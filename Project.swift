@@ -38,11 +38,11 @@ let project = Project(
             ),
             sources: ["Haruby-iOS/Sources/**"],
             resources: ["Haruby-iOS/Resources/**"],
-            scripts: [
-                .pre(script: """
-                        cp ./.scripts/pre-commit ./.git/hooks
-                        """, name: "PreCommitScript")
-            ],
+//            scripts: [
+//                .pre(script: """
+//                        cp ./.scripts/pre-commit ./.git/hooks
+//                        """, name: "PreCommitScript")
+//            ],
             dependencies: [
                 .external(name: "RxSwift"),
                 .external(name: "RxCocoa"),
