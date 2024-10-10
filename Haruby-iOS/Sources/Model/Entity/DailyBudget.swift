@@ -8,7 +8,7 @@
 import Foundation
 
 struct DailyBudget {
-    var date: Date
+    var date: String
     var haruby: Int?
     var memo: String
     var expenses: Expenses
