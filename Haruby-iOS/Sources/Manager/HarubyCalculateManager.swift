@@ -7,7 +7,7 @@
 
 import UIKit
 
-class HarubyCalculateManager {
+final class HarubyCalculateManager {
     // 평균하루비를 구하는 메서드
     func getAverageHarubyFromNow(endDate: Date, balance: Int) -> Int {
         // 1. 현재로부터 endDate까지 남은 일자 구하기 (+1)
