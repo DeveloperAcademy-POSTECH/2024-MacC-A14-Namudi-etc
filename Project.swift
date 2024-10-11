@@ -50,7 +50,8 @@ let project = Project(
                 .external(name: "SnapKit"),
                 .external(name: "ReactorKit"),
                 .external(name: "Hero"),
-                .external(name: "RealmSwift", condition: .when([.ios]))
+                .external(name: "RealmSwift", condition: .when([.ios])),
+                .external(name: "Realm")
             ]
         ),
         .target(

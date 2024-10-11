@@ -10,5 +10,5 @@ import Foundation
 struct ExpenseItem {
     var id: UUID = UUID()
     var name: String
-    var amount: Int
+    var price: Int
 }

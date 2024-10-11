@@ -8,6 +8,7 @@
 import Foundation
 import RealmSwift
 
+// TODO: 모델명 수정
 final class RealmExpenses: Object {
     @Persisted(primaryKey: true) var id: UUID = UUID()
     @Persisted var total: Int
