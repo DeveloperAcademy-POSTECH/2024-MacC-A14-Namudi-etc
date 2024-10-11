@@ -10,11 +10,9 @@ import RealmSwift
 
 final class RealmSalaryBudget: Object {
     
-    // 고민할 부분 :
-    // 앱 내에서 start, end를 사용할 때 Date 타입으로 사용할거면 Date로 저장하고
-    // Primary ID 값을 추가해주는 것이 어떨까
-    @Persisted(primaryKey: true) var startDate: String
-    @Persisted var endDate: String
+    @Persisted(primaryKey: true) var id: UUID
+    @Persisted var startDate: Date
+    @Persisted var endDate: Date
     @Persisted var fixedIncome: Int
     @Persisted var fixedExpense: List<RealmExpenseItem>
     @Persisted var balance: Int
@@ -22,8 +20,9 @@ final class RealmSalaryBudget: Object {
     @Persisted var dailyBudgets: List<RealmDailyBudget>
     
     convenience init(
-        startDate: String,
-        endDate: String,
+        id: UUID,
+        startDate: Date,
+        endDate: Date,
         fixedIncome: Int,
         fixedExpense: List<RealmExpenseItem>,
         balance: Int,
@@ -31,6 +30,7 @@ final class RealmSalaryBudget: Object {
         dailyBudgets: List<RealmDailyBudget>
     ) {
         self.init()
+        self.id = id
         self.startDate = startDate
         self.endDate = endDate
         self.fixedIncome = fixedIncome
@@ -42,6 +42,7 @@ final class RealmSalaryBudget: Object {
     
     convenience init(_ salaryBudget: SalaryBudget) {
         self.init()
+        self.id = salaryBudget.id
         self.startDate = salaryBudget.startDate
         self.endDate = salaryBudget.endDate
         self.fixedIncome = salaryBudget.fixedIncome
@@ -60,7 +61,7 @@ final class RealmSalaryBudget: Object {
         let realmDailyBudgets = salaryBudget.dailyBudgets.map { RealmDailyBudget($0) }
         // [RealmDailyBudget] -> List<RealmDailyBudget>
         let dailyBudgets = List<RealmDailyBudget>()
-        dailyBudgets.append(objectsIn: dailyBudgets)
+        dailyBudgets.append(objectsIn: realmDailyBudgets)
         
         self.dailyBudgets = dailyBudgets
     }
@@ -69,6 +70,7 @@ final class RealmSalaryBudget: Object {
 extension RealmSalaryBudget {
     func toEntity() -> SalaryBudget {
         SalaryBudget(
+            id: self.id,
             startDate: self.startDate,
             endDate: self.endDate,
             fixedIncome: self.fixedIncome,
