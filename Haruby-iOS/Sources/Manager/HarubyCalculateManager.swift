@@ -34,7 +34,6 @@ class HarubyCalculateManager {
             else { nilCount += 1 }
         }
         
-        // 3. balance / nilCount 리턴
-        return newBalance / nilCount
+        return nilCount == 0 ? newBalance : newBalance / nilCount
     }
 }
