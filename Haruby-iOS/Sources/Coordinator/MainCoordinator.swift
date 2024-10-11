@@ -8,37 +8,38 @@
 import UIKit
 
 class MainCoordinator: Coordinator {
-    var parentCoordinator: Coordinator?
-    var children: [Coordinator] = []
     var navigationController: UINavigationController
+    weak var parentCoordinator: Coordinator?
+    var childCoordinators: [Coordinator] = []
     
-    func start() {
-        print("main coordinator start")
-        let vc = MainViewController(coordinator: self)
-        navigationController.pushViewController(vc, animated: true)
-    }
-    
-    required init(_ navigationController: UINavigationController) {
+    init(navigationController: UINavigationController) {
         self.navigationController = navigationController
     }
     
-    deinit {
-        print("main coordinator deinit")
+    func start() {
+        print("Parents: \(String(describing: parentCoordinator))")
+        let vc = MainViewController(reactor: MainReactor(coordinator: self))
+        navigationController.pushViewController(vc, animated: false)
     }
     
-    func showCalculatorViewController() {
-        let coordinator = CalculatorCoordinator(navigationController: navigationController)
-        children.removeAll()
+    func showHarubyCalculator() {
+        let coordinator = HarubyCalculatorCoordinator(navigationController: navigationController)
         coordinator.parentCoordinator = self
-        children.append(coordinator)
+        addChildCoordinator(coordinator)
         coordinator.start()
     }
     
-    func showCalendarViewController() {
-        let coordinator = CalendarCoordinator(navigationController: navigationController)
-        children.removeAll()
+    func showHarubyCalendar() {
+        let coordinator = HarubyCalendarCoordinator(navigationController: navigationController)
         coordinator.parentCoordinator = self
-        children.append(coordinator)
+        addChildCoordinator(coordinator)
+        coordinator.start()
+    }
+    
+    func showHarubyManagement() {
+        let coordinator = HarubyManagementCoordinator(navigationController: navigationController)
+        coordinator.parentCoordinator = self
+        addChildCoordinator(coordinator)
         coordinator.start()
     }
 }
