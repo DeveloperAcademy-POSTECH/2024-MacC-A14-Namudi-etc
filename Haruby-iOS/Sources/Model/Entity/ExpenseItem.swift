@@ -8,7 +8,7 @@
 import Foundation
 
 struct ExpenseItem {
-    var id: UUID = UUID()
+    var id: String = UUID().uuidString
     var name: String
     var price: Int
 }

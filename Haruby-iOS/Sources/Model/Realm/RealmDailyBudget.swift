@@ -9,7 +9,7 @@ import Foundation
 import RealmSwift
 
 final class RealmDailyBudget: Object {
-    @Persisted(primaryKey: true) var id: UUID
+    @Persisted(primaryKey: true) var id: String
     @Persisted var date: Date
     @Persisted var haruby: Int?
     @Persisted var memo: String
@@ -17,7 +17,7 @@ final class RealmDailyBudget: Object {
     @Persisted var income: RealmExpenses?
     
     convenience init(
-        id: UUID,
+        id: String,
         date: Date,
         haruby: Int? = nil,
         memo: String,

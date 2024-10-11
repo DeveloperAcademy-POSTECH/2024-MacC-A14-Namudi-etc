@@ -8,7 +8,7 @@
 import Foundation
 
 struct SalaryBudget {
-    var id: UUID = UUID()
+    var id: String = UUID().uuidString
     var startDate: Date
     var endDate: Date
     var fixedIncome: Int
