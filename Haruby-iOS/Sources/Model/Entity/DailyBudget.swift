@@ -12,5 +12,6 @@ struct DailyBudget {
     var date: Date
     var haruby: Int?
     var memo: String
-    var expenses: Expenses
+    var expense: Expenses
+    var income: Expenses
 }
