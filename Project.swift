@@ -46,6 +46,7 @@ let project = Project(
             dependencies: [
                 .external(name: "RxSwift"),
                 .external(name: "RxCocoa"),
+                .external(name: "RxDataSources"),
                 .external(name: "SnapKit"),
                 .external(name: "ReactorKit"),
                 .external(name: "Hero"),

@@ -22,6 +22,7 @@ let package = Package(
         .package(url: "https://github.com/SnapKit/SnapKit.git", .upToNextMajor(from: "5.7.1")),
         .package(url: "https://github.com/ReactorKit/ReactorKit.git", .upToNextMajor(from: "3.2.0")),
         .package(url: "https://github.com/HeroTransitions/Hero.git", .upToNextMajor(from: "1.6.3")),
-        .package(url: "https://github.com/realm/realm-swift.git", .upToNextMajor(from: "10.54.0"))
+        .package(url: "https://github.com/realm/realm-swift.git", .upToNextMajor(from: "10.54.0")),
+        .package(url: "https://github.com/RxSwiftCommunity/RxDataSources.git", .upToNextMajor(from: "5.0.0")),
     ]
 )
