@@ -9,18 +9,21 @@ import Foundation
 import RealmSwift
 
 final class RealmDailyBudget: Object {
-    @Persisted(primaryKey: true) var date: String
+    @Persisted(primaryKey: true) var id: UUID
+    @Persisted var date: Date
     @Persisted var haruby: Int?
     @Persisted var memo: String
-    @Persisted var expenses: RealmExpenses
+    @Persisted var expenses: RealmExpenses?
     
     convenience init(
-        date: String,
+        id: UUID,
+        date: Date,
         haruby: Int? = nil,
         memo: String,
         expenses: RealmExpenses
     ) {
         self.init()
+        self.id = id
         self.date = date
         self.haruby = haruby
         self.memo = memo
@@ -29,6 +32,7 @@ final class RealmDailyBudget: Object {
     
     convenience init(_ dailyBudget: DailyBudget) {
         self.init()
+        self.id = dailyBudget.id
         self.date = dailyBudget.date
         self.haruby = dailyBudget.haruby
         self.memo = dailyBudget.memo
@@ -39,10 +43,11 @@ final class RealmDailyBudget: Object {
 extension RealmDailyBudget {
     func toEntity() -> DailyBudget {
         DailyBudget(
+            id: self.id,
             date: self.date,
             haruby: self.haruby,
             memo: self.memo,
-            expenses: self.expenses.toEntity()
+            expenses: self.expenses?.toEntity() ?? Expenses(total: 0, expenseItems: [])
         )
     }
 }
