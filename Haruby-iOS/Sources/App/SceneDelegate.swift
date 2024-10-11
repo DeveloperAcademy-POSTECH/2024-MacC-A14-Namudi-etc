@@ -25,8 +25,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         coordinator.start()
         
         window.makeKeyAndVisible()
-        
-        print("Scene Delegate - Will Connect")
     }
 }
 

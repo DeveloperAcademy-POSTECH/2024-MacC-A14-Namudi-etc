@@ -7,31 +7,23 @@
 
 import UIKit
 
-final class AppCoordinator: Coordinator {
-    var parentCoordinator: Coordinator?
-    var children: [Coordinator] = []
+class AppCoordinator: Coordinator {
     var navigationController: UINavigationController
-    
-    func start() {
-        print("app coordinator start")
-        startMainCoordinator()
-    }
+    var parentCoordinator: Coordinator?
+    var childCoordinators: [Coordinator] = []
     
     init(navigationController: UINavigationController) {
         self.navigationController = navigationController
     }
     
-    deinit {
-        print("app coordinator deinit")
+    func start() {
+        showMain()
     }
     
-    func startMainCoordinator() {
-        let mainCoordinator = MainCoordinator(navigationController)
-        children.removeAll()
+    func showMain() {
+        let mainCoordinator = MainCoordinator(navigationController: navigationController)
         mainCoordinator.parentCoordinator = self
-        children.append(mainCoordinator)
+        addChildCoordinator(mainCoordinator)
         mainCoordinator.start()
     }
-    
-    
 }
