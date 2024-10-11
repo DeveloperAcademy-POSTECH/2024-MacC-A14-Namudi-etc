@@ -10,21 +10,24 @@ import RealmSwift
 
 // TODO: 모델명 수정
 final class RealmExpenses: Object {
-    @Persisted(primaryKey: true) var id: UUID = UUID()
+    @Persisted(primaryKey: true) var id: String
     @Persisted var total: Int
     @Persisted var expenseItems: List<RealmExpenseItem>
     
     convenience init(
+        id: String,
         total: Int,
         expenseItems: List<RealmExpenseItem>
     ) {
         self.init()
+        self.id = id
         self.total = total
         self.expenseItems = expenseItems
     }
     
     convenience init(_ expenses: Expenses) {
         self.init()
+        self.id = id
         self.total = expenses.total
         
         // [ExpenseItem] -> [RealmExpenseItem]으로 변환
@@ -41,6 +44,7 @@ final class RealmExpenses: Object {
 extension RealmExpenses {
     func toEntity() -> Expenses {
         Expenses(
+            id: self.id,
             total: self.total,
             // List<RealmExpenseItem> -> [RealmExpenseItem] -> [ExpenseItem]
             expenseItems: Array(self.expenseItems).map { $0.toEntity() }

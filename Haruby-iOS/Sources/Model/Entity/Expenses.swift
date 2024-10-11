@@ -9,7 +9,7 @@ import Foundation
 
 // TODO: 모델명 수정
 struct Expenses {
-    var id: UUID = UUID()
+    var id: String = UUID().uuidString
     var total: Int
     var expenseItems: [ExpenseItem]
 }

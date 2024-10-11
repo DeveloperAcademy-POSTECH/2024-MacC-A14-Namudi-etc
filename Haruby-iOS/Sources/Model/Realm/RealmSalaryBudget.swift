@@ -10,7 +10,7 @@ import RealmSwift
 
 final class RealmSalaryBudget: Object {
     
-    @Persisted(primaryKey: true) var id: UUID
+    @Persisted(primaryKey: true) var id: String
     @Persisted var startDate: Date
     @Persisted var endDate: Date
     @Persisted var fixedIncome: Int
@@ -20,7 +20,7 @@ final class RealmSalaryBudget: Object {
     @Persisted var dailyBudgets: List<RealmDailyBudget>
     
     convenience init(
-        id: UUID,
+        id: String,
         startDate: Date,
         endDate: Date,
         fixedIncome: Int,
