@@ -10,20 +10,23 @@ import UIKit
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     
     var window: UIWindow?
+    var coordinator: AppCoordinator!
     
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let windowScene = (scene as? UIWindowScene) else { return }
-        window = UIWindow(frame: windowScene.coordinateSpace.bounds)
-        window?.windowScene = windowScene
         
+        let window = UIWindow(windowScene: windowScene)
+        self.window = window
         
-        let reactor = CalculatorViewReactor(salaryBudget: StubSalaryBudgetRepository.mock[0])
-        let vc = CalculatorViewController()
-
-        vc.reactor = reactor
+        let navigationController = UINavigationController()
+        window.rootViewController = navigationController
         
-        window?.rootViewController = vc
-        window?.makeKeyAndVisible()
+        coordinator = AppCoordinator(navigationController: navigationController)
+        coordinator.start()
+        
+        window.makeKeyAndVisible()
+        
+        print("Scene Delegate - Will Connect")
     }
 }
 
