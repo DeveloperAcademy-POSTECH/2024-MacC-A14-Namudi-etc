@@ -12,6 +12,8 @@ protocol DailyBudgetRepository: AnyObject {
     func read(_ date: Date) -> Observable<DailyBudget>
     func updateHaruby(_ id: String, haruby: Int) -> Observable<Void>
     func updateMemo(_ id: String, memo: String) -> Observable<Void>
+    func updateExpense(_ id: String, expense: TransactionRecord) -> Observable<Void>
+    func updateIncome(_ id: String, income: TransactionRecord) -> Observable<Void>
 }
 
 // MARK: - Impl
@@ -30,6 +32,16 @@ final class DailyBudgetRepositoryImpl: DailyBudgetRepository {
         print("Impl: Update Memo \(memo)")
         return .empty()
     }
+    
+    func updateExpense(_ id: String, expense: TransactionRecord) -> Observable<Void> {
+        print("Impl: Update Expense \(expense)")
+        return .empty()
+    }
+    
+    func updateIncome(_ id: String, income: TransactionRecord) -> Observable<Void> {
+        print("Impl: Update Income \(income)")
+        return .empty()
+    }
 }
 
 // MARK: - Stub
@@ -46,6 +58,16 @@ final class StubDailyBudgetRepository: DailyBudgetRepository {
     
     func updateMemo(_ id: String, memo: String) -> Observable<Void> {
         print("Stub: Update Memo \(memo)")
+        return .empty()
+    }
+    
+    func updateExpense(_ id: String, expense: TransactionRecord) -> Observable<Void> {
+        print("Stub: Update Expense \(expense)")
+        return .empty()
+    }
+    
+    func updateIncome(_ id: String, income: TransactionRecord) -> Observable<Void> {
+        print("Stub: Update Income \(income)")
         return .empty()
     }
 }

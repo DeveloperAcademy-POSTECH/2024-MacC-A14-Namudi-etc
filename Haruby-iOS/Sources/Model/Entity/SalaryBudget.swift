@@ -12,7 +12,7 @@ struct SalaryBudget {
     var startDate: Date
     var endDate: Date
     var fixedIncome: Int
-    var fixedExpense: [ExpenseItem]
+    var fixedExpense: [TransactionItem]
     var balance: Int
     var defaultHaruby: Int
     var dailyBudgets: [DailyBudget]

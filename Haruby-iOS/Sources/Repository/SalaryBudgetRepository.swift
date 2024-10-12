@@ -16,7 +16,7 @@ protocol SalaryBudgetRepository: AnyObject {
     
     func updateDate(_ id: String, start: Date, end:Date) -> Observable<Void>
     func updateFixedIncome(_ id: String, fixedIncome: Int) -> Observable<Void>
-    func updateFixedExpense(_ id: String, fixedExpense: [ExpenseItem]) -> Observable<Void>
+    func updateFixedExpense(_ id: String, fixedExpense: [TransactionItem]) -> Observable<Void>
     func updateBalance(_ id: String, balance: Int) -> Observable<Void>
     func updateDefaultHaruby(_ id: String, defaultHaruby: Int) -> Observable<Void>
     
@@ -51,7 +51,7 @@ final class SalaryBudgetRepositoryImpl: SalaryBudgetRepository {
         return .empty()
     }
     
-    func updateFixedExpense(_ id: String, fixedExpense: [ExpenseItem]) -> Observable<Void> {
+    func updateFixedExpense(_ id: String, fixedExpense: [TransactionItem]) -> Observable<Void> {
         // TODO: 기존 RealmExpenseItem Delete 필요
         print("Impl: Update fixedExpense \(fixedExpense)")
         return .empty()
@@ -103,7 +103,7 @@ final class StubSalaryBudgetRepository: SalaryBudgetRepository {
         return .empty()
     }
     
-    func updateFixedExpense(_ id: String, fixedExpense: [ExpenseItem]) -> Observable<Void> {
+    func updateFixedExpense(_ id: String, fixedExpense: [TransactionItem]) -> Observable<Void> {
         print("Stub: Update fixedExpense \(fixedExpense)")
         return .empty()
     }
@@ -122,5 +122,6 @@ final class StubSalaryBudgetRepository: SalaryBudgetRepository {
     func delete(_ id: String) -> Observable<Void> {
         print("Stub: Delete SalaryBudget")
         return .empty()
-    }}
+    }
+}
 
