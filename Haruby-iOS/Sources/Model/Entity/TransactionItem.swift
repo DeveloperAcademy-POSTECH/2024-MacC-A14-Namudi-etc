@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct ExpenseItem {
+struct TransactionItem {
     var id: String = UUID().uuidString
     var name: String
     var price: Int

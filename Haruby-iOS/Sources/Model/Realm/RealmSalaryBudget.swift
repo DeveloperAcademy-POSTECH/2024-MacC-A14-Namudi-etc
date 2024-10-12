@@ -14,7 +14,7 @@ final class RealmSalaryBudget: Object {
     @Persisted var startDate: Date
     @Persisted var endDate: Date
     @Persisted var fixedIncome: Int
-    @Persisted var fixedExpense: List<RealmExpenseItem>
+    @Persisted var fixedExpense: List<RealmTransactionItem>
     @Persisted var balance: Int
     @Persisted var defaultHaruby: Int
     @Persisted var dailyBudgets: List<RealmDailyBudget>
@@ -24,7 +24,7 @@ final class RealmSalaryBudget: Object {
         startDate: Date,
         endDate: Date,
         fixedIncome: Int,
-        fixedExpense: List<RealmExpenseItem>,
+        fixedExpense: List<RealmTransactionItem>,
         balance: Int,
         defaultHaruby: Int,
         dailyBudgets: List<RealmDailyBudget>
@@ -49,21 +49,21 @@ final class RealmSalaryBudget: Object {
         self.balance = salaryBudget.balance
         self.defaultHaruby = salaryBudget.defaultHaruby
         
-        // [ExpenseItem] -> [RealmExpenseItem]
-        let realmExpenseItems = salaryBudget.fixedExpense.map { RealmExpenseItem($0) }
-        // [RealmExpenseItem] -> List<RealmExpenseItem>
-        let expenseItems = List<RealmExpenseItem>()
-        expenseItems.append(objectsIn: realmExpenseItems)
+        // [TransactionItem] -> [RealmTransactionItem]
+        let realmTransactionItems = salaryBudget.fixedExpense.map { RealmTransactionItem($0) }
+        // [RealmTransactionItem] -> List<RealmTransactionItem>
+        let listTransactionItem = List<RealmTransactionItem>()
+        listTransactionItem.append(objectsIn: realmTransactionItems)
         
-        self.fixedExpense = expenseItems
+        self.fixedExpense = listTransactionItem
         
         // [DailyBudget] -> [RealmDailyBudget]
         let realmDailyBudgets = salaryBudget.dailyBudgets.map { RealmDailyBudget($0) }
         // [RealmDailyBudget] -> List<RealmDailyBudget>
-        let dailyBudgets = List<RealmDailyBudget>()
-        dailyBudgets.append(objectsIn: realmDailyBudgets)
+        let listDailyBudgets = List<RealmDailyBudget>()
+        listDailyBudgets.append(objectsIn: realmDailyBudgets)
         
-        self.dailyBudgets = dailyBudgets
+        self.dailyBudgets = listDailyBudgets
     }
 }
 
@@ -74,7 +74,7 @@ extension RealmSalaryBudget {
             startDate: self.startDate,
             endDate: self.endDate,
             fixedIncome: self.fixedIncome,
-            // List<RealmExpenseItem> -> [RealmExpenseItem] -> [ExpenseItem]
+            // List<RealmTransactionItem> -> [RealmTransactionItem] -> [TransactionItem]
             fixedExpense: Array(self.fixedExpense).map { $0.toEntity() },
             balance: self.balance,
             defaultHaruby: self.defaultHaruby,

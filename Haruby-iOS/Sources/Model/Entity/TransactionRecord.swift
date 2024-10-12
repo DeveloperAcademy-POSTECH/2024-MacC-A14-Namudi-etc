@@ -8,8 +8,8 @@
 import Foundation
 
 // TODO: 모델명 수정
-struct Expenses {
+struct TransactionRecord {
     var id: String = UUID().uuidString
     var total: Int
-    var expenseItems: [ExpenseItem]
+    var transactionItems: [TransactionItem]
 }

@@ -13,16 +13,16 @@ final class RealmDailyBudget: Object {
     @Persisted var date: Date
     @Persisted var haruby: Int?
     @Persisted var memo: String
-    @Persisted var expense: RealmExpenses?
-    @Persisted var income: RealmExpenses?
+    @Persisted var expense: RealmTransactionRecord?
+    @Persisted var income: RealmTransactionRecord?
     
     convenience init(
         id: String,
         date: Date,
         haruby: Int? = nil,
         memo: String,
-        expense: RealmExpenses,
-        income: RealmExpenses
+        expense: RealmTransactionRecord,
+        income: RealmTransactionRecord
     ) {
         self.init()
         self.id = id
@@ -39,8 +39,8 @@ final class RealmDailyBudget: Object {
         self.date = dailyBudget.date
         self.haruby = dailyBudget.haruby
         self.memo = dailyBudget.memo
-        self.expense = RealmExpenses(dailyBudget.expense)
-        self.income = RealmExpenses(dailyBudget.income)
+        self.expense = RealmTransactionRecord(dailyBudget.expense)
+        self.income = RealmTransactionRecord(dailyBudget.income)
     }
 }
 
@@ -51,8 +51,8 @@ extension RealmDailyBudget {
             date: self.date,
             haruby: self.haruby,
             memo: self.memo,
-            expense: self.expense?.toEntity() ?? Expenses(total: 0, expenseItems: []),
-            income: self.income?.toEntity() ?? Expenses(total: 0, expenseItems: [])
+            expense: self.expense?.toEntity() ?? TransactionRecord(total: 0, transactionItems: []),
+            income: self.income?.toEntity() ?? TransactionRecord(total: 0, transactionItems: [])
         )
     }
 }

@@ -6,12 +6,13 @@
 //
 
 import Foundation
+import SwiftUI
 
 struct DailyBudget {
     var id: String = UUID().uuidString
     var date: Date
     var haruby: Int?
     var memo: String
-    var expense: Expenses
-    var income: Expenses
+    var expense: TransactionRecord
+    var income: TransactionRecord
 }
