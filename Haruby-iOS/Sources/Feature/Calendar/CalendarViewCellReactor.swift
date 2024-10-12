@@ -33,8 +33,18 @@ class CalendarViewCellReactor: Reactor {
     init(dayItem: DayItem) {
         let calendar = Calendar.current
         
-        // 날짜 숫자 설정 (날짜가 없으면 빈 문자열)
-        let dayNumber = dayItem.date.map { "\(calendar.component(.day, from: $0))" } ?? ""
+        let dayNumber: String
+        if let date = dayItem.date {
+            let dayComponent = calendar.component(.day, from: date)
+            if dayComponent == 1 {
+                let monthComponent = calendar.component(.month, from: date)
+                dayNumber = "\(monthComponent)/\(dayComponent)"
+            } else {
+                dayNumber = "\(dayComponent)"
+            }
+        } else {
+            dayNumber = ""
+        }
         
         // 월의 첫 날인지 확인
         let isFirstDayOfMonth = dayItem.date.map { calendar.component(.day, from: $0) == 1 } ?? false
