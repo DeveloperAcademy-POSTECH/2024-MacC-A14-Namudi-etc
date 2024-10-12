@@ -9,6 +9,7 @@ import UIKit
 
 import ReactorKit
 import RxCocoa
+import RxDataSources
 import RxSwift
 import SnapKit
 
@@ -18,7 +19,7 @@ class CalendarViewController: UIViewController, View {
     typealias Reactor = CalendarViewReactor
     
     // MARK: - Properties
-    private var numbers = Array(1...100)
+    private let cellHeight: CGFloat = 83
     
     // MARK: - UI Component
     private lazy var monthLabel: UILabel = {
@@ -137,10 +138,13 @@ class CalendarViewController: UIViewController, View {
         layout.minimumLineSpacing = 0
         layout.minimumInteritemSpacing = 0
         
+        let cellWidth = (UIScreen.main.bounds.width - 32) / 7
+        layout.itemSize = CGSize(width: cellWidth, height: cellHeight)
+        
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.backgroundColor = .clear
         collectionView.showsVerticalScrollIndicator = false
-        collectionView.register(CalendarViewCell.self, forCellWithReuseIdentifier: "CalendarViewCell")
+        collectionView.register(CalendarViewCell.self, forCellWithReuseIdentifier: "calendarCell")
         
         return collectionView
     }()
@@ -149,9 +153,6 @@ class CalendarViewController: UIViewController, View {
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        collectionView.dataSource = self
-        collectionView.delegate = self
 
         // Do any additional setup after loading the view.
         initConstraints()
@@ -170,7 +171,13 @@ class CalendarViewController: UIViewController, View {
     
     // MARK: - Binding
     func bind(reactor: CalendarViewReactor) {
-            // code
+        // Action
+        reactor.action.onNext(.viewDidLoad)
+        
+        // State
+        reactor.state.map { $0.monthSections }
+            .bind(to: collectionView.rx.items(dataSource: createDataSource()))
+            .disposed(by: disposeBag)
     }
     
     // MARK: - Private Methods
@@ -191,22 +198,15 @@ class CalendarViewController: UIViewController, View {
             make.bottom.equalToSuperview()
         }
     }
-}
-
-extension CalendarViewController: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return numbers.count
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CalendarViewCell", for: indexPath) as! CalendarViewCell
-        cell.configure(with: numbers[indexPath.item])
-        return cell
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let width = collectionView.bounds.width / 7
-        return CGSize(width: width, height: 83)
+    private func createDataSource() -> RxCollectionViewSectionedReloadDataSource<MonthSection> {
+        return RxCollectionViewSectionedReloadDataSource<MonthSection>(
+            configureCell: { dataSource, collectionView, indexPath, item in
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "calendarCell", for: indexPath) as! CalendarViewCell
+                let reactor = CalendarViewCellReactor(dayItem: item)
+                cell.reactor = reactor
+                return cell
+            }
+        )
     }
 }

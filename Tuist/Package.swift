@@ -4,19 +4,19 @@ import PackageDescription
 #if TUIST
     import ProjectDescription
 
-    let packageSettings = PackageSettings(
-        productTypes: [
-                    "RxSwift" : .framework,
-                    "SnapKit" : .framework,
-                    "ReactorKit" : .framework,
-                    "Hero" : .framework,
-                    "RealmSwift" : .framework,
-                    "RxDataSources" : .framework,
-                    "RxCocoa" : .framework,
-                    "RxCocoaRuntime" : .framework,
-                    "RxRelay" : .framework
-                ]
-    )
+let packageSettings = PackageSettings(
+    productTypes: [
+        "RxSwift" : .framework,
+        "SnapKit" : .framework,
+        "ReactorKit" : .framework,
+        "Hero" : .framework,
+        "RealmSwift" : .framework,
+        "RxDataSources" : .framework,
+        "RxCocoa" : .framework,
+        "RxCocoaRuntime" : .framework,
+        "RxRelay" : .framework
+    ]
+)
 #endif
 
 let package = Package(
