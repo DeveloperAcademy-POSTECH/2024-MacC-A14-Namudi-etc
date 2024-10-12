@@ -14,33 +14,13 @@ protocol SalaryBudgetRepository: AnyObject {
     func fetch() -> Observable<[SalaryBudget]>
     func read(_ startDate: Date) -> Observable<SalaryBudget?>
     
-    func updateDate(
-        _ salaryBudget: SalaryBudget,
-        start: Date,
-        end:Date
-    ) -> Observable<Void>
+    func updateDate(_ id: String, start: Date, end:Date) -> Observable<Void>
+    func updateFixedIncome(_ id: String, fixedIncome: Int) -> Observable<Void>
+    func updateFixedExpense(_ id: String, fixedExpense: [ExpenseItem]) -> Observable<Void>
+    func updateBalance(_ id: String, balance: Int) -> Observable<Void>
+    func updateDefaultHaruby(_ id: String, defaultHaruby: Int) -> Observable<Void>
     
-    func updateFixedIncome(
-        _ salaryBudget: SalaryBudget,
-        fixedIncome: Int
-    ) -> Observable<Void>
-    
-    func updateFixedExpense(
-        _ salaryBudget: SalaryBudget,
-        fixedExpense: [ExpenseItem]
-    ) -> Observable<Void>
-    
-    func updateBalance(
-        _ salaryBudget: SalaryBudget,
-        balance: Int
-    ) -> Observable<Void>
-    
-    func updateDefaultHaruby(
-        _ salaryBudget: SalaryBudget,
-        defaultHaruby: Int
-    ) -> Observable<Void>
-    
-    func delete(_ salaryBudget: SalaryBudget) -> Observable<Void>
+    func delete(_ id: String) -> Observable<Void>
 }
 
 // MARK: - Impl
@@ -61,51 +41,35 @@ final class SalaryBudgetRepositoryImpl: SalaryBudgetRepository {
         return .empty()
     }
     
-    func updateDate(
-        _ salaryBudget: SalaryBudget,
-        start: Date,
-        end: Date
-    ) -> Observable<Void> {
+    func updateDate(_ id: String, start: Date, end: Date) -> Observable<Void> {
         print("Impl: Update Date \(start) - \(end)")
         return .empty()
     }
     
-    func updateFixedIncome(
-        _ salaryBudget: SalaryBudget,
-        fixedIncome: Int
-    ) -> Observable<Void> {
+    func updateFixedIncome(_ id: String, fixedIncome: Int) -> Observable<Void> {
         print("Impl: Update fixedIncome \(fixedIncome)")
         return .empty()
     }
     
-    func updateFixedExpense(
-        _ salaryBudget: SalaryBudget,
-        fixedExpense: [ExpenseItem]
-    ) -> Observable<Void> {
+    func updateFixedExpense(_ id: String, fixedExpense: [ExpenseItem]) -> Observable<Void> {
         // TODO: 기존 RealmExpenseItem Delete 필요
         print("Impl: Update fixedExpense \(fixedExpense)")
         return .empty()
     }
     
-    func updateBalance(
-        _ salaryBudget: SalaryBudget,
-        balance: Int
-    ) -> Observable<Void> {
+    func updateBalance(_ id: String, balance: Int) -> Observable<Void> {
         print("Impl: Update balance \(balance)")
         return .empty()
     }
     
-    func updateDefaultHaruby(
-        _ salaryBudget: SalaryBudget,
-        defaultHaruby: Int
-    ) -> Observable<Void> {
+    func updateDefaultHaruby(_ id: String, defaultHaruby: Int) -> Observable<Void> {
         print("Impl: Update defaultHaruby \(defaultHaruby)")
         return .empty()
     }
     
     
-    func delete(_ salaryBudget: SalaryBudget) -> Observable<Void> {
-        print("Impl: Delete SalaryBudget \(salaryBudget)")
+    func delete(_ id: String) -> Observable<Void> {
+        print("Impl: Delete SalaryBudget")
         return .empty()
     }
 }
@@ -129,51 +93,34 @@ final class StubSalaryBudgetRepository: SalaryBudgetRepository {
         return .empty()
     }
     
-    func updateDate(
-        _ salaryBudget: SalaryBudget,
-        start: Date,
-        end: Date
-    ) -> Observable<Void> {
+    func updateDate(_ id: String, start: Date, end: Date) -> Observable<Void> {
         print("Stub: Update Date \(start) - \(end)")
         return .empty()
     }
     
-    func updateFixedIncome(
-        _ salaryBudget: SalaryBudget,
-        fixedIncome: Int
-    ) -> Observable<Void> {
+    func updateFixedIncome(_ id: String, fixedIncome: Int) -> Observable<Void> {
         print("Stub: Update fixedIncome \(fixedIncome)")
         return .empty()
     }
     
-    func updateFixedExpense(
-        _ salaryBudget: SalaryBudget,
-        fixedExpense: [ExpenseItem]
-    ) -> Observable<Void> {
+    func updateFixedExpense(_ id: String, fixedExpense: [ExpenseItem]) -> Observable<Void> {
         print("Stub: Update fixedExpense \(fixedExpense)")
         return .empty()
     }
     
-    func updateBalance(
-        _ salaryBudget: SalaryBudget,
-        balance: Int
-    ) -> Observable<Void> {
+    func updateBalance(_ id: String, balance: Int) -> Observable<Void> {
         print("Stub: Update balance \(balance)")
         return .empty()
     }
     
-    func updateDefaultHaruby(
-        _ salaryBudget: SalaryBudget,
-        defaultHaruby: Int
-    ) -> Observable<Void> {
+    func updateDefaultHaruby(_ id: String, defaultHaruby: Int) -> Observable<Void> {
         print("Stub: Update defaultHaruby \(defaultHaruby)")
         return .empty()
     }
     
     
-    func delete(_ salaryBudget: SalaryBudget) -> Observable<Void> {
-        print("Stub: Delete SalaryBudget \(salaryBudget)")
+    func delete(_ id: String) -> Observable<Void> {
+        print("Stub: Delete SalaryBudget")
         return .empty()
-    }
-}
+    }}
 
