@@ -11,9 +11,112 @@ class ReceiptView: UIView {
     private let arcRadius: CGFloat = 8
     private let sidePadding: CGFloat = 23
     
+    private let dateLabel: UILabel = {
+        let label = UILabel()
+        label.font = UIFont.systemFont(ofSize: 16)
+        label.textColor = .gray
+        return label
+    }()
+    
+    private lazy var amountBox: UIView = {
+        let view = UIView()
+        view.backgroundColor = .systemGray6
+        view.layer.cornerRadius = 10
+        return view
+    }()
+    
+    private let titleLabel: UILabel = {
+        let label = UILabel()
+        label.font = UIFont.boldSystemFont(ofSize: 24)
+        label.text = "오늘의 하루비"
+        return label
+    }()
+    
+    private let amountLabel: UILabel = {
+        let label = UILabel()
+        label.font = UIFont.boldSystemFont(ofSize: 36)
+        label.text = "36,000"
+        return label
+    }()
+    
+    private let inputButton: UIButton = {
+        let button = UIButton(type: .system)
+        
+        var configuration = UIButton.Configuration.filled()
+        configuration.baseBackgroundColor = .systemBlue
+        configuration.baseForegroundColor = .white
+        configuration.background.cornerRadius = 10
+        
+        configuration.title = "오늘의 지출 및 수입 입력하기"
+        configuration.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { incoming in
+            var outgoing = incoming
+            outgoing.font = UIFont.systemFont(ofSize: 18, weight: .semibold)
+            return outgoing
+        }
+        
+        let chevronConfig = UIImage.SymbolConfiguration(pointSize: 14, weight: .regular)
+        let chevronImage = UIImage(systemName: "chevron.right", withConfiguration: chevronConfig)?.withTintColor(.white, renderingMode: .alwaysOriginal)
+        configuration.image = chevronImage
+        
+        configuration.imagePlacement = .trailing
+        configuration.imagePadding = 8
+        
+        button.configuration = configuration
+        
+        return button
+    }()
+    
     override func layoutSubviews() {
         super.layoutSubviews()
         drawReceipt()
+        setupSubviews()
+    }
+    
+    private func setupSubviews() {
+        addSubview(dateLabel)
+        addSubview(titleLabel)
+        addSubview(amountBox)
+        addSubview(amountLabel)
+        addSubview(inputButton)
+        
+        setupConstraints()
+        updateDateLabel()
+    }
+    
+    private func setupConstraints() {
+        dateLabel.snp.makeConstraints { make in
+            make.top.equalToSuperview().offset(18)
+            make.leading.equalToSuperview().offset(29)
+        }
+        
+        titleLabel.snp.makeConstraints { make in
+            make.top.equalToSuperview().offset(45 + 54) // 상단 점선(45) + 54
+            make.centerX.equalToSuperview()
+        }
+        
+        amountBox.snp.makeConstraints { make in
+            make.top.equalTo(titleLabel.snp.bottom).offset(8)
+            make.leading.trailing.equalToSuperview().inset(73)
+            make.height.equalTo(53)
+        }
+        
+        amountLabel.snp.makeConstraints { make in
+            make.center.equalTo(amountBox)
+        }
+        
+        inputButton.snp.makeConstraints { make in
+            make.leading.equalToSuperview().offset(27)
+            make.trailing.equalToSuperview().offset(-27)
+            make.top.equalToSuperview().offset(frame.height - 78 + 14)
+            make.bottom.equalToSuperview().offset(-25)
+            make.height.equalTo(39)
+        }
+    }
+    
+    private func updateDateLabel() {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy년 MM월 dd일"
+        dateLabel.text = dateFormatter.string(from: Date())
     }
     
     private func drawReceipt() {
@@ -22,8 +125,8 @@ class ReceiptView: UIView {
         let receiptShapeLayer = createReceiptShapeLayer()
         layer.addSublayer(receiptShapeLayer)
         
-        addDottedLine(at: 45) // Top dotted line
-        addDottedLine(at: frame.height - 71)
+        addDottedLine(at: 53)
+        addDottedLine(at: frame.height - 78)
         
         addElevation()
     }
@@ -45,7 +148,7 @@ class ReceiptView: UIView {
         // 상단 좌우 아크 생성
         receiptShapePath.append(
             createArcPath(
-                at: CGPoint(x: 0, y: 45),
+                at: CGPoint(x: 0, y: 53),
                 startAngle: .pi/2,
                 endAngle: .pi*3/2,
                 clockwise: false
@@ -53,7 +156,7 @@ class ReceiptView: UIView {
         )
         receiptShapePath.append(
             createArcPath(
-                at: CGPoint(x: frame.width, y: 45),
+                at: CGPoint(x: frame.width, y: 53),
                 startAngle: .pi/2,
                 endAngle: .pi*3/2,
                 clockwise: true
@@ -63,7 +166,7 @@ class ReceiptView: UIView {
         // 하단 좌우 아크 생성
         receiptShapePath.append(
             createArcPath(
-                at: CGPoint(x: 0, y: frame.height - 71),
+                at: CGPoint(x: 0, y: frame.height - 78),
                 startAngle: .pi/2,
                 endAngle: .pi*3/2,
                 clockwise: false
@@ -71,7 +174,7 @@ class ReceiptView: UIView {
         )
         receiptShapePath.append(
             createArcPath(
-                at: CGPoint(x: frame.width, y: frame.height - 71),
+                at: CGPoint(x: frame.width, y: frame.height - 78),
                 startAngle: .pi/2,
                 endAngle: .pi*3/2,
                 clockwise: true
