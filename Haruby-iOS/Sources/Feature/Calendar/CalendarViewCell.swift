@@ -12,14 +12,14 @@ import RxCocoa
 import RxSwift
 import SnapKit
 
-class CalendarViewCell: UICollectionViewCell {
-//    var disposeBag: DisposeBag = DisposeBag()
-//    typealias Reactor = CalendarViewCellReactor
+class CalendarViewCell: UICollectionViewCell, View {
+    var disposeBag: DisposeBag = DisposeBag()
+    typealias Reactor = CalendarViewCellReactor
     
     private let numberLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 12)
-        label.textColor = .lightGray
+        label.font = .systemFont(ofSize: 12, weight: .medium)
+        label.textColor = .black
         label.textAlignment = .center
         return label
     }()
@@ -27,6 +27,27 @@ class CalendarViewCell: UICollectionViewCell {
     // MARK: - Initialization
     override init(frame: CGRect) {
         super.init(frame: frame)
+        
+        setup()
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    // MARK: - Properties
+    // MARK: - UI Components
+    
+    // MARK: - Binding
+    func bind(reactor: CalendarViewCellReactor) {
+        // State
+        reactor.state.map{ $0.dayNumber }
+            .bind(to: numberLabel.rx.text)
+            .disposed(by: disposeBag)
+    }
+    
+    // MARK: - Private Methods
+    private func setup() {
         contentView.addSubview(numberLabel)
         contentView.layer.borderColor = UIColor.black.cgColor
         contentView.layer.borderWidth = 1
@@ -34,22 +55,4 @@ class CalendarViewCell: UICollectionViewCell {
             make.edges.equalToSuperview()
         }
     }
-
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    func configure(with number: Int) {
-        numberLabel.text = "\(number)"
-    }
-    
-    // MARK: - Properties
-    // MARK: - UI Components
-    
-    // MARK: - Binding
-//    func bind(reactor: CalendarViewCellReactor) {
-//        // code
-//    }
-    
-    // MARK: - Private Methods
 }
