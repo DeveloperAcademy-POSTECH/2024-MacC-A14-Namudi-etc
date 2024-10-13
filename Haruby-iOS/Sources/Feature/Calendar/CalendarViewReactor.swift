@@ -13,37 +13,37 @@ import RxSwift
 
 class CalendarViewReactor: Reactor {
     enum Action {
-        case viewDidLoad
+        case initializeCalendar
     }
     
     enum Mutation {
-        case setMonthSections([MonthSection])
+        case updateMonthSections([MonthlySection])
     }
     
     struct State {
-        var monthSections: [MonthSection] = []
+        var monthlySections: [MonthlySection] = []
     }
     
     let initialState: State = State()
     
     func mutate(action: Action) -> Observable<Mutation> {
         switch action {
-            case .viewDidLoad:
-            return Observable.just(Mutation.setMonthSections(generateMonthSections()))
+            case .initializeCalendar:
+            return Observable.just(Mutation.updateMonthSections(createMonthSections()))
         }
     }
     
     func reduce(state: State, mutation: Mutation) -> State {
         var newState = state
         switch mutation {
-        case .setMonthSections(let monthSections):
-            newState.monthSections = monthSections
+        case .updateMonthSections(let monthlySections):
+            newState.monthlySections = monthlySections
         }
         return newState
     }
     
     // MARK: - Private Methods
-    private func generateMonthSections() -> [MonthSection] {
+    private func createMonthSections() -> [MonthlySection] {
         let calendar = Calendar.current
         let currentDate = Date()
         
@@ -52,12 +52,12 @@ class CalendarViewReactor: Reactor {
                 fatalError("Failed to create date")
             }
             
-            let days = daysInMonth(monthDate)
-            return MonthSection(firstDayOfMonth: monthDate, items: days)
+            let days = generateDaysForMonth(monthDate)
+            return MonthlySection(firstDayOfMonth: monthDate, items: days)
         }
     }
     
-    private func daysInMonth(_ date: Date) -> [DayItem] {
+    private func generateDaysForMonth(_ date: Date) -> [DayItem] {
         let calendar = Calendar.current
         let monthStart = calendar.date(from: calendar.dateComponents([.year, .month], from: date))!
         let nextMonth = calendar.date(byAdding: .month, value: 1, to: monthStart)!
@@ -92,13 +92,13 @@ class CalendarViewReactor: Reactor {
 }
 
 
-struct MonthSection {
+struct MonthlySection {
     var firstDayOfMonth: Date
     var items: [DayItem]
 }
 
-extension MonthSection: SectionModelType {
-    init(original: MonthSection, items: [DayItem]) {
+extension MonthlySection: SectionModelType {
+    init(original: MonthlySection, items: [DayItem]) {
         self = original
         self.items = items
     }
