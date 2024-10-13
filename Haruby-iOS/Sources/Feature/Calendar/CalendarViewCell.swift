@@ -95,11 +95,11 @@ final class CalendarViewCell: UICollectionViewCell, View {
             .bind(to: harubyLabel.rx.text)
             .disposed(by: disposeBag)
         
-        reactor.state.map { !$0.isVisible }
+        reactor.state.map{ !$0.isVisible }
                     .bind(to: topLine.rx.isHidden)
                     .disposed(by: disposeBag)
         
-        reactor.state.map { !$0.isVisible }
+        reactor.state.map{ !$0.isVisible }
                     .bind(to: dotStackView.rx.isHidden)
                     .disposed(by: disposeBag)
         
