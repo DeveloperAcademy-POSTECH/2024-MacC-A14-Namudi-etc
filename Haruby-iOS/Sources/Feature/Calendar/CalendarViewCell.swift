@@ -32,23 +32,23 @@ final class CalendarViewCell: UICollectionViewCell, View {
     // MARK: - UI Components
     lazy private var numberLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 12, weight: .medium)
-        label.textColor = .black
+        label.font = .pretendardMedium_12()
+        label.textColor = .Haruby.textBlack
         label.textAlignment = .center
         return label
     }()
     
     lazy private var harubyLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 11, weight: .medium)
-        label.textColor = .lightGray
+        label.font = .pretendardMedium_11()
+        label.textColor = .Haruby.textBlack40
         label.textAlignment = .center
         return label
     }()
     
     lazy private var redDot: UIView = {
         let view = UIView()
-        view.backgroundColor = .red
+        view.backgroundColor = .Haruby.red
         view.layer.cornerRadius = 3
         view.clipsToBounds = true
         view.snp.makeConstraints { make in
@@ -59,7 +59,7 @@ final class CalendarViewCell: UICollectionViewCell, View {
     
     lazy private var blueDot: UIView = {
         let view = UIView()
-        view.backgroundColor = .blue
+        view.backgroundColor = .Haruby.main
         view.layer.cornerRadius = 3
         view.clipsToBounds = true
         view.snp.makeConstraints { make in
@@ -79,7 +79,7 @@ final class CalendarViewCell: UICollectionViewCell, View {
     
     lazy private var topLine: UIView = {
         let view = UIView()
-        view.backgroundColor = .lightGray
+        view.backgroundColor = .Haruby.textBlack10
         view.isHidden = true
         return view
     }()

@@ -112,7 +112,7 @@ final class CalendarViewController: UIViewController, View {
         for weekday in weekdays {
             let label = UILabel()
             label.text = weekday
-            label.font = .pretendardMedium_11()
+            label.font = .pretendardMedium_16()
             label.textColor = .Haruby.textBlack
             label.textAlignment = .center
             
@@ -155,9 +155,20 @@ final class CalendarViewController: UIViewController, View {
         label.textColor = .Haruby.red
         label.textAlignment = .center
         
+        let rootView = UIView()
+        rootView.backgroundColor = .white
+        rootView.layer.cornerRadius = 16
+        
+        
         let view = UIView()
         view.backgroundColor = .Haruby.red10
         view.layer.cornerRadius = 16
+        
+        rootView.addSubview(view)
+        
+        view.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
         
         view.addSubview(label)
         label.snp.makeConstraints { make in
@@ -165,7 +176,7 @@ final class CalendarViewController: UIViewController, View {
             make.verticalEdges.equalToSuperview().inset(10)
         }
         
-        return view
+        return rootView
     }()
     
     // MARK: - Lifecycle
