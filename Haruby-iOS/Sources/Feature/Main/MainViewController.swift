@@ -169,12 +169,12 @@ final class MainViewController: UIViewController, View {
         }
         
         topAvgHarubyStackView.snp.makeConstraints { make in
+            make.top.equalTo(view.safeAreaLayoutGuide).offset(62)
             make.centerX.equalToSuperview()
-            make.bottom.equalTo(receiptView.snp.top).offset(-9)
         }
 
         receiptView.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(142)
+            make.top.equalTo(topAvgHarubyStackView.snp.bottom).offset(9)
             make.left.right.equalToSuperview().inset(16)
             make.height.equalTo(331)
         }
@@ -188,6 +188,7 @@ final class MainViewController: UIViewController, View {
         navigateStackView.snp.makeConstraints { make in
             make.top.equalTo(navigateCalculatorButton.snp.bottom).offset(11)
             make.leading.trailing.equalToSuperview().inset(16)
+            make.bottom.lessThanOrEqualToSuperview().offset(-20)
             make.height.equalTo(66)
         }
     }
