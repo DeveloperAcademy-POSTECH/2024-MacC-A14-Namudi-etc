@@ -23,7 +23,7 @@ enum ButtonType {
     var textColor: UIColor {
         switch self {
         case .number:
-            return .black
+            return .Haruby.textBlack
         case .operatorSymbol(let symbol):
             return symbol == "=" ? .Haruby.white : .Haruby.main
         case .delete:
@@ -44,12 +44,10 @@ enum ButtonType {
     
     var font: UIFont {
         switch self {
-        case .number:
+        case .number, .delete:
             return .pretendardRegular_20()
         case .operatorSymbol(let symbol):
-            return symbol == "=" ? .pretendardRegular_20() : .pretendardRegular_24()
-        case .delete:
-            return .pretendardRegular_20()
+            return .pretendardRegular_24()
         }
     }
     
@@ -94,7 +92,7 @@ final class CalculationKeypad: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         
-        backgroundColor = .Haruby.main
+        backgroundColor = .Haruby.whiteDeep
         
         addSubviews()
         configureConstraints()
