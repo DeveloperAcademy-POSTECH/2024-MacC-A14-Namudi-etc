@@ -13,13 +13,16 @@ import RxDataSources
 import RxSwift
 import SnapKit
 
-class CalendarViewController: UIViewController, View {
+final class CalendarViewController: UIViewController, View {
     
-    var disposeBag: DisposeBag = DisposeBag()
+    var disposeBag = DisposeBag()
     typealias Reactor = CalendarViewReactor
     
+    
     // MARK: - Properties
+    private let cellId: String = "CalendarCell"
     private let cellHeight: CGFloat = 83
+    
     
     // MARK: - UI Component
     private lazy var monthLabel: UILabel = {
@@ -144,7 +147,7 @@ class CalendarViewController: UIViewController, View {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.backgroundColor = .clear
         collectionView.showsVerticalScrollIndicator = false
-        collectionView.register(CalendarViewCell.self, forCellWithReuseIdentifier: "calendarCell")
+        collectionView.register(CalendarViewCell.self, forCellWithReuseIdentifier: self.cellId)
         
         return collectionView
     }()
@@ -180,6 +183,7 @@ class CalendarViewController: UIViewController, View {
             .disposed(by: disposeBag)
     }
     
+    
     // MARK: - Private Methods
     private func initConstraints() {
         monthLabel.snp.makeConstraints { make in
@@ -202,7 +206,7 @@ class CalendarViewController: UIViewController, View {
     private func createDataSource() -> RxCollectionViewSectionedReloadDataSource<MonthlySection> {
         return RxCollectionViewSectionedReloadDataSource<MonthlySection>(
             configureCell: { dataSource, collectionView, indexPath, item in
-                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "calendarCell", for: indexPath) as! CalendarViewCell
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: self.cellId, for: indexPath) as! CalendarViewCell
                 let reactor = CalendarViewCellReactor(dayItem: item)
                 cell.reactor = reactor
                 return cell

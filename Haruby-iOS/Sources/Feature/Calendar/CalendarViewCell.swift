@@ -13,7 +13,7 @@ import RxSwift
 import SnapKit
 
 class CalendarViewCell: UICollectionViewCell, View {
-    var disposeBag: DisposeBag = DisposeBag()
+    var disposeBag = DisposeBag()
     typealias Reactor = CalendarViewCellReactor
     
     
@@ -52,19 +52,15 @@ class CalendarViewCell: UICollectionViewCell, View {
             .bind(to: numberLabel.rx.text)
             .disposed(by: disposeBag)
         
-        reactor.state.map { $0.dayNumber.isEmpty }
+        reactor.state.map { !$0.isVisible }
                     .bind(to: topLine.rx.isHidden)
                     .disposed(by: disposeBag)
     }
     
     // MARK: - Private Methods
     private func setup() {
-        
-        
         contentView.addSubview(numberLabel)
         contentView.addSubview(topLine)
-//        contentView.layer.borderColor = UIColor.black.cgColor
-//        contentView.layer.borderWidth = 1
         numberLabel.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(8)
             make.horizontalEdges.equalToSuperview()

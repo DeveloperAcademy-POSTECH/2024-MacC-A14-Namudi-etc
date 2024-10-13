@@ -11,7 +11,7 @@ import ReactorKit
 import RxDataSources
 import RxSwift
 
-class CalendarViewReactor: Reactor {
+final class CalendarViewReactor: Reactor {
     enum Action {
         case initializeCalendar
     }
@@ -41,7 +41,10 @@ class CalendarViewReactor: Reactor {
         }
         return newState
     }
-    
+}
+
+
+extension CalendarViewReactor {
     // MARK: - Private Methods
     private func createMonthSections() -> [MonthlySection] {
         let calendar = Calendar.current
@@ -69,7 +72,7 @@ class CalendarViewReactor: Reactor {
         var days: [DayItem] = []
         
         for _ in 1..<firstWeekday {
-            days.append(DayItem(date: nil, isInSalaryPeriod: false, isToday: false, isSelected: false, haruby: nil, memo: nil, expense: nil, income: nil))
+            days.append(DayItem(date: nil, isInSalaryPeriod: false, isToday: false, haruby: nil, memo: nil, expense: nil, income: nil))
         }
         
         let today = calendar.startOfDay(for: Date())
@@ -79,7 +82,6 @@ class CalendarViewReactor: Reactor {
                 date: date,
                 isInSalaryPeriod: true,
                 isToday: calendar.isDate(date, inSameDayAs: today),
-                isSelected: false,
                 haruby: 12000,
                 memo: nil,
                 expense: nil,
@@ -90,7 +92,6 @@ class CalendarViewReactor: Reactor {
         return days
     }
 }
-
 
 struct MonthlySection {
     var firstDayOfMonth: Date
@@ -105,12 +106,11 @@ extension MonthlySection: SectionModelType {
 }
 
 struct DayItem {
-    var date: Date?
-    var isInSalaryPeriod: Bool
-    var isToday: Bool
-    var isSelected: Bool
-    var haruby: Int?
-    var memo: String?
-    var expense: TransactionRecord?
-    var income: TransactionRecord?
+    var date: Date?             // 날짜
+    var isInSalaryPeriod: Bool  // 이번 월급달에 해당하는지
+    var isToday: Bool           // 해당날짜가 오늘인지
+    var haruby: Int?            // 하루비
+    var memo: String?           // 메모
+    var expense: TransactionRecord? // 지출
+    var income: TransactionRecord?  // 수입
 }
