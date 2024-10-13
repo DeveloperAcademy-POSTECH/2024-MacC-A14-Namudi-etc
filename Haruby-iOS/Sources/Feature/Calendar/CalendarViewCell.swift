@@ -99,6 +99,10 @@ class CalendarViewCell: UICollectionViewCell, View {
                     .bind(to: topLine.rx.isHidden)
                     .disposed(by: disposeBag)
         
+        reactor.state.map { !$0.isVisible }
+                    .bind(to: dotStackView.rx.isHidden)
+                    .disposed(by: disposeBag)
+        
         
     }
     
