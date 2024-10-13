@@ -33,7 +33,7 @@ final class MainViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .whiteDeep
+        view.backgroundColor = .Haruby.green
         view.addSubview(harubyImageView)
         view.addSubview(helloLabel)
         view.addSubview(helloLabelKR)
