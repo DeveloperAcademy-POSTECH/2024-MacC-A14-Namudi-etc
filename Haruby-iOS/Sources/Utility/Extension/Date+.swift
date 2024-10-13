@@ -28,4 +28,10 @@ extension Date {
         formatter.locale = Locale(identifier: "ko_KR")
         return formatter.string(from: self)
     }
+    
+    /// Date값을 ~월 String으로 표현
+    func formattedMonth() -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "M월"
+        return dateFormatter.string(from: self)
 }
