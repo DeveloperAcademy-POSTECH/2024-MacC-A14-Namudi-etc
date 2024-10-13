@@ -25,7 +25,6 @@ class CalendarViewCellReactor: Reactor {
         var monthName: String         // 월 이름 (월의 첫 날에만 표시)
         var isVisible: Bool           // 셀이 표시 가능한지 여부
         var isHighlighted: Bool       // 강조 표시 여부 (오늘 날짜 또는 선택된 날짜)
-        var isCurrentMonth: Bool      // 현재 표시 중인 월의 날짜인지 여부
     }
     
     let initialState: State
@@ -59,8 +58,7 @@ class CalendarViewCellReactor: Reactor {
             isFirstDayOfMonth: isFirstDayOfMonth,
             monthName: monthName,
             isVisible: dayItem.date != nil,       // 날짜가 있으면 표시 가능
-            isHighlighted: dayItem.isToday || dayItem.isSelected,  // 오늘 날짜이거나 선택된 날짜면 강조
-            isCurrentMonth: dayItem.isCurrentMonth  // 현재 월의 날짜인지 여부
+            isHighlighted: dayItem.isToday || dayItem.isSelected  // 오늘 날짜이거나 선택된 날짜면 강조
         )
     }
     
