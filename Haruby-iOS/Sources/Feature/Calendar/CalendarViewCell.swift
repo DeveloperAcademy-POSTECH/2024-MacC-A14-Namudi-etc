@@ -30,7 +30,7 @@ class CalendarViewCell: UICollectionViewCell, View {
     
     // MARK: - Properties
     // MARK: - UI Components
-    private let numberLabel: UILabel = {
+    lazy private var numberLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 12, weight: .medium)
         label.textColor = .black
@@ -38,7 +38,46 @@ class CalendarViewCell: UICollectionViewCell, View {
         return label
     }()
     
-    private let topLine: UIView = {
+    lazy private var harubyLabel: UILabel = {
+        let label = UILabel()
+        label.font = .systemFont(ofSize: 11, weight: .medium)
+        label.textColor = .lightGray
+        label.textAlignment = .center
+        return label
+    }()
+    
+    lazy private var redDot: UIView = {
+        let view = UIView()
+        view.backgroundColor = .red
+        view.layer.cornerRadius = 3
+        view.clipsToBounds = true
+        view.snp.makeConstraints { make in
+            make.width.height.equalTo(6)
+        }
+        return view
+    }()
+    
+    lazy private var blueDot: UIView = {
+        let view = UIView()
+        view.backgroundColor = .blue
+        view.layer.cornerRadius = 3
+        view.clipsToBounds = true
+        view.snp.makeConstraints { make in
+            make.width.height.equalTo(6)
+        }
+        return view
+    }()
+    
+    lazy private var dotStackView: UIStackView = {
+        let stackView = UIStackView(arrangedSubviews: [blueDot, redDot])
+        stackView.axis = .horizontal
+        stackView.alignment = .center
+        stackView.spacing = 2
+        stackView.distribution = .equalSpacing
+        return stackView
+    }()
+    
+    lazy private var topLine: UIView = {
         let view = UIView()
         view.backgroundColor = .lightGray
         view.isHidden = true
@@ -52,18 +91,36 @@ class CalendarViewCell: UICollectionViewCell, View {
             .bind(to: numberLabel.rx.text)
             .disposed(by: disposeBag)
         
+        reactor.state.map{ $0.haruby }
+            .bind(to: harubyLabel.rx.text)
+            .disposed(by: disposeBag)
+        
         reactor.state.map { !$0.isVisible }
                     .bind(to: topLine.rx.isHidden)
                     .disposed(by: disposeBag)
+        
+        
     }
     
     // MARK: - Private Methods
     private func setup() {
         contentView.addSubview(numberLabel)
+        contentView.addSubview(harubyLabel)
+        contentView.addSubview(dotStackView)
         contentView.addSubview(topLine)
         numberLabel.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(8)
             make.horizontalEdges.equalToSuperview()
+        }
+        
+        harubyLabel.snp.makeConstraints { make in
+            make.bottom.equalToSuperview().offset(-8)
+            make.horizontalEdges.equalToSuperview()
+        }
+        
+        dotStackView.snp.makeConstraints { make in
+            make.centerX.equalToSuperview()
+            make.centerY.equalToSuperview()
         }
         
         topLine.snp.makeConstraints { make in

@@ -43,7 +43,8 @@ final class CalendarViewCellReactor: Reactor {
         initialState = State(
             dayNumber: isFirstDayOfMonth ? "\(monthNumber)/\(dayNumber)" : dayNumber,
             isVisible: dayItem.date != nil,
-            isToday: dayItem.isToday
+            isToday: dayItem.isToday,
+            haruby: dayItem.haruby?.toKoreanCurrencyFormat() ?? nil
         )
     }
     
