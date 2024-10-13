@@ -7,11 +7,13 @@
 
 import UIKit
 
-class ReceiptView: UIView {
+final class ReceiptView: UIView {
+    // MARK: - Properties
     private let arcRadius: CGFloat = 8
     private let sidePadding: CGFloat = 15
     
-    private let dateLabel: UILabel = {
+    // MARK: - UI Components
+    let dateLabel: UILabel = {
         let label = UILabel()
         label.font = .pretendard(size: 16, weight: .semiBold)
         label.textColor = .Haruby.textBlack
@@ -33,10 +35,10 @@ class ReceiptView: UIView {
         return view
     }()
     
-    private let amountLabel: UILabel = {
+    let amountLabel: UILabel = {
         let label = UILabel()
         label.font = .pretendard(size: 36, weight: .bold)
-        label.text = "112,000원"
+        label.text = "-"
         label.textColor = .Haruby.main
         return label
     }()
@@ -60,7 +62,7 @@ class ReceiptView: UIView {
         return stackView
     }()
     
-    private let inputButton: UIButton = {
+    let inputButton: UIButton = {
         let button = UIButton(type: .system)
         
         var configuration = UIButton.Configuration.filled()
@@ -87,12 +89,14 @@ class ReceiptView: UIView {
         return button
     }()
     
+    // MARK: - Layout
     override func layoutSubviews() {
         super.layoutSubviews()
         drawReceipt()
         setupSubviews()
     }
     
+    // MARK: - Setup
     private func setupSubviews() {
         addSubview(dateLabel)
         addSubview(titleLabel)
@@ -101,7 +105,6 @@ class ReceiptView: UIView {
         addSubview(inputButton)
         
         setupConstraints()
-        updateDateLabel()
     }
     
     private func setupConstraints() {
@@ -135,12 +138,7 @@ class ReceiptView: UIView {
         }
     }
     
-    private func updateDateLabel() {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy년 MM월 dd일"
-        dateLabel.text = dateFormatter.string(from: Date())
-    }
-    
+    // MARK: - Methods
     private func drawReceipt() {
         layer.sublayers?.forEach { $0.removeFromSuperlayer() }
         
@@ -150,7 +148,7 @@ class ReceiptView: UIView {
         addDottedLine(at: 53)
         addDottedLine(at: frame.height - 78)
         
-//        addElevation()
+        addElevation()
     }
     
     private func createReceiptShapeLayer() -> CAShapeLayer {

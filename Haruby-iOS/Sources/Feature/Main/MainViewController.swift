@@ -8,10 +8,14 @@
 import UIKit
 import SnapKit
 import ReactorKit
+import RxCocoa
 import Hero
 
-final class MainViewController: UIViewController {
+final class MainViewController: UIViewController, View {
+    // MARK: - Properties
+    var disposeBag = DisposeBag()
     
+    // MARK: - UI Components
     private lazy var topAvgHarubyText1: UILabel = {
         let label = UILabel()
         label.textColor = .Haruby.whiteDeep50
@@ -26,7 +30,7 @@ final class MainViewController: UIViewController {
         label.textColor = .Haruby.whiteDeep50
         label.font = .pretendardSemibold_14()
         label.textAlignment = .center
-        label.text = "23,000원"
+        label.text = "-"
         return label
     }()
     
@@ -85,54 +89,67 @@ final class MainViewController: UIViewController {
         return view
     }()
     
-    private lazy var navigateCalculatorView = NavigationButtonView(
+    private lazy var navigateCalculatorButton = NavigationButton(
         title: "하루비 계산기",
         subtitle: "지금 지출이 앞으로의 하루비에 얼마나 영향을 줄까요?",
         symbolName: "plus.forwardslash.minus"
     )
     
-    private lazy var navigateCalendarView = NavigationButtonView(
+    private lazy var navigateCalendarButton = NavigationButton(
         title: "하루비 달력",
         subtitle: "하루비 확인 및 조정",
         symbolName: "calendar"
     )
     
-    private lazy var navigateManagementView = NavigationButtonView(
+    private lazy var navigateManagementButton = NavigationButton(
         title: "하루비 관리",
         subtitle: "고정지출 및 수입 관리",
         symbolName: "wonsign"
     )
     
     private lazy var navigateStackView: UIStackView = {
-        let stackView = UIStackView(arrangedSubviews: [navigateCalendarView, navigateManagementView])
+        let stackView = UIStackView(arrangedSubviews: [navigateCalendarButton, navigateManagementButton])
         stackView.axis = .horizontal
         stackView.spacing = 9
         stackView.distribution = .fillEqually
         return stackView
     }()
     
+    // MARK: - Initializer
+    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    // MARK: - View Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
         setupConstraints()
         setupHeroAnimations()
+        
+        reactor?.action.onNext(.viewDidLoad)
     }
     
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(true)
         animateViewsSequentially()
     }
     
+    // MARK: - Setup
     private func setupView() {
         view.backgroundColor = .Haruby.whiteDeep
         view.addSubview(backgroundRectangle)
         view.addSubview(backgroundEllipse)
         view.addSubview(topAvgHarubyStackView)
         view.addSubview(receiptView)
-        view.addSubview(navigateCalculatorView)
+        view.addSubview(navigateCalculatorButton)
         view.addSubview(navigateStackView)
         
-        [topAvgHarubyStackView, receiptView, navigateCalculatorView, navigateStackView].forEach {
+        [topAvgHarubyStackView, receiptView, navigateCalculatorButton, navigateStackView].forEach {
             $0.transform = CGAffineTransform(translationX: 0, y: view.bounds.height)
         }
     }
@@ -162,17 +179,57 @@ final class MainViewController: UIViewController {
             make.height.equalTo(331)
         }
         
-        navigateCalculatorView.snp.makeConstraints { make in
+        navigateCalculatorButton.snp.makeConstraints { make in
             make.top.equalTo(receiptView.snp.bottom).offset(16)
             make.leading.trailing.equalToSuperview().inset(16)
             make.height.equalTo(106)
         }
         
         navigateStackView.snp.makeConstraints { make in
-            make.top.equalTo(navigateCalculatorView.snp.bottom).offset(11)
+            make.top.equalTo(navigateCalculatorButton.snp.bottom).offset(11)
             make.leading.trailing.equalToSuperview().inset(16)
             make.height.equalTo(66)
         }
+    }
+    
+    // MARK: - Binding
+    func bind(reactor: MainReactor) {
+        // Action
+        navigateCalculatorButton.rx.tap
+            .map { Reactor.Action.naivgateCalculator }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        navigateCalendarButton.rx.tap
+            .map { Reactor.Action.navigateCalendar }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        navigateManagementButton.rx.tap
+            .map { Reactor.Action.navigateManagement }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        receiptView.inputButton.rx.tap
+            .map { Reactor.Action.navigateInputButton }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        // State
+        reactor.state.map { $0.avgHaruby }
+            .distinctUntilChanged()
+            .bind(to: topAvgHarubyText2.rx.text)
+            .disposed(by: disposeBag)
+        
+        reactor.state.map { $0.todayHaruby }
+            .distinctUntilChanged()
+            .bind(to: receiptView.amountLabel.rx.text)
+            .disposed(by: disposeBag)
+        
+        reactor.state.map { $0.date }
+            .distinctUntilChanged()
+            .bind(to: receiptView.dateLabel.rx.text)
+            .disposed(by: disposeBag)
     }
 }
 
@@ -181,13 +238,13 @@ extension MainViewController {
     private func setupHeroAnimations() {
         self.hero.isEnabled = true
         
-        [topAvgHarubyStackView, receiptView, navigateCalculatorView, navigateStackView].forEach {
+        [topAvgHarubyStackView, receiptView, navigateCalculatorButton, navigateStackView].forEach {
             $0.hero.modifiers = [.translate(y: view.bounds.height)]
         }
     }
     
     private func animateViewsSequentially() {
-        let views = [topAvgHarubyStackView, receiptView, navigateCalculatorView, navigateStackView]
+        let views = [topAvgHarubyStackView, receiptView, navigateCalculatorButton, navigateStackView]
         let delay: TimeInterval = 0.15
         
         for (index, view) in views.enumerated() {
