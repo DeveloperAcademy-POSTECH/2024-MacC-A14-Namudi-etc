@@ -9,48 +9,69 @@ import UIKit
 
 class ReceiptView: UIView {
     private let arcRadius: CGFloat = 8
-    private let sidePadding: CGFloat = 23
+    private let sidePadding: CGFloat = 15
     
     private let dateLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 16)
-        label.textColor = .gray
+        label.font = .pretendard(size: 16, weight: .semiBold)
+        label.textColor = .Haruby.textBlack
+        return label
+    }()
+    
+    private let titleLabel: UILabel = {
+        let label = UILabel()
+        label.font = .pretendard(size: 24, weight: .semiBold)
+        label.text = "오늘의 하루비"
+        label.textColor = .Haruby.textBlack
         return label
     }()
     
     private lazy var amountBox: UIView = {
         let view = UIView()
-        view.backgroundColor = .systemGray6
+        view.backgroundColor = .Haruby.whiteDeep
         view.layer.cornerRadius = 10
         return view
     }()
     
-    private let titleLabel: UILabel = {
+    private let amountLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont.boldSystemFont(ofSize: 24)
-        label.text = "오늘의 하루비"
+        label.font = .pretendard(size: 36, weight: .semiBold)
+        label.text = "36,000원"
+        label.textColor = .Haruby.main
         return label
     }()
     
-    private let amountLabel: UILabel = {
-        let label = UILabel()
-        label.font = UIFont.boldSystemFont(ofSize: 36)
-        label.text = "36,000"
-        return label
+    private let harubyImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = .purpleHaruby
+        imageView.contentMode = .scaleAspectFit
+        imageView.snp.makeConstraints { make in
+            make.width.equalTo(35)
+            make.height.equalTo(30)
+        }
+        return imageView
+    }()
+
+    private lazy var amountStackView: UIStackView = {
+        let stackView = UIStackView(arrangedSubviews: [harubyImageView, amountLabel])
+        stackView.axis = .horizontal
+        stackView.alignment = .center
+        stackView.spacing = 6
+        return stackView
     }()
     
     private let inputButton: UIButton = {
         let button = UIButton(type: .system)
         
         var configuration = UIButton.Configuration.filled()
-        configuration.baseBackgroundColor = .systemBlue
-        configuration.baseForegroundColor = .white
+        configuration.baseBackgroundColor = .Haruby.main
+        configuration.baseForegroundColor = .Haruby.white
         configuration.background.cornerRadius = 10
         
         configuration.title = "오늘의 지출 및 수입 입력하기"
         configuration.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { incoming in
             var outgoing = incoming
-            outgoing.font = UIFont.systemFont(ofSize: 18, weight: .semibold)
+            outgoing.font = UIFont.pretendardSemibold_18()
             return outgoing
         }
         
@@ -76,7 +97,7 @@ class ReceiptView: UIView {
         addSubview(dateLabel)
         addSubview(titleLabel)
         addSubview(amountBox)
-        addSubview(amountLabel)
+        addSubview(amountStackView)
         addSubview(inputButton)
         
         setupConstraints()
@@ -100,8 +121,9 @@ class ReceiptView: UIView {
             make.height.equalTo(53)
         }
         
-        amountLabel.snp.makeConstraints { make in
-            make.center.equalTo(amountBox)
+        amountStackView.snp.makeConstraints { make in
+            make.leading.trailing.equalTo(amountBox).inset(10)
+            make.top.bottom.equalTo(amountBox).inset(5)
         }
         
         inputButton.snp.makeConstraints { make in
@@ -128,7 +150,7 @@ class ReceiptView: UIView {
         addDottedLine(at: 53)
         addDottedLine(at: frame.height - 78)
         
-        addElevation()
+//        addElevation()
     }
     
     private func createReceiptShapeLayer() -> CAShapeLayer {
@@ -143,7 +165,7 @@ class ReceiptView: UIView {
     }
     
     private func createReceiptShapePath() -> UIBezierPath {
-        let receiptShapePath = UIBezierPath(roundedRect: bounds, cornerRadius: 18)
+        let receiptShapePath = UIBezierPath(roundedRect: bounds, cornerRadius: 10)
         
         // 상단 좌우 아크 생성
         receiptShapePath.append(
@@ -197,7 +219,7 @@ class ReceiptView: UIView {
         return arcPath
     }
     
-    private func addBottomSmallArcs(to             receiptShapePath: UIBezierPath) {
+    private func addBottomSmallArcs(to receiptShapePath: UIBezierPath) {
         let startX: CGFloat = sidePadding
         let endX: CGFloat = frame.width - sidePadding
         let arcSpacing: CGFloat = arcRadius * 2 + 6
@@ -219,11 +241,11 @@ class ReceiptView: UIView {
         }
     }
     
-    private func addDottedLine(at y: CGFloat, sidePadding: CGFloat = 20) {
+    private func addDottedLine(at y: CGFloat, sidePadding: CGFloat = 8) {
         let dottedLineLayer = CAShapeLayer()
-        dottedLineLayer.strokeColor = UIColor.lightGray.cgColor
-        dottedLineLayer.lineWidth = 1
-        dottedLineLayer.lineDashPattern = [8, 8] // 8pt 선, 8pt 갭
+        dottedLineLayer.strokeColor = UIColor.Haruby.main.cgColor
+        dottedLineLayer.lineWidth = 0.5
+        dottedLineLayer.lineDashPattern = [6, 8] // 8pt 선, 8pt 갭
         
         let dottedLinePath = UIBezierPath()
         dottedLinePath.move(to: CGPoint(x: arcRadius + sidePadding, y: y))
