@@ -18,7 +18,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
         print("Scene Delegate - Will Connect")
         
-        window?.rootViewController = UINavigationController(rootViewController: CalculationViewController())
+        let reactor = MainReactor()
+        let vc = MainViewController()
+        vc.reactor = reactor
+        
+        window?.rootViewController = vc
         window?.makeKeyAndVisible()
     }
 }

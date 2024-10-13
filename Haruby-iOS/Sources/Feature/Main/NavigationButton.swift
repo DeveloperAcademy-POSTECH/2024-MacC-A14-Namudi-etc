@@ -8,30 +8,30 @@
 import UIKit
 import SnapKit
 
-class NavigationButtonView: UIView {
+final class NavigationButton: UIButton {
     // MARK: - Properties
-    private lazy var circleView: UIView = {
+    private let circleView: UIView = {
         let view = UIView()
         view.backgroundColor = .Haruby.whiteDeep
         view.layer.cornerRadius = 22
         return view
     }()
     
-    private lazy var symbolImageView: UIImageView = {
+    private let symbolImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.tintColor = .Haruby.main
         imageView.contentMode = .scaleAspectFit
         return imageView
     }()
     
-    private lazy var titleLabel: UILabel = {
+    private let customTitleLabel: UILabel = {
         let label = UILabel()
         label.font = .pretendardSemibold_18()
         label.textColor = .Haruby.main
         return label
     }()
     
-    private lazy var subtitleLabel: UILabel = {
+    private let customSubTitleLabel: UILabel = {
         let label = UILabel()
         label.font = .pretendardMedium_12()
         label.textColor = .Haruby.textBright
@@ -39,16 +39,16 @@ class NavigationButtonView: UIView {
     }()
     
     private lazy var labelStackView: UIStackView = {
-        let stackView = UIStackView(arrangedSubviews: [titleLabel, subtitleLabel])
+        let stackView = UIStackView(arrangedSubviews: [customTitleLabel, customSubTitleLabel])
         stackView.axis = .vertical
         stackView.spacing = 2
         return stackView
     }()
     
     // MARK: - Initialization
-    init(title: String, subtitle: String, symbolName: String, titleFontSize: CGFloat = 16, subtitleFontSize: CGFloat = 12) {
+    init(title: String, subtitle: String, symbolName: String) {
         super.init(frame: .zero)
-        setupView(title: title, subtitle: subtitle, symbolName: symbolName, titleFontSize: titleFontSize, subtitleFontSize: subtitleFontSize)
+        setupView(title: title, subtitle: subtitle, symbolName: symbolName)
     }
     
     required init?(coder: NSCoder) {
@@ -56,19 +56,29 @@ class NavigationButtonView: UIView {
     }
     
     // MARK: - Setup
-    private func setupView(title: String, subtitle: String, symbolName: String, titleFontSize: CGFloat, subtitleFontSize: CGFloat) {
+    private func setupView(title: String, subtitle: String, symbolName: String) {
         backgroundColor = .white
         layer.cornerRadius = 10
         
+        addSubviews()
+        configureSubviews(title: title, subtitle: subtitle, symbolName: symbolName)
+        setupConstraints()
+    }
+    
+    private func addSubviews() {
         addSubview(circleView)
         circleView.addSubview(symbolImageView)
         addSubview(labelStackView)
-        
+    }
+    
+    private func configureSubviews(title: String, subtitle: String, symbolName: String) {
         symbolImageView.image = UIImage(systemName: symbolName)
-        titleLabel.text = title
-        subtitleLabel.text = subtitle
         
-        setupConstraints()
+        customTitleLabel.text = title
+        customSubTitleLabel.text = subtitle
+        
+        circleView.isUserInteractionEnabled = false
+        labelStackView.isUserInteractionEnabled = false
     }
     
     private func setupConstraints() {
