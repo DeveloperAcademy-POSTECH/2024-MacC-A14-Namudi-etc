@@ -13,16 +13,16 @@ class InputViewController: UIViewController {
     private lazy var dateLabel: UILabel = {
         let label = UILabel()
         label.text = "날짜"
-        label.textColor = UIColor.black
-        label.font = .systemFont(ofSize: 20)
+        label.textColor = .Haruby.textBlack
+        label.font = .pretendardMedium_20()
         return label
     }()
     
     private lazy var datePickerButton: UIButton = {
         let button = UIButton()
         button.setTitle("2024.09.28", for: .normal)
-        button.setTitleColor(UIColor.black, for: .normal)
-        button.titleLabel?.font = .systemFont(ofSize: 20)
+        button.setTitleColor(.Haruby.main, for: .normal)
+        button.titleLabel?.font = .pretendardRegular_20()
         return button
     }()
     
@@ -38,14 +38,15 @@ class InputViewController: UIViewController {
     private lazy var amountTextField : UITextField = {
         let textField = UITextField()
         textField.placeholder = "총 지출 금액을 입력하세요"
-        textField.setPlaceholder(color: .gray)
+        textField.setPlaceholder(color: .Haruby.textBright40)
         textField.textAlignment = .left
-        textField.textColor = .black
+        textField.textColor = .Haruby.textBlack
+        textField.font = .pretendardSemibold_20()
         textField.borderStyle = .roundedRect
-        textField.backgroundColor = .clear
-        textField.layer.cornerRadius = 10.0
-        textField.layer.borderWidth = 1.0
-        textField.layer.borderColor = UIColor.gray.cgColor
+        textField.backgroundColor = .Haruby.white
+        textField.layer.cornerRadius = 10
+        textField.layer.borderWidth = 1
+        textField.layer.borderColor = UIColor.Haruby.textBright40.cgColor
         
         return textField
     }()
@@ -53,14 +54,15 @@ class InputViewController: UIViewController {
     private lazy var detailInputButton: UIButton = {
         let button = UIButton()
         button.setTitle("상세 내역 기록하기", for: .normal)
-        button.setTitleColor(UIColor.black, for: .normal)
-        button.titleLabel?.font = .systemFont(ofSize: 14)
+        button.setTitleColor(.Haruby.textBright, for: .normal)
+        button.titleLabel?.font = .pretendardMedium_14()
         return button
     }()
     
     private lazy var detailInputChevron: UIButton = {
         let button = UIButton()
         button.setImage(UIImage(systemName: "chevron.down"), for: .normal)
+        button.tintColor = .Haruby.textBright
         button.titleLabel?.font = .systemFont(ofSize: 14)
         return button
     }()
