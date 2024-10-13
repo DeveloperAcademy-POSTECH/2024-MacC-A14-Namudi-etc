@@ -8,6 +8,7 @@
 import UIKit
 import SnapKit
 import ReactorKit
+import Hero
 
 final class MainViewController: UIViewController {
     
@@ -114,6 +115,12 @@ final class MainViewController: UIViewController {
         super.viewDidLoad()
         setupView()
         setupConstraints()
+        setupHeroAnimations()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        animateViewsSequentially()
     }
     
     private func setupView() {
@@ -124,6 +131,10 @@ final class MainViewController: UIViewController {
         view.addSubview(receiptView)
         view.addSubview(navigateCalculatorView)
         view.addSubview(navigateStackView)
+        
+        [topAvgHarubyStackView, receiptView, navigateCalculatorView, navigateStackView].forEach {
+            $0.transform = CGAffineTransform(translationX: 0, y: view.bounds.height)
+        }
     }
     
     private func setupConstraints() {
@@ -161,6 +172,28 @@ final class MainViewController: UIViewController {
             make.top.equalTo(navigateCalculatorView.snp.bottom).offset(11)
             make.leading.trailing.equalToSuperview().inset(16)
             make.height.equalTo(66)
+        }
+    }
+}
+
+// MARK: - Animation
+extension MainViewController {
+    private func setupHeroAnimations() {
+        self.hero.isEnabled = true
+        
+        [topAvgHarubyStackView, receiptView, navigateCalculatorView, navigateStackView].forEach {
+            $0.hero.modifiers = [.translate(y: view.bounds.height)]
+        }
+    }
+    
+    private func animateViewsSequentially() {
+        let views = [topAvgHarubyStackView, receiptView, navigateCalculatorView, navigateStackView]
+        let delay: TimeInterval = 0.15
+        
+        for (index, view) in views.enumerated() {
+            UIView.animate(withDuration: 0.5, delay: delay * Double(index), options: .curveEaseOut, animations: {
+                view.transform = .identity
+            })
         }
     }
 }

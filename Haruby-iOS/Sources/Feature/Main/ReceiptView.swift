@@ -35,8 +35,8 @@ class ReceiptView: UIView {
     
     private let amountLabel: UILabel = {
         let label = UILabel()
-        label.font = .pretendard(size: 36, weight: .semiBold)
-        label.text = "36,000원"
+        label.font = .pretendard(size: 36, weight: .bold)
+        label.text = "112,000원"
         label.textColor = .Haruby.main
         return label
     }()
@@ -117,7 +117,7 @@ class ReceiptView: UIView {
         
         amountBox.snp.makeConstraints { make in
             make.top.equalTo(titleLabel.snp.bottom).offset(8)
-            make.leading.trailing.equalToSuperview().inset(73)
+            make.centerX.equalToSuperview()
             make.height.equalTo(53)
         }
         
