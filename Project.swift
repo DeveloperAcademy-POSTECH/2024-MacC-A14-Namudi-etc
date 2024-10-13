@@ -64,5 +64,10 @@ let project = Project(
             resources: [],
             dependencies: [.target(name: "Haruby-iOS")]
         ),
+    ],
+    resourceSynthesizers: [
+        .assets(),
+        .fonts(),
+        .strings()
     ]
 )
