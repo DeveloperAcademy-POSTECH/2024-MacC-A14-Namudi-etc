@@ -236,8 +236,7 @@ final class CalendarViewController: UIViewController, View {
     
     private func bindScrollEvent() {
         collectionView.rx.didScroll
-            .subscribe(onNext: { [weak self] in
-                guard let self = self else { return }
+            .subscribe(onNext: { [unowned self] in
                 self.updateMonthLabel()
             })
             .disposed(by: disposeBag)
