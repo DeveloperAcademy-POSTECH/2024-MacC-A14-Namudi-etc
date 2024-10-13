@@ -172,10 +172,10 @@ class CalendarViewController: UIViewController, View {
     // MARK: - Binding
     func bind(reactor: CalendarViewReactor) {
         // Action
-        reactor.action.onNext(.viewDidLoad)
+        reactor.action.onNext(.initializeCalendar)
         
         // State
-        reactor.state.map { $0.monthSections }
+        reactor.state.map { $0.monthlySections }
             .bind(to: collectionView.rx.items(dataSource: createDataSource()))
             .disposed(by: disposeBag)
     }
@@ -199,8 +199,8 @@ class CalendarViewController: UIViewController, View {
         }
     }
     
-    private func createDataSource() -> RxCollectionViewSectionedReloadDataSource<MonthSection> {
-        return RxCollectionViewSectionedReloadDataSource<MonthSection>(
+    private func createDataSource() -> RxCollectionViewSectionedReloadDataSource<MonthlySection> {
+        return RxCollectionViewSectionedReloadDataSource<MonthlySection>(
             configureCell: { dataSource, collectionView, indexPath, item in
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "calendarCell", for: indexPath) as! CalendarViewCell
                 let reactor = CalendarViewCellReactor(dayItem: item)
