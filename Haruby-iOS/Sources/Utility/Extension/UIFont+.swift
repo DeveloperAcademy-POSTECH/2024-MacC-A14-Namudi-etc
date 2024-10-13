@@ -73,27 +73,27 @@ extension UIFont {
     }
     
     static func pretendardMedium_20() -> UIFont {
-        HarubyIOSFontFamily.Pretendard.medium.font(size: 24)
+        HarubyIOSFontFamily.Pretendard.medium.font(size: 20)
     }
     
     static func pretendardMedium_18() -> UIFont {
-        HarubyIOSFontFamily.Pretendard.medium.font(size: 24)
+        HarubyIOSFontFamily.Pretendard.medium.font(size: 18)
     }
     
     static func pretendardMedium_16() -> UIFont {
-        HarubyIOSFontFamily.Pretendard.medium.font(size: 24)
+        HarubyIOSFontFamily.Pretendard.medium.font(size: 16)
     }
     
     static func pretendardMedium_14() -> UIFont {
-        HarubyIOSFontFamily.Pretendard.medium.font(size: 24)
+        HarubyIOSFontFamily.Pretendard.medium.font(size: 14)
     }
     
     static func pretendardMedium_12() -> UIFont {
-        HarubyIOSFontFamily.Pretendard.medium.font(size: 24)
+        HarubyIOSFontFamily.Pretendard.medium.font(size: 12)
     }
     
     static func pretendardMedium_11() -> UIFont {
-        HarubyIOSFontFamily.Pretendard.medium.font(size: 24)
+        HarubyIOSFontFamily.Pretendard.medium.font(size: 11)
     }
     
     // MARK: Pretendard Regular
