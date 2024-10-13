@@ -35,6 +35,21 @@ class InputViewController: UIViewController {
         return view
     }()
     
+    private lazy var amountTextField : UITextField = {
+        let textField = UITextField()
+        textField.placeholder = "총 지출 금액을 입력하세요"
+        textField.setPlaceholder(color: .gray)
+        textField.textAlignment = .left
+        textField.textColor = .black
+        textField.borderStyle = .roundedRect
+        textField.backgroundColor = .clear
+        textField.layer.cornerRadius = 10.0
+        textField.layer.borderWidth = 1.0
+        textField.layer.borderColor = UIColor.gray.cgColor
+        
+        return textField
+    }()
+    
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -48,6 +63,7 @@ class InputViewController: UIViewController {
     // MARK: - UI Setup
     private func addSubviews() {
         self.view.addSubview(dateStackView)
+        self.view.addSubview(amountTextField)
     }
     
     private func configureConstraints() {
@@ -55,6 +71,12 @@ class InputViewController: UIViewController {
             make.top.equalTo(view.safeAreaLayoutGuide).offset(58)
             make.horizontalEdges.equalTo(view.safeAreaLayoutGuide).inset(24)
             make.height.equalTo(40)
+        }
+        
+        amountTextField.snp.makeConstraints { make in
+            make.top.equalTo(self.dateStackView.snp_bottomMargin).offset(32)
+            make.horizontalEdges.equalTo(view.safeAreaLayoutGuide).inset(16)
+            make.height.equalTo(54)
         }
     }
 }
