@@ -152,6 +152,25 @@ final class CalendarViewController: UIViewController, View {
         return collectionView
     }()
     
+    private lazy var warningLabel: UIView = {
+       let label = UILabel()
+        label.text = "아직 입력하지 않은 지출 및 수입이 있어요!"
+        label.font = .systemFont(ofSize: 12, weight: .medium)
+        label.textColor = .red
+        label.textAlignment = .center
+        
+        let view = UIView()
+        view.backgroundColor = UIColor(red:254/255.0, green: 236/255.0, blue: 236/255.0, alpha: 1.0)
+        view.layer.cornerRadius = 16
+        
+        view.addSubview(label)
+        label.snp.makeConstraints { make in
+            make.horizontalEdges.equalToSuperview().inset(18)
+            make.verticalEdges.equalToSuperview().inset(10)
+        }
+        
+        return view
+    }()
     
     // MARK: - Lifecycle
     override func viewDidLoad() {
@@ -170,7 +189,7 @@ final class CalendarViewController: UIViewController, View {
         // TODO: 색 바꾸기
         view.backgroundColor = UIColor(red: 78/255, green: 84/255, blue: 198/255, alpha: 1)
         
-        [monthLabel, remainTotalHarubyBox, topRoundedContainer].forEach{ self.view.addSubview($0) }
+        [monthLabel, remainTotalHarubyBox, topRoundedContainer, warningLabel].forEach{ self.view.addSubview($0) }
     }
     
     // MARK: - Binding
@@ -201,6 +220,11 @@ final class CalendarViewController: UIViewController, View {
             make.top.equalTo(monthLabel.snp.bottom).offset(20)
             make.horizontalEdges.equalToSuperview()
             make.bottom.equalToSuperview()
+        }
+        
+        warningLabel.snp.makeConstraints { make in
+            make.centerX.equalToSuperview()
+            make.bottom.equalTo(self.view.safeAreaLayoutGuide.snp.bottom).offset(-6)
         }
     }
     
