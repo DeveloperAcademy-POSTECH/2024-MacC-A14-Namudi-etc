@@ -28,9 +28,8 @@ final class CalendarViewController: UIViewController, View {
     private lazy var monthLabel: UILabel = {
         let label = UILabel()
         label.text = "9월"
-        label.font = .systemFont(ofSize: 36, weight: .semibold)
-        // TODO: 색 바꾸기
-        label.textColor = .white
+        label.font = .pretendardSemibold_36()
+        label.textColor = .Haruby.white
         
         label.snp.makeConstraints { make in
             make.height.equalTo(54)
@@ -42,9 +41,8 @@ final class CalendarViewController: UIViewController, View {
     private lazy var totalHarubyValueLabel: UILabel = {
         let label = UILabel()
         label.text = "170,000원"
-        label.font = .systemFont(ofSize: 18, weight: .semibold)
-        // TODO: 색 바꾸기
-        label.textColor = .white
+        label.font = .pretendardSemibold_18()
+        label.textColor = .Haruby.white
         
         label.snp.makeConstraints { make in
             make.height.equalTo(21)
@@ -56,16 +54,14 @@ final class CalendarViewController: UIViewController, View {
     private lazy var remainTotalHarubyBox: UIView = {
         let view = UIView()
         view.backgroundColor = .clear
-        // TODO: 색 바꾸기
-        view.layer.borderColor = UIColor.white.withAlphaComponent(0.2).cgColor
+        view.layer.borderColor = UIColor.Haruby.white20.cgColor
         view.layer.borderWidth = 1
         view.layer.cornerRadius = 10
         
         let totalHarubyTitleLabel = UILabel()
         totalHarubyTitleLabel.text = "남은 총 하루비"
-        totalHarubyTitleLabel.font = .systemFont(ofSize: 14, weight: .medium)
-        // TODO: 색 바꾸기
-        totalHarubyTitleLabel.textColor = .white
+        totalHarubyTitleLabel.font = .pretendardMedium_14()
+        totalHarubyTitleLabel.textColor = .Haruby.white
         
         let stackView = UIStackView(arrangedSubviews: [totalHarubyTitleLabel, totalHarubyValueLabel])
         stackView.axis = .horizontal
@@ -85,7 +81,7 @@ final class CalendarViewController: UIViewController, View {
     
     private lazy var topRoundedContainer: UIView = {
         let view = UIView()
-        view.backgroundColor = .white
+        view.backgroundColor = .Haruby.white
         view.layer.cornerRadius = 20
         view.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         
@@ -116,8 +112,8 @@ final class CalendarViewController: UIViewController, View {
         for weekday in weekdays {
             let label = UILabel()
             label.text = weekday
-            label.font = .systemFont(ofSize: 16, weight: .medium)
-            label.textColor = .black
+            label.font = .pretendardMedium_11()
+            label.textColor = .Haruby.textBlack
             label.textAlignment = .center
             
             label.snp.makeConstraints { make in
@@ -155,12 +151,12 @@ final class CalendarViewController: UIViewController, View {
     private lazy var warningLabel: UIView = {
        let label = UILabel()
         label.text = "아직 입력하지 않은 지출 및 수입이 있어요!"
-        label.font = .systemFont(ofSize: 12, weight: .medium)
-        label.textColor = .red
+        label.font = .pretendardMedium_12()
+        label.textColor = .Haruby.red
         label.textAlignment = .center
         
         let view = UIView()
-        view.backgroundColor = UIColor(red:254/255.0, green: 236/255.0, blue: 236/255.0, alpha: 1.0)
+        view.backgroundColor = .Haruby.red10
         view.layer.cornerRadius = 16
         
         view.addSubview(label)
@@ -186,8 +182,7 @@ final class CalendarViewController: UIViewController, View {
         
         let view = UIView()
         self.view = view
-        // TODO: 색 바꾸기
-        view.backgroundColor = UIColor(red: 78/255, green: 84/255, blue: 198/255, alpha: 1)
+        view.backgroundColor = .Haruby.main
         
         [monthLabel, remainTotalHarubyBox, topRoundedContainer, warningLabel].forEach{ self.view.addSubview($0) }
     }
