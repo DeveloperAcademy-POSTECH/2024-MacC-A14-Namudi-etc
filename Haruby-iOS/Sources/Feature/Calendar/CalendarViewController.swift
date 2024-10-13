@@ -159,6 +159,7 @@ final class CalendarViewController: UIViewController, View {
 
         // Do any additional setup after loading the view.
         initConstraints()
+        bindScrollEvent()
     }
     
     override func loadView() {
@@ -203,6 +204,15 @@ final class CalendarViewController: UIViewController, View {
         }
     }
     
+    private func bindScrollEvent() {
+        collectionView.rx.didScroll
+            .subscribe(onNext: { [weak self] in
+                guard let self = self else { return }
+                self.updateMonthLabel()
+            })
+            .disposed(by: disposeBag)
+    }
+    
     private func createDataSource() -> RxCollectionViewSectionedReloadDataSource<MonthlySection> {
         return RxCollectionViewSectionedReloadDataSource<MonthlySection>(
             configureCell: { dataSource, collectionView, indexPath, item in
@@ -212,5 +222,19 @@ final class CalendarViewController: UIViewController, View {
                 return cell
             }
         )
+    }
+    
+    private func updateMonthLabel() {
+        guard let topVisibleSection = collectionView.indexPathsForVisibleItems
+                .min(by: { $0.section < $1.section })?.section,
+              let sectionData = reactor?.currentState.monthlySections[topVisibleSection]
+        else { return }
+        
+        let newMonthText = sectionData.firstDayOfMonth.formattedMonth()
+        
+        // 현재 텍스트와 다를 경우에만 업데이트
+        if monthLabel.text != newMonthText {
+            monthLabel.text = newMonthText
+        }
     }
 }

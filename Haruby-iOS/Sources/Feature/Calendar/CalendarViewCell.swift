@@ -12,7 +12,7 @@ import RxCocoa
 import RxSwift
 import SnapKit
 
-class CalendarViewCell: UICollectionViewCell, View {
+final class CalendarViewCell: UICollectionViewCell, View {
     var disposeBag = DisposeBag()
     typealias Reactor = CalendarViewCellReactor
     
