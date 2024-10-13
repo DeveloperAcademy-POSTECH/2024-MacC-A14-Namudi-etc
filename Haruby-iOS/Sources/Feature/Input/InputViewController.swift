@@ -50,6 +50,29 @@ class InputViewController: UIViewController {
         return textField
     }()
     
+    private lazy var detailInputButton: UIButton = {
+        let button = UIButton()
+        button.setTitle("상세 내역 기록하기", for: .normal)
+        button.setTitleColor(UIColor.black, for: .normal)
+        button.titleLabel?.font = .systemFont(ofSize: 14)
+        return button
+    }()
+    
+    private lazy var detailInputChevron: UIButton = {
+        let button = UIButton()
+        button.setImage(UIImage(systemName: "chevron.down"), for: .normal)
+        button.titleLabel?.font = .systemFont(ofSize: 14)
+        return button
+    }()
+    
+    private lazy var detailInputButtonStackView: UIStackView = {
+        let view = UIStackView(arrangedSubviews: [self.detailInputButton, self.detailInputChevron])
+        view.axis = .horizontal
+        view.alignment = .fill
+        view.spacing = 2
+        return view
+    }()
+    
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -64,6 +87,7 @@ class InputViewController: UIViewController {
     private func addSubviews() {
         self.view.addSubview(dateStackView)
         self.view.addSubview(amountTextField)
+        self.view.addSubview(detailInputButtonStackView)
     }
     
     private func configureConstraints() {
@@ -77,6 +101,13 @@ class InputViewController: UIViewController {
             make.top.equalTo(self.dateStackView.snp_bottomMargin).offset(32)
             make.horizontalEdges.equalTo(view.safeAreaLayoutGuide).inset(16)
             make.height.equalTo(54)
+        }
+        
+        detailInputButtonStackView.snp.makeConstraints { make in
+            make.top.equalTo(self.amountTextField.snp_bottomMargin).offset(10)
+            make.left.equalTo(view.safeAreaLayoutGuide).inset(28)
+            make.right.equalTo(view.safeAreaLayoutGuide).inset(243)
+            make.height.equalTo(40)
         }
     }
 }
