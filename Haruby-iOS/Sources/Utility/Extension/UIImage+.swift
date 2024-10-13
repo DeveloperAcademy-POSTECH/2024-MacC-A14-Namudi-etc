@@ -7,7 +7,7 @@
 
 import UIKit
 
-public extension UIImage {
+extension UIImage {
     static var greenHaruby: UIImage {
         HarubyIOSAsset.greenHaruby.image
     }
