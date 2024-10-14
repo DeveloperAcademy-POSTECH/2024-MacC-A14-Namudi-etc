@@ -19,13 +19,13 @@ class InputTextField: UIView {
         let textfield = UITextField()
         textfield.font = .pretendardMedium_16()
         textfield.textColor = .Haruby.textBlack
-        textfield.setPlaceholder(color: .Haruby.textBright40)
         return textfield
     }()
     
     var placeholder: String? {
         didSet {
             self.textField.placeholder = placeholder
+            self.textField.setPlaceholder(color: .Haruby.textBright40)
         }
     }
     
