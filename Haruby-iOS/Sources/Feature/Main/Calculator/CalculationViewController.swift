@@ -11,8 +11,11 @@ import ReactorKit
 import RxSwift
 import RxCocoa
 
-final class CalculationViewController: UIViewController {
+final class CalculationViewController: UIViewController, View {
     
+    typealias Reactor = CalculationViewReactor
+    
+    // MARK: - UI Components
     private lazy var topStackView: UIStackView = {
         let view = UIStackView()
         view.axis = .vertical
@@ -80,6 +83,7 @@ final class CalculationViewController: UIViewController {
     private lazy var textField: RoundedTextField = {
         let view = RoundedTextField()
         view.placeholder = "금액을 입력해 주세요"
+        view.isUserInteractionEnabled = false
         return view
     }()
     
@@ -87,6 +91,9 @@ final class CalculationViewController: UIViewController {
         let view = CalculationKeypad()
         return view
     }()
+    
+    // MARK: - Properties
+    var disposeBag = DisposeBag()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -157,4 +164,21 @@ final class CalculationViewController: UIViewController {
             .foregroundColor: UIColor.white
         ]
     }
+    
+    // MARK: - Binding
+    
+    func bind(reactor: CalculationViewReactor) {
+        bindState()
+        bindAction()
+    }
+    
+    private func bindState() {
+        
+    }
+    
+    private func bindAction() {
+        
+    }
+    
+    
 }
