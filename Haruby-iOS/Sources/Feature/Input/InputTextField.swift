@@ -17,7 +17,7 @@ class InputTextField: UIView {
     
     private lazy var textField: UITextField = {
         let textfield = UITextField()
-        textfield.font = .pretendardMedium_16()
+        textfield.font = .pretendardMedium_16
         textfield.textColor = .Haruby.textBlack
         return textfield
     }()
