@@ -13,15 +13,12 @@ import RxSwift
 import SnapKit
 
 final class CalendarViewCell: UICollectionViewCell, View {
-    var disposeBag = DisposeBag()
-    typealias Reactor = CalendarViewCellReactor
-    
     
     // MARK: - Initialization
     override init(frame: CGRect) {
         super.init(frame: frame)
         
-        setup()
+        setupViews()
     }
 
     required init?(coder: NSCoder) {
@@ -29,6 +26,9 @@ final class CalendarViewCell: UICollectionViewCell, View {
     }
     
     // MARK: - Properties
+    var disposeBag = DisposeBag()
+    typealias Reactor = CalendarViewCellReactor
+    
     // MARK: - UI Components
     lazy private var numberLabel: UILabel = {
         let label = UILabel()
@@ -88,16 +88,16 @@ final class CalendarViewCell: UICollectionViewCell, View {
     func bind(reactor: CalendarViewCellReactor) {
         // State
         reactor.state.map{ $0.dayNumber }
-            .bind(to: numberLabel.rx.text)
-            .disposed(by: disposeBag)
+                    .bind(to: numberLabel.rx.text)
+                    .disposed(by: disposeBag)
         
         reactor.state.map{ !$0.isVisible }
                     .bind(to: numberLabel.rx.isHidden)
                     .disposed(by: disposeBag)
         
         reactor.state.map{ $0.haruby }
-            .bind(to: harubyLabel.rx.text)
-            .disposed(by: disposeBag)
+                    .bind(to: harubyLabel.rx.text)
+                    .disposed(by: disposeBag)
         
         reactor.state.map{ !$0.isVisible }
                     .bind(to: topLine.rx.isHidden)
@@ -110,12 +110,21 @@ final class CalendarViewCell: UICollectionViewCell, View {
         
     }
     
-    // MARK: - Private Methods
-    private func setup() {
+    // MARK: - setup
+    private func setupViews() {
+        
+        addSubviews()
+        setupConstraints()
+    }
+    
+    private func addSubviews() {
         contentView.addSubview(numberLabel)
         contentView.addSubview(harubyLabel)
         contentView.addSubview(dotStackView)
         contentView.addSubview(topLine)
+    }
+    
+    private func setupConstraints() {
         numberLabel.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(8)
             make.horizontalEdges.equalToSuperview()
