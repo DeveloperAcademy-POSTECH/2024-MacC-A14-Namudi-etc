@@ -77,11 +77,9 @@ class CalculationViewController: UIViewController {
         return view
     }()
     
-    private lazy var testTextField: UITextField = {
-        let view = UITextField()
+    private lazy var textField: RoundedTextField = {
+        let view = RoundedTextField()
         view.placeholder = "금액을 입력해 주세요"
-        view.font = .pretendardSemibold_20()
-        view.textColor = .Haruby.textBlack
         return view
     }()
     
@@ -126,7 +124,7 @@ class CalculationViewController: UIViewController {
         view.addSubview(bottomView)
         
         bottomView.addSubview(calculationProcessView)
-        bottomView.addSubview(testTextField)
+        bottomView.addSubview(textField)
         bottomView.addSubview(calculationKeypad)
     }
     
@@ -148,7 +146,7 @@ class CalculationViewController: UIViewController {
             make.horizontalEdges.equalToSuperview().inset(20)
         }
         
-        testTextField.snp.makeConstraints { make in
+        textField.snp.makeConstraints { make in
             make.bottom.equalTo(calculationKeypad.snp.top)
                 .offset(-12)
             make.horizontalEdges.equalToSuperview().inset(16)
