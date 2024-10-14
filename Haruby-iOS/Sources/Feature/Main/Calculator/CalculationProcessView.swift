@@ -28,6 +28,13 @@ final class CalculationProcessView: UIView {
         return view
     }()
     
+    private lazy var totalHarubyContainerView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .Haruby.whiteDeep50
+        view.layer.cornerRadius = 10
+        return view
+    }()
+    
     private lazy var totalHarubyStackView: UIStackView = {
         let view = UIStackView()
         view.axis = .vertical
@@ -60,6 +67,13 @@ final class CalculationProcessView: UIView {
         view.text = "-"
         view.textColor = .Haruby.textBright
         view.font = .pretendardMedium_20()
+        return view
+    }()
+    
+    private lazy var estimatedPriceContainerView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .Haruby.whiteDeep50
+        view.layer.cornerRadius = 10
         return view
     }()
     
@@ -104,6 +118,13 @@ final class CalculationProcessView: UIView {
         return view
     }()
     
+    private lazy var remainingDayContainerView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .Haruby.whiteDeep50
+        view.layer.cornerRadius = 10
+        return view
+    }()
+    
     private lazy var remainingDayStackView: UIStackView = {
         let view = UIStackView()
         view.axis = .vertical
@@ -145,17 +166,23 @@ final class CalculationProcessView: UIView {
     private func addSubviews() {
         addSubview(containerStackView)
         
-        [leftParenthesisSymbol, totalHarubyStackView, minusSymbol,
-         estimatedPriceStackView, rightParenthesisSymbol, divideSymbol, remainingDayStackView].forEach {
+        [leftParenthesisSymbol, totalHarubyContainerView, minusSymbol,
+         estimatedPriceContainerView, rightParenthesisSymbol, divideSymbol, remainingDayContainerView].forEach {
             containerStackView.addArrangedSubview($0)
         }
+        
+        totalHarubyContainerView.addSubview(totalHarubyStackView)
         
         [totalHarybyTitle, totalHaryby].forEach { totalHarubyStackView.addArrangedSubview($0)
         }
         
+        estimatedPriceContainerView.addSubview(estimatedPriceStackView)
+        
         [estimatedPriceTitle, estimatedPrice].forEach {
             estimatedPriceStackView.addArrangedSubview($0)
         }
+        
+        remainingDayContainerView.addSubview(remainingDayStackView)
         
         [remainingDayTitle, remainingDay].forEach {
             remainingDayStackView.addArrangedSubview($0)
@@ -167,6 +194,18 @@ final class CalculationProcessView: UIView {
     private func configureConstraints() {
         containerStackView.snp.makeConstraints { make in
             make.top.horizontalEdges.equalToSuperview()
+        }
+        
+        totalHarubyStackView.snp.makeConstraints { make in
+            make.edges.equalToSuperview().inset(8)
+        }
+        
+        estimatedPriceStackView.snp.makeConstraints { make in
+            make.edges.equalToSuperview().inset(8)
+        }
+        
+        remainingDayStackView.snp.makeConstraints { make in
+            make.edges.equalToSuperview().inset(8)
         }
     }
 }
