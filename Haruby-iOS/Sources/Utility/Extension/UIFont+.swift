@@ -31,77 +31,26 @@ extension UIFont {
         }
     }
     // MARK: Pretendard Semibold
-    static func pretendardSemibold_36() -> UIFont {
-        HarubyIOSFontFamily.Pretendard.semiBold.font(size: 36)
-    }
-    
-    static func pretendardSemibold_32() -> UIFont {
-        HarubyIOSFontFamily.Pretendard.semiBold.font(size: 32)
-    }
-    
-    static func pretendardSemibold_28() -> UIFont {
-        HarubyIOSFontFamily.Pretendard.semiBold.font(size: 28)
-    }
-    
-    static func pretendardSemibold_24() -> UIFont {
-        HarubyIOSFontFamily.Pretendard.semiBold.font(size: 24)
-    }
-    
-    static func pretendardSemibold_20() -> UIFont {
-        HarubyIOSFontFamily.Pretendard.semiBold.font(size: 20)
-    }
-    
-    static func pretendardSemibold_18() -> UIFont {
-        HarubyIOSFontFamily.Pretendard.semiBold.font(size: 18)
-    }
-    
-    static func pretendardSemibold_14() -> UIFont {
-        HarubyIOSFontFamily.Pretendard.semiBold.font(size: 14)
-    }
-    
-    static func pretendardSemibold_12() -> UIFont {
-        HarubyIOSFontFamily.Pretendard.semiBold.font(size: 12)
-    }
-    
-    static func pretendardSemibold_11() -> UIFont {
-        HarubyIOSFontFamily.Pretendard.semiBold.font(size: 11)
-    }
-    
+    static var pretendardSemibold_36: UIFont = HarubyIOSFontFamily.Pretendard.semiBold.font(size: 36)
+    static var pretendardSemibold_32: UIFont = HarubyIOSFontFamily.Pretendard.semiBold.font(size: 32)
+    static var pretendardSemibold_28: UIFont = HarubyIOSFontFamily.Pretendard.semiBold.font(size: 28)
+    static var pretendardSemibold_24: UIFont = HarubyIOSFontFamily.Pretendard.semiBold.font(size: 24)
+    static var pretendardSemibold_20: UIFont = HarubyIOSFontFamily.Pretendard.semiBold.font(size: 20)
+    static var pretendardSemibold_18: UIFont = HarubyIOSFontFamily.Pretendard.semiBold.font(size: 18)
+    static var pretendardSemibold_14: UIFont = HarubyIOSFontFamily.Pretendard.semiBold.font(size: 14)
+    static var pretendardSemibold_12: UIFont = HarubyIOSFontFamily.Pretendard.semiBold.font(size: 12)
+    static var pretendardSemibold_11: UIFont = HarubyIOSFontFamily.Pretendard.semiBold.font(size: 11)
+
     // MARK: Pretendard Medium
-    static func pretendardMedium_24() -> UIFont {
-        HarubyIOSFontFamily.Pretendard.medium.font(size: 24)
-    }
-    
-    static func pretendardMedium_20() -> UIFont {
-        HarubyIOSFontFamily.Pretendard.medium.font(size: 20)
-    }
-    
-    static func pretendardMedium_18() -> UIFont {
-        HarubyIOSFontFamily.Pretendard.medium.font(size: 18)
-    }
-    
-    static func pretendardMedium_16() -> UIFont {
-        HarubyIOSFontFamily.Pretendard.medium.font(size: 16)
-    }
-    
-    static func pretendardMedium_14() -> UIFont {
-        HarubyIOSFontFamily.Pretendard.medium.font(size: 14)
-    }
-    
-    static func pretendardMedium_12() -> UIFont {
-        HarubyIOSFontFamily.Pretendard.medium.font(size: 12)
-    }
-    
-    static func pretendardMedium_11() -> UIFont {
-        HarubyIOSFontFamily.Pretendard.medium.font(size: 11)
-    }
-    
+    static var pretendardMedium_24: UIFont = HarubyIOSFontFamily.Pretendard.medium.font(size: 24)
+    static var pretendardMedium_20: UIFont = HarubyIOSFontFamily.Pretendard.medium.font(size: 20)
+    static var pretendardMedium_18: UIFont = HarubyIOSFontFamily.Pretendard.medium.font(size: 18)
+    static var pretendardMedium_16: UIFont = HarubyIOSFontFamily.Pretendard.medium.font(size: 16)
+    static var pretendardMedium_14: UIFont = HarubyIOSFontFamily.Pretendard.medium.font(size: 14)
+    static var pretendardMedium_12: UIFont = HarubyIOSFontFamily.Pretendard.medium.font(size: 12)
+    static var pretendardMedium_11: UIFont = HarubyIOSFontFamily.Pretendard.medium.font(size: 11)
+
     // MARK: Pretendard Regular
-    static func pretendardRegular_24() -> UIFont {
-        HarubyIOSFontFamily.Pretendard.regular.font(size: 24)
-    }
-    
-    static func pretendardRegular_20() -> UIFont {
-        HarubyIOSFontFamily.Pretendard.regular.font(size: 20)
-    }
+    static var pretendardRegular_24: UIFont = HarubyIOSFontFamily.Pretendard.regular.font(size: 24)
+    static var pretendardRegular_20: UIFont = HarubyIOSFontFamily.Pretendard.regular.font(size: 20)
 }
