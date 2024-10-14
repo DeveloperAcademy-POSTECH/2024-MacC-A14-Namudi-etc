@@ -8,10 +8,12 @@
 import Foundation
 import RxDataSources
 
-struct MonthlySection: SectionModelType {
+struct MonthlySection {
     var firstDayOfMonth: Date
     var items: [DailyBudget]
-    
+}
+
+extension MonthlySection: SectionModelType {
     init(original: MonthlySection, items: [DailyBudget]) {
         self = original
         self.items = items
