@@ -24,7 +24,7 @@ class CalculationViewController: UIViewController {
     
     private lazy var topLabel: UILabel = {
         let view = UILabel()
-        view.font = .systemFont(ofSize: 24, weight: .semibold)
+        view.font = .pretendardSemibold_24()
         view.text = "고민 중인 지출의 금액을"
         view.numberOfLines = 2
         view.textColor = .white
@@ -50,7 +50,7 @@ class CalculationViewController: UIViewController {
     
     private lazy var bottomPriceLabel: UILabel = {
         let view = UILabel()
-        view.font = .systemFont(ofSize: 36, weight: .semibold)
+        view.font = .pretendardSemibold_36()
         view.text = "\(12000.decimal)"
         view.textColor = .white
         view.isHidden = true
@@ -59,12 +59,19 @@ class CalculationViewController: UIViewController {
     
     private lazy var bottomLabel: UILabel = {
         let view = UILabel()
-        view.font = .systemFont(ofSize: 24, weight: .semibold)
+        view.font = .pretendardSemibold_24()
         view.text = "입력해 주세요"
         view.numberOfLines = 2
         view.textColor = .white
         return view
     }()
+    
+    private lazy var bottomView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .Haruby.white
+        return view
+    }()
+    
     
     private lazy var calculationKeypad: CalculationKeypad = {
         let view = CalculationKeypad()
@@ -88,6 +95,8 @@ class CalculationViewController: UIViewController {
         
         addSubviews()
         configureConstraints()
+        
+        bottomView.roundCorners(cornerRadius: 20, maskedCorners: [.layerMinXMinYCorner, .layerMaxXMinYCorner])
     }
     
     // MARK: - addSubviews()
@@ -101,7 +110,8 @@ class CalculationViewController: UIViewController {
         [bottomImageView, bottomPriceLabel, bottomLabel].forEach { bottomStackView.addArrangedSubview($0)
         }
 
-        view.addSubview(calculationKeypad)
+        view.addSubview(bottomView)
+        bottomView.addSubview(calculationKeypad)
     }
     
     // MARK: - configureConstraints()
@@ -112,10 +122,16 @@ class CalculationViewController: UIViewController {
             make.horizontalEdges.equalToSuperview().inset(26)
         }
         
+        bottomView.snp.makeConstraints { make in
+            make.top.equalTo(topStackView.snp.top).inset(100)
+            make.horizontalEdges.bottom.equalToSuperview()
+        }
+        
         calculationKeypad.snp.makeConstraints { make in
             make.bottom.equalToSuperview()
             make.horizontalEdges.equalToSuperview()
         }
     }
 
+    
 }
