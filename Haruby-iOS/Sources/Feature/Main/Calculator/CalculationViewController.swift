@@ -51,7 +51,7 @@ class CalculationViewController: UIViewController {
     private lazy var bottomPriceLabel: UILabel = {
         let view = UILabel()
         view.font = .pretendardSemibold_36()
-        view.text = "\(12000.decimal)"
+        view.text = "\(12000.decimalWithWon)"
         view.textColor = .white
         view.isHidden = true
         return view
@@ -69,6 +69,19 @@ class CalculationViewController: UIViewController {
     private lazy var bottomView: UIView = {
         let view = UIView()
         view.backgroundColor = .Haruby.white
+        return view
+    }()
+    
+    private lazy var calculationProcessView: CalculationProcessView = {
+        let view = CalculationProcessView()
+        return view
+    }()
+    
+    private lazy var testTextField: UITextField = {
+        let view = UITextField()
+        view.placeholder = "금액을 입력해 주세요"
+        view.font = .pretendardSemibold_20()
+        view.textColor = .Haruby.textBlack
         return view
     }()
     
@@ -111,6 +124,9 @@ class CalculationViewController: UIViewController {
         }
 
         view.addSubview(bottomView)
+        
+        bottomView.addSubview(calculationProcessView)
+        bottomView.addSubview(testTextField)
         bottomView.addSubview(calculationKeypad)
     }
     
@@ -125,6 +141,17 @@ class CalculationViewController: UIViewController {
         bottomView.snp.makeConstraints { make in
             make.top.equalTo(topStackView.snp.top).inset(100)
             make.horizontalEdges.bottom.equalToSuperview()
+        }
+        
+        calculationProcessView.snp.makeConstraints { make in
+            make.top.equalToSuperview().inset(22)
+            make.horizontalEdges.equalToSuperview().inset(20)
+        }
+        
+        testTextField.snp.makeConstraints { make in
+            make.bottom.equalTo(calculationKeypad.snp.top)
+                .offset(-12)
+            make.horizontalEdges.equalToSuperview().inset(16)
         }
         
         calculationKeypad.snp.makeConstraints { make in

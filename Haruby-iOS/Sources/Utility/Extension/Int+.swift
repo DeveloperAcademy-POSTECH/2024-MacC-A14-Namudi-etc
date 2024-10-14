@@ -15,4 +15,12 @@ extension Int {
         let number = formatter.string(from: NSNumber(value: self)) ?? "NA"
         return number
     }
+    
+    var decimalWithWon: String {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+        
+        let number = formatter.string(from: NSNumber(value: self)) ?? "NA"
+        return number + "원"
+    }
 }
