@@ -20,7 +20,7 @@ class InputViewController: UIViewController, View {
         let label = UILabel()
         label.text = "날짜"
         label.textColor = .Haruby.textBlack
-        label.font = .pretendardMedium_20()
+        label.font = .pretendardMedium_20
         return label
     }()
     
@@ -28,7 +28,7 @@ class InputViewController: UIViewController, View {
         let button = UIButton()
         button.setTitle("2024.09.28", for: .normal)
         button.setTitleColor(.Haruby.main, for: .normal)
-        button.titleLabel?.font = .pretendardRegular_20()
+        button.titleLabel?.font = .pretendardRegular_20
         return button
     }()
     
@@ -47,7 +47,7 @@ class InputViewController: UIViewController, View {
         textField.setPlaceholder(color: .Haruby.textBright40)
         textField.textAlignment = .left
         textField.textColor = .Haruby.textBlack
-        textField.font = .pretendardSemibold_20()
+        textField.font = .pretendardSemibold_20
         textField.borderStyle = .roundedRect
         textField.backgroundColor = .Haruby.white
         textField.keyboardType = .numberPad
@@ -62,7 +62,7 @@ class InputViewController: UIViewController, View {
         let button = UIButton()
         button.setTitle("상세 내역 기록하기", for: .normal)
         button.setTitleColor(.Haruby.textBright, for: .normal)
-        button.titleLabel?.font = .pretendardMedium_14()
+        button.titleLabel?.font = .pretendardMedium_14
         return button
     }()
     
