@@ -53,7 +53,7 @@ final class MainReactor: Reactor {
                 todayHarubyTitle: "오늘의 하루비",
                 avgHaruby: "10,000원",
                 todayHaruby: "36,000원",
-                date: Date.todayString()
+                date: Date().formattedDateToStringforMainView
             )
             return Observable.just(.updateMainState(newState))
         case .naivgateCalculator:

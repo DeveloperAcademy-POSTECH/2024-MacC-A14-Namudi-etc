@@ -22,10 +22,10 @@ extension Date {
         return calendar.date(from: dateComponent)!
     }
     
-    static func todayString() -> String {
+    var formattedDateToStringforMainView: String {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy년 MM월 dd일 (E)"
         formatter.locale = Locale(identifier: "ko_KR")
-        return formatter.string(from: Date())
+        return formatter.string(from: self)
     }
 }
