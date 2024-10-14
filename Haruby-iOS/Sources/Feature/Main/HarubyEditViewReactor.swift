@@ -18,17 +18,17 @@ class HarubyEditViewReactor: Reactor {
     }
     
     struct State {
-        
+        var memoText = ""
     }
     
     let initialState: State = State()
     
     func mutate(action: Action) -> Observable<Mutation> {
-        // code
+        
     }
     
     func reduce(state: State, mutation: Mutation) -> State {
-        // code
+        
     }
     
     // MARK: - Private Methods
