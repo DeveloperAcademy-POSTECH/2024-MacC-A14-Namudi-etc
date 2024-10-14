@@ -184,19 +184,9 @@ final class CalendarViewController: UIViewController, View {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
-        initConstraints()
-        bindScrollEvent()
+        setupView()
     }
     
-    override func loadView() {
-        title = "캘린더"
-        
-        let view = UIView()
-        self.view = view
-        view.backgroundColor = .Haruby.main
-        
-        [monthLabel, remainTotalHarubyBox, topRoundedContainer, warningLabel].forEach{ self.view.addSubview($0) }
-    }
     
     // MARK: - Binding
     func bind(reactor: CalendarViewReactor) {
@@ -210,8 +200,25 @@ final class CalendarViewController: UIViewController, View {
     }
     
     
-    // MARK: - Private Methods
-    private func initConstraints() {
+    // MARK: - setup
+    private func setupView() {
+        title = "캘린더"
+        view.backgroundColor = .Haruby.main
+        
+        addSubviews()
+        setupConstraints()
+        bindScrollEvent()
+    }
+    
+    private func addSubviews() {
+        view.addSubview(monthLabel)
+        view.addSubview(remainTotalHarubyBox)
+        view.addSubview(topRoundedContainer)
+        view.addSubview(warningLabel)
+    }
+    
+    
+    private func setupConstraints() {
         monthLabel.snp.makeConstraints { make in
             make.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(17)
             make.leading.equalToSuperview().offset(16)
@@ -234,6 +241,8 @@ final class CalendarViewController: UIViewController, View {
         }
     }
     
+    
+    // MARK: - Private Methods
     private func bindScrollEvent() {
         collectionView.rx.didScroll
             .subscribe(onNext: { [unowned self] in
