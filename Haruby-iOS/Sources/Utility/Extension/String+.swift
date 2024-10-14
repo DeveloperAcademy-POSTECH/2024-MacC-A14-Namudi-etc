@@ -9,7 +9,9 @@ import Foundation
 
 extension String {
     var numberFormat: Int? {
-        let string = self.replacingOccurrences(of: ",", with: "")
+        let string = self
+            .replacingOccurrences(of: ",", with: "")
+            .replacingOccurrences(of: "원", with: "")
         return Int(string)
     }
 }
