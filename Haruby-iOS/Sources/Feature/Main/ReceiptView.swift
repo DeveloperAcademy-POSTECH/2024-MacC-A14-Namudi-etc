@@ -20,10 +20,10 @@ final class ReceiptView: UIView {
         return label
     }()
     
-    private let titleLabel: UILabel = {
+    let titleLabel: UILabel = {
         let label = UILabel()
         label.font = .pretendard(size: 24, weight: .semiBold)
-        label.text = "오늘의 하루비"
+        label.text = "-"
         label.textColor = .Haruby.textBlack
         return label
     }()
@@ -73,7 +73,7 @@ final class ReceiptView: UIView {
         configuration.title = "오늘의 지출 및 수입 입력하기"
         configuration.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { incoming in
             var outgoing = incoming
-            outgoing.font = UIFont.pretendardSemibold_18()
+            outgoing.font = UIFont.pretendardSemibold_18
             return outgoing
         }
         
