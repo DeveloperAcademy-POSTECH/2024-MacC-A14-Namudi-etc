@@ -8,15 +8,7 @@
 import UIKit
 
 extension UIImage {
-    static var greenHaruby: UIImage {
-        HarubyIOSAsset.greenHaruby.image
-    }
-    
-    static var purpleHaruby: UIImage {
-        HarubyIOSAsset.purpleHaruby.image
-    }
-    
-    static var redHaruby: UIImage {
-        HarubyIOSAsset.redHaruby.image
-    }
+    static let greenHaruby: UIImage = HarubyIOSAsset.greenHaruby.image
+    static let purpleHaruby: UIImage = HarubyIOSAsset.purpleHaruby.image
+    static let redHaruby: UIImage = HarubyIOSAsset.redHaruby.image
 }
