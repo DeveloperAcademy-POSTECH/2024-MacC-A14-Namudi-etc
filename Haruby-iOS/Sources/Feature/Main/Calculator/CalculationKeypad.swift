@@ -45,17 +45,15 @@ enum ButtonType {
     var font: UIFont {
         switch self {
         case .number, .delete:
-            return .pretendardRegular_20()
-        case .operatorSymbol(let symbol):
+            return .pretendardRegular_24()
+        case .operatorSymbol:
             return .pretendardRegular_24()
         }
     }
     
     var isSquare: Bool {
         if case let .operatorSymbol(type) = self,
-           type == "=" {
-            return false
-        }
+           type == "=" { return false }
         return true
     }
 }
@@ -67,15 +65,16 @@ final class CalculationKeypad: UIView {
         view.axis = .horizontal
         view.distribution = .fillEqually
         view.alignment = .fill
-        view.spacing = spacing
+        view.spacing = horizontalSpacing
         return view
     }()
     
-    private let spacing: CGFloat = 26
+    private let horizontalSpacing: CGFloat = 26
+    private let verticalSpacing: CGFloat = 16
     private let horizontalPadding: CGFloat = 38
     private let verticalPadding: CGFloat = 16
     private var buttonWidthSize: CGFloat {
-        (UIScreen.main.bounds.width - (horizontalPadding * 2) - (spacing * 3)) / 4
+        (UIScreen.main.bounds.width - (horizontalPadding * 2) - (horizontalSpacing * 3)) / 4
     }
     
     private let keypadTypes: [[ButtonType]] = [
@@ -153,7 +152,7 @@ extension CalculationKeypad {
         stackView.axis = .vertical
         stackView.distribution = isLastRow ? .fill : .fillEqually
         stackView.alignment = .fill
-        stackView.spacing = spacing
+        stackView.spacing = verticalSpacing
         return stackView
     }
     
