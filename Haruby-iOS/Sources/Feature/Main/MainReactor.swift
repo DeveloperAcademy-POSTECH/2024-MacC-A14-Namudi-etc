@@ -48,7 +48,7 @@ final class MainReactor: Reactor {
             5. dailyBudget.haruby - dailyBudget.expense.toal이 양수인지 음수인지 판단
             6. 판단에 따라 amountBox와 amountLabel의 색상 바꾸고 사용한 금액 Label로 표시
              */
-            print("viewDidLoad")
+            print("MainView DidLoad")
             let newState = MainState(
                 todayHarubyTitle: "오늘의 하루비",
                 avgHaruby: "10,000원",
