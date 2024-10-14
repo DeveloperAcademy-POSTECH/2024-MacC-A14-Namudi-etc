@@ -37,8 +37,8 @@ enum ButtonType {
             return .Haruby.white
         case .operatorSymbol(let symbol):
             return symbol == "=" ? .Haruby.main : .Haruby.mainBright15
-        case .delete(let string):
-            return string.isEmpty ? .Haruby.white : .Haruby.mainBright15
+        case .delete:
+            return .Haruby.mainBright15
         }
     }
     
@@ -142,6 +142,7 @@ final class CalculationKeypad: UIView {
         [numberButtons, operatorButtons, deleteButtons].flatMap { $0 }
             .forEach {
                 $0.layer.cornerRadius = self.buttonWidthSize / 2
+                $0.clipsToBounds = true
             }
     }
 }
@@ -160,8 +161,10 @@ extension CalculationKeypad {
         let button = UIButton()
         if type.title.isEmpty {
             button.setImage(.delete, for: .normal)
+//            button.setImage(UIImage(systemName: "delete.left.fill").resi, for: .normal)
             button.imageView?.tintColor = type.textColor
             button.imageView?.contentMode = .scaleAspectFit
+            button.imageView?.backgroundColor = type.backgroundColor
         } else {
             button.setTitle(type.title, for: .normal)
             button.setTitleColor(type.textColor, for: .normal)
