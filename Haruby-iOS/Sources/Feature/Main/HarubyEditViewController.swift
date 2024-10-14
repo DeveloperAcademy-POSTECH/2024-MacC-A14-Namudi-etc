@@ -20,20 +20,23 @@ class HarubyEditViewController: UIViewController, View {
     private lazy var harubyTitleLabel: UILabel = {
         let label = UILabel()
         label.text = "하루비"
-        label.font = .systemFont(ofSize: 14, weight: .medium)
+        label.font = .pretendardMedium_14()
+        label.textColor = .Haruby.textBlack
         return label
     }()
     
     private lazy var harubyTextField: UIView = {
         let textField = UITextField()
         textField.placeholder = "36,900원"
-        textField.font = .systemFont(ofSize: 20, weight: .semibold)
+        textField.font = .pretendardSemibold_20()
+        textField.textColor = .Haruby.textBlack
+        textField.setPlaceholderColor(.Haruby.textBrighter)
         
         let view = UIView()
         
         view.layer.cornerRadius = 10
         view.layer.borderWidth = 1
-        view.layer.borderColor = UIColor.gray.cgColor
+        view.layer.borderColor = UIColor.Haruby.textBright40.cgColor
         
         view.addSubview(textField)
         textField.snp.makeConstraints { make in
@@ -47,7 +50,8 @@ class HarubyEditViewController: UIViewController, View {
     private lazy var memoTitleLabel: UILabel = {
         let label = UILabel()
         label.text = "메모"
-        label.font = .systemFont(ofSize: 14, weight: .medium)
+        label.font = .pretendardMedium_14()
+        label.textColor = .Haruby.textBlack
         return label
     }()
     
@@ -59,7 +63,7 @@ class HarubyEditViewController: UIViewController, View {
         
         view.layer.cornerRadius = 10
         view.layer.borderWidth = 1
-        view.layer.borderColor = UIColor.gray.cgColor
+        view.layer.borderColor = UIColor.Haruby.textBright40.cgColor
         
         view.addSubview(textField)
         textField.snp.makeConstraints { make in
@@ -73,8 +77,8 @@ class HarubyEditViewController: UIViewController, View {
     private lazy var memoFooterLabel: UILabel = {
         let label = UILabel()
         label.text = "(0/30)"
-        label.font = .systemFont(ofSize: 14, weight: .medium)
-        label.textColor = .lightGray
+        label.font = .pretendardMedium_14()
+        label.textColor = .Haruby.textBlack40
         return label
     }()
     
