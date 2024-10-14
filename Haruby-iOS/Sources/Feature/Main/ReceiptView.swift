@@ -13,14 +13,14 @@ final class ReceiptView: UIView {
     private let sidePadding: CGFloat = 15
     
     // MARK: - UI Components
-    let dateLabel: UILabel = {
+    internal let dateLabel: UILabel = {
         let label = UILabel()
         label.font = .pretendard(size: 16, weight: .semiBold)
         label.textColor = .Haruby.textBlack
         return label
     }()
     
-    let titleLabel: UILabel = {
+    internal let titleLabel: UILabel = {
         let label = UILabel()
         label.font = .pretendard(size: 24, weight: .semiBold)
         label.text = "-"
@@ -28,14 +28,14 @@ final class ReceiptView: UIView {
         return label
     }()
     
-    private lazy var amountBox: UIView = {
+    internal let amountBox: UIView = {
         let view = UIView()
         view.backgroundColor = .Haruby.whiteDeep
         view.layer.cornerRadius = 10
         return view
     }()
     
-    let amountLabel: UILabel = {
+    internal let amountLabel: UILabel = {
         let label = UILabel()
         label.font = .pretendard(size: 36, weight: .bold)
         label.text = "-"
@@ -62,7 +62,7 @@ final class ReceiptView: UIView {
         return stackView
     }()
     
-    let inputButton: UIButton = {
+    internal let inputButton: UIButton = {
         let button = UIButton(type: .system)
         
         var configuration = UIButton.Configuration.filled()
@@ -94,6 +94,7 @@ final class ReceiptView: UIView {
         super.layoutSubviews()
         drawReceipt()
         setupSubviews()
+        setupConstraints()
     }
     
     // MARK: - Setup
@@ -103,8 +104,6 @@ final class ReceiptView: UIView {
         addSubview(amountBox)
         addSubview(amountStackView)
         addSubview(inputButton)
-        
-        setupConstraints()
     }
     
     private func setupConstraints() {
