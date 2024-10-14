@@ -31,20 +31,20 @@ final class CalendarViewCellReactor: Reactor {
     
     let initialState: State
     
-    init(dayItem: DayItem) {
+    init(dailyBudget: DailyBudget) {
         
         let calendar = Calendar.current
         
-        let dayNumber = dayItem.date.map { "\(calendar.component(.day, from: $0))" } ?? ""
-        let monthNumber = dayItem.date.map { "\(calendar.component(.month, from: $0))" } ?? ""
+        let dayNumber = "\(calendar.component(.day, from: dailyBudget.date))"
+        let monthNumber = "\(calendar.component(.month, from: dailyBudget.date))"
 
-        let isFirstDayOfMonth = dayItem.date.map { calendar.component(.day, from: $0) == 1 } ?? false
+        let isFirstDayOfMonth = dayNumber == "1" ? true : false
 
         initialState = State(
             dayNumber: isFirstDayOfMonth ? "\(monthNumber)/\(dayNumber)" : dayNumber,
-            isVisible: dayItem.date != nil,
-            isToday: dayItem.isToday,
-            haruby: dayItem.haruby?.toKoreanCurrencyFormat() ?? nil
+            isVisible: dailyBudget.date != Date.distantPast ? true : false,
+            isToday: calendar.isDate(dailyBudget.date, inSameDayAs: Date()),
+            haruby: dailyBudget.haruby?.toKoreanCurrencyFormat() ?? nil
         )
     }
     

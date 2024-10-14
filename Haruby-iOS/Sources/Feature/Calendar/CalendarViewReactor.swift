@@ -60,7 +60,7 @@ extension CalendarViewReactor {
         }
     }
     
-    private func generateDaysForMonth(_ date: Date) -> [DayItem] {
+    private func generateDaysForMonth(_ date: Date) -> [DailyBudget] {
         let calendar = Calendar.current
         let monthStart = calendar.date(from: calendar.dateComponents([.year, .month], from: date))!
         let nextMonth = calendar.date(byAdding: .month, value: 1, to: monthStart)!
@@ -69,48 +69,33 @@ extension CalendarViewReactor {
         let numberOfDaysInMonth = calendar.component(.day, from: monthEnd)
         let firstWeekday = calendar.component(.weekday, from: monthStart)
         
-        var days: [DayItem] = []
+        var dailyBudgets: [DailyBudget] = []
         
         for _ in 1..<firstWeekday {
-            days.append(DayItem(date: nil, isInSalaryPeriod: false, isToday: false, haruby: nil, memo: nil, expense: nil, income: nil))
+            dailyBudgets.append(
+                DailyBudget(
+                    date: Date.distantPast,
+                    haruby: nil,
+                    memo: "",
+                    expense: TransactionRecord(total: 0, transactionItems: []),
+                    income: TransactionRecord(total: 0, transactionItems: [])
+                )
+            )
         }
         
-        let today = calendar.startOfDay(for: Date())
         for day in 1...numberOfDaysInMonth {
             let date = calendar.date(byAdding: .day, value: day - 1, to: monthStart)!
-            days.append(DayItem(
+            // TODO: 데이터 연결시 넣기
+            dailyBudgets.append(DailyBudget(
                 date: date,
-                isInSalaryPeriod: true,
-                isToday: calendar.isDate(date, inSameDayAs: today),
-                haruby: 12000,
-                memo: nil,
-                expense: nil,
-                income: nil
+                haruby: 36000,
+                memo: "",
+                expense: TransactionRecord(total: 0, transactionItems: []),
+                income: TransactionRecord(total: 0, transactionItems: [])
             ))
         }
         
-        return days
+        return dailyBudgets
     }
 }
 
-struct MonthlySection {
-    var firstDayOfMonth: Date
-    var items: [DayItem]
-}
-
-extension MonthlySection: SectionModelType {
-    init(original: MonthlySection, items: [DayItem]) {
-        self = original
-        self.items = items
-    }
-}
-
-struct DayItem {
-    var date: Date?             // 날짜
-    var isInSalaryPeriod: Bool  // 이번 월급달에 해당하는지
-    var isToday: Bool           // 해당날짜가 오늘인지
-    var haruby: Int?            // 하루비
-    var memo: String?           // 메모
-    var expense: TransactionRecord? // 지출
-    var income: TransactionRecord?  // 수입
-}
