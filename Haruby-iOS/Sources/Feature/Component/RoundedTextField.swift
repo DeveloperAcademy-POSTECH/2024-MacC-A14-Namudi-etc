@@ -38,27 +38,25 @@ final class RoundedTextField: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         
-        addSubviews()
-        configureConstraints()
+        setupView()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
+    // MARK: - Setup View
+    private func setupView() {
+        setupSubviews()
+        setupConstraints()
+    }
     
-    
-    // MARK: - addSubviews()
-    
-    private func addSubviews() {
-        
+    private func setupSubviews() {
         addSubview(containerView)
         containerView.addSubview(textField)
     }
     
-    // MARK: - configureConstraints()
-    
-    private func configureConstraints() {
+    private func setupConstraints() {
         containerView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
@@ -68,5 +66,4 @@ final class RoundedTextField: UIView {
             make.horizontalEdges.equalToSuperview().inset(14)
         }
     }
-    
 }

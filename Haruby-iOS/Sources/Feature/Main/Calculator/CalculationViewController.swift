@@ -91,9 +91,6 @@ final class CalculationViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        title = "하루비 계산기"
-        view.backgroundColor = .Haruby.main
-        
         setupView()
     }
     
@@ -106,6 +103,8 @@ final class CalculationViewController: UIViewController {
     }
     
     private func setupSubviews() {
+        view.backgroundColor = .Haruby.main
+        
         view.addSubview(topStackView)
         
         [topLabel, bottomStackView].forEach { topStackView.addArrangedSubview($0) }
@@ -151,6 +150,8 @@ final class CalculationViewController: UIViewController {
     }
     
     private func setupNavigationBar() {
+        title = "하루비 계산기"
+        
         self.navigationController?.navigationBar.titleTextAttributes = [
             .foregroundColor: UIColor.white
         ]
