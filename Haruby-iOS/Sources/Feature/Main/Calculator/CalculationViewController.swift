@@ -109,7 +109,7 @@ class CalculationViewController: UIViewController {
         addSubviews()
         configureConstraints()
         
-        bottomView.roundCorners(cornerRadius: 20, maskedCorners: [.layerMinXMinYCorner, .layerMaxXMinYCorner])
+        bottomView.roundCorners(cornerRadius: 20, maskedCorners: [.topLeft, .topRight])
     }
     
     // MARK: - addSubviews()

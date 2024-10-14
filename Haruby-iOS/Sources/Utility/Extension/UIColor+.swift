@@ -9,23 +9,24 @@ import UIKit
 
 extension UIColor {
     enum Haruby {
-        static let accentColor: UIColor = HarubyIOSAsset.accentColor.color
-        static let green: UIColor = HarubyIOSAsset.green.color
-        static let green10: UIColor = HarubyIOSAsset.green10.color
-        static let main: UIColor = HarubyIOSAsset.main.color
-        static let mainBright: UIColor = HarubyIOSAsset.mainBright.color
-        static let red: UIColor = HarubyIOSAsset.red.color
-        static let red10: UIColor = HarubyIOSAsset.red10.color
-        static let textBlack: UIColor = HarubyIOSAsset.textBlack.color
-        static let textBlack10: UIColor = HarubyIOSAsset.textBlack10.color
-        static let textBlack40: UIColor = HarubyIOSAsset.textBlack40.color
-        static let textBright: UIColor = HarubyIOSAsset.textBright.color
-        static let textBright40: UIColor = HarubyIOSAsset.textBright40.color
-        static let textBright60: UIColor = HarubyIOSAsset.textBright60.color
-        static let textBrighter: UIColor = HarubyIOSAsset.textBrighter.color
-        static let white: UIColor = HarubyIOSAsset.white.color
-        static let white20: UIColor = HarubyIOSAsset.white20.color
-        static let whiteDeep: UIColor = HarubyIOSAsset.whiteDeep.color
-        static let whiteDeep50: UIColor = HarubyIOSAsset.whiteDeep50.color
+        static var accentColor: UIColor { HarubyIOSAsset.accentColor.color }
+        static var green: UIColor { HarubyIOSAsset.green.color }
+        static var green10: UIColor { HarubyIOSAsset.green10.color }
+        static var main: UIColor { HarubyIOSAsset.main.color }
+        static var mainBright: UIColor { HarubyIOSAsset.mainBright.color }
+        static var mainBright15: UIColor { HarubyIOSAsset.mainBright15.color }
+        static var red: UIColor { HarubyIOSAsset.red.color }
+        static var red10: UIColor { HarubyIOSAsset.red10.color }
+        static var textBlack: UIColor { HarubyIOSAsset.textBlack.color }
+        static var textBlack10: UIColor { HarubyIOSAsset.textBlack10.color }
+        static var textBlack40: UIColor { HarubyIOSAsset.textBlack40.color }
+        static var textBright: UIColor { HarubyIOSAsset.textBright.color }
+        static var textBright40: UIColor { HarubyIOSAsset.textBright40.color }
+        static var textBright60: UIColor { HarubyIOSAsset.textBright60.color }
+        static var textBrighter: UIColor { HarubyIOSAsset.textBrighter.color }
+        static var white: UIColor { HarubyIOSAsset.white.color }
+        static var white20: UIColor { HarubyIOSAsset.white20.color }
+        static var whiteDeep: UIColor { HarubyIOSAsset.whiteDeep.color }
+        static var whiteDeep50: UIColor { HarubyIOSAsset.whiteDeep50.color }
     }
 }

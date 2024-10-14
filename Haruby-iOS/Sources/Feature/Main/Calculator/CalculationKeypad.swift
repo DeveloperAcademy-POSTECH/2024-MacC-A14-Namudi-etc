@@ -34,11 +34,11 @@ enum ButtonType {
     var backgroundColor: UIColor {
         switch self {
         case .number:
-            return .clear
-        case .operatorSymbol(let symbol):
-            return symbol == "=" ? .Haruby.main : .Haruby.white
-        case .delete:
             return .Haruby.white
+        case .operatorSymbol(let symbol):
+            return symbol == "=" ? .Haruby.main : .Haruby.mainBright15
+        case .delete(let string):
+            return string.isEmpty ? .Haruby.white : .Haruby.mainBright15
         }
     }
     
@@ -47,7 +47,7 @@ enum ButtonType {
         case .number, .delete:
             return .pretendardRegular_24()
         case .operatorSymbol:
-            return .pretendardRegular_24()
+            return .pretendardExtraLight_37()
         }
     }
     
@@ -69,9 +69,9 @@ final class CalculationKeypad: UIView {
         return view
     }()
     
-    private let horizontalSpacing: CGFloat = 26
-    private let verticalSpacing: CGFloat = 16
-    private let horizontalPadding: CGFloat = 38
+    private let horizontalSpacing: CGFloat = 27
+    private let verticalSpacing: CGFloat = 18
+    private let horizontalPadding: CGFloat = 40
     private let verticalPadding: CGFloat = 16
     private var buttonWidthSize: CGFloat {
         (UIScreen.main.bounds.width - (horizontalPadding * 2) - (horizontalSpacing * 3)) / 4
@@ -139,7 +139,7 @@ final class CalculationKeypad: UIView {
             containerStackView.addArrangedSubview(stackView)
         }
         
-        [operatorButtons, deleteButtons].flatMap { $0 }
+        [numberButtons, operatorButtons, deleteButtons].flatMap { $0 }
             .forEach {
                 $0.layer.cornerRadius = self.buttonWidthSize / 2
             }
@@ -159,7 +159,7 @@ extension CalculationKeypad {
     private func createButton(_ type: ButtonType) -> UIButton {
         let button = UIButton()
         if type.title.isEmpty {
-            button.setImage(.purpleHaruby, for: .normal)
+            button.setImage(.delete, for: .normal)
             button.imageView?.tintColor = type.textColor
             button.imageView?.contentMode = .scaleAspectFit
         } else {
