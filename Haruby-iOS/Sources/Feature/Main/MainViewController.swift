@@ -13,7 +13,7 @@ final class MainViewController: UIViewController {
     private let helloLabel: UILabel = {
         let label = UILabel()
         label.text = "Hello, Namudi.etc!"
-        label.font = .pretendardSemibold_32()
+        label.font = .pretendardSemibold_32
         return label
     }()
     
