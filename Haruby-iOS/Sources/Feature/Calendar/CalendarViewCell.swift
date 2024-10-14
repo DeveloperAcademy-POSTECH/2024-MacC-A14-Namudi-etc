@@ -32,7 +32,7 @@ final class CalendarViewCell: UICollectionViewCell, View {
     // MARK: - UI Components
     lazy private var numberLabel: UILabel = {
         let label = UILabel()
-        label.font = .pretendardMedium_12()
+        label.font = .pretendardMedium_12
         label.textColor = .Haruby.textBlack
         label.textAlignment = .center
         return label
@@ -40,7 +40,7 @@ final class CalendarViewCell: UICollectionViewCell, View {
     
     lazy private var harubyLabel: UILabel = {
         let label = UILabel()
-        label.font = .pretendardMedium_11()
+        label.font = .pretendardMedium_11
         label.textColor = .Haruby.textBlack40
         label.textAlignment = .center
         return label
