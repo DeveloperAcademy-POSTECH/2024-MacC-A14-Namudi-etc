@@ -191,7 +191,7 @@ final class CalendarViewController: UIViewController, View {
     // MARK: - Binding
     func bind(reactor: CalendarViewReactor) {
         // Action
-        reactor.action.onNext(.initializeCalendar)
+        reactor.action.onNext(.viewDidLoad)
         
         // State
         reactor.state.map { $0.monthlySections }
