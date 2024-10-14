@@ -97,13 +97,14 @@ final class CalculationViewController: UIViewController {
 
     // MARK: - Setup View
     private func setupView() {
+        view.backgroundColor = .Haruby.main
+        
         setupSubviews()
         setupConstraints()
         setupNavigationBar()
     }
     
     private func setupSubviews() {
-        view.backgroundColor = .Haruby.main
         
         view.addSubview(topStackView)
         
