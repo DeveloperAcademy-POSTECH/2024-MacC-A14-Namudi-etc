@@ -22,11 +22,12 @@ final class InputViewReactor: Reactor {
         var isDetailVisible: Bool = false
     }
     
-    var initialState: State = State()
+    private(set) var initialState: State = State()
     
-    func mutation(action: Action) -> Observable<Mutation> {
+    func mutate(action: Action) -> Observable<Mutation> {
         switch action {
         case .toggleDetailButton:
+            print("tapped \(currentState.isDetailVisible)")
             return Observable.just(.setDetailVisible(!currentState.isDetailVisible))
         }
     }

@@ -6,10 +6,16 @@
 //
 
 import UIKit
+import ReactorKit
+import RxSwift
+import RxCocoa
 import SnapKit
 
-class InputViewController: UIViewController {
+class InputViewController: UIViewController, View {
     // MARK: - Properties
+    var disposeBag = DisposeBag()
+    typealias Reactor = InputViewReactor
+    
     private lazy var dateLabel: UILabel = {
         let label = UILabel()
         label.text = "날짜"
@@ -75,6 +81,14 @@ class InputViewController: UIViewController {
         return view
     }()
     
+    // 임시 상세 내역 기록하기 뷰
+    private lazy var detailInputCellView: UILabel = {
+        let view = UILabel()
+        view.backgroundColor = .Haruby.mainBright
+        view.text = "ㅎㅇ"
+        return view
+    }()
+    
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -90,6 +104,9 @@ class InputViewController: UIViewController {
         self.view.addSubview(dateStackView)
         self.view.addSubview(amountTextField)
         self.view.addSubview(detailInputButtonStackView)
+        self.view.addSubview(detailInputCellView)
+        
+        detailInputCellView.isHidden = true
     }
     
     private func configureConstraints() {
@@ -111,5 +128,36 @@ class InputViewController: UIViewController {
             make.right.equalTo(view.safeAreaLayoutGuide).inset(243)
             make.height.equalTo(40)
         }
+        
+        detailInputCellView.snp.makeConstraints { make in
+            make.top.equalTo(self.detailInputButtonStackView).offset(30)
+            make.horizontalEdges.equalTo(view.safeAreaLayoutGuide).inset(28)
+        }
+    }
+    
+    func bind(reactor: InputViewReactor) {
+        detailInputChevron.rx.tap
+            .map { Reactor.Action.toggleDetailButton }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        detailInputButton.rx.tap
+            .map { Reactor.Action.toggleDetailButton }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+
+        reactor.state
+            .map { $0.isDetailVisible }
+            .distinctUntilChanged()
+            .subscribe(onNext: { [weak self] isVisible in
+                guard let self = self else { return }
+                self.detailInputCellView.isHidden = !isVisible
+                
+                let angle: CGFloat = isVisible ? .pi : 0
+                UIView.animate(withDuration: 0.3) {
+                    self.detailInputChevron.transform = CGAffineTransform(rotationAngle: angle)
+                }
+            })
+            .disposed(by: disposeBag)
     }
 }
