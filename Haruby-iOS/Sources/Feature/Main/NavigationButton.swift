@@ -59,26 +59,20 @@ final class NavigationButton: UIButton {
     private func setupView(title: String, subtitle: String, symbolName: String) {
         backgroundColor = .white
         layer.cornerRadius = 10
+        symbolImageView.image = UIImage(systemName: symbolName)
+        customTitleLabel.text = title
+        customSubTitleLabel.text = subtitle
+        circleView.isUserInteractionEnabled = false
+        labelStackView.isUserInteractionEnabled = false
         
-        addSubviews()
-        configureSubviews(title: title, subtitle: subtitle, symbolName: symbolName)
+        setupSubViews()
         setupConstraints()
     }
     
-    private func addSubviews() {
+    private func setupSubViews() {
         addSubview(circleView)
         circleView.addSubview(symbolImageView)
         addSubview(labelStackView)
-    }
-    
-    private func configureSubviews(title: String, subtitle: String, symbolName: String) {
-        symbolImageView.image = UIImage(systemName: symbolName)
-        
-        customTitleLabel.text = title
-        customSubTitleLabel.text = subtitle
-        
-        circleView.isUserInteractionEnabled = false
-        labelStackView.isUserInteractionEnabled = false
     }
     
     private func setupConstraints() {
