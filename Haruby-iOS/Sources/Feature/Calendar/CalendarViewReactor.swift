@@ -13,7 +13,7 @@ import RxSwift
 
 final class CalendarViewReactor: Reactor {
     enum Action {
-        case initializeCalendar
+        case viewDidLoad
     }
     
     enum Mutation {
@@ -28,7 +28,7 @@ final class CalendarViewReactor: Reactor {
     
     func mutate(action: Action) -> Observable<Mutation> {
         switch action {
-            case .initializeCalendar:
+            case .viewDidLoad:
             return Observable.just(Mutation.updateMonthSections(createMonthSections()))
         }
     }
