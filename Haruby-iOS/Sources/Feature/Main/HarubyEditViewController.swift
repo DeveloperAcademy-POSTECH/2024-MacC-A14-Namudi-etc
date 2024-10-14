@@ -25,25 +25,26 @@ class HarubyEditViewController: UIViewController, View {
         return label
     }()
     
-    private lazy var harubyTextField: UIView = {
+    private lazy var harubyTextField: UITextField = {
         let textField = UITextField()
         textField.placeholder = "36,900원"
         textField.font = .pretendardSemibold_20()
         textField.textColor = .Haruby.textBlack
         textField.setPlaceholderColor(.Haruby.textBrighter)
         
+        return textField
+    }()
+    
+    private lazy var harubyContainerView: UIView = {
         let view = UIView()
-        
         view.layer.cornerRadius = 10
         view.layer.borderWidth = 1
         view.layer.borderColor = UIColor.Haruby.textBright40.cgColor
-        
-        view.addSubview(textField)
-        textField.snp.makeConstraints { make in
+        view.addSubview(harubyTextField)
+        harubyTextField.snp.makeConstraints { make in
             make.verticalEdges.equalToSuperview().inset(15)
             make.horizontalEdges.equalToSuperview().inset(14)
         }
-        
         return view
     }()
     
@@ -55,22 +56,24 @@ class HarubyEditViewController: UIViewController, View {
         return label
     }()
     
-    private lazy var memoTextField: UIView = {
+    private lazy var memoTextField: UITextField = {
         let textField = UITextField()
-        textField.font = .systemFont(ofSize: 20, weight: .semibold)
+        textField.font = .pretendardSemibold_20()
+        textField.textColor = .Haruby.textBlack
         
+        return textField
+    }()
+    
+    private lazy var memoContainerView: UIView = {
         let view = UIView()
-        
         view.layer.cornerRadius = 10
         view.layer.borderWidth = 1
         view.layer.borderColor = UIColor.Haruby.textBright40.cgColor
-        
-        view.addSubview(textField)
-        textField.snp.makeConstraints { make in
+        view.addSubview(memoTextField)
+        memoTextField.snp.makeConstraints { make in
             make.verticalEdges.equalToSuperview().inset(15)
             make.horizontalEdges.equalToSuperview().inset(14)
         }
-        
         return view
     }()
     
@@ -97,12 +100,22 @@ class HarubyEditViewController: UIViewController, View {
         self.view = view
         view.backgroundColor = .systemBackground
         
-        [harubyTitleLabel, harubyTextField, memoTitleLabel, memoTextField, memoFooterLabel].forEach { self.view.addSubview($0) }
+        [harubyTitleLabel, harubyContainerView, memoTitleLabel, memoContainerView, memoFooterLabel].forEach { self.view.addSubview($0) }
     }
     
     // MARK: - Binding
     func bind(reactor: HarubyEditViewReactor) {
-        // code
+        // Action
+        memoTextField.rx.text
+            .orEmpty
+            .distinctUntilChanged()
+            .subscribe(onNext: { text in
+                self.updateText(text)
+            })
+            .disposed(by: disposeBag)
+        
+        // State
+        
     }
     
     // MARK: - Private Methods
@@ -112,28 +125,35 @@ class HarubyEditViewController: UIViewController, View {
             make.leading.equalToSuperview().offset(29)
         }
         
-        harubyTextField.snp.makeConstraints { make in
+        harubyContainerView.snp.makeConstraints { make in
             make.top.equalTo(harubyTitleLabel.snp.bottom).offset(8)
             make.leading.equalToSuperview().offset(16)
             make.trailing.equalToSuperview().offset(-16)
         }
         
         memoTitleLabel.snp.makeConstraints { make in
-            make.top.equalTo(harubyTextField.snp.bottom).offset(16)
+            make.top.equalTo(harubyContainerView.snp.bottom).offset(16)
             make.leading.equalToSuperview().offset(29)
         }
         
-        memoTextField.snp.makeConstraints { make in
+        memoContainerView.snp.makeConstraints { make in
             make.top.equalTo(memoTitleLabel.snp.bottom).offset(8)
             make.leading.equalToSuperview().offset(16)
             make.trailing.equalToSuperview().offset(-16)
         }
         
         memoFooterLabel.snp.makeConstraints { make in
-            make.top.equalTo(memoTextField.snp.bottom).offset(8)
+            make.top.equalTo(memoContainerView.snp.bottom).offset(8)
             make.trailing.equalToSuperview().offset(-30)
         }
     }
-
+    
+    private func updateText(_ text: String) {
+        if text.count > 30 {
+            self.memoTextField.text = String(text.prefix(30))
+        } else {
+            self.memoFooterLabel.text = "(\(text.count)/30)"
+        }
+    }
 }
 
