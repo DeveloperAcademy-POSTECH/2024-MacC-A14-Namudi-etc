@@ -34,6 +34,7 @@ extension UIFont {
     static let pretendardSemibold_24: UIFont = HarubyIOSFontFamily.Pretendard.semiBold.font(size: 24)
     static let pretendardSemibold_20: UIFont = HarubyIOSFontFamily.Pretendard.semiBold.font(size: 20)
     static let pretendardSemibold_18: UIFont = HarubyIOSFontFamily.Pretendard.semiBold.font(size: 18)
+    static let pretendardSemibold_16: UIFont = HarubyIOSFontFamily.Pretendard.semiBold.font(size: 16)
     static let pretendardSemibold_14: UIFont = HarubyIOSFontFamily.Pretendard.semiBold.font(size: 14)
     static let pretendardSemibold_12: UIFont = HarubyIOSFontFamily.Pretendard.semiBold.font(size: 12)
     static let pretendardSemibold_11: UIFont = HarubyIOSFontFamily.Pretendard.semiBold.font(size: 11)

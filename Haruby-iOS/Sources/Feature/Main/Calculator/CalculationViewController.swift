@@ -11,7 +11,7 @@ import ReactorKit
 import RxSwift
 import RxCocoa
 
-class CalculationViewController: UIViewController {
+final class CalculationViewController: UIViewController {
     
     private lazy var topStackView: UIStackView = {
         let view = UIStackView()
@@ -24,7 +24,7 @@ class CalculationViewController: UIViewController {
     
     private lazy var topLabel: UILabel = {
         let view = UILabel()
-        view.font = .pretendardSemibold_24()
+        view.font = .pretendardSemibold_24
         view.text = "고민 중인 지출의 금액을"
         view.numberOfLines = 2
         view.textColor = .white
@@ -50,7 +50,7 @@ class CalculationViewController: UIViewController {
     
     private lazy var bottomPriceLabel: UILabel = {
         let view = UILabel()
-        view.font = .pretendardSemibold_36()
+        view.font = .pretendardSemibold_36
         view.text = "\(12000.decimalWithWon)"
         view.textColor = .white
         view.isHidden = true
@@ -59,7 +59,7 @@ class CalculationViewController: UIViewController {
     
     private lazy var bottomLabel: UILabel = {
         let view = UILabel()
-        view.font = .pretendardSemibold_24()
+        view.font = .pretendardSemibold_24
         view.text = "입력해 주세요"
         view.numberOfLines = 2
         view.textColor = .white
@@ -83,37 +83,29 @@ class CalculationViewController: UIViewController {
         return view
     }()
     
-    
     private lazy var calculationKeypad: CalculationKeypad = {
         let view = CalculationKeypad()
         return view
     }()
-    
-    override func loadView() {
-        let backgroundView = UIView()
-        backgroundView.backgroundColor = .Haruby.main
-        view = backgroundView
-    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
         title = "하루비 계산기"
+        view.backgroundColor = .Haruby.main
         
-        self.navigationController?.navigationBar.titleTextAttributes = [
-            .foregroundColor: UIColor.white
-        ]
-        
-        addSubviews()
-        configureConstraints()
-        
-        bottomView.roundCorners(cornerRadius: 20, maskedCorners: [.topLeft, .topRight])
+        setupView()
     }
     
-    // MARK: - addSubviews()
+
+    // MARK: - Setup View
+    private func setupView() {
+        setupSubviews()
+        setupConstraints()
+        setupNavigationBar()
+    }
     
-    private func addSubviews() {
-        
+    private func setupSubviews() {
         view.addSubview(topStackView)
         
         [topLabel, bottomStackView].forEach { topStackView.addArrangedSubview($0) }
@@ -126,11 +118,11 @@ class CalculationViewController: UIViewController {
         bottomView.addSubview(calculationProcessView)
         bottomView.addSubview(textField)
         bottomView.addSubview(calculationKeypad)
+        
+        bottomView.roundCorners(cornerRadius: 20, maskedCorners: [.topLeft, .topRight])
     }
     
-    // MARK: - configureConstraints()
-    
-    private func configureConstraints() {
+    private func setupConstraints() {
         topStackView.snp.makeConstraints { make in
             make.top.equalTo(view.safeAreaLayoutGuide).inset(32)
             make.horizontalEdges.equalToSuperview().inset(26)
@@ -157,6 +149,10 @@ class CalculationViewController: UIViewController {
             make.horizontalEdges.equalToSuperview()
         }
     }
-
     
+    private func setupNavigationBar() {
+        self.navigationController?.navigationBar.titleTextAttributes = [
+            .foregroundColor: UIColor.white
+        ]
+    }
 }

@@ -21,7 +21,7 @@ final class RoundedTextField: UIView {
     
     private lazy var textField: UITextField = {
         let textField = UITextField()
-        textField.font = .pretendardSemibold_20()
+        textField.font = .pretendardSemibold_20
         textField.textColor = .Haruby.textBlack
         textField.setPlaceholderColor(.Haruby.textBrighter)
         
