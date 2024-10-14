@@ -11,7 +11,7 @@ import RxCocoa
 import ReactorKit
 import SnapKit
 
-class HarubyEditViewController: UIViewController, View {
+final class HarubyEditViewController: UIViewController, View {
     var disposeBag: DisposeBag = DisposeBag()
     typealias Reactor = HarubyEditViewReactor
     

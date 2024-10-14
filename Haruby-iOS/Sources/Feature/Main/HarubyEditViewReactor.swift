@@ -8,7 +8,7 @@
 import ReactorKit
 import RxSwift
 
-class HarubyEditViewReactor: Reactor {
+final class HarubyEditViewReactor: Reactor {
     enum Action {
         
     }
