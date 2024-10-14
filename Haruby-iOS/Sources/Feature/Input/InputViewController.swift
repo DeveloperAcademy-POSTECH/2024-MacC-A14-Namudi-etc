@@ -82,12 +82,7 @@ class InputViewController: UIViewController, View {
     }()
     
     // 임시 상세 내역 기록하기 뷰
-    private lazy var detailInputCellView: UILabel = {
-        let view = UILabel()
-        view.backgroundColor = .Haruby.mainBright
-        view.text = "ㅎㅇ"
-        return view
-    }()
+    private lazy var detailInputCellView = DetailInputCell()
     
     // MARK: - Lifecycle
     override func viewDidLoad() {
@@ -117,21 +112,21 @@ class InputViewController: UIViewController, View {
         }
         
         amountTextField.snp.makeConstraints { make in
-            make.top.equalTo(self.dateStackView.snp_bottomMargin).offset(32)
+            make.top.equalTo(self.dateStackView.snp.bottom).offset(32)
             make.horizontalEdges.equalTo(view.safeAreaLayoutGuide).inset(16)
             make.height.equalTo(54)
         }
         
         detailInputButtonStackView.snp.makeConstraints { make in
-            make.top.equalTo(self.amountTextField.snp_bottomMargin).offset(10)
-            make.left.equalTo(view.safeAreaLayoutGuide).inset(28)
+            make.top.equalTo(self.amountTextField.snp.bottom).offset(10)
+            make.leading.equalTo(view.safeAreaLayoutGuide).inset(28)
             make.right.equalTo(view.safeAreaLayoutGuide).inset(243)
             make.height.equalTo(40)
         }
         
         detailInputCellView.snp.makeConstraints { make in
-            make.top.equalTo(self.detailInputButtonStackView).offset(30)
-            make.horizontalEdges.equalTo(view.safeAreaLayoutGuide).inset(28)
+            make.top.equalTo(self.detailInputButtonStackView.snp.bottom).offset(30)
+            make.horizontalEdges.equalTo(view.safeAreaLayoutGuide)
         }
     }
     
@@ -154,7 +149,7 @@ class InputViewController: UIViewController, View {
                 self.detailInputCellView.isHidden = !isVisible
                 
                 let angle: CGFloat = isVisible ? .pi : 0
-                UIView.animate(withDuration: 0.3) {
+                UIView.animate(withDuration: 0.1) {
                     self.detailInputChevron.transform = CGAffineTransform(rotationAngle: angle)
                 }
             })
