@@ -28,7 +28,7 @@ final class CalendarViewController: UIViewController, View {
     private lazy var monthLabel: UILabel = {
         let label = UILabel()
         label.text = "9월"
-        label.font = .pretendardSemibold_36()
+        label.font = .pretendardSemibold_36
         label.textColor = .Haruby.white
         
         label.snp.makeConstraints { make in
@@ -41,7 +41,7 @@ final class CalendarViewController: UIViewController, View {
     private lazy var totalHarubyValueLabel: UILabel = {
         let label = UILabel()
         label.text = "170,000원"
-        label.font = .pretendardSemibold_18()
+        label.font = .pretendardSemibold_18
         label.textColor = .Haruby.white
         
         label.snp.makeConstraints { make in
@@ -60,7 +60,7 @@ final class CalendarViewController: UIViewController, View {
         
         let totalHarubyTitleLabel = UILabel()
         totalHarubyTitleLabel.text = "남은 총 하루비"
-        totalHarubyTitleLabel.font = .pretendardMedium_14()
+        totalHarubyTitleLabel.font = .pretendardMedium_14
         totalHarubyTitleLabel.textColor = .Haruby.white
         
         let stackView = UIStackView(arrangedSubviews: [totalHarubyTitleLabel, totalHarubyValueLabel])
@@ -112,7 +112,7 @@ final class CalendarViewController: UIViewController, View {
         for weekday in weekdays {
             let label = UILabel()
             label.text = weekday
-            label.font = .pretendardMedium_16()
+            label.font = .pretendardMedium_16
             label.textColor = .Haruby.textBlack
             label.textAlignment = .center
             
@@ -151,7 +151,7 @@ final class CalendarViewController: UIViewController, View {
     private lazy var warningLabel: UIView = {
        let label = UILabel()
         label.text = "아직 입력하지 않은 지출 및 수입이 있어요!"
-        label.font = .pretendardMedium_12()
+        label.font = .pretendardMedium_12
         label.textColor = .Haruby.red
         label.textAlignment = .center
         
