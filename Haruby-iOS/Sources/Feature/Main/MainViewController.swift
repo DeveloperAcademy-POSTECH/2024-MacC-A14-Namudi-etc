@@ -19,7 +19,7 @@ final class MainViewController: UIViewController, View {
     private lazy var topAvgHarubyText1: UILabel = {
         let label = UILabel()
         label.textColor = .Haruby.whiteDeep50
-        label.font = .pretendardMedium_14()
+        label.font = .pretendardMedium_14
         label.textAlignment = .center
         label.text = "다음 월급까지의 평균 하루비는 "
         return label
@@ -28,7 +28,7 @@ final class MainViewController: UIViewController, View {
     private lazy var topAvgHarubyText2: UILabel = {
         let label = UILabel()
         label.textColor = .Haruby.whiteDeep50
-        label.font = .pretendardSemibold_14()
+        label.font = .pretendardSemibold_14
         label.textAlignment = .center
         label.text = "-"
         return label
@@ -37,7 +37,7 @@ final class MainViewController: UIViewController, View {
     private lazy var topAvgHarubyText3: UILabel = {
         let label = UILabel()
         label.textColor = .Haruby.whiteDeep50
-        label.font = .pretendardMedium_14()
+        label.font = .pretendardMedium_14
         label.textAlignment = .center
         label.text = "입니다 "
         return label
@@ -128,30 +128,25 @@ final class MainViewController: UIViewController, View {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
-        setupConstraints()
-        setupHeroAnimations()
         
         reactor?.action.onNext(.viewDidLoad)
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(true)
-        animateViewsSequentially()
     }
     
     // MARK: - Setup
     private func setupView() {
         view.backgroundColor = .Haruby.whiteDeep
+        
+        setupSUbviews()
+        setupConstraints()
+    }
+    
+    private func setupSUbviews() {
         view.addSubview(backgroundRectangle)
         view.addSubview(backgroundEllipse)
         view.addSubview(topAvgHarubyStackView)
         view.addSubview(receiptView)
         view.addSubview(navigateCalculatorButton)
         view.addSubview(navigateStackView)
-        
-        [topAvgHarubyStackView, receiptView, navigateCalculatorButton, navigateStackView].forEach {
-            $0.transform = CGAffineTransform(translationX: 0, y: view.bounds.height)
-        }
     }
     
     private func setupConstraints() {
@@ -217,41 +212,24 @@ final class MainViewController: UIViewController, View {
             .disposed(by: disposeBag)
         
         // State
-        reactor.state.map { $0.avgHaruby }
+        reactor.state.map { $0.mainState.todayHarubyTitle }
+            .distinctUntilChanged()
+            .bind(to: receiptView.titleLabel.rx.text)
+            .disposed(by: disposeBag)
+        
+        reactor.state.map { $0.mainState.avgHaruby }
             .distinctUntilChanged()
             .bind(to: topAvgHarubyText2.rx.text)
             .disposed(by: disposeBag)
         
-        reactor.state.map { $0.todayHaruby }
+        reactor.state.map { $0.mainState.todayHaruby }
             .distinctUntilChanged()
             .bind(to: receiptView.amountLabel.rx.text)
             .disposed(by: disposeBag)
         
-        reactor.state.map { $0.date }
+        reactor.state.map { $0.mainState.date }
             .distinctUntilChanged()
             .bind(to: receiptView.dateLabel.rx.text)
             .disposed(by: disposeBag)
-    }
-}
-
-// MARK: - Animation
-extension MainViewController {
-    private func setupHeroAnimations() {
-        self.hero.isEnabled = true
-        
-        [topAvgHarubyStackView, receiptView, navigateCalculatorButton, navigateStackView].forEach {
-            $0.hero.modifiers = [.translate(y: view.bounds.height)]
-        }
-    }
-    
-    private func animateViewsSequentially() {
-        let views = [topAvgHarubyStackView, receiptView, navigateCalculatorButton, navigateStackView]
-        let delay: TimeInterval = 0.15
-        
-        for (index, view) in views.enumerated() {
-            UIView.animate(withDuration: 0.5, delay: delay * Double(index), options: .curveEaseOut, animations: {
-                view.transform = .identity
-            })
-        }
     }
 }

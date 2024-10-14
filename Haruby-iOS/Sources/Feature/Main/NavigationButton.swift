@@ -26,14 +26,14 @@ final class NavigationButton: UIButton {
     
     private let customTitleLabel: UILabel = {
         let label = UILabel()
-        label.font = .pretendardSemibold_18()
+        label.font = .pretendardSemibold_18
         label.textColor = .Haruby.main
         return label
     }()
     
     private let customSubTitleLabel: UILabel = {
         let label = UILabel()
-        label.font = .pretendardMedium_12()
+        label.font = .pretendardMedium_12
         label.textColor = .Haruby.textBright
         return label
     }()
