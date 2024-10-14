@@ -130,8 +130,7 @@ final class ReceiptView: UIView {
         }
         
         inputButton.snp.makeConstraints { make in
-            make.leading.equalToSuperview().offset(27)
-            make.trailing.equalToSuperview().offset(-27)
+            make.horizontalEdges.equalToSuperview().inset(27)
             make.top.equalToSuperview().offset(frame.height - 78 + 14) // 하단 DottedLine에서 14만큼 패딩
             make.bottom.equalToSuperview().offset(-25)
             make.height.equalTo(39)
