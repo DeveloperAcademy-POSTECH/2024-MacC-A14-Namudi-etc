@@ -193,7 +193,7 @@ final class CalculationProcessView: UIView {
     
     private func configureConstraints() {
         containerStackView.snp.makeConstraints { make in
-            make.top.horizontalEdges.equalToSuperview()
+            make.edges.equalToSuperview()
         }
         
         totalHarubyStackView.snp.makeConstraints { make in

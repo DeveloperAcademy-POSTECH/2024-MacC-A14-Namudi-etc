@@ -55,4 +55,9 @@ extension UIFont {
     static func pretendard(size: CGFloat, weight: PretendardWeight) -> UIFont {
         weight.fontConvertible.font(size: size)
     }
+    
+    // MARK: - Pretendard ExtraLight
+    static func pretendardExtraLight_37() -> UIFont {
+        HarubyIOSFontFamily.Pretendard.extraLight.font(size: 37)
+    }
 }
