@@ -50,6 +50,7 @@ class InputViewController: UIViewController, View {
         textField.font = .pretendardSemibold_20()
         textField.borderStyle = .roundedRect
         textField.backgroundColor = .Haruby.white
+        textField.keyboardType = .numberPad
         textField.layer.cornerRadius = 10
         textField.layer.borderWidth = 1
         textField.layer.borderColor = UIColor.Haruby.textBright40.cgColor
@@ -92,6 +93,9 @@ class InputViewController: UIViewController, View {
         
         addSubviews()
         configureConstraints()
+        
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        view.addGestureRecognizer(tapGesture)
     }
     
     // MARK: - UI Setup
@@ -128,6 +132,10 @@ class InputViewController: UIViewController, View {
             make.top.equalTo(self.detailInputButtonStackView.snp.bottom).offset(30)
             make.horizontalEdges.equalTo(view.safeAreaLayoutGuide)
         }
+    }
+    
+    @objc private func dismissKeyboard() {
+        view.endEditing(true)
     }
     
     func bind(reactor: InputViewReactor) {
