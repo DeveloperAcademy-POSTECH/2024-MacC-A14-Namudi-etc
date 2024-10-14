@@ -17,21 +17,21 @@ final class NavigationButton: UIButton {
         return view
     }()
     
-    private let symbolImageView: UIImageView = {
+    let symbolImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.tintColor = .Haruby.main
         imageView.contentMode = .scaleAspectFit
         return imageView
     }()
     
-    private let customTitleLabel: UILabel = {
+    let customTitleLabel: UILabel = {
         let label = UILabel()
         label.font = .pretendardSemibold_18
         label.textColor = .Haruby.main
         return label
     }()
     
-    private let customSubTitleLabel: UILabel = {
+    let customSubTitleLabel: UILabel = {
         let label = UILabel()
         label.font = .pretendardMedium_12
         label.textColor = .Haruby.textBright
@@ -46,9 +46,9 @@ final class NavigationButton: UIButton {
     }()
     
     // MARK: - Initialization
-    init(title: String, subtitle: String, symbolName: String) {
+    init() {
         super.init(frame: .zero)
-        setupView(title: title, subtitle: subtitle, symbolName: symbolName)
+        setupView()
     }
     
     required init?(coder: NSCoder) {
@@ -56,12 +56,9 @@ final class NavigationButton: UIButton {
     }
     
     // MARK: - Setup
-    private func setupView(title: String, subtitle: String, symbolName: String) {
+    private func setupView() {
         backgroundColor = .white
         layer.cornerRadius = 10
-        symbolImageView.image = UIImage(systemName: symbolName)
-        customTitleLabel.text = title
-        customSubTitleLabel.text = subtitle
         circleView.isUserInteractionEnabled = false
         labelStackView.isUserInteractionEnabled = false
         
@@ -77,7 +74,7 @@ final class NavigationButton: UIButton {
     
     private func setupConstraints() {
         circleView.snp.makeConstraints { make in
-            make.left.equalToSuperview().offset(11)
+            make.leading.equalToSuperview().offset(11)
             make.centerY.equalToSuperview()
             make.width.height.equalTo(44)
         }

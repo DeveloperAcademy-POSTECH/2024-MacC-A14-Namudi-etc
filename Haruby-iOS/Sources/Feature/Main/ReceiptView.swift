@@ -13,14 +13,14 @@ final class ReceiptView: UIView {
     private let sidePadding: CGFloat = 15
     
     // MARK: - UI Components
-    internal let dateLabel: UILabel = {
+    let dateLabel: UILabel = {
         let label = UILabel()
         label.font = .pretendard(size: 16, weight: .semiBold)
         label.textColor = .Haruby.textBlack
         return label
     }()
     
-    internal let titleLabel: UILabel = {
+    let titleLabel: UILabel = {
         let label = UILabel()
         label.font = .pretendard(size: 24, weight: .semiBold)
         label.text = "-"
@@ -28,14 +28,14 @@ final class ReceiptView: UIView {
         return label
     }()
     
-    internal let amountBox: UIView = {
+    let amountBox: UIView = {
         let view = UIView()
         view.backgroundColor = .Haruby.whiteDeep
         view.layer.cornerRadius = 10
         return view
     }()
     
-    internal let amountLabel: UILabel = {
+    let amountLabel: UILabel = {
         let label = UILabel()
         label.font = .pretendard(size: 36, weight: .bold)
         label.text = "-"
@@ -47,10 +47,6 @@ final class ReceiptView: UIView {
         let imageView = UIImageView()
         imageView.image = .purpleHaruby
         imageView.contentMode = .scaleAspectFit
-        imageView.snp.makeConstraints { make in
-            make.width.equalTo(35)
-            make.height.equalTo(30)
-        }
         return imageView
     }()
 
@@ -62,7 +58,7 @@ final class ReceiptView: UIView {
         return stackView
     }()
     
-    internal let inputButton: UIButton = {
+    let inputButton: UIButton = {
         let button = UIButton(type: .system)
         
         var configuration = UIButton.Configuration.filled()
@@ -128,10 +124,15 @@ final class ReceiptView: UIView {
             make.top.bottom.equalTo(amountBox).inset(5)
         }
         
+        harubyImageView.snp.makeConstraints { make in
+            make.width.equalTo(35)
+            make.height.equalTo(30)
+        }
+        
         inputButton.snp.makeConstraints { make in
             make.leading.equalToSuperview().offset(27)
             make.trailing.equalToSuperview().offset(-27)
-            make.top.equalToSuperview().offset(frame.height - 78 + 14)
+            make.top.equalToSuperview().offset(frame.height - 78 + 14) // 하단 DottedLine에서 14만큼 패딩
             make.bottom.equalToSuperview().offset(-25)
             make.height.equalTo(39)
         }
@@ -145,7 +146,7 @@ final class ReceiptView: UIView {
         layer.addSublayer(receiptShapeLayer)
         
         addDottedLine(at: 53)
-        addDottedLine(at: frame.height - 78)
+        addDottedLine(at: frame.height - 78) // 영수증 뷰 하단에서 78만큼 위에 위치
         
         addElevation()
     }

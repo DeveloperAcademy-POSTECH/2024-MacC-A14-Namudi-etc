@@ -47,9 +47,6 @@ final class MainViewController: UIViewController, View {
         let imageView = UIImageView()
         imageView.image = UIImage(systemName: "info.circle")
         imageView.tintColor = .Haruby.whiteDeep50
-        imageView.snp.makeConstraints { make in
-            make.width.height.equalTo(17)
-        }
         return imageView
     }()
     
@@ -89,23 +86,32 @@ final class MainViewController: UIViewController, View {
         return view
     }()
     
-    private lazy var navigateCalculatorButton = NavigationButton(
-        title: "하루비 계산기",
-        subtitle: "지금 지출이 앞으로의 하루비에 얼마나 영향을 줄까요?",
-        symbolName: "plus.forwardslash.minus"
-    )
+    private let navigateCalculatorButton: NavigationButton = {
+        let button = NavigationButton()
+        button.customTitleLabel.text = "하루비 계산기"
+        button.customSubTitleLabel.text = "지금 지출이 앞으로의 하루비에 얼마나 영향을 줄까요?"
+        button.symbolImageView.image = UIImage(systemName: "plus.forwardslash.minus")
+        
+        return button
+    }()
     
-    private lazy var navigateCalendarButton = NavigationButton(
-        title: "하루비 달력",
-        subtitle: "하루비 확인 및 조정",
-        symbolName: "calendar"
-    )
+    private let navigateCalendarButton: NavigationButton = {
+        let button = NavigationButton()
+        button.customTitleLabel.text = "하루비 달력"
+        button.customSubTitleLabel.text = "하루비 확인 및 조정"
+        button.symbolImageView.image = UIImage(systemName: "calendar")
+        
+        return button
+    }()
     
-    private lazy var navigateManagementButton = NavigationButton(
-        title: "하루비 관리",
-        subtitle: "고정지출 및 수입 관리",
-        symbolName: "wonsign"
-    )
+    private let navigateManagementButton: NavigationButton = {
+        let button = NavigationButton()
+        button.customTitleLabel.text = "하루비 관리"
+        button.customSubTitleLabel.text = "고정지출 및 수입 관리"
+        button.symbolImageView.image = UIImage(systemName: "wonsign")
+        
+        return button
+    }()
     
     private lazy var navigateStackView: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: [navigateCalendarButton, navigateManagementButton])
@@ -136,11 +142,11 @@ final class MainViewController: UIViewController, View {
     private func setupView() {
         view.backgroundColor = .Haruby.whiteDeep
         
-        setupSUbviews()
+        setupSubviews()
         setupConstraints()
     }
     
-    private func setupSUbviews() {
+    private func setupSubviews() {
         view.addSubview(backgroundRectangle)
         view.addSubview(backgroundEllipse)
         view.addSubview(topAvgHarubyStackView)
@@ -161,6 +167,10 @@ final class MainViewController: UIViewController, View {
             make.top.equalToSuperview().offset(211)
             make.width.equalTo(484)
             make.height.equalTo(174)
+        }
+        
+        topAvgHarubyIcon.snp.makeConstraints { make in
+            make.width.height.equalTo(17)
         }
         
         topAvgHarubyStackView.snp.makeConstraints { make in
