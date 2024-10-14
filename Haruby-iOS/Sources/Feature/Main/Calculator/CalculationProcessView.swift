@@ -24,7 +24,7 @@ final class CalculationProcessView: UIView {
         let view = UILabel()
         view.text = "("
         view.textColor = .Haruby.textBright
-        view.font = .pretendardMedium_20()
+        view.font = .pretendardMedium_20
         return view
     }()
     
@@ -50,7 +50,7 @@ final class CalculationProcessView: UIView {
         let view = UILabel()
         view.text = "남은 총 하루비"
         view.textColor = .Haruby.textBright
-        view.font = .pretendardSemibold_11()
+        view.font = .pretendardSemibold_11
         return view
     }()
     
@@ -58,7 +58,7 @@ final class CalculationProcessView: UIView {
         let view = UILabel()
         view.text = "\(170000.decimalWithWon)"
         view.textColor = .Haruby.textBright
-        view.font = .pretendardSemibold_16()
+        view.font = .pretendardSemibold_16
         return view
     }()
     
@@ -66,7 +66,7 @@ final class CalculationProcessView: UIView {
         let view = UILabel()
         view.text = "-"
         view.textColor = .Haruby.textBright
-        view.font = .pretendardMedium_20()
+        view.font = .pretendardMedium_20
         return view
     }()
     
@@ -90,7 +90,7 @@ final class CalculationProcessView: UIView {
         let view = UILabel()
         view.text = "지출 예정 금액"
         view.textColor = .Haruby.textBright
-        view.font = .pretendardSemibold_11()
+        view.font = .pretendardSemibold_11
         return view
     }()
     
@@ -98,7 +98,7 @@ final class CalculationProcessView: UIView {
         let view = UILabel()
         view.text = "\(36900.decimalWithWon)"
         view.textColor = .Haruby.textBright
-        view.font = .pretendardSemibold_16()
+        view.font = .pretendardSemibold_16
         return view
     }()
     
@@ -106,7 +106,7 @@ final class CalculationProcessView: UIView {
         let view = UILabel()
         view.text = ")"
         view.textColor = .Haruby.textBright
-        view.font = .pretendardMedium_20()
+        view.font = .pretendardMedium_20
         return view
     }()
     
@@ -114,7 +114,7 @@ final class CalculationProcessView: UIView {
         let view = UILabel()
         view.text = "÷"
         view.textColor = .Haruby.textBright
-        view.font = .pretendardMedium_20()
+        view.font = .pretendardMedium_20
         return view
     }()
     
@@ -138,7 +138,7 @@ final class CalculationProcessView: UIView {
         let view = UILabel()
         view.text = "남은 일자"
         view.textColor = .Haruby.textBright
-        view.font = .pretendardSemibold_11()
+        view.font = .pretendardSemibold_11
         return view
     }()
     
@@ -146,24 +146,27 @@ final class CalculationProcessView: UIView {
         let view = UILabel()
         view.text = "15일"
         view.textColor = .Haruby.textBright
-        view.font = .pretendardSemibold_16()
+        view.font = .pretendardSemibold_16
         return view
     }()
 
     override init(frame: CGRect) {
         super.init(frame: frame)
         
-        addSubviews()
-        configureConstraints()
+        setupView()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    // MARK: - addSubviews()
+    // MARK: - Setup View
+    private func setupView() {
+        setupSubviews()
+        setupConstraints()
+    }
     
-    private func addSubviews() {
+    private func setupSubviews() {
         addSubview(containerStackView)
         
         [leftParenthesisSymbol, totalHarubyContainerView, minusSymbol,
@@ -189,9 +192,7 @@ final class CalculationProcessView: UIView {
         }
     }
     
-    // MARK: - configureConstraints()
-    
-    private func configureConstraints() {
+    private func setupConstraints() {
         containerStackView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }

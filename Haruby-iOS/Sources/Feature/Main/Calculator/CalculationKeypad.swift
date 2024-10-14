@@ -8,58 +8,60 @@
 import UIKit
 import SnapKit
 
-enum ButtonType {
-    case number(String)
-    case operatorSymbol(String)
-    case delete(String)
-    
-    var title: String {
-        switch self {
-        case .number(let value), .operatorSymbol(let value), .delete(let value):
-            return value
-        }
-    }
-    
-    var textColor: UIColor {
-        switch self {
-        case .number:
-            return .Haruby.textBlack
-        case .operatorSymbol(let symbol):
-            return symbol == "=" ? .Haruby.white : .Haruby.main
-        case .delete:
-            return .Haruby.main
-        }
-    }
-    
-    var backgroundColor: UIColor {
-        switch self {
-        case .number:
-            return .Haruby.white
-        case .operatorSymbol(let symbol):
-            return symbol == "=" ? .Haruby.main : .Haruby.mainBright15
-        case .delete:
-            return .Haruby.mainBright15
-        }
-    }
-    
-    var font: UIFont {
-        switch self {
-        case .number, .delete:
-            return .pretendardRegular_24()
-        case .operatorSymbol:
-            return .pretendardExtraLight_37()
-        }
-    }
-    
-    var isSquare: Bool {
-        if case let .operatorSymbol(type) = self,
-           type == "=" { return false }
-        return true
-    }
-}
-
 final class CalculationKeypad: UIView {
     
+    enum KeypadButtonType {
+        case number(String)
+        case operatorSymbol(String)
+        case delete(String)
+        
+        var title: String {
+            switch self {
+            case .number(let value), .operatorSymbol(let value), .delete(let value):
+                return value
+            }
+        }
+        
+        var textColor: UIColor {
+            switch self {
+            case .number:
+                return .Haruby.textBlack
+            case .operatorSymbol(let symbol):
+                return symbol == "=" ? .Haruby.white : .Haruby.main
+            case .delete:
+                return .Haruby.main
+            }
+        }
+        
+        var backgroundColor: UIColor {
+            switch self {
+            case .number:
+                return .Haruby.white
+            case .operatorSymbol(let symbol):
+                return symbol == "=" ? .Haruby.main : .Haruby.mainBright15
+            case .delete:
+                return .Haruby.mainBright15
+            }
+        }
+        
+        var font: UIFont {
+            switch self {
+            case .number, .delete:
+                return .pretendardRegular_24
+            case .operatorSymbol:
+                return .pretendardExtraLight_37()
+            }
+        }
+        
+        var isSquare: Bool {
+            if case let .operatorSymbol(type) = self,
+               type == "=" { return false }
+            return true
+        }
+    }
+    
+    
+    // MARK: - UI Components
     private lazy var containerStackView: UIStackView = {
         let view = UIStackView()
         view.axis = .horizontal
@@ -77,13 +79,14 @@ final class CalculationKeypad: UIView {
         (UIScreen.main.bounds.width - (horizontalPadding * 2) - (horizontalSpacing * 3)) / 4
     }
     
-    private let keypadTypes: [[ButtonType]] = [
+    private let keypadTypes: [[KeypadButtonType]] = [
         [.delete("AC"), .number("1"), .number("4"), .number("7"), .number("0")],
         [.operatorSymbol("÷"), .number("2"), .number("5"), .number("8"), .number("00")],
         [.operatorSymbol("×"), .number("3"), .number("6"), .number("9"), .number("000")],
         [.delete(""), .operatorSymbol("−"), .operatorSymbol("+"), .operatorSymbol("=")]
     ]
     
+    // MARK: - Properties
     var numberButtons: [UIButton] = []
     var operatorButtons: [UIButton] = []
     var deleteButtons: [UIButton] = []
@@ -93,24 +96,25 @@ final class CalculationKeypad: UIView {
         
         backgroundColor = .Haruby.whiteDeep
         
-        addSubviews()
-        configureConstraints()
-        configureKeypads()
+        setupView()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    // MARK: - addSubviews()
+    // MARK: - Setup View
+    private func setupView() {
+        setupSubviews()
+        setupConstraints()
+        setupKeypads()
+    }
     
-    private func addSubviews() {
+    private func setupSubviews() {
         addSubview(containerStackView)
     }
     
-    // MARK: - configureConstraints()
-    
-    private func configureConstraints() {
+    private func setupConstraints() {
         containerStackView.snp.makeConstraints { make in
             make.top.equalToSuperview().inset(self.verticalPadding)
             make.bottom.equalTo(self.safeAreaLayoutGuide).inset(self.verticalPadding)
@@ -118,7 +122,7 @@ final class CalculationKeypad: UIView {
         }
     }
     
-    private func configureKeypads() {
+    private func setupKeypads() {
         for (idx, keypad) in keypadTypes.enumerated() {
             
             let stackView = createStackView(isLastRow: idx == keypadTypes.count - 1)
@@ -157,7 +161,7 @@ extension CalculationKeypad {
         return stackView
     }
     
-    private func createButton(_ type: ButtonType) -> UIButton {
+    private func createButton(_ type: KeypadButtonType) -> UIButton {
         let button = UIButton()
         if type.title.isEmpty {
             button.setImage(.delete, for: .normal)
