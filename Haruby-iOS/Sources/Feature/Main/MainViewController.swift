@@ -180,7 +180,7 @@ final class MainViewController: UIViewController, View {
 
         receiptView.snp.makeConstraints { make in
             make.top.equalTo(topAvgHarubyStackView.snp.bottom).offset(9)
-            make.left.right.equalToSuperview().inset(16)
+            make.leading.trailing.equalToSuperview().inset(16)
             make.height.equalTo(331)
         }
         
