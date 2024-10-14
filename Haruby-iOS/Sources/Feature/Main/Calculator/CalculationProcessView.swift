@@ -46,7 +46,7 @@ final class CalculationProcessView: UIView {
         return view
     }()
     
-    private lazy var totalHarybyTitle: UILabel = {
+    private lazy var totalHarubyTitle: UILabel = {
         let view = UILabel()
         view.text = "남은 총 하루비"
         view.textColor = .Haruby.textBright
@@ -54,7 +54,7 @@ final class CalculationProcessView: UIView {
         return view
     }()
     
-    private lazy var totalHaryby: UILabel = {
+    private lazy var totalHaruby: UILabel = {
         let view = UILabel()
         view.text = "\(170000.decimalWithWon)"
         view.textColor = .Haruby.textBright
@@ -176,7 +176,7 @@ final class CalculationProcessView: UIView {
         
         totalHarubyContainerView.addSubview(totalHarubyStackView)
         
-        [totalHarybyTitle, totalHaryby].forEach { totalHarubyStackView.addArrangedSubview($0)
+        [totalHarubyTitle, totalHaruby].forEach { totalHarubyStackView.addArrangedSubview($0)
         }
         
         estimatedPriceContainerView.addSubview(estimatedPriceStackView)

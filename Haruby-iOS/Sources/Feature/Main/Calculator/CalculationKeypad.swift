@@ -94,8 +94,6 @@ final class CalculationKeypad: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         
-        backgroundColor = .Haruby.whiteDeep
-        
         setupView()
     }
     
@@ -105,6 +103,8 @@ final class CalculationKeypad: UIView {
     
     // MARK: - Setup View
     private func setupView() {
+        backgroundColor = .Haruby.whiteDeep
+        
         setupSubviews()
         setupConstraints()
         setupKeypads()
