@@ -85,6 +85,7 @@ final class HarubyEditViewController: UIViewController, View {
         return label
     }()
     
+    private lazy var bottomButton = BottomButton(title: "저장하기")
     
     // MARK: - Lifecycle
     override func viewDidLoad() {
@@ -92,6 +93,7 @@ final class HarubyEditViewController: UIViewController, View {
         
         // Do any additional setup after loading the view.
         setupConstraints()
+        setupTapGesture()
     }
     
     override func loadView() {
@@ -100,7 +102,7 @@ final class HarubyEditViewController: UIViewController, View {
         self.view = view
         view.backgroundColor = .systemBackground
         
-        [harubyTitleLabel, harubyContainerView, memoTitleLabel, memoContainerView, memoFooterLabel].forEach { self.view.addSubview($0) }
+        [harubyTitleLabel, harubyContainerView, memoTitleLabel, memoContainerView, memoFooterLabel, bottomButton].forEach { self.view.addSubview($0) }
     }
     
     // MARK: - Binding
@@ -114,6 +116,10 @@ final class HarubyEditViewController: UIViewController, View {
             })
             .disposed(by: disposeBag)
         
+        bottomButton.rx.tap
+            .map{ Reactor.Action.bottomButtonTapped }
+                   .bind(to: reactor.action)
+                   .disposed(by: disposeBag)
         // State
         
     }
@@ -146,6 +152,11 @@ final class HarubyEditViewController: UIViewController, View {
             make.top.equalTo(memoContainerView.snp.bottom).offset(8)
             make.trailing.equalToSuperview().offset(-30)
         }
+        
+        bottomButton.snp.makeConstraints { make in
+            make.bottom.equalToSuperview()
+            make.horizontalEdges.equalToSuperview()
+        }
     }
     
     private func updateText(_ text: String) {
@@ -154,6 +165,16 @@ final class HarubyEditViewController: UIViewController, View {
         } else {
             self.memoFooterLabel.text = "(\(text.count)/30)"
         }
+    }
+    
+    private func setupTapGesture() {
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        tapGesture.cancelsTouchesInView = false
+        view.addGestureRecognizer(tapGesture)
+    }
+    
+    @objc private func dismissKeyboard() {
+        view.endEditing(true)
     }
 }
 

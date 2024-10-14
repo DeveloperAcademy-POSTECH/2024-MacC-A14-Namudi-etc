@@ -10,11 +10,10 @@ import RxSwift
 
 final class HarubyEditViewReactor: Reactor {
     enum Action {
-        
+        case bottomButtonTapped
     }
     
     enum Mutation {
-        
     }
     
     struct State {
@@ -24,7 +23,11 @@ final class HarubyEditViewReactor: Reactor {
     let initialState: State = State()
     
     func mutate(action: Action) -> Observable<Mutation> {
-        
+        switch action {
+            case .bottomButtonTapped:
+            print("bottomButtonTapped")
+            return .empty()
+        }
     }
     
     func reduce(state: State, mutation: Mutation) -> State {
