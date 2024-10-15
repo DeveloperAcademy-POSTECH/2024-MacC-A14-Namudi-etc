@@ -17,6 +17,12 @@ class BottomButton: UIButton {
     let buttonTapSubject = PublishSubject<Void>()
     private let disposeBag = DisposeBag()
     
+    var title: String? {
+        didSet {
+            self.label.text = title
+        }
+    }
+    
     // MARK: - UI Components
     private lazy var label: UILabel = {
         let label = UILabel()
@@ -27,9 +33,8 @@ class BottomButton: UIButton {
     }()
     
     // MARK: - Initializers
-    init(title: String) {
+    override init(frame: CGRect) {
         super.init(frame: .zero)
-        label.text = title
         
         setupView()
     }
