@@ -74,6 +74,8 @@ class InputViewController: UIViewController, View {
     
     private lazy var detailInputScrollView = DetailInputScrollView()
     
+    private let bottomButtonView = BottomButton()
+    
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -93,6 +95,7 @@ class InputViewController: UIViewController, View {
         self.view.addSubview(amountTextField)
         self.view.addSubview(detailInputButtonStackView)
         self.view.addSubview(detailInputScrollView)
+        self.view.addSubview(bottomButtonView)
         
         detailInputScrollView.isHidden = true
     }
@@ -111,12 +114,16 @@ class InputViewController: UIViewController, View {
         detailInputButtonStackView.snp.makeConstraints { make in
             make.top.equalTo(self.amountTextField.snp.bottom).offset(10)
             make.leading.equalTo(view.safeAreaLayoutGuide).inset(28)
-            make.right.equalTo(view.safeAreaLayoutGuide).inset(243)
         }
         
         detailInputScrollView.snp.makeConstraints { make in
             make.top.equalTo(self.detailInputButtonStackView.snp.bottom).offset(30)
             make.horizontalEdges.equalTo(view.safeAreaLayoutGuide)
+        }
+        
+        bottomButtonView.snp.makeConstraints { make in
+            make.leading.trailing.equalToSuperview()
+            make.bottom.equalTo(view.snp.bottom)
         }
     }
     
