@@ -12,14 +12,17 @@ import RxSwift
 final class InputViewReactor: Reactor {
     enum Action {
         case toggleDetailButton
+        case showDatePicker
     }
     
     enum Mutation {
         case setDetailVisible(Bool)
+        case setDatePickerVisible(Bool)
     }
     
     struct State {
         var isDetailVisible: Bool = false
+        var isDatePickerVisible: Bool = false
     }
     
     private(set) var initialState: State = State()
@@ -27,8 +30,12 @@ final class InputViewReactor: Reactor {
     func mutate(action: Action) -> Observable<Mutation> {
         switch action {
         case .toggleDetailButton:
-            print("tapped \(currentState.isDetailVisible)")
-            return Observable.just(.setDetailVisible(!currentState.isDetailVisible))
+            let isDetailVisible = !currentState.isDetailVisible
+            return Observable.just(.setDetailVisible(isDetailVisible))
+            
+        case .showDatePicker:
+            let isDatePickerVisible = !currentState.isDatePickerVisible
+            return Observable.just(.setDatePickerVisible(isDatePickerVisible))
         }
     }
     
@@ -37,6 +44,9 @@ final class InputViewReactor: Reactor {
         switch mutation {
         case .setDetailVisible(let isVisible):
             newState.isDetailVisible = isVisible
+            
+        case .setDatePickerVisible(let isVisible):
+            newState.isDatePickerVisible = isVisible
         }
         
         return newState
