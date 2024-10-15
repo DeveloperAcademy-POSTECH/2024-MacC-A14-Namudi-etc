@@ -17,7 +17,7 @@ class DetailInputScrollView: UIView {
         button.setTitleColor(.Haruby.main, for: .normal)
         button.titleLabel?.font = .pretendardMedium_16
         button.backgroundColor = .clear
-        button.addTarget(self, action: #selector(addExpense), for: .touchUpInside)
+        button.addTarget(self, action: #selector(addDetailItem), for: .touchUpInside)
         return button
     }()
     
@@ -27,6 +27,7 @@ class DetailInputScrollView: UIView {
         super.init(frame: frame)
         setupSubviews()
         setupConstraints()
+        addDetailItem()
     }
     
     required init?(coder: NSCoder) {
@@ -59,7 +60,7 @@ class DetailInputScrollView: UIView {
         }
     }
     
-    @objc private func addExpense() {
+    @objc private func addDetailItem() {
         let newExpenseCell = DetailInputCell()
         contentView.addSubview(newExpenseCell)
         
