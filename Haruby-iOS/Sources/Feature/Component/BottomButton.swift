@@ -26,7 +26,7 @@ class BottomButton: UIButton {
     // MARK: - UI Components
     private lazy var label: UILabel = {
         let label = UILabel()
-        label.font = .pretendardSemibold_20()
+        label.font = .pretendardSemibold_20
         label.textColor = .Haruby.white
         label.textAlignment = .center
         return label
