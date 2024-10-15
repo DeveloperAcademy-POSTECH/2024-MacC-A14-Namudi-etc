@@ -19,7 +19,7 @@ final class RoundedTextField: UIView {
         return view
     }()
     
-    private lazy var textField: UITextField = {
+    lazy var textField: UITextField = {
         let textField = UITextField()
         textField.font = .pretendardSemibold_20
         textField.textColor = .Haruby.textBlack
