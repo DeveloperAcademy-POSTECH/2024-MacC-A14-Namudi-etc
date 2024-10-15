@@ -60,17 +60,8 @@ final class CalculationKeypad: UIView {
         }
     }
     
-    
-    // MARK: - UI Components
-    private lazy var containerStackView: UIStackView = {
-        let view = UIStackView()
-        view.axis = .horizontal
-        view.distribution = .fillEqually
-        view.alignment = .fill
-        view.spacing = horizontalSpacing
-        return view
-    }()
-    
+    // MARK: - Properties
+
     private let horizontalSpacing: CGFloat = 27
     private let verticalSpacing: CGFloat = 18
     private let horizontalPadding: CGFloat = 40
@@ -86,10 +77,23 @@ final class CalculationKeypad: UIView {
         [.delete(""), .operatorSymbol("−"), .operatorSymbol("+"), .operatorSymbol("=")]
     ]
     
-    // MARK: - Properties
     var numberButtons: [UIButton] = []
     var operatorButtons: [UIButton] = []
     var deleteButtons: [UIButton] = []
+    
+    
+    // MARK: - UI Components
+    
+    private lazy var containerStackView: UIStackView = {
+        let view = UIStackView()
+        view.axis = .horizontal
+        view.distribution = .fillEqually
+        view.alignment = .fill
+        view.spacing = horizontalSpacing
+        return view
+    }()
+    
+    
 
     override init(frame: CGRect) {
         super.init(frame: frame)
