@@ -37,6 +37,12 @@ class InputTextField: UIView {
         }
     }
     
+    var keyboardType: UIKeyboardType = .default {
+        didSet {
+            self.textField.keyboardType = keyboardType
+        }
+    }
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         
