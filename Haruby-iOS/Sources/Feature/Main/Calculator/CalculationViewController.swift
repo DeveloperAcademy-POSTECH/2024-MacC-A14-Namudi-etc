@@ -228,7 +228,7 @@ final class CalculationViewController: UIViewController, View {
         
         reactor.state.map { $0.isResultButtonClicked }
             .distinctUntilChanged()
-//            .filter { $0 }
+            .filter { $0 }
             .subscribe { [weak self] _ in
                 self?.updateTopView()
             }
@@ -236,31 +236,19 @@ final class CalculationViewController: UIViewController, View {
     }
     
     private func bindAction(reactor: Reactor) {
-        var numberButtons = calculationKeypad.numberButtons.map { button in
+        let buttons = [
+            calculationKeypad.numberButtons,
+            calculationKeypad.operatorButtons,
+            calculationKeypad.deleteButtons
+        ].flatMap { $0 }
+        
+        let observableButtons = buttons.map { button in
             button.rx.tap.map { _ in
-                Reactor.Action.numberButtonTapped(button.titleLabel!.text!)
-            }
-        }
-        var operatorButtons = calculationKeypad.operatorButtons.map { button in
-            button.rx.tap.map { _ in
-                Reactor.Action.operatorButtonTapped(button.titleLabel!.text!)
-            }
-        }
-        var deleteButtons = calculationKeypad.deleteButtons.map { button in
-            button.rx.tap.map { _ in
-                Reactor.Action.deleteButtonTapped(button.titleLabel?.text ?? "")
+                Reactor.Action.keypadButtonTapped(button.titleLabel?.text ?? "")
             }
         }
         
-        Observable.merge(numberButtons)
-            .bind(to: reactor.action)
-            .disposed(by: disposeBag)
-            
-        Observable.merge(operatorButtons)
-            .bind(to: reactor.action)
-            .disposed(by: disposeBag)
-        
-        Observable.merge(deleteButtons)
+        Observable.merge(observableButtons)
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
     }
@@ -271,6 +259,7 @@ extension CalculationViewController {
         bottomImageView.isHidden = false
         bottomPriceLabel.isHidden = false
         
+        topLabel.text = "지출 후 바뀔 평균 하루비는"
         bottomLabel.text = "입니다"
         
         bottomPriceLabel.font = .pretendardSemibold_36
