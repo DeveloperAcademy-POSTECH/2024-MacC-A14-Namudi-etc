@@ -8,7 +8,7 @@
 import UIKit
 import SnapKit
 
-final class CalculationKeypad: UIView {
+final class CalculatorKeypad: UIView {
     
     enum KeypadButtonType {
         case number(String)
@@ -155,7 +155,7 @@ final class CalculationKeypad: UIView {
     }
 }
 
-extension CalculationKeypad {
+extension CalculatorKeypad {
     private func createStackView(isLastRow: Bool) -> UIStackView {
         let stackView = UIStackView()
         stackView.axis = .vertical
@@ -169,7 +169,6 @@ extension CalculationKeypad {
         let button = UIButton()
         if type.title.isEmpty {
             button.setImage(.delete, for: .normal)
-//            button.setImage(UIImage(systemName: "delete.left.fill").resi, for: .normal)
             button.imageView?.tintColor = type.textColor
             button.imageView?.contentMode = .scaleAspectFit
             button.imageView?.backgroundColor = type.backgroundColor
