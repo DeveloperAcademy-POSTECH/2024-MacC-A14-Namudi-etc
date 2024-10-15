@@ -22,7 +22,7 @@ final class CalendarViewController: UIViewController, View {
     // MARK: - Properties
     private let cellId: String = "CalendarCell"
     private let cellHeight: CGFloat = 83
-    
+    private let horizontalPadding: CGFloat = 32
     
     // MARK: - UI Component
     private lazy var monthLabel: UILabel = {
@@ -137,7 +137,7 @@ final class CalendarViewController: UIViewController, View {
         layout.minimumLineSpacing = 0
         layout.minimumInteritemSpacing = 0
         
-        let cellWidth = (UIScreen.main.bounds.width - 32) / 7
+        let cellWidth = (UIScreen.main.bounds.width - horizontalPadding) / 7
         layout.itemSize = CGSize(width: cellWidth, height: cellHeight)
         
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
