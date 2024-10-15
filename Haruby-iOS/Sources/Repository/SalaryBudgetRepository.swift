@@ -139,7 +139,6 @@ extension StubSalaryBudgetRepository {
         let startDate = calendar.date(from: DateComponents(year: 2024, month: 10, day: 15))!
         let endDate = calendar.date(from: DateComponents(year: 2024, month: 11, day: 14))!
         
-        // 고정 지출 항목 예시
         let fixedExpenses = List<RealmTransactionItem>()
         fixedExpenses.append(objectsIn: [
             RealmTransactionItem(id: UUID().uuidString, name: "월세", price: 500000),
@@ -147,7 +146,6 @@ extension StubSalaryBudgetRepository {
             RealmTransactionItem(id: UUID().uuidString, name: "구독서비스", price: 30000)
         ])
         
-        // 일일 예산 생성
         let dailyBudgets = List<RealmDailyBudget>()
         var currentDate = startDate
         while currentDate <= endDate {
@@ -170,10 +168,10 @@ extension StubSalaryBudgetRepository {
             id: UUID().uuidString,
             startDate: startDate,
             endDate: endDate,
-            fixedIncome: 3000000,  // 예시 월급
+            fixedIncome: 3000000,
             fixedExpense: fixedExpenses,
-            balance: 2420000,  // 3000000 - (500000 + 50000 + 30000)
-            defaultHaruby: 80000,  // 일일 기본 하루비 예시
+            balance: 2420000,
+            defaultHaruby: 80000,
             dailyBudgets: dailyBudgets
         )
     }

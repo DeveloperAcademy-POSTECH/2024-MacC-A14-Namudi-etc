@@ -200,7 +200,11 @@ final class MainViewController: UIViewController, View {
     
     // MARK: - Binding
     func bind(reactor: MainReactor) {
-        // Action
+        bindAction(reactor: reactor)
+        bindState(reactor: reactor)
+    }
+    
+    func bindAction(reactor: MainReactor) {
         navigateCalculatorButton.rx.tap
             .map { Reactor.Action.naivgateCalculator }
             .bind(to: reactor.action)
@@ -220,8 +224,9 @@ final class MainViewController: UIViewController, View {
             .map { Reactor.Action.navigateInputButton }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
-        
-        // State
+    }
+    
+    func bindState(reactor: MainReactor) {
         reactor.state.map { $0.mainState.todayHarubyTitle }
             .distinctUntilChanged()
             .bind(to: receiptView.titleLabel.rx.text)
