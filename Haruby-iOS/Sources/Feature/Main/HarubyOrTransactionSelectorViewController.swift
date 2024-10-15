@@ -21,6 +21,11 @@ final class HarubyOrTransactionSelectorViewController: UIViewController, View {
     private let horizontalPadding: CGFloat = 16
     
     // MARK: - UI Components
+    private lazy var closeButton: UIBarButtonItem = {
+        let button = UIBarButtonItem(title: "닫기", style: .plain, target: nil, action: nil)
+        return button
+    }()
+    
     private let navigateHarubyButton: NavigationButton = {
         let button = NavigationButton()
         button.customTitleLabel.text = "하루비 조정하기"
@@ -59,6 +64,7 @@ final class HarubyOrTransactionSelectorViewController: UIViewController, View {
     private func setupView() {
         title = Date().formattedDateToStringforMainView
         view.backgroundColor = .Haruby.white
+        navigationItem.rightBarButtonItem = closeButton
         
         setupAddSubviews()
         setupConstraints()
@@ -85,7 +91,21 @@ final class HarubyOrTransactionSelectorViewController: UIViewController, View {
     
     // MARK: - Binding
     func bind(reactor: HarubyOrTransactionSelectorViewReactor) {
-        // code
+        // TODO: 기능 구현때 분리
+        closeButton.rx.tap
+            .map{ Reactor.Action.closeButtonTapped }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        navigateHarubyButton.rx.tap
+            .map{ Reactor.Action.harubyButtonTapped }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        navigateTransactionButton.rx.tap
+            .map{ Reactor.Action.transactionButtonTapped }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
     }
 }
 
