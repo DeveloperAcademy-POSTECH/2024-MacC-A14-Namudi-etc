@@ -13,7 +13,7 @@ class DetailInputScrollView: UIView {
     
     private lazy var addButton: UIButton = {
         let button = UIButton()
-        button.setTitle("지출 추가", for: .normal)
+        button.setTitle("+ 지출 추가", for: .normal)
         button.setTitleColor(.Haruby.main, for: .normal)
         button.titleLabel?.font = .pretendardMedium_16
         button.backgroundColor = .clear
