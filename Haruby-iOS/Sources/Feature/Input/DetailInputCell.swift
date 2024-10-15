@@ -50,12 +50,16 @@ class DetailInputCell: UITableViewCell {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
-        setupSubviews()
-        setupConstraints()
+        setupView()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    private func setupView() {
+        setupSubviews()
+        setupConstraints()
     }
     
     private func setupSubviews() {
