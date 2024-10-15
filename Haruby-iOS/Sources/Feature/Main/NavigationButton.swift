@@ -9,8 +9,12 @@ import UIKit
 import SnapKit
 
 final class NavigationButton: UIButton {
+    
+    var circleLeftPadding: CGFloat = 11
+    var circleRightPadding: CGFloat = 8
+    
     // MARK: - Properties
-    private let circleView: UIView = {
+    let circleView: UIView = {
         let view = UIView()
         view.backgroundColor = .Haruby.whiteDeep
         view.layer.cornerRadius = 22
@@ -38,7 +42,7 @@ final class NavigationButton: UIButton {
         return label
     }()
     
-    private lazy var labelStackView: UIStackView = {
+    lazy var labelStackView: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: [customTitleLabel, customSubTitleLabel])
         stackView.axis = .vertical
         stackView.spacing = 2
@@ -74,7 +78,7 @@ final class NavigationButton: UIButton {
     
     private func setupConstraints() {
         circleView.snp.makeConstraints { make in
-            make.leading.equalToSuperview().offset(11)
+            make.leading.equalToSuperview().offset(circleLeftPadding)
             make.centerY.equalToSuperview()
             make.width.height.equalTo(44)
         }
@@ -85,8 +89,19 @@ final class NavigationButton: UIButton {
         }
         
         labelStackView.snp.makeConstraints { make in
-            make.leading.equalTo(circleView.snp.trailing).offset(8)
+            make.leading.equalTo(circleView.snp.trailing).offset(circleRightPadding)
             make.centerY.equalToSuperview()
+        }
+    }
+    
+    // MARK: - Public Methods
+    func configure(circleLeftPadding: CGFloat, circleRightPadding: CGFloat) {
+        circleView.snp.updateConstraints { make in
+            make.leading.equalToSuperview().offset(circleLeftPadding)
+        }
+        
+        labelStackView.snp.updateConstraints { make in
+            make.leading.equalTo(circleView.snp.trailing).offset(circleRightPadding)
         }
     }
 }
