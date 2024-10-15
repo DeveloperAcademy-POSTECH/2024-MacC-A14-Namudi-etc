@@ -44,7 +44,7 @@ class InputViewController: UIViewController, View {
     private lazy var amountTextField : RoundedTextField = {
         let textField = RoundedTextField()
         textField.placeholder = "총 지출 금액을 입력하세요"
-        
+        textField.keyboardType = .numberPad
         return textField
     }()
     
