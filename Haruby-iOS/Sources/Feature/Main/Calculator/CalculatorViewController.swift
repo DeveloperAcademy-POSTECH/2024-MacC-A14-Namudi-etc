@@ -11,9 +11,9 @@ import ReactorKit
 import RxSwift
 import RxCocoa
 
-final class CalculationViewController: UIViewController, View {
+final class CalculatorViewController: UIViewController, View {
     
-    typealias Reactor = CalculationViewReactor
+    typealias Reactor = CalculatorViewReactor
     
     // MARK: - Properties
     var disposeBag = DisposeBag()
@@ -89,8 +89,8 @@ final class CalculationViewController: UIViewController, View {
         return view
     }()
     
-    private lazy var calculationProcessView: CalculationProcessView = {
-        let view = CalculationProcessView()
+    private lazy var calculationProcessView: CalculatorProcessView = {
+        let view = CalculatorProcessView()
         return view
     }()
     
@@ -101,8 +101,8 @@ final class CalculationViewController: UIViewController, View {
         return view
     }()
     
-    private lazy var calculationKeypad: CalculationKeypad = {
-        let view = CalculationKeypad()
+    private lazy var calculationKeypad: CalculatorKeypad = {
+        let view = CalculatorKeypad()
         return view
     }()
 
@@ -254,7 +254,7 @@ final class CalculationViewController: UIViewController, View {
     }
 }
 
-extension CalculationViewController {
+extension CalculatorViewController {
     private func updateTopView() {
         bottomImageView.isHidden = false
         bottomPriceLabel.isHidden = false

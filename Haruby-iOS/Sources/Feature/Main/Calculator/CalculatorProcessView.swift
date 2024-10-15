@@ -9,7 +9,7 @@
 import UIKit
 import SnapKit
 
-final class CalculationProcessView: UIView {
+final class CalculatorProcessView: UIView {
     
     // MARK: - UI Components
     

@@ -9,7 +9,7 @@ import Foundation
 import ReactorKit
 import RxSwift
 
-final class CalculationViewReactor: Reactor {
+final class CalculatorViewReactor: Reactor {
     enum Action {
         case viewDidLoad
         case keypadButtonTapped(String)
@@ -60,7 +60,7 @@ final class CalculationViewReactor: Reactor {
     }
 }
 
-extension CalculationViewReactor {
+extension CalculatorViewReactor {
     
     private func processKeypad(_ text: String) -> Observable<Mutation> {
         
@@ -128,7 +128,7 @@ extension CalculationViewReactor {
     
 }
 
-extension CalculationViewReactor {
+extension CalculatorViewReactor {
     // 함수: 문자열 수식을 계산
     private func evaluateExpression(_ expression: String) -> Int {
         var newExpression = expression
