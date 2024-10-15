@@ -67,33 +67,6 @@ final class HarubyEditViewController: UIViewController, View {
         setupView()
     }
     
-    
-    // MARK: - Binding
-    func bind(reactor: HarubyEditViewReactor) {
-        // Action
-        memoTextField.textField.rx.text
-                    .orEmpty
-                    .distinctUntilChanged()
-                    .map{ Reactor.Action.editMemoText($0) }
-                    .bind(to: reactor.action)
-                    .disposed(by: disposeBag)
-        
-        bottomButton.rx.tap
-                    .map{ Reactor.Action.bottomButtonTapped }
-                    .bind(to: reactor.action)
-                    .disposed(by: disposeBag)
-        // State
-        reactor.state.map{ $0.memoText }
-            .bind(to: memoTextField.textField.rx.text)
-                    .disposed(by: disposeBag)
-        
-        reactor.state.map{ $0.memoText.count }
-                    .distinctUntilChanged()
-                    .map{ "\($0)/30" }
-                    .bind(to: memoFooterLabel.rx.text)
-                    .disposed(by: disposeBag)
-    }
-    
     //MARK: - setup
     private func setupView() {
         title = "하루비 조정"
@@ -147,6 +120,34 @@ final class HarubyEditViewController: UIViewController, View {
         }
     }
     
+    // MARK: - Binding
+    func bind(reactor: HarubyEditViewReactor) {
+        // Action
+        memoTextField.textField.rx.text
+                    .orEmpty
+                    .distinctUntilChanged()
+                    .map{ Reactor.Action.editMemoText($0) }
+                    .bind(to: reactor.action)
+                    .disposed(by: disposeBag)
+        
+        bottomButton.rx.tap
+                    .map{ Reactor.Action.bottomButtonTapped }
+                    .bind(to: reactor.action)
+                    .disposed(by: disposeBag)
+        // State
+        reactor.state.map{ $0.memoText }
+            .bind(to: memoTextField.textField.rx.text)
+                    .disposed(by: disposeBag)
+        
+        reactor.state.map{ $0.memoText.count }
+                    .distinctUntilChanged()
+                    .map{ "\($0)/30" }
+                    .bind(to: memoFooterLabel.rx.text)
+                    .disposed(by: disposeBag)
+    }
+}
+
+extension HarubyEditViewController {
     // MARK: - Private Methods
     // 빈공간 터치 했을때 키보드 내리는 메서드
     private func setupTapGesture() {
@@ -159,4 +160,3 @@ final class HarubyEditViewController: UIViewController, View {
         view.endEditing(true)
     }
 }
-
