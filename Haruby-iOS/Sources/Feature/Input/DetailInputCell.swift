@@ -9,6 +9,8 @@ import UIKit
 
 class DetailInputCell: UITableViewCell {
     
+    static let cellId = "DetailInputCell"
+    
     let detailNameTextField: InputTextField = {
         let textfield = InputTextField()
         textfield.placeholder = "지출 이름"
@@ -32,7 +34,7 @@ class DetailInputCell: UITableViewCell {
     let deleteButtonBackground: UIView = {
         let view = UIView()
         view.backgroundColor = .Haruby.textBright60
-        view.layer.cornerRadius = 15
+        view.layer.cornerRadius = 13
         return view
     }()
     
@@ -62,20 +64,17 @@ class DetailInputCell: UITableViewCell {
     }
     
     private func setupConstraints() {
-        // deleteButtonBackground의 크기 설정 및 위치
         deleteButtonBackground.snp.makeConstraints { make in
-            make.width.height.equalTo(30) // 원형 배경이 되도록 크기 설정
-            make.centerY.equalToSuperview() // 세로 방향 중앙에 배치
-            make.leading.equalToSuperview().offset(28) // 좌측에서 28만큼 띄워 배치
+            make.width.height.equalTo(25)
+            make.centerY.equalToSuperview()
+            make.leading.equalToSuperview().offset(28)
         }
         
-        // deleteButton을 deleteButtonBackground 중앙에 배치
         deleteButton.snp.makeConstraints { make in
-            make.center.equalToSuperview() // deleteButton이 배경의 중앙에 위치하도록
-            make.width.height.equalTo(25) // deleteButton 크기 설정
+            make.center.equalToSuperview()
+            make.width.height.equalTo(15)
         }
         
-        // detailTextFieldStackView constraints
         detailTextFieldStackView.snp.makeConstraints { make in
             make.centerY.equalToSuperview()
             make.leading.equalTo(deleteButtonBackground.snp.trailing).offset(10)
