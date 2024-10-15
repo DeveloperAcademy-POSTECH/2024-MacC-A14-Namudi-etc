@@ -12,7 +12,9 @@ import RxSwift
 
 class HarubyOrTransactionSelectorViewReactor: Reactor {
     enum Action {
-        
+        case closeButtonTapped
+        case harubyButtonTapped
+        case transactionButtonTapped
     }
     
     enum Mutation {
@@ -27,6 +29,17 @@ class HarubyOrTransactionSelectorViewReactor: Reactor {
     
     func mutate(action: Action) -> Observable<Mutation> {
         // code
+        switch action {
+        case .closeButtonTapped:
+            print("closeButtonTapped")
+            return .empty()
+        case .harubyButtonTapped:
+            print("harubyButtonTapped")
+            return .empty()
+        case .transactionButtonTapped:
+            print("transactionButtonTapped")
+            return .empty()
+        }
     }
     
     func reduce(state: State, mutation: Mutation) -> State {
