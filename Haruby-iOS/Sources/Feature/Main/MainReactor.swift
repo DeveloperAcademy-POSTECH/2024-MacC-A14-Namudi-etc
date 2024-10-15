@@ -25,6 +25,7 @@ final class MainReactor: Reactor {
     struct MainState {
         var todayHarubyTitle: String
         var avgHaruby: String
+        var remainHaruby: String
         var todayHaruby: String
         var date: String
         var harubyImage: UIImage
@@ -33,9 +34,27 @@ final class MainReactor: Reactor {
         var usedAmount: Int
     }
     
+    enum HarubyState {
+        case initial
+        case positive
+        case negative
+
+        var uiProperties: (boxColor: UIColor, labelColor: UIColor, image: UIImage) {
+            switch self {
+            case .initial:
+                return (UIColor.Haruby.whiteDeep, UIColor.Haruby.main, .purpleHaruby)
+            case .positive:
+                return (UIColor.Haruby.green10, UIColor.Haruby.green, .greenHaruby)
+            case .negative:
+                return (UIColor.Haruby.red10, UIColor.Haruby.red, .redHaruby)
+            }
+        }
+    }
+    
     struct State {
         var mainState: MainState = MainState(todayHarubyTitle: "",
                                              avgHaruby: "",
+                                             remainHaruby: "",
                                              todayHaruby: "",
                                              date: "",
                                              harubyImage: .purpleHaruby,
@@ -81,6 +100,7 @@ final class MainReactor: Reactor {
                         return .just(.updateMainState(MainState(
                             todayHarubyTitle: "데이터 없음",
                             avgHaruby: "0원",
+                            remainHaruby: "0원",
                             todayHaruby: "0원",
                             date: currentDate.formattedDateToStringforMainView,
                             harubyImage: .purpleHaruby,
@@ -115,14 +135,20 @@ final class MainReactor: Reactor {
                         .getAverageHarubyFromNow(endDate: salaryBudget.endDate, balance: salaryBudget.balance)
                     
                     // 금액에 따른 UI 상태 결정
-                    let (amountBoxColor, amountLabelColor, harubyImage) = harubyAmount >= 0
-                    ? (UIColor.Haruby.green10, UIColor.Haruby.green, UIImage.greenHaruby)
-                    : (UIColor.Haruby.red10, UIColor.Haruby.red, UIImage.redHaruby)
+                    let harubyState: HarubyState
+                    if let todayDailyBudget = todayDailyBudget, todayDailyBudget.expense.total > 0 {
+                        harubyState = harubyAmount > 0 ? .positive : .negative
+                    } else {
+                        harubyState = .initial
+                    }
+
+                    let (amountBoxColor, amountLabelColor, harubyImage) = harubyState.uiProperties
                     
                     let newState = MainState(
                         todayHarubyTitle: harubyTitle,
-                        avgHaruby: "\(avgHaruby.decimalWithWon)",
-                        todayHaruby: "\(harubyAmount.decimalWithWon)",
+                        avgHaruby: avgHaruby.decimalWithWon,
+                        remainHaruby: harubyAmount.decimalWithWon,
+                        todayHaruby: todayDailyBudget?.haruby?.decimalWithWon ?? "",
                         date: todayDailyBudget?.date.formattedDateToStringforMainView ?? "",
                         harubyImage: harubyImage,
                         amountBoxColor: amountBoxColor,
