@@ -101,20 +101,17 @@ class InputViewController: UIViewController, View {
         dateStackView.snp.makeConstraints { make in
             make.top.equalTo(view.safeAreaLayoutGuide).offset(58)
             make.horizontalEdges.equalTo(view.safeAreaLayoutGuide).inset(24)
-            make.height.equalTo(40)
         }
         
         amountTextField.snp.makeConstraints { make in
             make.top.equalTo(self.dateStackView.snp.bottom).offset(32)
             make.horizontalEdges.equalTo(view.safeAreaLayoutGuide).inset(16)
-            make.height.equalTo(54)
         }
         
         detailInputButtonStackView.snp.makeConstraints { make in
             make.top.equalTo(self.amountTextField.snp.bottom).offset(10)
             make.leading.equalTo(view.safeAreaLayoutGuide).inset(28)
             make.right.equalTo(view.safeAreaLayoutGuide).inset(243)
-            make.height.equalTo(40)
         }
         
         detailInputScrollView.snp.makeConstraints { make in
