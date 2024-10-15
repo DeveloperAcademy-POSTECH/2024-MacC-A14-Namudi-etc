@@ -85,8 +85,9 @@ class InputViewController: UIViewController, View {
         addSubviews()
         configureConstraints()
         
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
-        view.addGestureRecognizer(tapGesture)
+        let tapGestureKeyBoard = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        view.addGestureRecognizer(tapGestureKeyBoard)
+        
     }
     
     // MARK: - UI Setup
@@ -141,6 +142,11 @@ class InputViewController: UIViewController, View {
             .map { Reactor.Action.toggleDetailButton }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
+        
+        datePickerButton.rx.tap
+            .map { Reactor.Action.toggleDatePicker }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
 
         reactor.state
             .map { $0.isDetailVisible }
@@ -155,5 +161,30 @@ class InputViewController: UIViewController, View {
                 }
             })
             .disposed(by: disposeBag)
+        
+        reactor.state
+            .map { $0.isDatePickerVisible }
+            .distinctUntilChanged()
+            .subscribe(onNext: { [weak self] isVisible in
+                guard let self = self else { return }
+                
+                self.presentSheet()
+            })
+            .disposed(by: disposeBag)
+    }
+    
+    private func presentSheet() {
+        let sheetViewController = DatePickerSheet()
+        sheetViewController.modalPresentationStyle = .pageSheet
+        
+        if let sheet = sheetViewController.sheetPresentationController {
+            let customDetent = UISheetPresentationController.Detent.custom { context in
+                return 400
+            }
+            sheet.detents = [customDetent]
+            sheet.prefersGrabberVisible = false
+        }
+        
+        present(sheetViewController, animated: true, completion: nil)
     }
 }
