@@ -21,7 +21,7 @@ class DetailInputScrollView: UIView {
         return button
     }()
     
-    private var expenseCount: Int = 0
+    private var detailItemCount: Int = 0
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -64,15 +64,15 @@ class DetailInputScrollView: UIView {
         contentView.addSubview(newExpenseCell)
         
         newExpenseCell.snp.makeConstraints { make in
-            make.top.equalTo(contentView.snp.top).offset(expenseCount * 49)
+            make.top.equalTo(contentView.snp.top).offset(detailItemCount * 49)
             make.leading.trailing.equalToSuperview().inset(0)
             make.height.equalTo(40)
         }
         
-        expenseCount += 1
+        detailItemCount += 1
         
         contentView.snp.updateConstraints { make in
-            make.height.equalTo(expenseCount * 49)
+            make.height.equalTo(detailItemCount * 49)
         }
     }
 }
