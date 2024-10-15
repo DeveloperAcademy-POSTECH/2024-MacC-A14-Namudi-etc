@@ -268,7 +268,7 @@ final class CalendarViewController: UIViewController, View {
               let sectionData = reactor?.currentState.monthlySections[topVisibleSection]
         else { return }
         
-        let newMonthText = sectionData.firstDayOfMonth.formattedMonth()
+        let newMonthText = "\(sectionData.firstDayOfMonth.monthValue)월"
         
         // 현재 텍스트와 다를 경우에만 업데이트
         if monthLabel.text != newMonthText {
