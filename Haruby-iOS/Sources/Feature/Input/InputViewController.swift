@@ -41,19 +41,9 @@ class InputViewController: UIViewController, View {
         return view
     }()
     
-    private lazy var amountTextField : UITextField = {
-        let textField = UITextField()
+    private lazy var amountTextField : RoundedTextField = {
+        let textField = RoundedTextField()
         textField.placeholder = "총 지출 금액을 입력하세요"
-        textField.setPlaceholder(color: .Haruby.textBright40)
-        textField.textAlignment = .left
-        textField.textColor = .Haruby.textBlack
-        textField.font = .pretendardSemibold_20
-        textField.borderStyle = .roundedRect
-        textField.backgroundColor = .Haruby.white
-        textField.keyboardType = .numberPad
-        textField.layer.cornerRadius = 10
-        textField.layer.borderWidth = 1
-        textField.layer.borderColor = UIColor.Haruby.textBright40.cgColor
         
         return textField
     }()
