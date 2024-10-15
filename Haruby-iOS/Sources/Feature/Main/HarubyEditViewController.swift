@@ -86,7 +86,11 @@ final class HarubyEditViewController: UIViewController, View {
         return label
     }()
     
-    private lazy var bottomButton = BottomButton(title: "저장하기")
+    private lazy var bottomButton: BottomButton = {
+        let button = BottomButton()
+        button.title = "저장하기"
+        return button
+    }()
     
     // MARK: - Lifecycle
     override func viewDidLoad() {
