@@ -25,13 +25,17 @@ class DetailInputScrollView: UIView {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        setupSubviews()
-        setupConstraints()
+        setupView()
         addDetailItem()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    private func setupView() {
+        setupSubviews()
+        setupConstraints()
     }
     
     private func setupSubviews() {
