@@ -14,23 +14,21 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     private let disposeBag = DisposeBag()
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        UserDefaults().setValue(15, forKey: "incomeDate") // 급여일 설정
+        UserDefaults().setValue(14, forKey: "incomeDate") // 급여일 설정
         print(Date().formattedDateToStringforMainView, Date().formattedDate)
         let container = DIContainer.shared
         if let salaryBudgetRepository = container.resolve(SalaryBudgetRepository.self) {
             
             // UserDefaults에서 급여일(incomeDate)를 가져옵니다.
-            if let incomeDate = UserDefaults.standard.object(forKey: "incomeDate") as? Int {
-                
-                let (startDate, endDate) =
-                calculateBudgetPeriod(incomeDate: incomeDate)
-                
-                // 이 기간에 대한 SalaryBudget 모델이 이미 존재하는지 확인
-                checkAndCreateSalaryBudget(repository: salaryBudgetRepository, startDate: startDate, endDate: endDate)
-            }
-            return true
+            let incomeDate = UserDefaults.standard.integer(forKey: "incomeDate")
+            
+            let (startDate, endDate) =
+            calculateBudgetPeriod(incomeDate: incomeDate)
+            
+            // 이 기간에 대한 SalaryBudget 모델이 이미 존재하는지 확인
+            checkAndCreateSalaryBudget(repository: salaryBudgetRepository, startDate: startDate, endDate: endDate)
         }
-        return false
+        return true
     }
     
     private func calculateBudgetPeriod(incomeDate: Int) -> (startDate: Date, endDate: Date) {

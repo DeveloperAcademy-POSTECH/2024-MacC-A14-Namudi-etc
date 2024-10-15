@@ -9,6 +9,7 @@ import UIKit
 import ReactorKit
 
 final class MainReactor: Reactor {
+    // MARK: - Action, Mutation, State
     enum Action {
         case viewDidLoad
         case naivgateCalculator
@@ -26,36 +27,111 @@ final class MainReactor: Reactor {
         var avgHaruby: String
         var todayHaruby: String
         var date: String
+        var harubyImage: UIImage
+        var amountBoxColor: UIColor
+        var amountLabelColor: UIColor
+        var usedAmount: Int
     }
     
     struct State {
-        var mainState: MainState = MainState(todayHarubyTitle: "", avgHaruby: "", todayHaruby: "", date: "")
+        var mainState: MainState = MainState(todayHarubyTitle: "",
+                                             avgHaruby: "",
+                                             todayHaruby: "",
+                                             date: "",
+                                             harubyImage: .purpleHaruby,
+                                             amountBoxColor: .Haruby.mainBright,
+                                             amountLabelColor: .Haruby.main,
+                                             usedAmount: 0)
     }
     
+    // MARK: - Properties
     let initialState = State()
+    let container = DIContainer.shared
+    private let salaryBudgetRepository: SalaryBudgetRepository?
     
+    init() {
+        let resolve = container.resolve(SalaryBudgetRepository.self)
+        guard let salaryBudgetRepository = resolve else {
+            fatalError("SalaryBudgetRepository is not resolved")
+        }
+        self.salaryBudgetRepository = salaryBudgetRepository
+    }
+    
+    // MARK: - Mutate
     func mutate(action: Action) -> Observable<Mutation> {
         switch action {
         case .viewDidLoad:
-            // TODO: - 메인 뷰 초기 데이터 설정 로직
-            /*
-            1. salraryBudget.dailyBudgets 에서 filter로 오늘 날짜의 dailyBudget을 불러온다.
-            2. dailyBudget.date를 표시한다.
-            3. dailyBudget.expense.total이 0이라면 dailyBudget.haruby를 표시
-                ("오늘의 하루비)
-            4. dailyBudget.expense.total이 0이 아니라면 dailyBudget.haruby - dailyBudget.expense.toal 표시
-                ("오늘의 남은 하루비")
-            5. dailyBudget.haruby - dailyBudget.expense.toal이 양수인지 음수인지 판단
-            6. 판단에 따라 amountBox와 amountLabel의 색상 바꾸고 사용한 금액 Label로 표시
-             */
-            print("MainView DidLoad")
-            let newState = MainState(
-                todayHarubyTitle: "오늘의 하루비",
-                avgHaruby: "10,000원",
-                todayHaruby: "36,000원",
-                date: Date().formattedDateToStringforMainView
-            )
-            return Observable.just(.updateMainState(newState))
+            let calendar = Calendar.current
+            let currentDate = Date()
+            let incomeDate = UserDefaults.standard.integer(forKey: "incomeDate")
+            
+            // 현재 날짜에서 시작해 incomeDate와 일치하는 날짜를 찾습니다
+            var startDate = currentDate
+            while true {
+                let components = calendar.dateComponents([.day], from: startDate)
+                if components.day == incomeDate {
+                    break
+                }
+                startDate = calendar.date(byAdding: .day, value: -1, to: startDate)!.formattedDate
+                
+            }
+            return salaryBudgetRepository!.read(startDate)
+                .flatMap { salaryBudget -> Observable<Mutation> in
+                    guard let salaryBudget = salaryBudget else {
+                        return .just(.updateMainState(MainState(
+                            todayHarubyTitle: "데이터 없음",
+                            avgHaruby: "0원",
+                            todayHaruby: "0원",
+                            date: currentDate.formattedDateToStringforMainView,
+                            harubyImage: .purpleHaruby,
+                            amountBoxColor: .Haruby.mainBright,
+                            amountLabelColor: .Haruby.main,
+                            usedAmount: 0
+                        )))
+                    }
+                    
+                    // 오늘 날짜의 dailyBudget 찾기
+                    let todayDailyBudget = salaryBudget.dailyBudgets.first {
+                        calendar.isDate($0.date, inSameDayAs: currentDate)
+                    }
+                    
+                    // 하루비 계산
+                    let harubyTitle: String
+                    let harubyAmount: Int
+                    if let todayDailyBudget = todayDailyBudget {
+                        if todayDailyBudget.expense.total == 0 {
+                            harubyTitle = "오늘의 하루비"
+                            harubyAmount = todayDailyBudget.haruby!
+                        } else {
+                            harubyTitle = "오늘의 남은 하루비"
+                            harubyAmount = todayDailyBudget.haruby! - todayDailyBudget.expense.total
+                        }
+                    } else {
+                        harubyTitle = "오늘의 하루비"
+                        harubyAmount = 0 // 또는 기본값 설정
+                    }
+                    
+                    let avgHaruby = HarubyCalculateManager
+                        .getAverageHarubyFromNow(endDate: salaryBudget.endDate, balance: salaryBudget.balance)
+                    
+                    // 금액에 따른 UI 상태 결정
+                    let (amountBoxColor, amountLabelColor, harubyImage) = harubyAmount >= 0
+                    ? (UIColor.Haruby.green10, UIColor.Haruby.green, UIImage.greenHaruby)
+                    : (UIColor.Haruby.red10, UIColor.Haruby.red, UIImage.redHaruby)
+                    
+                    let newState = MainState(
+                        todayHarubyTitle: harubyTitle,
+                        avgHaruby: "\(avgHaruby.decimalWithWon)",
+                        todayHaruby: "\(harubyAmount.decimalWithWon)",
+                        date: todayDailyBudget?.date.formattedDateToStringforMainView ?? "",
+                        harubyImage: harubyImage,
+                        amountBoxColor: amountBoxColor,
+                        amountLabelColor: amountLabelColor,
+                        usedAmount: todayDailyBudget?.expense.total ?? 0
+                    )
+                    
+                    return .just(.updateMainState(newState))
+                }
         case .naivgateCalculator:
             // TODO: - 하루비 계산기 네비게이션 로직
             print("navigateCalculator tapped")
@@ -75,6 +151,7 @@ final class MainReactor: Reactor {
         }
     }
     
+    // MARK: - Reduce
     func reduce(state: State, mutation: Mutation) -> State {
         var newState = state
         switch mutation {
@@ -83,4 +160,7 @@ final class MainReactor: Reactor {
         }
         return newState
     }
+    
+    // MARK: - Private Methods
+    
 }

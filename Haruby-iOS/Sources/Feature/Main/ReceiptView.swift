@@ -43,7 +43,7 @@ final class ReceiptView: UIView {
         return label
     }()
     
-    private let harubyImageView: UIImageView = {
+    let harubyImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.image = .purpleHaruby
         imageView.contentMode = .scaleAspectFit

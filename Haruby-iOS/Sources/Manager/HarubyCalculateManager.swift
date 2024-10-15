@@ -9,7 +9,7 @@ import UIKit
 
 final class HarubyCalculateManager {
     // 평균하루비를 구하는 메서드
-    func getAverageHarubyFromNow(endDate: Date, balance: Int) -> Int {
+    static func getAverageHarubyFromNow(endDate: Date, balance: Int) -> Int {
         // 1. 현재로부터 endDate까지 남은 일자 구하기 (+1)
         let now = Date().formattedDate
         let remain = endDate.timeIntervalSince(now) / 86400 + 1
@@ -18,7 +18,7 @@ final class HarubyCalculateManager {
     }
     
     // 잔액 반영후에 이 메서드 사용하기
-    func getDefaultHarubyFromNow(salaryBudget: SalaryBudget) -> Int {
+    static func getDefaultHarubyFromNow(salaryBudget: SalaryBudget) -> Int {
         // 1. nil count 변수 생성 (var nilCount = 0)
         var nilCount = 0
         var newBalance = salaryBudget.balance
