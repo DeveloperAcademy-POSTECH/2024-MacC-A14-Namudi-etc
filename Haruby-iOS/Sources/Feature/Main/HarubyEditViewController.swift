@@ -12,10 +12,11 @@ import ReactorKit
 import SnapKit
 
 final class HarubyEditViewController: UIViewController, View {
+    
+    // MARK: - Properties
     var disposeBag: DisposeBag = DisposeBag()
     typealias Reactor = HarubyEditViewReactor
     
-    // MARK: - Properties
     // MARK: - UI Components
     private lazy var harubyTitleLabel: UILabel = {
         let label = UILabel()
@@ -176,6 +177,7 @@ final class HarubyEditViewController: UIViewController, View {
     }
     
     // MARK: - Private Methods
+    // 빈공간 터치 했을때 키보드 내리는 메서드
     private func setupTapGesture() {
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
         tapGesture.cancelsTouchesInView = false
