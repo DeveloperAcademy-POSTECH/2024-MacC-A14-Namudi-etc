@@ -82,8 +82,7 @@ class InputViewController: UIViewController, View {
         
         view.backgroundColor = .white
         
-        addSubviews()
-        configureConstraints()
+        setupView()
         
         let tapGestureKeyBoard = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
         view.addGestureRecognizer(tapGestureKeyBoard)
@@ -91,7 +90,12 @@ class InputViewController: UIViewController, View {
     }
     
     // MARK: - UI Setup
-    private func addSubviews() {
+    private func setupView() {
+        setupSubviews()
+        setupConstraints()
+    }
+    
+    private func setupSubviews() {
         self.view.addSubview(dateStackView)
         self.view.addSubview(amountTextField)
         self.view.addSubview(detailInputButtonStackView)
@@ -101,7 +105,7 @@ class InputViewController: UIViewController, View {
         detailInputScrollView.isHidden = true
     }
     
-    private func configureConstraints() {
+    private func setupConstraints() {
         dateStackView.snp.makeConstraints { make in
             make.top.equalTo(view.safeAreaLayoutGuide).offset(58)
             make.horizontalEdges.equalTo(view.safeAreaLayoutGuide).inset(24)
