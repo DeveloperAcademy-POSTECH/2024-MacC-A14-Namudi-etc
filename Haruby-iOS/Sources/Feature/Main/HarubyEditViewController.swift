@@ -109,19 +109,26 @@ final class HarubyEditViewController: UIViewController, View {
     func bind(reactor: HarubyEditViewReactor) {
         // Action
         memoTextField.rx.text
-            .orEmpty
-            .distinctUntilChanged()
-            .subscribe(onNext: { text in
-                self.updateText(text)
-            })
-            .disposed(by: disposeBag)
+                    .orEmpty
+                    .distinctUntilChanged()
+                    .map{ Reactor.Action.editMemoText($0) }
+                    .bind(to: reactor.action)
+                    .disposed(by: disposeBag)
         
         bottomButton.rx.tap
-            .map{ Reactor.Action.bottomButtonTapped }
-                   .bind(to: reactor.action)
-                   .disposed(by: disposeBag)
+                    .map{ Reactor.Action.bottomButtonTapped }
+                    .bind(to: reactor.action)
+                    .disposed(by: disposeBag)
         // State
+        reactor.state.map{ $0.memoText }
+                    .bind(to: memoTextField.rx.text)
+                    .disposed(by: disposeBag)
         
+        reactor.state.map{ $0.memoText.count }
+                    .distinctUntilChanged()
+                    .map{ "\($0)/30" }
+                    .bind(to: memoFooterLabel.rx.text)
+                    .disposed(by: disposeBag)
     }
     
     // MARK: - Private Methods
@@ -156,14 +163,6 @@ final class HarubyEditViewController: UIViewController, View {
         bottomButton.snp.makeConstraints { make in
             make.bottom.equalToSuperview()
             make.horizontalEdges.equalToSuperview()
-        }
-    }
-    
-    private func updateText(_ text: String) {
-        if text.count > 30 {
-            self.memoTextField.text = String(text.prefix(30))
-        } else {
-            self.memoFooterLabel.text = "(\(text.count)/30)"
         }
     }
     
