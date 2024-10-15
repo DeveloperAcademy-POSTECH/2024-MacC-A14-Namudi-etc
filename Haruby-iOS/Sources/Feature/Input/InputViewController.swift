@@ -74,7 +74,7 @@ class InputViewController: UIViewController, View {
     
     private lazy var detailInputScrollView = DetailInputScrollView()
     
-    private let bottomButtonView = BottomButton()
+//    private let bottomButtonView = BottomButton()
     
     // MARK: - Lifecycle
     override func viewDidLoad() {
@@ -96,7 +96,7 @@ class InputViewController: UIViewController, View {
         self.view.addSubview(amountTextField)
         self.view.addSubview(detailInputButtonStackView)
         self.view.addSubview(detailInputScrollView)
-        self.view.addSubview(bottomButtonView)
+//        self.view.addSubview(bottomButtonView)
         
         detailInputScrollView.isHidden = true
     }
@@ -122,10 +122,10 @@ class InputViewController: UIViewController, View {
             make.horizontalEdges.equalTo(view.safeAreaLayoutGuide)
         }
         
-        bottomButtonView.snp.makeConstraints { make in
-            make.leading.trailing.equalToSuperview()
-            make.bottom.equalTo(view.snp.bottom)
-        }
+//        bottomButtonView.snp.makeConstraints { make in
+//            make.leading.trailing.equalToSuperview()
+//            make.bottom.equalTo(view.snp.bottom)
+//        }
     }
     
     @objc private func dismissKeyboard() {
