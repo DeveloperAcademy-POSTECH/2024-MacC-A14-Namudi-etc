@@ -27,7 +27,7 @@ final class CalculationKeypad: UIView {
             case .number:
                 return .Haruby.textBlack
             case .operatorSymbol(let symbol):
-                return symbol == "=" ? .Haruby.white : .Haruby.main
+                return symbol == CalculatorSymbol.equal ? .Haruby.white : .Haruby.main
             case .delete:
                 return .Haruby.main
             }
@@ -38,7 +38,7 @@ final class CalculationKeypad: UIView {
             case .number:
                 return .Haruby.white
             case .operatorSymbol(let symbol):
-                return symbol == "=" ? .Haruby.main : .Haruby.mainBright15
+                return symbol == CalculatorSymbol.equal ? .Haruby.main : .Haruby.mainBright15
             case .delete:
                 return .Haruby.mainBright15
             }
@@ -55,7 +55,7 @@ final class CalculationKeypad: UIView {
         
         var isSquare: Bool {
             if case let .operatorSymbol(type) = self,
-               type == "=" { return false }
+               type == CalculatorSymbol.equal { return false }
             return true
         }
     }
@@ -71,10 +71,10 @@ final class CalculationKeypad: UIView {
     }
     
     private let keypadTypes: [[KeypadButtonType]] = [
-        [.delete("AC"), .number("1"), .number("4"), .number("7"), .number("0")],
-        [.operatorSymbol("÷"), .number("2"), .number("5"), .number("8"), .number("00")],
-        [.operatorSymbol("×"), .number("3"), .number("6"), .number("9"), .number("000")],
-        [.delete(""), .operatorSymbol("−"), .operatorSymbol("+"), .operatorSymbol("=")]
+        [.delete(CalculatorSymbol.deleteAll), .number("1"), .number("4"), .number("7"), .number("0")],
+        [.operatorSymbol(CalculatorSymbol.divide), .number("2"), .number("5"), .number("8"), .number("00")],
+        [.operatorSymbol(CalculatorSymbol.multiply), .number("3"), .number("6"), .number("9"), .number("000")],
+        [.delete(CalculatorSymbol.deleteLast), .operatorSymbol(CalculatorSymbol.minus), .operatorSymbol(CalculatorSymbol.plus), .operatorSymbol(CalculatorSymbol.equal)]
     ]
     
     var numberButtons: [UIButton] = []

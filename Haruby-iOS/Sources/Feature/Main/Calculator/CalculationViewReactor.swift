@@ -25,9 +25,9 @@ final class CalculationViewReactor: Reactor {
     struct State {
         var isResultButtonClicked: Bool = false
         var averageHaruby: Int = 0
-        var remainTotalHaruby: Int = 0
+        var remainTotalHaruby: Int = 170000
         var estimatedPrice: Int = 0
-        var remainingDays: Int = 0
+        var remainingDays: Int = 15
         var inputFieldText: String = ""
     }
     
@@ -64,41 +64,41 @@ extension CalculationViewReactor {
     
     private func processKeypad(_ text: String) -> Observable<Mutation> {
         
-        if ["÷", "×", "+", "−"].contains(text) {
+        if CalculatorSymbol.operators.contains(text) { // +, -, ×, ÷
             return processOperator(text)
-        } else if text == "=" {
-            // 1. 계산
-            // 2. 평균 하루비, 지출 예정 금액, 텍스트필드 업데이트
+        } else if text == CalculatorSymbol.equal { // =
             return processEqual()
-        } else if ["AC", ""].contains(text) {
+        } else if CalculatorSymbol.deletes.contains(text) { // "AC", "Delete"
             return processDelete(text)
-        } else {
-            // if text == "0"이고 필드의 마지막 텍스트가 "0"이면 return .empty()
-            // else udpateInputTextField
+        } else { // Numbers
             return processNumber(text)
         }
     }
     
     private func processOperator(_ op: String) -> Observable<Mutation> {
         let currentInputFieldText = self.currentState.inputFieldText
-        let lastText = currentInputFieldText.last
+        let lastText = currentInputFieldText.last?.description ?? ""
         
-        if ["+", "−", "×", "÷"].contains(lastText)
+        if CalculatorSymbol.operators.contains(lastText)
             || currentInputFieldText.isEmpty {
             return .empty()
         } else {
-            return updateInputTextField(currentInputFieldText + op)
+            return .just(.updateInputField(currentInputFieldText + op))
         }
     }
     
     private func processEqual() -> Observable<Mutation> {
-        let result = evaluateExpression(self.currentState.inputFieldText)
-        print(result)
+        let currentText = self.currentState.inputFieldText
+        let result = evaluateExpression(currentText)
+        let remainTotalHaruby = self.currentState.remainTotalHaruby
+        let remainingDays = self.currentState.remainingDays
+        
+        let avgHaruby = (remainTotalHaruby - result) / remainingDays
         
         return .concat([
-            updateHaruby(),
-            updateEstimatedPrice(),
-            updateInputTextField("")
+            .just(.updateAverageHaruby(avgHaruby)),
+            .just(.updateEstimatedPrice(result)),
+            .just(.updateInputField(""))
         ])
     }
     
@@ -109,41 +109,30 @@ extension CalculationViewReactor {
             newText = String(currentState.inputFieldText.dropLast())
         }
         
-        return updateInputTextField(newText)
+        return .just(.updateInputField(newText))
     }
     
     private func processNumber(_ number: String) -> Observable<Mutation> {
         let currentInputFieldText = self.currentState.inputFieldText
-        let lastText = currentInputFieldText.last
+        let lastText = currentInputFieldText.last?.description ?? ""
         
-        if ["0", "00", "000"].contains(number)
-            && (["0", "+", "-", "×", "÷"].contains(lastText)
+        if CalculatorSymbol.zeros.contains(number)
+            && (CalculatorSymbol.operators.contains(lastText)
+                
                 || currentInputFieldText.isEmpty) {
             return .empty()
         } else {
-            return updateInputTextField(currentInputFieldText + number)
+            return .just(.updateInputField(currentInputFieldText + number))
         }
     }
     
-    
-    private func updateHaruby() -> Observable<Mutation> {
-        .just(.updateAverageHaruby(100))
-    }
-    
-    private func updateEstimatedPrice() -> Observable<Mutation> {
-        .just(.updateEstimatedPrice(100))
-    }
-    
-    private func updateInputTextField(_ text: String) -> Observable<Mutation> {
-        return .just(.updateInputField(text))
-    }
 }
 
 extension CalculationViewReactor {
     // 함수: 문자열 수식을 계산
-    private func evaluateExpression(_ expression: String) -> Double? {
+    private func evaluateExpression(_ expression: String) -> Int {
         var newExpression = expression
-        if ["+", "-", "×", "÷"].contains(expression.last) {
+        if CalculatorSymbol.operators.contains(expression.last?.description ?? "") {
             newExpression = String(newExpression.dropLast())
         }
         
@@ -156,21 +145,21 @@ extension CalculationViewReactor {
         ]
         
         // 후위 표기법으로 변환
-        var values: [Double] = []
+        var values: [Int] = []
         var ops: [Character] = []
         
         var index = newExpression.startIndex
         while index < newExpression.endIndex {
             let char = newExpression[index]
             
-            if char.isNumber || char == "." {
+            if char.isNumber {
                 // 숫자일 경우 숫자를 추출
                 var numStr = ""
-                while index < expression.endIndex && (newExpression[index].isNumber || newExpression[index] == ".") {
+                while index < newExpression.endIndex && (newExpression[index].isNumber) {
                     numStr.append(newExpression[index])
                     index = newExpression.index(after: index)
                 }
-                if let value = Double(numStr) {
+                if let value = Int(numStr) {
                     values.append(value)
                 }
                 continue
@@ -178,9 +167,15 @@ extension CalculationViewReactor {
             
             if operators.keys.contains(char) {
                 // 연산자일 경우 처리
-                while let lastOp = ops.last, let lastOpPriority = operators[lastOp], let currentPriority = operators[char], lastOpPriority >= currentPriority {
+                while let lastOp = ops.last,
+                        let lastOpPriority = operators[lastOp],
+                        let currentPriority = operators[char],
+                        lastOpPriority >= currentPriority {
+                    
                     ops.removeLast()
-                    if let right = values.popLast(), let left = values.popLast() {
+                    
+                    if let right = values.popLast(),
+                        let left = values.popLast() {
                         values.append(applyOperation(left, right, lastOp))
                     }
                 }
@@ -192,24 +187,25 @@ extension CalculationViewReactor {
         
         // 남은 연산자 처리
         while let op = ops.popLast() {
-            if let right = values.popLast(), let left = values.popLast() {
+            if let right = values.popLast(),
+                let left = values.popLast() {
                 values.append(applyOperation(left, right, op))
             }
         }
         
-        return values.last
+        return values.last ?? 0
     }
 
     // 연산을 적용하는 함수
-    private func applyOperation(_ left: Double, _ right: Double, _ op: Character) -> Double {
-        switch op {
-        case "+":
+    private func applyOperation(_ left: Int, _ right: Int, _ op: Character) -> Int {
+        switch String(op) {
+        case CalculatorSymbol.plus:
             return left + right
-        case "-":
+        case CalculatorSymbol.minus:
             return left - right
-        case "×":
+        case CalculatorSymbol.multiply:
             return left * right
-        case "÷":
+        case CalculatorSymbol.divide:
             return left / right
         default:
             fatalError("Unknown operator \(op)")
