@@ -21,67 +21,34 @@ final class HarubyEditViewController: UIViewController, View {
     private lazy var harubyTitleLabel: UILabel = {
         let label = UILabel()
         label.text = "하루비"
-        label.font = .pretendardMedium_14()
+        label.font = .pretendardMedium_14
         label.textColor = .Haruby.textBlack
         return label
     }()
     
-    private lazy var harubyTextField: UITextField = {
-        let textField = UITextField()
+    private lazy var harubyTextField: RoundedTextField = {
+        let textField = RoundedTextField()
         textField.placeholder = "36,900원"
-        textField.font = .pretendardSemibold_20()
-        textField.textColor = .Haruby.textBlack
-        textField.setPlaceholderColor(.Haruby.textBrighter)
-        
         return textField
-    }()
-    
-    private lazy var harubyContainerView: UIView = {
-        let view = UIView()
-        view.layer.cornerRadius = 10
-        view.layer.borderWidth = 1
-        view.layer.borderColor = UIColor.Haruby.textBright40.cgColor
-        view.addSubview(harubyTextField)
-        harubyTextField.snp.makeConstraints { make in
-            make.verticalEdges.equalToSuperview().inset(15)
-            make.horizontalEdges.equalToSuperview().inset(14)
-        }
-        return view
     }()
     
     private lazy var memoTitleLabel: UILabel = {
         let label = UILabel()
         label.text = "메모"
-        label.font = .pretendardMedium_14()
+        label.font = .pretendardMedium_14
         label.textColor = .Haruby.textBlack
         return label
     }()
     
-    private lazy var memoTextField: UITextField = {
-        let textField = UITextField()
-        textField.font = .pretendardSemibold_20()
-        textField.textColor = .Haruby.textBlack
-        
+    private lazy var memoTextField: RoundedTextField = {
+        let textField = RoundedTextField()
         return textField
-    }()
-    
-    private lazy var memoContainerView: UIView = {
-        let view = UIView()
-        view.layer.cornerRadius = 10
-        view.layer.borderWidth = 1
-        view.layer.borderColor = UIColor.Haruby.textBright40.cgColor
-        view.addSubview(memoTextField)
-        memoTextField.snp.makeConstraints { make in
-            make.verticalEdges.equalToSuperview().inset(15)
-            make.horizontalEdges.equalToSuperview().inset(14)
-        }
-        return view
     }()
     
     private lazy var memoFooterLabel: UILabel = {
         let label = UILabel()
         label.text = "(0/30)"
-        label.font = .pretendardMedium_14()
+        label.font = .pretendardMedium_14
         label.textColor = .Haruby.textBlack40
         return label
     }()
@@ -104,7 +71,7 @@ final class HarubyEditViewController: UIViewController, View {
     // MARK: - Binding
     func bind(reactor: HarubyEditViewReactor) {
         // Action
-        memoTextField.rx.text
+        memoTextField.textField.rx.text
                     .orEmpty
                     .distinctUntilChanged()
                     .map{ Reactor.Action.editMemoText($0) }
@@ -117,7 +84,7 @@ final class HarubyEditViewController: UIViewController, View {
                     .disposed(by: disposeBag)
         // State
         reactor.state.map{ $0.memoText }
-                    .bind(to: memoTextField.rx.text)
+            .bind(to: memoTextField.textField.rx.text)
                     .disposed(by: disposeBag)
         
         reactor.state.map{ $0.memoText.count }
@@ -139,9 +106,9 @@ final class HarubyEditViewController: UIViewController, View {
     
     private func addSubviews() {
         view.addSubview(harubyTitleLabel)
-        view.addSubview(harubyContainerView)
+        view.addSubview(harubyTextField)
         view.addSubview(memoTitleLabel)
-        view.addSubview(memoContainerView)
+        view.addSubview(memoTextField)
         view.addSubview(memoFooterLabel)
         view.addSubview(bottomButton)
     }
@@ -152,25 +119,25 @@ final class HarubyEditViewController: UIViewController, View {
             make.leading.equalToSuperview().offset(29)
         }
         
-        harubyContainerView.snp.makeConstraints { make in
+        harubyTextField.snp.makeConstraints { make in
             make.top.equalTo(harubyTitleLabel.snp.bottom).offset(8)
             make.leading.equalToSuperview().offset(16)
             make.trailing.equalToSuperview().offset(-16)
         }
         
         memoTitleLabel.snp.makeConstraints { make in
-            make.top.equalTo(harubyContainerView.snp.bottom).offset(16)
+            make.top.equalTo(harubyTextField.snp.bottom).offset(16)
             make.leading.equalToSuperview().offset(29)
         }
         
-        memoContainerView.snp.makeConstraints { make in
+        memoTextField.snp.makeConstraints { make in
             make.top.equalTo(memoTitleLabel.snp.bottom).offset(8)
             make.leading.equalToSuperview().offset(16)
             make.trailing.equalToSuperview().offset(-16)
         }
         
         memoFooterLabel.snp.makeConstraints { make in
-            make.top.equalTo(memoContainerView.snp.bottom).offset(8)
+            make.top.equalTo(memoTextField.snp.bottom).offset(8)
             make.trailing.equalToSuperview().offset(-30)
         }
         

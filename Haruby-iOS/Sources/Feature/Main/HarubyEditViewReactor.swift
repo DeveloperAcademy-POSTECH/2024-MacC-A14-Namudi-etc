@@ -41,7 +41,6 @@ final class HarubyEditViewReactor: Reactor {
         switch mutation {
         case .setMemoText(let memoText):
             newState.memoText = memoText
-            print(newState.memoText)
         }
         return newState
     }
