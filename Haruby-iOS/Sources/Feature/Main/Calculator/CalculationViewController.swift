@@ -15,6 +15,9 @@ final class CalculationViewController: UIViewController, View {
     
     typealias Reactor = CalculationViewReactor
     
+    // MARK: - Properties
+    var disposeBag = DisposeBag()
+    
     // MARK: - UI Components
     private lazy var topStackView: UIStackView = {
         let view = UIStackView()
@@ -39,15 +42,24 @@ final class CalculationViewController: UIViewController, View {
         view.axis = .horizontal
         view.spacing = 5
         view.alignment = .center
-        view.distribution = .equalSpacing
+        view.distribution = .fill
         return view
     }()
     
     private lazy var bottomImageView: UIImageView = {
         let view = UIImageView()
-        view.image = .redHaruby
+        view.image = .whiteHaruby
         view.contentMode = .scaleAspectFit
         view.isHidden = true
+        return view
+    }()
+    
+    private lazy var bottomLabelStackView: UIStackView = {
+        let view = UIStackView()
+        view.axis = .horizontal
+        view.spacing = 5
+        view.alignment = .firstBaseline
+        view.distribution = .fill
         return view
     }()
     
@@ -57,6 +69,8 @@ final class CalculationViewController: UIViewController, View {
         view.text = "\(12000.decimalWithWon)"
         view.textColor = .white
         view.isHidden = true
+        view.baselineAdjustment = .alignBaselines
+        
         return view
     }()
     
@@ -80,7 +94,7 @@ final class CalculationViewController: UIViewController, View {
         return view
     }()
     
-    private lazy var textField: RoundedTextField = {
+    private lazy var inputField: RoundedTextField = {
         let view = RoundedTextField()
         view.placeholder = "금액을 입력해 주세요"
         view.isUserInteractionEnabled = false
@@ -91,9 +105,6 @@ final class CalculationViewController: UIViewController, View {
         let view = CalculationKeypad()
         return view
     }()
-    
-    // MARK: - Properties
-    var disposeBag = DisposeBag()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -117,13 +128,18 @@ final class CalculationViewController: UIViewController, View {
         
         [topLabel, bottomStackView].forEach { topStackView.addArrangedSubview($0) }
         
-        [bottomImageView, bottomPriceLabel, bottomLabel].forEach { bottomStackView.addArrangedSubview($0)
+        [bottomImageView, bottomLabelStackView].forEach {
+            bottomStackView.addArrangedSubview($0)
+        }
+        
+        [bottomPriceLabel, bottomLabel].forEach {
+            bottomLabelStackView.addArrangedSubview($0)
         }
 
         view.addSubview(bottomView)
         
         bottomView.addSubview(calculationProcessView)
-        bottomView.addSubview(textField)
+        bottomView.addSubview(inputField)
         bottomView.addSubview(calculationKeypad)
         
         bottomView.roundCorners(cornerRadius: 20, maskedCorners: [.topLeft, .topRight])
@@ -133,6 +149,13 @@ final class CalculationViewController: UIViewController, View {
         topStackView.snp.makeConstraints { make in
             make.top.equalTo(view.safeAreaLayoutGuide).inset(32)
             make.horizontalEdges.equalToSuperview().inset(26)
+        }
+        
+        bottomImageView.snp.makeConstraints { make in
+//            make.width.equalTo(50)
+//            make.height.equalTo(43)
+            make.width.equalTo(35)
+            make.height.equalTo(30)
         }
         
         bottomView.snp.makeConstraints { make in
@@ -145,7 +168,7 @@ final class CalculationViewController: UIViewController, View {
             make.horizontalEdges.equalToSuperview().inset(20)
         }
         
-        textField.snp.makeConstraints { make in
+        inputField.snp.makeConstraints { make in
             make.bottom.equalTo(calculationKeypad.snp.top)
                 .offset(-12)
             make.horizontalEdges.equalToSuperview().inset(16)
@@ -167,18 +190,90 @@ final class CalculationViewController: UIViewController, View {
     
     // MARK: - Binding
     
-    func bind(reactor: CalculationViewReactor) {
-        bindState()
-        bindAction()
+    func bind(reactor: Reactor) {
+        bindState(reactor: reactor)
+        bindAction(reactor: reactor)
     }
     
-    private func bindState() {
+    private func bindState(reactor: Reactor) {
+        // 계산된 평균 하루비
+        reactor.state.map { $0.averageHaruby.decimalWithWon }
+            .distinctUntilChanged()
+            .bind(to: self.bottomPriceLabel.rx.text)
+            .disposed(by: disposeBag)
         
-    }
-    
-    private func bindAction() {
+        // 남은 총 하루비
+        reactor.state.map { $0.remainTotalHaruby.decimalWithWon }
+            .distinctUntilChanged()
+            .bind(to: self.calculationProcessView.totalHaruby.rx.text)
+            .disposed(by: disposeBag)
         
+        // 지출 예정 금액
+        reactor.state.map { $0.estimatedPrice.decimalWithWon }
+            .distinctUntilChanged()
+            .bind(to: self.calculationProcessView.estimatedPrice.rx.text)
+            .disposed(by: disposeBag)
+        
+        // 남은 일수
+        reactor.state.map { String($0.remainingDays) + "일" }
+            .distinctUntilChanged()
+            .bind(to: self.calculationProcessView.remainingDay.rx.text)
+            .disposed(by: disposeBag)
+        
+        // 계산식
+        reactor.state.map { $0.inputFieldText }
+            .distinctUntilChanged()
+            .bind(to: inputField.textField.rx.text)
+            .disposed(by: disposeBag)
+        
+        reactor.state.map { $0.isResultButtonClicked }
+            .distinctUntilChanged()
+//            .filter { $0 }
+            .subscribe { [weak self] _ in
+                self?.updateTopView()
+            }
+            .disposed(by: disposeBag)
     }
     
-    
+    private func bindAction(reactor: Reactor) {
+        var numberButtons = calculationKeypad.numberButtons.map { button in
+            button.rx.tap.map { _ in
+                Reactor.Action.numberButtonTapped(button.titleLabel!.text!)
+            }
+        }
+        var operatorButtons = calculationKeypad.operatorButtons.map { button in
+            button.rx.tap.map { _ in
+                Reactor.Action.operatorButtonTapped(button.titleLabel!.text!)
+            }
+        }
+        var deleteButtons = calculationKeypad.deleteButtons.map { button in
+            button.rx.tap.map { _ in
+                Reactor.Action.deleteButtonTapped(button.titleLabel?.text ?? "")
+            }
+        }
+        
+        Observable.merge(numberButtons)
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+            
+        Observable.merge(operatorButtons)
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        Observable.merge(deleteButtons)
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+    }
+}
+
+extension CalculationViewController {
+    private func updateTopView() {
+        bottomImageView.isHidden = false
+        bottomPriceLabel.isHidden = false
+        
+        bottomLabel.text = "입니다"
+        
+        bottomPriceLabel.font = .pretendardSemibold_36
+        bottomLabel.font = .pretendardSemibold_32
+    }
 }

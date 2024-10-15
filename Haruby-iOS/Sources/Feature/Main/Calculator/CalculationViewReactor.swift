@@ -81,6 +81,7 @@ extension CalculationViewReactor {
     }
     
     private func updateInputTextField(_ text: String) -> Observable<Mutation> {
-        .empty()
+        print(text)
+        return .empty()
     }
 }

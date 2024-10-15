@@ -11,6 +11,8 @@ import SnapKit
 
 final class CalculationProcessView: UIView {
     
+    // MARK: - UI Components
+    
     private lazy var containerStackView: UIStackView = {
         let view = UIStackView()
         view.axis = .horizontal
@@ -41,7 +43,6 @@ final class CalculationProcessView: UIView {
         view.alignment = .center
         view.distribution = .fill
         view.spacing = 5
-        view.backgroundColor = .Haruby.whiteDeep50
         view.layer.cornerRadius = 10
         return view
     }()
@@ -54,7 +55,7 @@ final class CalculationProcessView: UIView {
         return view
     }()
     
-    private lazy var totalHaruby: UILabel = {
+    lazy var totalHaruby: UILabel = {
         let view = UILabel()
         view.text = "\(170000.decimalWithWon)"
         view.textColor = .Haruby.textBright
@@ -94,7 +95,7 @@ final class CalculationProcessView: UIView {
         return view
     }()
     
-    private lazy var estimatedPrice: UILabel = {
+    lazy var estimatedPrice: UILabel = {
         let view = UILabel()
         view.text = "\(36900.decimalWithWon)"
         view.textColor = .Haruby.textBright
@@ -142,14 +143,14 @@ final class CalculationProcessView: UIView {
         return view
     }()
     
-    private lazy var remainingDay: UILabel = {
+    lazy var remainingDay: UILabel = {
         let view = UILabel()
         view.text = "15일"
         view.textColor = .Haruby.textBright
         view.font = .pretendardSemibold_16
         return view
     }()
-
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         
