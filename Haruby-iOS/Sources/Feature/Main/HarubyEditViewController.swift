@@ -92,18 +92,9 @@ final class HarubyEditViewController: UIViewController, View {
         super.viewDidLoad()
         
         // Do any additional setup after loading the view.
-        setupConstraints()
-        setupTapGesture()
+        setupView()
     }
     
-    override func loadView() {
-        title = "하루비 조정"
-        let view = UIView()
-        self.view = view
-        view.backgroundColor = .systemBackground
-        
-        [harubyTitleLabel, harubyContainerView, memoTitleLabel, memoContainerView, memoFooterLabel, bottomButton].forEach { self.view.addSubview($0) }
-    }
     
     // MARK: - Binding
     func bind(reactor: HarubyEditViewReactor) {
@@ -131,7 +122,25 @@ final class HarubyEditViewController: UIViewController, View {
                     .disposed(by: disposeBag)
     }
     
-    // MARK: - Private Methods
+    //MARK: - setup
+    private func setupView() {
+        title = "하루비 조정"
+        view.backgroundColor = .Haruby.white
+        
+        addSubviews()
+        setupConstraints()
+        setupTapGesture()
+    }
+    
+    private func addSubviews() {
+        view.addSubview(harubyTitleLabel)
+        view.addSubview(harubyContainerView)
+        view.addSubview(memoTitleLabel)
+        view.addSubview(memoContainerView)
+        view.addSubview(memoFooterLabel)
+        view.addSubview(bottomButton)
+    }
+    
     private func setupConstraints() {
         harubyTitleLabel.snp.makeConstraints { make in
             make.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(40)
@@ -166,6 +175,7 @@ final class HarubyEditViewController: UIViewController, View {
         }
     }
     
+    // MARK: - Private Methods
     private func setupTapGesture() {
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
         tapGesture.cancelsTouchesInView = false
