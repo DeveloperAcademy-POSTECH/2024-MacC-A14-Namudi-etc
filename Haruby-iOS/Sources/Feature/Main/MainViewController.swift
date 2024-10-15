@@ -246,5 +246,26 @@ final class MainViewController: UIViewController, View {
             .distinctUntilChanged()
             .bind(to: receiptView.dateLabel.rx.text)
             .disposed(by: disposeBag)
+        
+        reactor.state.map { $0.mainState.harubyImage }
+            .distinctUntilChanged()
+            .bind(to: receiptView.harubyImageView.rx.image)
+            .disposed(by: disposeBag)
+        
+        reactor.state.map { $0.mainState.amountBoxColor }
+            .distinctUntilChanged()
+            .bind(to: receiptView.amountBox.rx.backgroundColor)
+            .disposed(by: disposeBag)
+        
+        reactor.state.map { $0.mainState.amountLabelColor }
+            .distinctUntilChanged()
+            .bind(to: receiptView.amountLabel.rx.textColor)
+            .disposed(by: disposeBag)
+        
+        // TODO: 사용한 금액 표시 로직 구현
+        /*
+        reactor.state.map { $0.mainState.usedAmount }
+            .distinctUntilChanged()
+         */
     }
 }

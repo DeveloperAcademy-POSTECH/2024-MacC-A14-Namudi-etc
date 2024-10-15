@@ -85,7 +85,6 @@ final class StubSalaryBudgetRepository: SalaryBudgetRepository {
     }
     
     func create(_ salaryBudget: SalaryBudget) -> Observable<Void> {
-//        print("Stub: Create \(salaryBudget)")
         print("Stub: Create SalaryBudget")
         salaryBudgets.append(RealmSalaryBudget(salaryBudget))
         return Observable.just(())
@@ -136,8 +135,8 @@ final class StubSalaryBudgetRepository: SalaryBudgetRepository {
 extension StubSalaryBudgetRepository {
     static func createMockRealmSalaryBudget() -> RealmSalaryBudget {
         let calendar = Calendar.current
-        let startDate = calendar.date(from: DateComponents(year: 2024, month: 10, day: 15))!
-        let endDate = calendar.date(from: DateComponents(year: 2024, month: 11, day: 14))!
+        let startDate = calendar.date(from: DateComponents(year: 2024, month: 10, day: 14))!
+        let endDate = calendar.date(from: DateComponents(year: 2024, month: 11, day: 13))!
         
         let fixedExpenses = List<RealmTransactionItem>()
         fixedExpenses.append(objectsIn: [
@@ -150,12 +149,13 @@ extension StubSalaryBudgetRepository {
         var currentDate = startDate
         while currentDate <= endDate {
             let emptyTransactionItems = List<RealmTransactionItem>()
-            let expense = RealmTransactionRecord(id: UUID().uuidString, total: 0, transactionItems: emptyTransactionItems)
+            let expense = RealmTransactionRecord(id: UUID().uuidString, total: 40000, transactionItems: emptyTransactionItems)
             let income = RealmTransactionRecord(id: UUID().uuidString, total: 0, transactionItems: emptyTransactionItems)
             
             let dailyBudget = RealmDailyBudget(
                 id: UUID().uuidString,
                 date: currentDate,
+                haruby: 50000,
                 memo: "",
                 expense: expense,
                 income: income
@@ -171,7 +171,7 @@ extension StubSalaryBudgetRepository {
             fixedIncome: 3000000,
             fixedExpense: fixedExpenses,
             balance: 2420000,
-            defaultHaruby: 80000,
+            defaultHaruby: 20000,
             dailyBudgets: dailyBudgets
         )
     }
