@@ -45,7 +45,6 @@ class BottomButton: UIButton {
         setupSubviews()
         setupConstriants()
         setupBindings()
-        setupKeyboardNotifications()
     }
     
     private func setupSubviews() {
@@ -63,12 +62,30 @@ class BottomButton: UIButton {
         }
     }
     
-    private func setupKeyboardNotifications() {
-         NotificationCenter.default.addObserver(self, selector: #selector(handleKeyboardWillShow(notification:)), name: UIResponder.keyboardWillShowNotification, object: nil)
-         NotificationCenter.default.addObserver(self, selector: #selector(handleKeyboardWillHide(notification:)), name: UIResponder.keyboardWillHideNotification, object: nil)
-     }
-
-     @objc private func handleKeyboardWillShow(notification: Notification) {
+    private func setupBindings() {
+        self.rx.tap
+            .bind(to: buttonTapSubject)
+            .disposed(by: disposeBag)
+        
+        NotificationCenter.default.rx
+            .notification(UIResponder.keyboardWillShowNotification)
+            .withUnretained(self)
+            .bind{ this, notification in
+                self.handleKeyboardWillShow(notification: notification)
+            }
+            .disposed(by: disposeBag)
+        
+        NotificationCenter.default.rx
+            .notification(UIResponder.keyboardWillHideNotification)
+            .withUnretained(self)
+            .bind{ this, notification in
+                self.handleKeyboardWillHide(notification: notification)
+            }
+            .disposed(by: disposeBag)
+    }
+    
+    // MARK: - Private Methods
+     private func handleKeyboardWillShow(notification: Notification) {
          guard let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect else { return }
          let keyboardHeight = keyboardFrame.height
          
@@ -84,7 +101,7 @@ class BottomButton: UIButton {
          }
      }
 
-     @objc private func handleKeyboardWillHide(notification: Notification) {
+     private func handleKeyboardWillHide(notification: Notification) {
          UIView.animate(withDuration: 0.0) {
              self.snp.updateConstraints { make in
                  make.height.equalTo(108)
@@ -96,17 +113,4 @@ class BottomButton: UIButton {
              self.superview?.layoutIfNeeded()
          }
      }
-
-     // MARK: - Deinitializer
-     deinit {
-         NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
-         NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
-     }
-    
-    // MARK: - Private Methods
-    private func setupBindings() {
-        self.rx.tap
-            .bind(to: buttonTapSubject)
-            .disposed(by: disposeBag)
-    }
 }
