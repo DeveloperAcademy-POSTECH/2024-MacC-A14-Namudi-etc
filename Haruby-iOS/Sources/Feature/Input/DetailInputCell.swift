@@ -20,6 +20,7 @@ class DetailInputCell: UITableViewCell {
     let detailAmountTextField: InputTextField = {
         let textfield = InputTextField()
         textfield.placeholder = "지출 금액"
+        textfield.keyboardType = .numberPad
         return textfield
     }()
     
