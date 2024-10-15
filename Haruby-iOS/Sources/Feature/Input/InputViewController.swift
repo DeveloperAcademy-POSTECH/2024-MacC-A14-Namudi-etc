@@ -82,8 +82,7 @@ class InputViewController: UIViewController, View {
         return view
     }()
     
-    // 임시 상세 내역 기록하기 뷰
-    private lazy var detailInputCellView = DetailInputCell()
+    private lazy var detailInputScrollView = DetailInputScrollView()
     
     // MARK: - Lifecycle
     override func viewDidLoad() {
@@ -103,9 +102,9 @@ class InputViewController: UIViewController, View {
         self.view.addSubview(dateStackView)
         self.view.addSubview(amountTextField)
         self.view.addSubview(detailInputButtonStackView)
-        self.view.addSubview(detailInputCellView)
+        self.view.addSubview(detailInputScrollView)
         
-        detailInputCellView.isHidden = true
+        detailInputScrollView.isHidden = true
     }
     
     private func configureConstraints() {
@@ -128,7 +127,7 @@ class InputViewController: UIViewController, View {
             make.height.equalTo(40)
         }
         
-        detailInputCellView.snp.makeConstraints { make in
+        detailInputScrollView.snp.makeConstraints { make in
             make.top.equalTo(self.detailInputButtonStackView.snp.bottom).offset(30)
             make.horizontalEdges.equalTo(view.safeAreaLayoutGuide)
         }
@@ -154,7 +153,7 @@ class InputViewController: UIViewController, View {
             .distinctUntilChanged()
             .subscribe(onNext: { [weak self] isVisible in
                 guard let self = self else { return }
-                self.detailInputCellView.isHidden = !isVisible
+                self.detailInputScrollView.isHidden = !isVisible
                 
                 let angle: CGFloat = isVisible ? .pi : 0
                 UIView.animate(withDuration: 0.1) {

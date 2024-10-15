@@ -64,8 +64,8 @@ class InputTextField: UIView {
         }
         
         textField.snp.makeConstraints { make in
-            make.verticalEdges.equalToSuperview().inset(12)
-            make.horizontalEdges.equalToSuperview().inset(8)
+            make.verticalEdges.equalToSuperview().inset(8)
+            make.horizontalEdges.equalToSuperview().inset(12)
         }
     }
 }
