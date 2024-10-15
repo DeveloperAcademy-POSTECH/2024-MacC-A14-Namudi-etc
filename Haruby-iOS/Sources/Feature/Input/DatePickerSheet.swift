@@ -21,8 +21,7 @@ class DatePickerSheet: UIViewController, UISheetPresentationControllerDelegate {
         super.viewDidLoad()
         view.backgroundColor = .Haruby.white
         
-        setupSubviews()
-        setupConstraints()
+        setupView()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -30,6 +29,11 @@ class DatePickerSheet: UIViewController, UISheetPresentationControllerDelegate {
         if let sheet = self.sheetPresentationController {
             sheet.delegate = self
         }
+    }
+    
+    private func setupView() {
+        setupSubviews()
+        setupConstraints()
     }
     
     private func setupSubviews() {
