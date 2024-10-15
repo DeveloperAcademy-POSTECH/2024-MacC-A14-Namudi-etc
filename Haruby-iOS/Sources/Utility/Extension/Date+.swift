@@ -8,18 +8,27 @@
 import Foundation
 
 extension Date {
-    /// Date 값이 어떤 날짜인지를 표현
-    var formattedDate: Self {
+    private var configuredCalendar: Calendar {
         var calendar = Calendar.current
-        
         // 달력 표기 방법 설정
         calendar.locale = .current
-        // 타임존(UTC 시간관련된 개념) 설정
+        // 타임존 설정
         calendar.timeZone = .current
-        
+        return calendar
+    }
+    
+    /// Date 값이 어떤 날짜인지를 표현
+    var formattedDate: Self {
+        let calendar = configuredCalendar
         let dateComponent = calendar.dateComponents([.year, .month, .day], from: self)
-        
         return calendar.date(from: dateComponent)!
+    }
+    
+    /// Date 값에서 월 Int만 추출
+    var monthValue: Int {
+        let calendar = configuredCalendar
+        let dateComponent = calendar.dateComponents([.month], from: self)
+        return dateComponent.month!
     }
     
     var formattedDateToStringforMainView: String {
@@ -28,10 +37,4 @@ extension Date {
         formatter.locale = Locale(identifier: "ko_KR")
         return formatter.string(from: self)
     }
-    
-    /// Date값을 ~월 String으로 표현
-    func formattedMonth() -> String {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "M월"
-        return dateFormatter.string(from: self)
 }
