@@ -9,61 +9,18 @@ import UIKit
 import SnapKit
 import ReactorKit
 import RxCocoa
-import Hero
 
 final class MainViewController: UIViewController, View {
     // MARK: - Properties
     var disposeBag = DisposeBag()
     
     // MARK: - UI Components
-    private lazy var topAvgHarubyText1: UILabel = {
-        let label = UILabel()
-        label.textColor = .Haruby.whiteDeep50
-        label.font = .pretendardMedium_14
-        label.textAlignment = .center
-        label.text = "다음 월급까지의 평균 하루비는 "
-        return label
-    }()
-    
-    private lazy var topAvgHarubyText2: UILabel = {
-        let label = UILabel()
-        label.textColor = .Haruby.whiteDeep50
-        label.font = .pretendardSemibold_14
-        label.textAlignment = .center
-        label.text = "-"
-        return label
-    }()
-    
-    private lazy var topAvgHarubyText3: UILabel = {
-        let label = UILabel()
-        label.textColor = .Haruby.whiteDeep50
-        label.font = .pretendardMedium_14
-        label.textAlignment = .center
-        label.text = "입니다 "
-        return label
-    }()
-    
-    private lazy var topAvgHarubyIcon: UIImageView = {
-        let imageView = UIImageView()
-        imageView.image = UIImage(systemName: "info.circle")
-        imageView.tintColor = .Haruby.whiteDeep50
-        return imageView
-    }()
-    
-    private lazy var topAvgHarubyStackView: UIStackView = {
-        let stackView = UIStackView(arrangedSubviews: [
-            topAvgHarubyText1, topAvgHarubyText2, topAvgHarubyText3, topAvgHarubyIcon
-        ])
-        stackView.axis = .horizontal
-        stackView.spacing = 0
-        stackView.alignment = .center
-        return stackView
-    }()
-    
-    private lazy var receiptView: ReceiptView = {
-        let view = ReceiptView(frame: .zero)
+    private lazy var headerView = MainHeaderView()
+    private lazy var receiptView: MainReceiptView = {
+        let view = MainReceiptView(frame: .zero)
         return view
     }()
+    private lazy var footerView = MainFooterView()
     
     private lazy var backgroundRectangle: UIView = {
         let view = UIView()
@@ -86,50 +43,6 @@ final class MainViewController: UIViewController, View {
         return view
     }()
     
-    private let navigateCalculatorButton: NavigationButton = {
-        let button = NavigationButton()
-        button.customTitleLabel.text = "하루비 계산기"
-        button.customSubTitleLabel.text = "지금 지출이 앞으로의 하루비에 얼마나 영향을 줄까요?"
-        button.symbolImageView.image = UIImage(systemName: "plus.forwardslash.minus")
-        
-        return button
-    }()
-    
-    private let navigateCalendarButton: NavigationButton = {
-        let button = NavigationButton()
-        button.customTitleLabel.text = "하루비 달력"
-        button.customSubTitleLabel.text = "하루비 확인 및 조정"
-        button.symbolImageView.image = UIImage(systemName: "calendar")
-        
-        return button
-    }()
-    
-    private let navigateManagementButton: NavigationButton = {
-        let button = NavigationButton()
-        button.customTitleLabel.text = "하루비 관리"
-        button.customSubTitleLabel.text = "고정지출 및 수입 관리"
-        button.symbolImageView.image = UIImage(systemName: "wonsign")
-        
-        return button
-    }()
-    
-    private lazy var navigateStackView: UIStackView = {
-        let stackView = UIStackView(arrangedSubviews: [navigateCalendarButton, navigateManagementButton])
-        stackView.axis = .horizontal
-        stackView.spacing = 9
-        stackView.distribution = .fillEqually
-        return stackView
-    }()
-    
-    // MARK: - Initializer
-    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
-        super.init(nibName: nil, bundle: nil)
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
     // MARK: - View Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -138,21 +51,15 @@ final class MainViewController: UIViewController, View {
         reactor?.action.onNext(.viewDidLoad)
     }
     
-    // MARK: - Setup
+    // MARK: - Setup View
     private func setupView() {
         view.backgroundColor = .Haruby.whiteDeep
-        
         setupSubviews()
         setupConstraints()
     }
     
     private func setupSubviews() {
-        view.addSubview(backgroundRectangle)
-        view.addSubview(backgroundEllipse)
-        view.addSubview(topAvgHarubyStackView)
-        view.addSubview(receiptView)
-        view.addSubview(navigateCalculatorButton)
-        view.addSubview(navigateStackView)
+        [backgroundRectangle, backgroundEllipse, headerView, receiptView, footerView].forEach { view.addSubview($0) }
     }
     
     private func setupConstraints() {
@@ -169,32 +76,21 @@ final class MainViewController: UIViewController, View {
             make.height.equalTo(174)
         }
         
-        topAvgHarubyIcon.snp.makeConstraints { make in
-            make.width.height.equalTo(17)
+        headerView.snp.makeConstraints { make in
+            make.top.equalTo(view.safeAreaLayoutGuide)
+            make.leading.trailing.equalToSuperview()
         }
         
-        topAvgHarubyStackView.snp.makeConstraints { make in
-            make.top.equalTo(view.safeAreaLayoutGuide).offset(62)
-            make.centerX.equalToSuperview()
-        }
-
         receiptView.snp.makeConstraints { make in
-            make.top.equalTo(topAvgHarubyStackView.snp.bottom).offset(9)
+            make.top.equalTo(headerView.snp.bottom).offset(9)
             make.leading.trailing.equalToSuperview().inset(16)
             make.height.equalTo(331)
         }
         
-        navigateCalculatorButton.snp.makeConstraints { make in
+        footerView.snp.makeConstraints { make in
             make.top.equalTo(receiptView.snp.bottom).offset(16)
             make.leading.trailing.equalToSuperview().inset(16)
-            make.height.equalTo(106)
-        }
-        
-        navigateStackView.snp.makeConstraints { make in
-            make.top.equalTo(navigateCalculatorButton.snp.bottom).offset(11)
-            make.leading.trailing.equalToSuperview().inset(16)
             make.bottom.lessThanOrEqualToSuperview().offset(-20)
-            make.height.equalTo(66)
         }
     }
     
@@ -204,68 +100,92 @@ final class MainViewController: UIViewController, View {
         bindState(reactor: reactor)
     }
     
-    func bindAction(reactor: MainReactor) {
-        navigateCalculatorButton.rx.tap
+    private func bindAction(reactor: MainReactor) {
+        footerView.rx.tapCalculator
             .map { Reactor.Action.naivgateCalculator }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
         
-        navigateCalendarButton.rx.tap
+        footerView.rx.tapCalendar
             .map { Reactor.Action.navigateCalendar }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
         
-        navigateManagementButton.rx.tap
+        footerView.rx.tapManagement
             .map { Reactor.Action.navigateManagement }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
         
-        receiptView.inputButton.rx.tap
+        receiptView.rx.inputButtonTap
             .map { Reactor.Action.navigateInputButton }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
     }
     
-    func bindState(reactor: MainReactor) {
-        reactor.state.map { $0.mainState.todayHarubyTitle }
-            .distinctUntilChanged()
-            .bind(to: receiptView.titleLabel.rx.text)
-            .disposed(by: disposeBag)
-        
+    private func bindState(reactor: MainReactor) {
         reactor.state.map { $0.mainState.avgHaruby }
             .distinctUntilChanged()
-            .bind(to: topAvgHarubyText2.rx.text)
+            .bind(to: headerView.rx.avgHaruby)
             .disposed(by: disposeBag)
         
-        reactor.state.map { $0.mainState.todayHaruby }
+        reactor.state.map { $0.mainState.todayHarubyTitle }
             .distinctUntilChanged()
-            .bind(to: receiptView.amountLabel.rx.text)
+            .bind(to: receiptView.rx.todayHarubyTitle)
+            .disposed(by: disposeBag)
+        
+        reactor.state.map { $0.mainState.remainHaruby }
+            .distinctUntilChanged()
+            .bind(to: receiptView.rx.remainHaruby)
             .disposed(by: disposeBag)
         
         reactor.state.map { $0.mainState.date }
             .distinctUntilChanged()
-            .bind(to: receiptView.dateLabel.rx.text)
+            .bind(to: receiptView.rx.date)
             .disposed(by: disposeBag)
         
         reactor.state.map { $0.mainState.harubyImage }
             .distinctUntilChanged()
-            .bind(to: receiptView.harubyImageView.rx.image)
+            .bind(to: receiptView.rx.harubyImage)
             .disposed(by: disposeBag)
         
         reactor.state.map { $0.mainState.amountBoxColor }
             .distinctUntilChanged()
-            .bind(to: receiptView.amountBox.rx.backgroundColor)
+            .bind(to: receiptView.rx.amountBoxColor)
             .disposed(by: disposeBag)
         
         reactor.state.map { $0.mainState.amountLabelColor }
             .distinctUntilChanged()
-            .bind(to: receiptView.amountLabel.rx.textColor)
+            .bind(to: receiptView.rx.amountLabelColor)
             .disposed(by: disposeBag)
         
-        // TODO: 사용한 금액 표시 로직 구현
-        /*
-        reactor.state.map { $0.mainState.usedAmount }
+        reactor.state
+            .map { $0.mainState.usedAmount > 0 ? false : true }
             .distinctUntilChanged()
-         */
+            .bind(to: receiptView.rx.expenseAmountStackViewHidden)
+            .disposed(by: disposeBag)
+        
+        reactor.state
+            .map { $0.mainState.todayHaruby }
+            .distinctUntilChanged()
+            .bind(to: receiptView.rx.todayHaruby)
+            .disposed(by: disposeBag)
+        
+        reactor.state
+            .map { state -> String in
+                let usedAmount = (state.mainState.todayHaruby.numberFormat ?? 0) - (state.mainState.remainHaruby.numberFormat ?? 0)
+                return usedAmount.decimalWithWon
+            }
+            .distinctUntilChanged()
+            .bind(to: receiptView.rx.usedAmount)
+            .disposed(by: disposeBag)
+        
+        reactor.state
+            .map { state -> UIColor in
+                let usedAmount = (state.mainState.todayHaruby.numberFormat ?? 0) - (state.mainState.remainHaruby.numberFormat ?? 0)
+                return state.mainState.usedAmount > 0 && usedAmount > state.mainState.todayHaruby.numberFormat ?? 0 ? .Haruby.red : .Haruby.green
+            }
+            .distinctUntilChanged()
+            .bind(to: receiptView.rx.usedAmountColor)
+            .disposed(by: disposeBag)
     }
 }
