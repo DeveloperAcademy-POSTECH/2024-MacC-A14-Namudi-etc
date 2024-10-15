@@ -22,7 +22,7 @@ final class CalendarViewController: UIViewController, View {
     // MARK: - Properties
     private let cellId: String = "CalendarCell"
     private let cellHeight: CGFloat = 83
-    private let horizontalPadding: CGFloat = 32
+    private let horizontalPadding: CGFloat = 16
     
     // MARK: - UI Component
     private lazy var monthLabel: UILabel = {
@@ -30,10 +30,6 @@ final class CalendarViewController: UIViewController, View {
         label.text = "9월"
         label.font = .pretendardSemibold_36
         label.textColor = .Haruby.white
-        
-        label.snp.makeConstraints { make in
-            make.height.equalTo(54)
-        }
         
         return label
     }()
@@ -44,19 +40,10 @@ final class CalendarViewController: UIViewController, View {
         label.font = .pretendardSemibold_18
         label.textColor = .Haruby.white
         
-        label.snp.makeConstraints { make in
-            make.height.equalTo(21)
-        }
-        
         return label
     }()
     
-    private lazy var remainTotalHarubyBox: UIView = {
-        let view = UIView()
-        view.backgroundColor = .clear
-        view.layer.borderColor = UIColor.Haruby.white20.cgColor
-        view.layer.borderWidth = 1
-        view.layer.cornerRadius = 10
+    private lazy var remainTotalHarubyStackView: UIStackView = {
         
         let totalHarubyTitleLabel = UILabel()
         totalHarubyTitleLabel.text = "남은 총 하루비"
@@ -69,14 +56,26 @@ final class CalendarViewController: UIViewController, View {
         stackView.alignment = .center
         stackView.distribution = .fill
         
-        view.addSubview(stackView)
+        return stackView
+    }()
+    
+    private lazy var remainTotalHarubyBox: UIView = {
+        let view = UIView()
+        view.backgroundColor = .clear
+        view.layer.borderColor = UIColor.Haruby.white20.cgColor
+        view.layer.borderWidth = 1
+        view.layer.cornerRadius = 10
         
-        stackView.snp.makeConstraints { make in
-            make.horizontalEdges.equalToSuperview().inset(16)
-            make.verticalEdges.equalToSuperview().inset(8)
-        }
+        view.addSubview(remainTotalHarubyStackView)
         
         return view
+    }()
+    
+    private lazy var bodyStackView: UIStackView = {
+        let stackView = UIStackView(arrangedSubviews: [weekdayHeader, collectionView])
+        stackView.axis = .vertical
+        
+        return stackView
     }()
     
     private lazy var topRoundedContainer: UIView = {
@@ -88,20 +87,12 @@ final class CalendarViewController: UIViewController, View {
         let stackView = UIStackView(arrangedSubviews: [weekdayHeader, collectionView])
         stackView.axis = .vertical
 
-        view.addSubview(stackView)
-        
-        stackView.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(23)
-            make.bottom.equalToSuperview()
-            make.horizontalEdges.equalToSuperview().inset(16)
-        }
+        view.addSubview(bodyStackView)
         
         return view
     }()
     
-    private lazy var weekdayHeader: UIView = {
-        let view = UIView()
-        view.backgroundColor = .clear
+    private lazy var weekdayHeader: UIStackView = {
         
         let stackView = UIStackView()
         stackView.axis = .horizontal
@@ -116,19 +107,10 @@ final class CalendarViewController: UIViewController, View {
             label.textColor = .Haruby.textBlack
             label.textAlignment = .center
             
-            label.snp.makeConstraints { make in
-                make.height.equalTo(32)
-            }
-            
             stackView.addArrangedSubview(label)
         }
         
-        view.addSubview(stackView)
-        stackView.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
-        }
-        
-        return view
+        return stackView
     }()
     
     private lazy var collectionView: UICollectionView = {
@@ -137,7 +119,7 @@ final class CalendarViewController: UIViewController, View {
         layout.minimumLineSpacing = 0
         layout.minimumInteritemSpacing = 0
         
-        let cellWidth = (UIScreen.main.bounds.width - horizontalPadding) / 7
+        let cellWidth = (UIScreen.main.bounds.width - horizontalPadding * 2) / 7
         layout.itemSize = CGSize(width: cellWidth, height: cellHeight)
         
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
@@ -219,9 +201,24 @@ final class CalendarViewController: UIViewController, View {
     
     
     private func setupConstraints() {
+        
         monthLabel.snp.makeConstraints { make in
+            make.height.equalTo(54)
             make.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(17)
             make.leading.equalToSuperview().offset(16)
+        }
+        
+        totalHarubyValueLabel.snp.makeConstraints { make in
+            make.height.equalTo(21)
+        }
+        
+        remainTotalHarubyStackView.snp.makeConstraints { make in
+            make.horizontalEdges.equalToSuperview().inset(16)
+            make.verticalEdges.equalToSuperview().inset(8)
+        }
+        
+        weekdayHeader.snp.makeConstraints { make in
+            make.height.equalTo(32)
         }
         
         remainTotalHarubyBox.snp.makeConstraints { make in
@@ -233,6 +230,12 @@ final class CalendarViewController: UIViewController, View {
             make.top.equalTo(monthLabel.snp.bottom).offset(20)
             make.horizontalEdges.equalToSuperview()
             make.bottom.equalToSuperview()
+        }
+        
+        bodyStackView.snp.makeConstraints { make in
+            make.top.equalToSuperview().offset(23)
+            make.bottom.equalToSuperview()
+            make.horizontalEdges.equalToSuperview().inset(16)
         }
         
         warningLabel.snp.makeConstraints { make in

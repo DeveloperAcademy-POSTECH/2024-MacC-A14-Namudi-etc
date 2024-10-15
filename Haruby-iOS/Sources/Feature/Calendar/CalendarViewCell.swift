@@ -51,9 +51,6 @@ final class CalendarViewCell: UICollectionViewCell, View {
         view.backgroundColor = .Haruby.red
         view.layer.cornerRadius = 3
         view.clipsToBounds = true
-        view.snp.makeConstraints { make in
-            make.width.height.equalTo(6)
-        }
         return view
     }()
     
@@ -62,9 +59,6 @@ final class CalendarViewCell: UICollectionViewCell, View {
         view.backgroundColor = .Haruby.main
         view.layer.cornerRadius = 3
         view.clipsToBounds = true
-        view.snp.makeConstraints { make in
-            make.width.height.equalTo(6)
-        }
         return view
     }()
     
@@ -125,6 +119,14 @@ final class CalendarViewCell: UICollectionViewCell, View {
     }
     
     private func setupConstraints() {
+        blueDot.snp.makeConstraints { make in
+            make.width.height.equalTo(6)
+        }
+        
+        redDot.snp.makeConstraints { make in
+            make.width.height.equalTo(6)
+        }
+        
         numberLabel.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(8)
             make.horizontalEdges.equalToSuperview()
