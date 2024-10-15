@@ -44,7 +44,7 @@ final class CalendarViewCellReactor: Reactor {
             dayNumber: isFirstDayOfMonth ? "\(monthNumber)/\(dayNumber)" : dayNumber,
             isVisible: dailyBudget.date != Date.distantPast ? true : false,
             isToday: calendar.isDate(dailyBudget.date, inSameDayAs: Date()),
-            haruby: dailyBudget.haruby?.toKoreanCurrencyFormat() ?? nil
+            haruby: dailyBudget.haruby?.decimal ?? nil
         )
     }
     
