@@ -17,8 +17,10 @@ class BottomButton: UIButton {
     let buttonTapSubject = PublishSubject<Void>()
     private let disposeBag = DisposeBag()
     
-    private let largeButtonheight: CGFloat = 108
-    private let smallButtonheight: CGFloat = 52
+    private let normalHeight: CGFloat = 108
+    private let compactHeight: CGFloat = 52
+    private let normalLabelPostion: CGFloat = 34
+    private let compactLabelPostion: CGFloat = 14
     
     var title: String? {
         didSet {
@@ -43,7 +45,7 @@ class BottomButton: UIButton {
     }
     
     required init?(coder: NSCoder) {
-        super.init(coder: coder)
+        fatalError("init(coder:) has not been implemented")
     }
     
     // MARK: - Setup View
@@ -61,11 +63,11 @@ class BottomButton: UIButton {
     
     private func setupConstriants() {
         self.snp.makeConstraints { make in
-            make.height.equalTo(largeButtonheight)
+            make.height.equalTo(normalHeight)
         }
         
         label.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(34)
+            make.top.equalToSuperview().offset(normalLabelPostion)
             make.centerX.equalToSuperview()
         }
     }
@@ -76,18 +78,10 @@ class BottomButton: UIButton {
             .disposed(by: disposeBag)
         
         NotificationCenter.default.rx
-            .notification(UIResponder.keyboardWillShowNotification)
+            .notification(UIResponder.keyboardWillChangeFrameNotification)
             .withUnretained(self)
             .bind{ this, notification in
-                self.handleKeyboardWillShow(notification: notification)
-            }
-            .disposed(by: disposeBag)
-        
-        NotificationCenter.default.rx
-            .notification(UIResponder.keyboardWillHideNotification)
-            .withUnretained(self)
-            .bind{ this, notification in
-                self.handleKeyboardWillHide(notification: notification)
+                self.handleKeyboardChangeFrame(notification: notification)
             }
             .disposed(by: disposeBag)
     }
@@ -95,32 +89,21 @@ class BottomButton: UIButton {
 
 extension BottomButton {
     // MARK: - Private Methods
-     private func handleKeyboardWillShow(notification: Notification) {
-         guard let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect else { return }
-         let keyboardHeight = keyboardFrame.height
-         
-         UIView.animate(withDuration: 0.0) {
-             self.snp.updateConstraints { make in
-                 make.height.equalTo(self.smallButtonheight)
-                 make.bottom.equalToSuperview().inset(keyboardHeight)
-             }
-             self.label.snp.updateConstraints { make in
-                 make.top.equalToSuperview().offset(14)
-             }
-             self.superview?.layoutIfNeeded()
-         }
-     }
-
-     private func handleKeyboardWillHide(notification: Notification) {
-         UIView.animate(withDuration: 0.0) {
-             self.snp.updateConstraints { make in
-                 make.height.equalTo(self.largeButtonheight)
-                 make.bottom.equalToSuperview()
-             }
-             self.label.snp.updateConstraints { make in
-                 make.top.equalToSuperview().offset(34)
-             }
-             self.superview?.layoutIfNeeded()
-         }
-     }
+    private func handleKeyboardChangeFrame(notification: Notification) {
+           guard let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect else { return }
+           
+           let keyboardHeight = UIScreen.main.bounds.height - keyboardFrame.origin.y
+           let isKeyboardShowing = keyboardHeight > 0
+           
+           UIView.animate(withDuration: 0) {
+               self.snp.updateConstraints { make in
+                   make.height.equalTo(isKeyboardShowing ? self.compactHeight : self.normalHeight)
+                   make.bottom.equalToSuperview().inset(isKeyboardShowing ? keyboardHeight : 0)
+               }
+               self.label.snp.updateConstraints { make in
+                   make.top.equalToSuperview().offset(isKeyboardShowing ? self.compactLabelPostion : self.normalLabelPostion)
+               }
+               self.superview?.layoutIfNeeded()
+           }
+       }
 }
