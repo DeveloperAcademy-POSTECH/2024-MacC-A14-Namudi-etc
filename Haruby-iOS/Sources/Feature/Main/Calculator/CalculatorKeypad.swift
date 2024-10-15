@@ -77,10 +77,7 @@ final class CalculatorKeypad: UIView {
         [.delete(CalculatorSymbol.deleteLast), .operatorSymbol(CalculatorSymbol.minus), .operatorSymbol(CalculatorSymbol.plus), .operatorSymbol(CalculatorSymbol.equal)]
     ]
     
-    var numberButtons: [UIButton] = []
-    var operatorButtons: [UIButton] = []
-    var deleteButtons: [UIButton] = []
-    
+    var keypadButtons: [UIButton] = []
     
     // MARK: - UI Components
     
@@ -133,22 +130,21 @@ final class CalculatorKeypad: UIView {
             
             for buttonType in keypad {
                 let button = createButton(buttonType)
-                
-                if case .number = buttonType {
-                    numberButtons.append(button)
-                } else if case .operatorSymbol = buttonType {
-                    operatorButtons.append(button)
-                } else if case .delete = buttonType {
-                    deleteButtons.append(button)
-                }
+                keypadButtons.append(button)
+//                if case .number = buttonType {
+//                    numberButtons.append(button)
+//                } else if case .operatorSymbol = buttonType {
+//                    operatorButtons.append(button)
+//                } else if case .delete = buttonType {
+//                    deleteButtons.append(button)
+//                }
                 stackView.addArrangedSubview(button)
             }
             
             containerStackView.addArrangedSubview(stackView)
         }
         
-        [numberButtons, operatorButtons, deleteButtons].flatMap { $0 }
-            .forEach {
+        keypadButtons.forEach {
                 $0.layer.cornerRadius = self.buttonWidthSize / 2
                 $0.clipsToBounds = true
             }
