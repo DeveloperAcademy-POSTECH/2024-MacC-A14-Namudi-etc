@@ -72,12 +72,12 @@ final class HarubyEditViewController: UIViewController, View {
         title = "하루비 조정"
         view.backgroundColor = .Haruby.white
         
-        addSubviews()
+        setupSubviews()
         setupConstraints()
         setupTapGesture()
     }
     
-    private func addSubviews() {
+    private func setupSubviews() {
         view.addSubview(harubyTitleLabel)
         view.addSubview(harubyTextField)
         view.addSubview(memoTitleLabel)
@@ -94,8 +94,7 @@ final class HarubyEditViewController: UIViewController, View {
         
         harubyTextField.snp.makeConstraints { make in
             make.top.equalTo(harubyTitleLabel.snp.bottom).offset(8)
-            make.leading.equalToSuperview().offset(16)
-            make.trailing.equalToSuperview().offset(-16)
+            make.horizontalEdges.equalToSuperview().inset(16)
         }
         
         memoTitleLabel.snp.makeConstraints { make in
@@ -105,8 +104,7 @@ final class HarubyEditViewController: UIViewController, View {
         
         memoTextField.snp.makeConstraints { make in
             make.top.equalTo(memoTitleLabel.snp.bottom).offset(8)
-            make.leading.equalToSuperview().offset(16)
-            make.trailing.equalToSuperview().offset(-16)
+            make.horizontalEdges.equalToSuperview().inset(16)
         }
         
         memoFooterLabel.snp.makeConstraints { make in

@@ -17,6 +17,9 @@ class BottomButton: UIButton {
     let buttonTapSubject = PublishSubject<Void>()
     private let disposeBag = DisposeBag()
     
+    private let largeButtonheight: CGFloat = 108
+    private let smallButtonheight: CGFloat = 52
+    
     var title: String? {
         didSet {
             self.label.text = title
@@ -58,7 +61,7 @@ class BottomButton: UIButton {
     
     private func setupConstriants() {
         self.snp.makeConstraints { make in
-            make.height.equalTo(108)
+            make.height.equalTo(largeButtonheight)
         }
         
         label.snp.makeConstraints { make in
@@ -88,7 +91,9 @@ class BottomButton: UIButton {
             }
             .disposed(by: disposeBag)
     }
-    
+}
+
+extension BottomButton {
     // MARK: - Private Methods
      private func handleKeyboardWillShow(notification: Notification) {
          guard let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect else { return }
@@ -96,7 +101,7 @@ class BottomButton: UIButton {
          
          UIView.animate(withDuration: 0.0) {
              self.snp.updateConstraints { make in
-                 make.height.equalTo(52)
+                 make.height.equalTo(self.smallButtonheight)
                  make.bottom.equalToSuperview().inset(keyboardHeight)
              }
              self.label.snp.updateConstraints { make in
@@ -109,7 +114,7 @@ class BottomButton: UIButton {
      private func handleKeyboardWillHide(notification: Notification) {
          UIView.animate(withDuration: 0.0) {
              self.snp.updateConstraints { make in
-                 make.height.equalTo(108)
+                 make.height.equalTo(self.largeButtonheight)
                  make.bottom.equalToSuperview()
              }
              self.label.snp.updateConstraints { make in
