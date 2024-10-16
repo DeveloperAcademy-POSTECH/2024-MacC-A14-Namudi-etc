@@ -65,7 +65,7 @@ final class CalendarViewController: UIViewController, View, CoordinatorCompatibl
         view.layer.borderColor = UIColor.Haruby.white20.cgColor
         view.layer.borderWidth = 1
         view.layer.cornerRadius = 10
-        
+        view.addSubview(remainTotalHarubyStackView)
         return view
     }()
     
@@ -195,7 +195,6 @@ final class CalendarViewController: UIViewController, View, CoordinatorCompatibl
     
     private func addSubviews() {
         view.addSubview(monthLabel)
-        view.addSubview(remainTotalHarubyStackView)
         view.addSubview(remainTotalHarubyBox)
         view.addSubview(topRoundedContainer)
         view.addSubview(warningLabel)
