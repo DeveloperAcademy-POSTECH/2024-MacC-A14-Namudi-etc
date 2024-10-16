@@ -7,64 +7,21 @@
 
 import UIKit
 import SnapKit
-import RxSwift
-import RxCocoa
 
 final class MainReceiptView: UIView {
-    // MARK: - Public API
-    var date: String = "-" {
-        didSet { dateLabel.text = date }
-    }
-    
-    var todayHarubyTitle: String = "-" {
-        didSet { titleLabel.text = todayHarubyTitle }
-    }
-    
-    var remainHaruby: String = "-" {
-        didSet { amountLabel.text = remainHaruby }
-    }
-    
-    var harubyImage: UIImage = .purpleHaruby {
-        didSet { harubyImageView.image = harubyImage }
-    }
-    
-    var amountBoxColor: UIColor = .Haruby.whiteDeep {
-        didSet { amountBox.backgroundColor = amountBoxColor }
-    }
-    
-    var amountLabelColor: UIColor = .Haruby.main {
-        didSet { amountLabel.textColor = amountLabelColor }
-    }
-    
-    var expenseAmountStackViewHidden: Bool = true {
-        didSet { expenseAmountStackView.isHidden = expenseAmountStackViewHidden }
-    }
-    
-    var todayHaruby: String = "-" {
-        didSet { expenseAmountText2.text = todayHaruby }
-    }
-    
-    var usedAmount: String = "-" {
-        didSet { expenseAmountText4.text = usedAmount }
-    }
-    
-    var usedAmountColor: UIColor = .Haruby.green {
-        didSet { expenseAmountText4.textColor = usedAmountColor }
-    }
-
     // MARK: - Properties
     private let arcRadius: CGFloat = 8
     private let sidePadding: CGFloat = 15
     
     // MARK: - UI Components
-    private let dateLabel: UILabel = {
+    lazy var dateLabel: UILabel = {
         let label = UILabel()
         label.font = .pretendard(size: 16, weight: .semiBold)
         label.textColor = .Haruby.textBlack
         return label
     }()
     
-    private let titleLabel: UILabel = {
+    lazy var titleLabel: UILabel = {
         let label = UILabel()
         label.font = .pretendard(size: 24, weight: .semiBold)
         label.text = "-"
@@ -72,14 +29,14 @@ final class MainReceiptView: UIView {
         return label
     }()
     
-    private let amountBox: UIView = {
+    lazy var amountBox: UIView = {
         let view = UIView()
         view.backgroundColor = .Haruby.whiteDeep
         view.layer.cornerRadius = 10
         return view
     }()
     
-    private let amountLabel: UILabel = {
+    lazy var amountLabel: UILabel = {
         let label = UILabel()
         label.font = .pretendard(size: 36, weight: .bold)
         label.text = "-"
@@ -87,14 +44,14 @@ final class MainReceiptView: UIView {
         return label
     }()
     
-    private let harubyImageView: UIImageView = {
+    lazy var harubyImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.image = .purpleHaruby
         imageView.contentMode = .scaleAspectFit
         return imageView
     }()
 
-    private lazy var amountStackView: UIStackView = {
+    lazy var amountStackView: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: [harubyImageView, amountLabel])
         stackView.axis = .horizontal
         stackView.alignment = .center
@@ -102,7 +59,7 @@ final class MainReceiptView: UIView {
         return stackView
     }()
     
-    private lazy var expenseAmountText1: UILabel = {
+    lazy var expenseAmountText1: UILabel = {
         let label = UILabel()
         label.font = .pretendard(size: 14, weight: .medium)
         label.textColor = .Haruby.textBlack40
@@ -110,7 +67,7 @@ final class MainReceiptView: UIView {
         return label
     }()
     
-    private let expenseAmountText2: UILabel = {
+    lazy var expenseAmountText2: UILabel = {
         let label = UILabel()
         label.font = .pretendard(size: 14, weight: .medium)
         label.textColor = .Haruby.textBlack
@@ -118,7 +75,7 @@ final class MainReceiptView: UIView {
         return label
     }()
     
-    private lazy var expenseAmountText3: UILabel = {
+    lazy var expenseAmountText3: UILabel = {
         let label = UILabel()
         label.font = .pretendard(size: 14, weight: .medium)
         label.textColor = .Haruby.textBlack40
@@ -126,7 +83,7 @@ final class MainReceiptView: UIView {
         return label
     }()
     
-    private let expenseAmountText4: UILabel = {
+    lazy var expenseAmountText4: UILabel = {
         let label = UILabel()
         label.font = .pretendard(size: 14, weight: .medium)
         label.textColor = .Haruby.green
@@ -134,7 +91,7 @@ final class MainReceiptView: UIView {
         return label
     }()
     
-    private lazy var expenseAmountText5: UILabel = {
+    lazy var expenseAmountText5: UILabel = {
         let label = UILabel()
         label.font = .pretendard(size: 14, weight: .medium)
         label.textColor = .Haruby.textBlack40
@@ -142,14 +99,14 @@ final class MainReceiptView: UIView {
         return label
     }()
     
-    private lazy var expenseAmountStackView: UIStackView = {
+    lazy var expenseAmountStackView: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: [expenseAmountText1, expenseAmountText2, expenseAmountText3, expenseAmountText4, expenseAmountText5])
         stackView.axis = .horizontal
         stackView.spacing = 3
         return stackView
     }()
     
-    let inputButton: UIButton = {
+    lazy var inputButton: UIButton = {
         let button = UIButton(type: .system)
         
         var configuration = UIButton.Configuration.filled()
@@ -362,72 +319,5 @@ final class MainReceiptView: UIView {
         layer.shadowOpacity = 0.4
         layer.shadowRadius = 10
         layer.shadowOffset = .zero
-    }
-}
-
-// MARK: - Rx
-extension Reactive where Base: MainReceiptView {
-    var date: Binder<String> {
-        return Binder(self.base) { view, value in
-            view.date = value
-        }
-    }
-    
-    var todayHarubyTitle: Binder<String> {
-        return Binder(self.base) { view, value in
-            view.todayHarubyTitle = value
-        }
-    }
-    
-    var remainHaruby: Binder<String> {
-        return Binder(self.base) { view, value in
-            view.remainHaruby = value
-        }
-    }
-    
-    var harubyImage: Binder<UIImage> {
-        return Binder(self.base) { view, value in
-            view.harubyImage = value
-        }
-    }
-    
-    var amountBoxColor: Binder<UIColor> {
-        return Binder(self.base) { view, value in
-            view.amountBoxColor = value
-        }
-    }
-    
-    var amountLabelColor: Binder<UIColor> {
-        return Binder(self.base) { view, value in
-            view.amountLabelColor = value
-        }
-    }
-    
-    var expenseAmountStackViewHidden: Binder<Bool> {
-        return Binder(self.base) { view, value in
-            view.expenseAmountStackViewHidden = value
-        }
-    }
-    
-    var todayHaruby: Binder<String> {
-        return Binder(self.base) { view, value in
-            view.todayHaruby = value
-        }
-    }
-    
-    var usedAmount: Binder<String> {
-        return Binder(self.base) { view, value in
-            view.usedAmount = value
-        }
-    }
-    
-    var usedAmountColor: Binder<UIColor> {
-        return Binder(self.base) { view, value in
-            view.usedAmountColor = value
-        }
-    }
-    
-    var inputButtonTap: ControlEvent<Void> {
-        return base.inputButton.rx.tap
     }
 }

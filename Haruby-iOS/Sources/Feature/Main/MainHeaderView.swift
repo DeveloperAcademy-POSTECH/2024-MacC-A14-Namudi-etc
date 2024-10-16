@@ -7,19 +7,10 @@
 
 import UIKit
 import SnapKit
-import RxSwift
-import RxCocoa
 
 final class MainHeaderView: UIView {
-    // MARK: - Public API
-    var avgHaruby: String = "-" {
-        didSet {
-            topAvgHarubyText2.text = avgHaruby
-        }
-    }
-    
     // MARK: - UI Components
-    private lazy var topAvgHarubyText1: UILabel = {
+    lazy var topAvgHarubyText1: UILabel = {
         let label = UILabel()
         label.textColor = .Haruby.whiteDeep50
         label.font = .pretendardMedium_14
@@ -28,7 +19,7 @@ final class MainHeaderView: UIView {
         return label
     }()
     
-    private lazy var topAvgHarubyText2: UILabel = {
+    lazy var topAvgHarubyText2: UILabel = {
         let label = UILabel()
         label.textColor = .Haruby.whiteDeep50
         label.font = .pretendardSemibold_14
@@ -36,7 +27,7 @@ final class MainHeaderView: UIView {
         return label
     }()
     
-    private lazy var topAvgHarubyText3: UILabel = {
+    lazy var topAvgHarubyText3: UILabel = {
         let label = UILabel()
         label.textColor = .Haruby.whiteDeep50
         label.font = .pretendardMedium_14
@@ -45,14 +36,14 @@ final class MainHeaderView: UIView {
         return label
     }()
     
-    private lazy var topAvgHarubyInfoIcon: UIImageView = {
+    lazy var topAvgHarubyInfoIcon: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(systemName: "info.circle")
         imageView.tintColor = .Haruby.whiteDeep50
         return imageView
     }()
     
-    private lazy var topAvgHarubyStackView: UIStackView = {
+    lazy var topAvgHarubyStackView: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: [
             topAvgHarubyText1, topAvgHarubyText2, topAvgHarubyText3, topAvgHarubyInfoIcon
         ])
@@ -74,8 +65,15 @@ final class MainHeaderView: UIView {
     
     // MARK: - Setup View
     private func setupView() {
+        setupSubViews()
+        setupConstraints()
+    }
+    
+    private func setupSubViews() {
         addSubview(topAvgHarubyStackView)
-        
+    }
+    
+    private func setupConstraints() {
         topAvgHarubyStackView.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(62)
             make.centerX.equalToSuperview()
@@ -84,15 +82,6 @@ final class MainHeaderView: UIView {
         
         topAvgHarubyInfoIcon.snp.makeConstraints { make in
             make.width.height.equalTo(17)
-        }
-    }
-}
-
-// MARK: - Rx
-extension Reactive where Base: MainHeaderView {
-    var avgHaruby: Binder<String> {
-        return Binder(self.base) { view, value in
-            view.avgHaruby = value
         }
     }
 }

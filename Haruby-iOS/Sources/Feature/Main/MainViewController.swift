@@ -101,22 +101,22 @@ final class MainViewController: UIViewController, View {
     }
     
     private func bindAction(reactor: MainReactor) {
-        footerView.rx.tapCalculator
+        footerView.navigateCalculatorButton.rx.tap
             .map { Reactor.Action.naivgateCalculator }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
         
-        footerView.rx.tapCalendar
+        footerView.navigateCalendarButton.rx.tap
             .map { Reactor.Action.navigateCalendar }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
         
-        footerView.rx.tapManagement
+        footerView.navigateManagementButton.rx.tap
             .map { Reactor.Action.navigateManagement }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
         
-        receiptView.rx.inputButtonTap
+        receiptView.inputButton.rx.tap
             .map { Reactor.Action.navigateInputButton }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
@@ -125,49 +125,49 @@ final class MainViewController: UIViewController, View {
     private func bindState(reactor: MainReactor) {
         reactor.state.map { $0.mainState.avgHaruby }
             .distinctUntilChanged()
-            .bind(to: headerView.rx.avgHaruby)
+            .bind(to: headerView.topAvgHarubyText2.rx.text)
             .disposed(by: disposeBag)
         
         reactor.state.map { $0.mainState.todayHarubyTitle }
             .distinctUntilChanged()
-            .bind(to: receiptView.rx.todayHarubyTitle)
+            .bind(to: receiptView.titleLabel.rx.text)
             .disposed(by: disposeBag)
         
         reactor.state.map { $0.mainState.remainHaruby }
             .distinctUntilChanged()
-            .bind(to: receiptView.rx.remainHaruby)
+            .bind(to: receiptView.amountLabel.rx.text)
             .disposed(by: disposeBag)
         
         reactor.state.map { $0.mainState.date }
             .distinctUntilChanged()
-            .bind(to: receiptView.rx.date)
+            .bind(to: receiptView.dateLabel.rx.text)
             .disposed(by: disposeBag)
         
         reactor.state.map { $0.mainState.harubyImage }
             .distinctUntilChanged()
-            .bind(to: receiptView.rx.harubyImage)
+            .bind(to: receiptView.harubyImageView.rx.image)
             .disposed(by: disposeBag)
         
         reactor.state.map { $0.mainState.amountBoxColor }
             .distinctUntilChanged()
-            .bind(to: receiptView.rx.amountBoxColor)
+            .bind(to: receiptView.amountBox.rx.backgroundColor)
             .disposed(by: disposeBag)
         
         reactor.state.map { $0.mainState.amountLabelColor }
             .distinctUntilChanged()
-            .bind(to: receiptView.rx.amountLabelColor)
+            .bind(to: receiptView.amountLabel.rx.textColor)
             .disposed(by: disposeBag)
         
         reactor.state
             .map { $0.mainState.usedAmount > 0 ? false : true }
             .distinctUntilChanged()
-            .bind(to: receiptView.rx.expenseAmountStackViewHidden)
+            .bind(to: receiptView.expenseAmountStackView.rx.isHidden)
             .disposed(by: disposeBag)
         
         reactor.state
             .map { $0.mainState.todayHaruby }
             .distinctUntilChanged()
-            .bind(to: receiptView.rx.todayHaruby)
+            .bind(to: receiptView.expenseAmountText2.rx.text)
             .disposed(by: disposeBag)
         
         reactor.state
@@ -176,7 +176,7 @@ final class MainViewController: UIViewController, View {
                 return usedAmount.decimalWithWon
             }
             .distinctUntilChanged()
-            .bind(to: receiptView.rx.usedAmount)
+            .bind(to: receiptView.expenseAmountText4.rx.text)
             .disposed(by: disposeBag)
         
         reactor.state
@@ -185,7 +185,7 @@ final class MainViewController: UIViewController, View {
                 return state.mainState.usedAmount > 0 && usedAmount > state.mainState.todayHaruby.numberFormat ?? 0 ? .Haruby.red : .Haruby.green
             }
             .distinctUntilChanged()
-            .bind(to: receiptView.rx.usedAmountColor)
+            .bind(to: receiptView.expenseAmountText4.rx.textColor)
             .disposed(by: disposeBag)
     }
 }
