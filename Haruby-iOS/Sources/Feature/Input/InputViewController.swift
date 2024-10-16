@@ -100,7 +100,11 @@ class InputViewController: UIViewController, View {
         return button
     }()
     
-//    private let bottomButtonView = BottomButton()
+    private let bottomButtonView: BottomButton = {
+        let button = BottomButton()
+        button.title = "저장하기"
+        return button
+    }()
     
     // MARK: - Lifecycle
     override func viewDidLoad() {
@@ -132,7 +136,7 @@ class InputViewController: UIViewController, View {
         self.view.addSubview(detailInputButtonStackView)
         self.view.addSubview(detailInputTableView)
         self.view.addSubview(addDetailCellButton)
-//        self.view.addSubview(bottomButtonView)
+        self.view.addSubview(bottomButtonView)
         
     }
     
@@ -170,10 +174,10 @@ class InputViewController: UIViewController, View {
             make.height.equalTo(35)
         }
         
-//        bottomButtonView.snp.makeConstraints { make in
-//            make.leading.trailing.equalToSuperview()
-//            make.bottom.equalTo(view.snp.bottom)
-//        }
+        bottomButtonView.snp.makeConstraints { make in
+            make.leading.trailing.equalToSuperview()
+            make.bottom.equalTo(view.snp.bottom)
+        }
     }
     
     private func setupNavigationBar() {
