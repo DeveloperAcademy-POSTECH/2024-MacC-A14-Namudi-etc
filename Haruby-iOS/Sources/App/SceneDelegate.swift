@@ -19,8 +19,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         print("Scene Delegate - Will Connect")
         
 
-        let reactor = MainReactor()
-        let vc = MainViewController()
+        let reactor = CalculatorViewReactor()
+        let vc = CalculatorViewController()
 
         vc.reactor = reactor
         
