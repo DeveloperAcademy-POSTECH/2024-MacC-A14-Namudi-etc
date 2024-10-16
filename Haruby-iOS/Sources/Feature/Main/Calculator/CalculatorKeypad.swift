@@ -31,7 +31,7 @@ final class CalculatorKeypad: UIView {
     
     // MARK: - UI Components
     
-    private lazy var containerStackView: UIStackView = {
+    lazy var containerStackView: UIStackView = {
         let view = UIStackView()
         view.axis = .horizontal
         view.distribution = .fillEqually

@@ -20,8 +20,8 @@ final class CalculatorViewController: UIViewController, View {
     
     
     // MARK: - UI Components
-    private lazy var topStackView: UIStackView = {
-        let view = UIStackView()
+    private lazy var headerStackView: UIStackView = {
+        let view = UIStackView(arrangedSubviews: [topLabel, bottomStackView])
         view.axis = .vertical
         view.spacing = 6
         view.alignment = .leading
@@ -39,7 +39,7 @@ final class CalculatorViewController: UIViewController, View {
     }()
     
     private lazy var bottomStackView: UIStackView = {
-        let view = UIStackView()
+        let view = UIStackView(arrangedSubviews: [bottomImageView, bottomLabelStackView])
         view.axis = .horizontal
         view.spacing = 5
         view.alignment = .center
@@ -56,7 +56,7 @@ final class CalculatorViewController: UIViewController, View {
     }()
     
     private lazy var bottomLabelStackView: UIStackView = {
-        let view = UIStackView()
+        let view = UIStackView(arrangedSubviews: [bottomPriceLabel, bottomLabel])
         view.axis = .horizontal
         view.spacing = 5
         view.alignment = .firstBaseline
@@ -125,18 +125,7 @@ final class CalculatorViewController: UIViewController, View {
     
     private func setupSubviews() {
         
-        view.addSubview(topStackView)
-        
-        [topLabel, bottomStackView].forEach { topStackView.addArrangedSubview($0) }
-        
-        [bottomImageView, bottomLabelStackView].forEach {
-            bottomStackView.addArrangedSubview($0)
-        }
-        
-        [bottomPriceLabel, bottomLabel].forEach {
-            bottomLabelStackView.addArrangedSubview($0)
-        }
-
+        view.addSubview(headerStackView)
         view.addSubview(bottomView)
         
         bottomView.addSubview(calculationProcessView)
@@ -147,7 +136,7 @@ final class CalculatorViewController: UIViewController, View {
     }
     
     private func setupConstraints() {
-        topStackView.snp.makeConstraints { make in
+        headerStackView.snp.makeConstraints { make in
             make.top.equalTo(view.safeAreaLayoutGuide).inset(32)
             make.horizontalEdges.equalToSuperview().inset(26)
         }
@@ -160,7 +149,7 @@ final class CalculatorViewController: UIViewController, View {
         }
         
         bottomView.snp.makeConstraints { make in
-            make.top.equalTo(topStackView.snp.top).inset(100)
+            make.top.equalTo(headerStackView.snp.top).inset(100)
             make.horizontalEdges.bottom.equalToSuperview()
         }
         

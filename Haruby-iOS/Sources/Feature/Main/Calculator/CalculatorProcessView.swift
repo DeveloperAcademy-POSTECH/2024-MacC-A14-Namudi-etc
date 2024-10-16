@@ -13,8 +13,12 @@ final class CalculatorProcessView: UIView {
     
     // MARK: - UI Components
     
-    private lazy var containerStackView: UIStackView = {
-        let view = UIStackView()
+    lazy var containerStackView: UIStackView = {
+        let view = UIStackView(arrangedSubviews: [
+            leftParenthesisSymbol, totalHarubyContainerView, minusSymbol,
+            estimatedPriceContainerView, rightParenthesisSymbol, divideSymbol,
+            remainingDayContainerView
+        ])
         view.axis = .horizontal
         view.alignment = .center
         view.distribution = .equalSpacing
@@ -22,7 +26,7 @@ final class CalculatorProcessView: UIView {
         return view
     }()
     
-    private lazy var leftParenthesisSymbol: UILabel = {
+    lazy var leftParenthesisSymbol: UILabel = {
         let view = UILabel()
         view.text = "("
         view.textColor = .Haruby.textBright
@@ -30,15 +34,15 @@ final class CalculatorProcessView: UIView {
         return view
     }()
     
-    private lazy var totalHarubyContainerView: UIView = {
+    lazy var totalHarubyContainerView: UIView = {
         let view = UIView()
         view.backgroundColor = .Haruby.whiteDeep50
         view.layer.cornerRadius = 10
         return view
     }()
     
-    private lazy var totalHarubyStackView: UIStackView = {
-        let view = UIStackView()
+    lazy var totalHarubyStackView: UIStackView = {
+        let view = UIStackView(arrangedSubviews: [totalHarubyTitle, totalHaruby])
         view.axis = .vertical
         view.alignment = .center
         view.distribution = .fill
@@ -47,7 +51,7 @@ final class CalculatorProcessView: UIView {
         return view
     }()
     
-    private lazy var totalHarubyTitle: UILabel = {
+    lazy var totalHarubyTitle: UILabel = {
         let view = UILabel()
         view.text = "남은 총 하루비"
         view.textColor = .Haruby.textBright
@@ -63,7 +67,7 @@ final class CalculatorProcessView: UIView {
         return view
     }()
     
-    private lazy var minusSymbol: UILabel = {
+    lazy var minusSymbol: UILabel = {
         let view = UILabel()
         view.text = "-"
         view.textColor = .Haruby.textBright
@@ -71,15 +75,15 @@ final class CalculatorProcessView: UIView {
         return view
     }()
     
-    private lazy var estimatedPriceContainerView: UIView = {
+    lazy var estimatedPriceContainerView: UIView = {
         let view = UIView()
         view.backgroundColor = .Haruby.whiteDeep50
         view.layer.cornerRadius = 10
         return view
     }()
     
-    private lazy var estimatedPriceStackView: UIStackView = {
-        let view = UIStackView()
+    lazy var estimatedPriceStackView: UIStackView = {
+        let view = UIStackView(arrangedSubviews: [estimatedPriceTitle, estimatedPrice])
         view.axis = .vertical
         view.alignment = .center
         view.distribution = .fill
@@ -87,7 +91,7 @@ final class CalculatorProcessView: UIView {
         return view
     }()
     
-    private lazy var estimatedPriceTitle: UILabel = {
+    lazy var estimatedPriceTitle: UILabel = {
         let view = UILabel()
         view.text = "지출 예정 금액"
         view.textColor = .Haruby.textBright
@@ -103,7 +107,7 @@ final class CalculatorProcessView: UIView {
         return view
     }()
     
-    private lazy var rightParenthesisSymbol: UILabel = {
+    lazy var rightParenthesisSymbol: UILabel = {
         let view = UILabel()
         view.text = ")"
         view.textColor = .Haruby.textBright
@@ -111,7 +115,7 @@ final class CalculatorProcessView: UIView {
         return view
     }()
     
-    private lazy var divideSymbol: UILabel = {
+    lazy var divideSymbol: UILabel = {
         let view = UILabel()
         view.text = "÷"
         view.textColor = .Haruby.textBright
@@ -119,15 +123,15 @@ final class CalculatorProcessView: UIView {
         return view
     }()
     
-    private lazy var remainingDayContainerView: UIView = {
+    lazy var remainingDayContainerView: UIView = {
         let view = UIView()
         view.backgroundColor = .Haruby.whiteDeep50
         view.layer.cornerRadius = 10
         return view
     }()
     
-    private lazy var remainingDayStackView: UIStackView = {
-        let view = UIStackView()
+    lazy var remainingDayStackView: UIStackView = {
+        let view = UIStackView(arrangedSubviews: [remainingDayTitle, remainingDay])
         view.axis = .vertical
         view.alignment = .center
         view.distribution = .fill
@@ -135,7 +139,7 @@ final class CalculatorProcessView: UIView {
         return view
     }()
     
-    private lazy var remainingDayTitle: UILabel = {
+    lazy var remainingDayTitle: UILabel = {
         let view = UILabel()
         view.text = "남은 일자"
         view.textColor = .Haruby.textBright
@@ -171,27 +175,9 @@ final class CalculatorProcessView: UIView {
     private func setupSubviews() {
         addSubview(containerStackView)
         
-        [leftParenthesisSymbol, totalHarubyContainerView, minusSymbol,
-         estimatedPriceContainerView, rightParenthesisSymbol, divideSymbol, remainingDayContainerView].forEach {
-            containerStackView.addArrangedSubview($0)
-        }
-        
         totalHarubyContainerView.addSubview(totalHarubyStackView)
-        
-        [totalHarubyTitle, totalHaruby].forEach { totalHarubyStackView.addArrangedSubview($0)
-        }
-        
         estimatedPriceContainerView.addSubview(estimatedPriceStackView)
-        
-        [estimatedPriceTitle, estimatedPrice].forEach {
-            estimatedPriceStackView.addArrangedSubview($0)
-        }
-        
         remainingDayContainerView.addSubview(remainingDayStackView)
-        
-        [remainingDayTitle, remainingDay].forEach {
-            remainingDayStackView.addArrangedSubview($0)
-        }
     }
     
     private func setupConstraints() {
