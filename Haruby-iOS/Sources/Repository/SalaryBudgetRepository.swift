@@ -149,7 +149,7 @@ extension StubSalaryBudgetRepository {
         var currentDate = startDate
         while currentDate <= endDate {
             let emptyTransactionItems = List<RealmTransactionItem>()
-            let expense = RealmTransactionRecord(id: UUID().uuidString, total: 60000, transactionItems: emptyTransactionItems)
+            let expense = RealmTransactionRecord(id: UUID().uuidString, total: 50000, transactionItems: emptyTransactionItems)
             let income = RealmTransactionRecord(id: UUID().uuidString, total: 0, transactionItems: emptyTransactionItems)
             
             let dailyBudget = RealmDailyBudget(

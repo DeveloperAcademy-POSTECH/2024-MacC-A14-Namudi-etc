@@ -92,7 +92,7 @@ final class MainViewReactor: Reactor {
     /// 오늘의 하루비 정보를 가져와 처리하는 메서드
     private func fetchAndProcessHarubyInfo() -> Observable<Mutation> {
         let currentDate = Date()
-        let startDate = calculateStartDate(from: currentDate)
+        let startDate = calculateStartDate(from: currentDate).formattedDate
         
         return salaryBudgetRepository.read(startDate)
             .map { [weak self] salaryBudget -> State in

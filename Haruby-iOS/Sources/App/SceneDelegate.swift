@@ -17,8 +17,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window?.windowScene = windowScene
         
 
-        let reactor = CalculatorViewReactor()
-        let vc = CalculatorViewController()
+        let reactor = MainViewReactor()
+        let vc = MainViewController()
 
         vc.reactor = reactor
         
