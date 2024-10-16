@@ -102,8 +102,8 @@ final class CalculatorViewController: UIViewController, View {
         return view
     }()
     
-    private lazy var calculationKeypad: CalculatorKeypad = {
-        let view = CalculatorKeypad()
+    private lazy var calculationKeypad: CalculatorKeypadView = {
+        let view = CalculatorKeypadView()
         return view
     }()
 
