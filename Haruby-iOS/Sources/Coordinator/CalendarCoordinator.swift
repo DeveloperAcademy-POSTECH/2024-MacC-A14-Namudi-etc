@@ -1,5 +1,5 @@
 //
-//  HarubyCalculatorCoordinator.swift
+//  HarubyCalendarCoordinator.swift
 //  Haruby-iOS
 //
 //  Created by namdghyun on 10/11/24.
@@ -7,7 +7,7 @@
 
 import UIKit
 
-class HarubyCalculatorCoordinator: Coordinator {
+class CalendarCoordinator: Coordinator {
     var navigationController: UINavigationController
     weak var parentCoordinator: Coordinator?
     var childCoordinators: [Coordinator] = []
@@ -18,7 +18,13 @@ class HarubyCalculatorCoordinator: Coordinator {
     
     func start() {
         print("Parents: \(String(describing: parentCoordinator))")
-        let vc = HarubyCalculatorViewController(reactor: HarubyCalculatorReactor())
+        let reactor = CalendarViewReactor(coordinator: self)
+        let vc = CalendarViewController()
+        vc.reactor = reactor
         navigationController.pushViewController(vc, animated: true)
+    }
+    
+    func showSpendingInput() {
+        
     }
 }

@@ -45,13 +45,15 @@ final class MainViewReactor: Reactor {
     let initialState = State(viewState: ViewState())
     private let container = DIContainer.shared
     private let salaryBudgetRepository: SalaryBudgetRepository
+    weak var coordinator: MainCoordinator?
     
     // MARK: - Initialization
-    init() {
+    init(coordinator: MainCoordinator) {
         guard let repository = container.resolve(SalaryBudgetRepository.self) else {
             fatalError("SalaryBudgetRepository is not resolved")
         }
         self.salaryBudgetRepository = repository
+        self.coordinator = coordinator
     }
     
     // MARK: - Mutate
@@ -61,9 +63,11 @@ final class MainViewReactor: Reactor {
             return fetchAndProcessHarubyInfo()
         case .calculatorButtonTapped:
             // TODO: - 하루비 계산기 네비게이션 코디네이터 적용
+            coordinator?.showCalculatorView()
             return .empty()
         case .calendarButtonTapped:
             // TODO: - 하루비 달력 네비게이션 코디네이터 적용
+            coordinator?.showCalendarView()
             return .empty()
         case .managementButtonTapped:
             // TODO: - 하루비 관리 네비게이션 코디네이터 적용
