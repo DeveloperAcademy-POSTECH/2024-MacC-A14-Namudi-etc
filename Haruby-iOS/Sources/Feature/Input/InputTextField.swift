@@ -8,40 +8,19 @@
 import UIKit
 
 class InputTextField: UIView {
-    private lazy var containerView: UIView = {
+    lazy var containerView: UIView = {
         let view = UIView()
         view.layer.cornerRadius = 7
         view.backgroundColor = .Haruby.whiteDeep50
         return view
     }()
     
-    private lazy var textField: UITextField = {
+    lazy var textField: UITextField = {
         let textfield = UITextField()
         textfield.font = .pretendardMedium_16
         textfield.textColor = .Haruby.textBlack
         return textfield
     }()
-    
-    var placeholder: String? {
-        didSet {
-            self.textField.placeholder = placeholder
-            self.textField.setPlaceholder(color: .Haruby.textBright40)
-        }
-    }
-    
-    var text: String? {
-        get {
-            return textField.text
-        } set {
-            textField.text = newValue
-        }
-    }
-    
-    var keyboardType: UIKeyboardType = .default {
-        didSet {
-            self.textField.keyboardType = keyboardType
-        }
-    }
     
     override init(frame: CGRect) {
         super.init(frame: frame)
