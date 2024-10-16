@@ -113,13 +113,13 @@ extension CalculatorKeypad {
             button.setTitle(type.title, for: .normal)
             button.setTitleColor(type.foregroundColor, for: .normal)
             button.titleLabel?.font = type.font
-            button.backgroundColor = type.backgroundColor
         } else {
             button.setImage(type.image, for: .normal)
             button.imageView?.tintColor = type.foregroundColor
             button.imageView?.contentMode = .scaleAspectFit
-            button.backgroundColor = type.backgroundColor
         }
+        
+        button.backgroundColor = type.backgroundColor
         
         if type.isSquare {
             button.snp.makeConstraints { make in
@@ -159,11 +159,11 @@ enum KeypadButtonType: Int {
         case .one, .two, .three, .four, .five, .six, .seven, .eight, .nine, .zero:
             return String(self.rawValue)
         case .doubleZero: // 00
-            return "00"
+            return CalculatorSymbol.doubleZero
         case .tripleZero: // 000
-            return "000"
+            return CalculatorSymbol.tripleZero
         case .deleteAll:
-            return "AC"
+            return CalculatorSymbol.deleteAll
             
         case .plus:
             return CalculatorSymbol.plus
@@ -177,8 +177,6 @@ enum KeypadButtonType: Int {
             return CalculatorSymbol.equal
         case .deleteLast:
             return CalculatorSymbol.deleteLast
-//        default:
-//            return ""
         }
     }
     
@@ -232,3 +230,4 @@ enum KeypadButtonType: Int {
         else { return true }
     }
 }
+

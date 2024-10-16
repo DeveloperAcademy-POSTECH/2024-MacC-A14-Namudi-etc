@@ -144,16 +144,17 @@ extension CalculatorViewReactor {
     // 함수: 문자열 수식을 계산
     private func evaluateExpression(_ expression: String) -> Int {
         var newExpression = expression
-        if CalculatorSymbol.operators.contains(expression.last?.description ?? "") {
+        let operatorTexts = KeypadButtonType.operators.map { $0.title }
+        if operatorTexts.contains(expression.last?.description ?? "") {
             newExpression = String(newExpression.dropLast())
         }
         
         // 연산자 우선순위를 정의
         let operators: [Character: Int] = [
-            "+": 1,
-            "-": 1,
-            "×": 2,
-            "÷": 2
+            CalculatorSymbol.plus.first!: 1,
+            CalculatorSymbol.minus.first!: 1,
+            CalculatorSymbol.multiply.first!: 2,
+            CalculatorSymbol.divide.first!: 2
         ]
         
         // 후위 표기법으로 변환
