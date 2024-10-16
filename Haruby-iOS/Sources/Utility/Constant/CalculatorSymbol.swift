@@ -1,22 +1,20 @@
 //
-//  KeypadType.swift
+//  CalculatorSymbol.swift
 //  Haruby-iOS
 //
-//  Created by 이정동 on 10/15/24.
+//  Created by 이정동 on 10/16/24.
 //
 
 import Foundation
 
 struct CalculatorSymbol {
     static let plus = "+"
-    static let minus = "−"
+    static let minus = "-"
     static let multiply = "×"
     static let divide = "÷"
-    static let deleteAll = "AC"
-    static let deleteLast = ""
     static let equal = "="
-    
-    static let zeros: [String] = ["0", "00", "000"]
-    static let operators: [String] = [plus, minus, multiply, divide]
-    static let deletes: [String] = [deleteAll, deleteLast]
+    static let deleteAll = "AC"
+    static let deleteLast = "Delete"
+    static let doubleZero = "00"
+    static let tripleZero = "000"
 }
