@@ -27,7 +27,7 @@ final class RealmTransactionRecord: Object {
     
     convenience init(_ transactionRecord: TransactionRecord) {
         self.init()
-        self.id = id
+        self.id = transactionRecord.id
         self.total = transactionRecord.total
         
         // [TransactionItem] -> [RealmTransactionItem]으로 변환
