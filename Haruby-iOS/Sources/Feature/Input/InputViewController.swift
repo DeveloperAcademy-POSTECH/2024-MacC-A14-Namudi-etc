@@ -78,11 +78,6 @@ class InputViewController: UIViewController, View {
         return view
     }()
     
-    private lazy var detailInputScrollView: DetailInputScrollView = {
-        let view = DetailInputScrollView()
-        return view
-    }()
-    
 //    private let bottomButtonView = BottomButton()
     
     // MARK: - Lifecycle
@@ -113,10 +108,8 @@ class InputViewController: UIViewController, View {
         self.view.addSubview(dateStackView)
         self.view.addSubview(amountTextField)
         self.view.addSubview(detailInputButtonStackView)
-        self.view.addSubview(detailInputScrollView)
 //        self.view.addSubview(bottomButtonView)
         
-        detailInputScrollView.isHidden = true
     }
     
     private func setupConstraints() {
@@ -139,11 +132,6 @@ class InputViewController: UIViewController, View {
         detailInputButtonStackView.snp.makeConstraints { make in
             make.top.equalTo(self.amountTextField.snp.bottom).offset(10)
             make.leading.equalTo(view.safeAreaLayoutGuide).inset(28)
-        }
-        
-        detailInputScrollView.snp.makeConstraints { make in
-            make.top.equalTo(self.detailInputButtonStackView.snp.bottom).offset(30)
-            make.horizontalEdges.equalTo(view.safeAreaLayoutGuide)
         }
         
 //        bottomButtonView.snp.makeConstraints { make in
@@ -185,7 +173,6 @@ class InputViewController: UIViewController, View {
             .distinctUntilChanged()
             .subscribe(onNext: { [weak self] isVisible in
                 guard let self = self else { return }
-                self.detailInputScrollView.isHidden = !isVisible
                 
                 let angle: CGFloat = isVisible ? .pi : 0
                 UIView.animate(withDuration: 0.1) {
@@ -209,7 +196,6 @@ class InputViewController: UIViewController, View {
             .distinctUntilChanged()
             .subscribe(onNext: { [weak self] newType in
                 self?.amountTextField.placeholder = "총 \(newType) 금액을 입력하세요"
-                self?.detailInputScrollView.transactionType = newType
             })
             .disposed(by: disposeBag)
     }
