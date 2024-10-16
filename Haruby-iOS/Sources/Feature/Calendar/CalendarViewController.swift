@@ -66,14 +66,16 @@ final class CalendarViewController: UIViewController, View, CoordinatorCompatibl
         view.layer.borderWidth = 1
         view.layer.cornerRadius = 10
         
-        view.addSubview(remainTotalHarubyStackView)
-        
         return view
     }()
     
     private lazy var bodyStackView: UIStackView = {
-        let stackView = UIStackView(arrangedSubviews: [weekdayHeader, collectionView])
+        let stackView = UIStackView()
+        stackView.insertArrangedSubview(collectionView, at: 0)
+        stackView.insertArrangedSubview(weekdayHeaderBottomLine, at: 0)
+        stackView.insertArrangedSubview(weekdayHeader, at: 0)
         stackView.axis = .vertical
+        stackView.spacing = -1
         
         return stackView
     }()
@@ -83,9 +85,6 @@ final class CalendarViewController: UIViewController, View, CoordinatorCompatibl
         view.backgroundColor = .Haruby.white
         view.layer.cornerRadius = 20
         view.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
-        
-        let stackView = UIStackView(arrangedSubviews: [weekdayHeader, collectionView])
-        stackView.axis = .vertical
 
         view.addSubview(bodyStackView)
         
@@ -111,6 +110,21 @@ final class CalendarViewController: UIViewController, View, CoordinatorCompatibl
         }
         
         return stackView
+    }()
+    
+    private let weekdayHeaderBottomLine: UIView = {
+        let rootView = UIView()
+        rootView.backgroundColor = .white
+        
+        let view = UIView()
+        view.backgroundColor = .Haruby.textBlack10
+        
+        rootView.addSubview(view)
+        
+        view.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
+        return rootView
     }()
     
     private lazy var collectionView: UICollectionView = {
@@ -169,23 +183,6 @@ final class CalendarViewController: UIViewController, View, CoordinatorCompatibl
         setupView()
     }
     
-    deinit {
-        print("CalendarViewController deinit")
-        didFinish?()
-    }
-    
-    // MARK: - Binding
-    func bind(reactor: CalendarViewReactor) {
-        // Action
-        reactor.action.onNext(.viewDidLoad)
-        
-        // State
-        reactor.state.map { $0.monthlySections }
-            .bind(to: collectionView.rx.items(dataSource: createDataSource()))
-            .disposed(by: disposeBag)
-    }
-    
-    
     // MARK: - setup
     private func setupView() {
         title = "캘린더"
@@ -198,6 +195,7 @@ final class CalendarViewController: UIViewController, View, CoordinatorCompatibl
     
     private func addSubviews() {
         view.addSubview(monthLabel)
+        view.addSubview(remainTotalHarubyStackView)
         view.addSubview(remainTotalHarubyBox)
         view.addSubview(topRoundedContainer)
         view.addSubview(warningLabel)
@@ -222,7 +220,11 @@ final class CalendarViewController: UIViewController, View, CoordinatorCompatibl
         }
         
         weekdayHeader.snp.makeConstraints { make in
-            make.height.equalTo(32)
+            make.height.equalTo(33)
+        }
+        
+        weekdayHeaderBottomLine.snp.makeConstraints { make in
+            make.height.equalTo(1)
         }
         
         remainTotalHarubyBox.snp.makeConstraints { make in
@@ -246,6 +248,18 @@ final class CalendarViewController: UIViewController, View, CoordinatorCompatibl
             make.centerX.equalToSuperview()
             make.bottom.equalTo(self.view.safeAreaLayoutGuide.snp.bottom).offset(-6)
         }
+    }
+    
+    
+    // MARK: - Binding
+    func bind(reactor: CalendarViewReactor) {
+        // Action
+        reactor.action.onNext(.viewDidLoad)
+        
+        // State
+        reactor.state.map { $0.monthlySections }
+            .bind(to: collectionView.rx.items(dataSource: createDataSource()))
+            .disposed(by: disposeBag)
     }
     
     
@@ -281,5 +295,10 @@ final class CalendarViewController: UIViewController, View, CoordinatorCompatibl
         if monthLabel.text != newMonthText {
             monthLabel.text = newMonthText
         }
+    }
+    
+    deinit {
+        print("CalendarViewController deinit")
+        didFinish?()
     }
 }
