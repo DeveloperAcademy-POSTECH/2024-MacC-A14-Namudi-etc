@@ -80,6 +80,11 @@ class InputViewController: UIViewController, View {
         return view
     }()
     
+    private lazy var detailInputScrollView: UIScrollView = {
+        let view = UIScrollView()
+        return view
+    }()
+    
     private lazy var detailInputTableView: UITableView = {
         let view = UITableView()
         view.register(DetailInputCell.self, forCellReuseIdentifier: DetailInputCell.cellId)
@@ -88,7 +93,7 @@ class InputViewController: UIViewController, View {
         view.rowHeight = UITableView.automaticDimension
         view.estimatedRowHeight = 49
         view.separatorStyle = .none
-        view.backgroundColor = .blue
+        view.isScrollEnabled = false
         return view
     }()
     
@@ -100,7 +105,7 @@ class InputViewController: UIViewController, View {
         return button
     }()
     
-    private let bottomButtonView: BottomButton = {
+    private let bottomButton: BottomButton = {
         let button = BottomButton()
         button.title = "저장하기"
         return button
@@ -134,9 +139,10 @@ class InputViewController: UIViewController, View {
         self.view.addSubview(dateStackView)
         self.view.addSubview(amountTextField)
         self.view.addSubview(detailInputButtonStackView)
+        self.view.addSubview(detailInputScrollView)
         self.view.addSubview(detailInputTableView)
         self.view.addSubview(addDetailCellButton)
-        self.view.addSubview(bottomButtonView)
+        self.view.addSubview(bottomButton)
         
     }
     
@@ -162,19 +168,26 @@ class InputViewController: UIViewController, View {
             make.leading.equalTo(view.safeAreaLayoutGuide).inset(28)
         }
         
-        detailInputTableView.snp.makeConstraints { make in
-            make.top.equalTo(self.detailInputButtonStackView.snp.bottom).offset(30)
+        detailInputScrollView.snp.makeConstraints { make in
+            make.top.equalTo(self.detailInputButtonStackView.snp.bottom).offset(16)
             make.horizontalEdges.equalTo(view.safeAreaLayoutGuide).inset(0)
+            make.bottom.equalTo(self.bottomButton.snp.top).offset(0)
+        }
+        
+        detailInputTableView.snp.makeConstraints { make in
+            make.top.equalTo(self.detailInputScrollView.snp.top).inset(0)
+            make.horizontalEdges.equalTo(self.detailInputScrollView.snp.horizontalEdges).inset(0)
+            make.height.equalTo(49)
         }
         
         addDetailCellButton.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
-            make.top.equalTo(self.detailInputTableView.snp.bottom).offset(22)
+            make.top.equalTo(self.detailInputTableView.snp.bottom).offset(14)
             make.horizontalEdges.equalTo(view.safeAreaLayoutGuide).inset(28)
             make.height.equalTo(35)
         }
         
-        bottomButtonView.snp.makeConstraints { make in
+        bottomButton.snp.makeConstraints { make in
             make.leading.trailing.equalToSuperview()
             make.bottom.equalTo(view.snp.bottom)
         }
