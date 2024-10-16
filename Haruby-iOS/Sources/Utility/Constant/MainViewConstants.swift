@@ -22,7 +22,7 @@ enum MainViewHarubyState {
     
     init(remainingAmount: Int, todayDailyBudget: DailyBudget?) {
         if let todayDailyBudget = todayDailyBudget, todayDailyBudget.expense.total > 0 {
-            self = remainingAmount > 0 ? .positive : .negative
+            self = remainingAmount >= 0 ? .positive : .negative
         } else {
             self = .initial
         }
