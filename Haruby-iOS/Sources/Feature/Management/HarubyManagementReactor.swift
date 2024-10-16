@@ -24,9 +24,9 @@ final class HarubyManagementReactor: Reactor {
     struct State { }
     
     let initialState: State
-    let coordinator: HarubyManagementCoordinator
+    let coordinator: ManagementCoordinator
     
-    init(coordinator: HarubyManagementCoordinator) {
+    init(coordinator: ManagementCoordinator) {
         self.coordinator = coordinator
         self.initialState = State()
     }

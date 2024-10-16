@@ -18,26 +18,29 @@ class MainCoordinator: Coordinator {
     
     func start() {
         print("Parents: \(String(describing: parentCoordinator))")
-        let vc = MainViewController(reactor: MainReactor(coordinator: self))
+        let reactor = MainViewReactor(coordinator: self)
+        let vc = MainViewController()
+        vc.reactor = reactor
         navigationController.pushViewController(vc, animated: false)
     }
     
-    func showHarubyCalculator() {
-        let coordinator = HarubyCalculatorCoordinator(navigationController: navigationController)
+    func showCalculatorView() {
+        print(#function)
+        let coordinator = CalculatorCoordinator(navigationController: navigationController)
         coordinator.parentCoordinator = self
         addChildCoordinator(coordinator)
         coordinator.start()
     }
     
-    func showHarubyCalendar() {
-        let coordinator = HarubyCalendarCoordinator(navigationController: navigationController)
+    func showCalendarView() {
+        let coordinator = CalendarCoordinator(navigationController: navigationController)
         coordinator.parentCoordinator = self
         addChildCoordinator(coordinator)
         coordinator.start()
     }
     
-    func showHarubyManagement() {
-        let coordinator = HarubyManagementCoordinator(navigationController: navigationController)
+    func showManagementView() {
+        let coordinator = ManagementCoordinator(navigationController: navigationController)
         coordinator.parentCoordinator = self
         addChildCoordinator(coordinator)
         coordinator.start()
