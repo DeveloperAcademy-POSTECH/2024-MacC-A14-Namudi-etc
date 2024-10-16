@@ -53,10 +53,9 @@ final class SalaryBudgetRepositoryImpl: SalaryBudgetRepository {
         print("Impl: Read SalaryBudget \(startDate)")
         
         let realmSalaryBudgets = realm.objects(RealmSalaryBudget.self)
-        let salaryBudgets = realmSalaryBudgets.map { $0.toEntity() }
-        let salaryBudget = salaryBudgets.first { $0.startDate == startDate.formattedDate }
-
-        return .just(salaryBudget)
+        let realmSalaryBudget = realmSalaryBudgets.where { $0.startDate == startDate.formattedDate }.first
+        
+        return .just(realmSalaryBudget?.toEntity())
     }
     
     func updateDate(_ id: String, start: Date, end: Date) -> Observable<Void> {
