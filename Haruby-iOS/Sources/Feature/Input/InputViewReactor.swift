@@ -13,16 +13,19 @@ final class InputViewReactor: Reactor {
     enum Action {
         case toggleDetailButton
         case toggleDatePicker
+        case selectTransactionType(String)
     }
     
     enum Mutation {
         case setDetailVisible(Bool)
         case setDatePickerVisible(Bool)
+        case setTransactionType(String)
     }
     
     struct State {
         var isDetailVisible: Bool = false
         var isDatePickerVisible: Bool = false
+        var transactionType: String = "지출"
     }
     
     private(set) var initialState: State = State()
@@ -36,6 +39,9 @@ final class InputViewReactor: Reactor {
         case .toggleDatePicker:
             let isDatePickerVisible = !currentState.isDatePickerVisible
             return Observable.just(.setDatePickerVisible(isDatePickerVisible))
+            
+        case .selectTransactionType(let newType):
+            return Observable.just(.setTransactionType(newType))
         }
     }
     
@@ -47,6 +53,9 @@ final class InputViewReactor: Reactor {
             
         case let .setDatePickerVisible(isVisible):
             newState.isDatePickerVisible = isVisible
+            
+        case let .setTransactionType(newType):
+            newState.transactionType = newType
         }
         
         return newState

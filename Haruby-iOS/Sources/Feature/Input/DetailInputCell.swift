@@ -11,15 +11,22 @@ class DetailInputCell: UITableViewCell {
     
     static let cellId = "DetailInputCell"
     
-    let detailNameTextField: InputTextField = {
+    var transactionType: String = "지출" {
+        didSet {
+            detailNameTextField.placeholder = "\(transactionType) 이름"
+            detailAmountTextField.placeholder = "\(transactionType) 금액"
+        }
+    }
+    
+    lazy var detailNameTextField: InputTextField = {
         let textfield = InputTextField()
-        textfield.placeholder = "지출 이름"
+        textfield.placeholder = "\(transactionType) 이름"
         return textfield
     }()
     
-    let detailAmountTextField: InputTextField = {
+    lazy var detailAmountTextField: InputTextField = {
         let textfield = InputTextField()
-        textfield.placeholder = "지출 금액"
+        textfield.placeholder = "\(transactionType) 금액"
         textfield.keyboardType = .numberPad
         return textfield
     }()
