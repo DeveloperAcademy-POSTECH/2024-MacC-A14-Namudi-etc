@@ -14,6 +14,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
         
+        let disposeBag = DisposeBag()
+        let salaryRepo = SalaryBudgetRepositoryImpl()
+        let dailyRepo = DailyBudgetRepositoryImpl()
+        
+//        salaryRepo.create(mockSalaryBudget)
+//            .subscribe { _ in
+//                print("Finish create")
+//            }
+//            .disposed(by: disposeBag)
         return true
     }
 }
@@ -34,23 +43,6 @@ let mockSalaryBudget: SalaryBudget = SalaryBudget(
         DailyBudget(
             date: .now.formattedDate,
             memo: "1번",
-            expense: TransactionRecord(
-                total: 13000,
-                transactionItems: [
-                    TransactionItem(name: "초콜릿", price: 3000),
-                    TransactionItem(name: "택시비", price: 10000),
-                ]
-            ),
-            income: TransactionRecord(
-                total: 50000,
-                transactionItems: [
-                    TransactionItem(name: "용돈", price: 50000)
-                ]
-            )
-        ),
-        DailyBudget(
-            date: .now.addingTimeInterval(86400).formattedDate,
-            memo: "2번",
             expense: TransactionRecord(
                 total: 13000,
                 transactionItems: [

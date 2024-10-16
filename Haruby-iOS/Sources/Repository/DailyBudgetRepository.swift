@@ -7,9 +7,10 @@
 
 import Foundation
 import RxSwift
+import RealmSwift
 
 protocol DailyBudgetRepository: AnyObject {
-    func read(_ date: Date) -> Observable<DailyBudget>
+    func read(_ date: Date) -> Observable<DailyBudget?>
     func updateHaruby(_ id: String, haruby: Int) -> Observable<Void>
     func updateMemo(_ id: String, memo: String) -> Observable<Void>
     func updateExpense(_ id: String, expense: TransactionRecord) -> Observable<Void>
@@ -18,35 +19,90 @@ protocol DailyBudgetRepository: AnyObject {
 
 // MARK: - Impl
 final class DailyBudgetRepositoryImpl: DailyBudgetRepository {
-    func read(_ date: Date) -> Observable<DailyBudget> {
+    
+    private let realm = RealmStorage.shared.realm
+    
+    func read(_ date: Date) -> Observable<DailyBudget?> {
         print("Impl: Read DailyBudget \(date)")
-        return .empty()
+        
+        let realmDailyBudgets = realm.objects(RealmDailyBudget.self)
+        let realmDailyBudget = realmDailyBudgets.where { $0.date == date.formattedDate }.first
+        
+        return .just(realmDailyBudget?.toEntity())
     }
     
     func updateHaruby(_ id: String, haruby: Int) -> Observable<Void> {
         print("Impl: Update Haruby \(haruby)")
-        return .empty()
+        
+        guard let realmDailyBudget = realm.object(ofType: RealmDailyBudget.self, forPrimaryKey: id) else {
+            return .just(())
+        }
+        
+        try! realm.write {
+            realmDailyBudget.haruby = haruby
+        }
+        
+        return .just(())
     }
     
     func updateMemo(_ id: String, memo: String) -> Observable<Void> {
         print("Impl: Update Memo \(memo)")
-        return .empty()
+        
+        guard let realmDailyBudget = realm.object(ofType: RealmDailyBudget.self, forPrimaryKey: id) else {
+            return .just(())
+        }
+        
+        try! realm.write {
+            realmDailyBudget.memo = memo
+        }
+        
+        return .just(())
     }
     
     func updateExpense(_ id: String, expense: TransactionRecord) -> Observable<Void> {
         print("Impl: Update Expense \(expense)")
-        return .empty()
+        
+        guard let realmDailyBudget = realm.object(ofType: RealmDailyBudget.self, forPrimaryKey: id) else {
+            return .just(())
+        }
+        
+        try! realm.write {
+            
+            if let expense = realmDailyBudget.expense {
+                realm.delete(expense.transactionItems)
+                realm.delete(expense)
+            }
+            
+            realmDailyBudget.expense = RealmTransactionRecord(expense)
+        }
+        
+        return .just(())
     }
     
     func updateIncome(_ id: String, income: TransactionRecord) -> Observable<Void> {
         print("Impl: Update Income \(income)")
-        return .empty()
+        
+        guard let realmDailyBudget = realm.object(ofType: RealmDailyBudget.self, forPrimaryKey: id) else {
+            return .just(())
+        }
+        
+        try! realm.write {
+            
+            if let income = realmDailyBudget.income {
+                realm.delete(income.transactionItems)
+                realm.delete(income)
+            }
+            
+            realmDailyBudget.income = RealmTransactionRecord(income)
+        }
+        
+        return .just(())
     }
 }
 
 // MARK: - Stub
 final class StubDailyBudgetRepository: DailyBudgetRepository {
-    func read(_ date: Date) -> Observable<DailyBudget> {
+    func read(_ date: Date) -> Observable<DailyBudget?> {
         print("Stub: Read DailyBudget \(date)")
         return .empty()
     }
