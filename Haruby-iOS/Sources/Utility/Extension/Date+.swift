@@ -24,11 +24,25 @@ extension Date {
         return calendar.date(from: dateComponent)!
     }
     
+    /// Date 값에서 년 Int만 추출
+    var yearValue: Int {
+        let calendar = configuredCalendar
+        let dateComponent = calendar.dateComponents([.year], from: self)
+        return dateComponent.year!
+    }
+    
     /// Date 값에서 월 Int만 추출
     var monthValue: Int {
         let calendar = configuredCalendar
         let dateComponent = calendar.dateComponents([.month], from: self)
         return dateComponent.month!
+    }
+    
+    /// Date 값에서 일 Int만 추출
+    var dayValue: Int {
+        let calendar = configuredCalendar
+        let dateComponent = calendar.dateComponents([.day], from: self)
+        return dateComponent.day!
     }
     
     var formattedDateToStringforMainView: String {
