@@ -60,6 +60,7 @@ final class CalculatorViewReactor: Reactor {
     }
 }
 
+// MARK: - Mutate 함수
 extension CalculatorViewReactor {
     
     private func processKeypad(_ text: String) -> Observable<Mutation> {
@@ -102,14 +103,16 @@ extension CalculatorViewReactor {
         ])
     }
     
-    private func processDelete(_ text: String) -> Observable<Mutation> {
-        var newText = ""
-        
-        if text.isEmpty {
-            newText = String(currentState.inputFieldText.dropLast())
+    private func processDelete(_ symbol: String) -> Observable<Mutation> {
+        switch symbol {
+        case CalculatorSymbol.deleteAll:
+            return .just(.updateInputField(""))
+        case CalculatorSymbol.deleteLast:
+            let newText = String(currentState.inputFieldText.dropLast())
+            return .just(.updateInputField(newText))
+        default:
+            return .empty()
         }
-        
-        return .just(.updateInputField(newText))
     }
     
     private func processNumber(_ number: String) -> Observable<Mutation> {
@@ -118,7 +121,6 @@ extension CalculatorViewReactor {
         
         if CalculatorSymbol.zeros.contains(number)
             && (CalculatorSymbol.operators.contains(lastText)
-                
                 || currentInputFieldText.isEmpty) {
             return .empty()
         } else {
@@ -128,6 +130,8 @@ extension CalculatorViewReactor {
     
 }
 
+
+// MARK: - 계산기 로직
 extension CalculatorViewReactor {
     // 함수: 문자열 수식을 계산
     private func evaluateExpression(_ expression: String) -> Int {
