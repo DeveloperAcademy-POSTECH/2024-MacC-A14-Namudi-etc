@@ -9,13 +9,6 @@ import Foundation
 import RxSwift
 import RealmSwift
 
-protocol DailyBudgetRepository: AnyObject {
-    func read(_ date: Date) -> Observable<DailyBudget?>
-    func updateHaruby(_ id: String, haruby: Int) -> Observable<Void>
-    func updateMemo(_ id: String, memo: String) -> Observable<Void>
-    func updateExpense(_ id: String, expense: TransactionRecord) -> Observable<Void>
-    func updateIncome(_ id: String, income: TransactionRecord) -> Observable<Void>
-}
 
 // MARK: - Impl
 final class DailyBudgetRepositoryImpl: DailyBudgetRepository {
