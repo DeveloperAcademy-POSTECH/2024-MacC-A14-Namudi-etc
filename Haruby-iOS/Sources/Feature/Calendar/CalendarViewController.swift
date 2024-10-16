@@ -275,7 +275,12 @@ final class CalendarViewController: UIViewController, View, CoordinatorCompatibl
         return RxCollectionViewSectionedReloadDataSource<MonthlySection>(
             configureCell: { [unowned self] dataSource, collectionView, indexPath, item in
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: self.cellId, for: indexPath) as! CalendarViewCell
-                let reactor = CalendarViewCellReactor(dailyBudget: item)
+                
+                let salaryStartDate = (self.reactor?.currentState.salaryBudget.startDate)!
+                let salaryEndDate = (self.reactor?.currentState.salaryBudget.endDate)!
+                let defaultHaruby = (self.reactor?.currentState.salaryBudget.defaultHaruby)!
+                
+                let reactor = CalendarViewCellReactor(dailyBudget: item, salaryStartDate: salaryStartDate, salaryEndDate: salaryEndDate, defaultHaruby: defaultHaruby)
                 cell.reactor = reactor
                 return cell
             }
