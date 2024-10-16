@@ -11,7 +11,6 @@ import UIKit
 struct MainViewConstants {
     static let emptyAmountString = "0원"
     static let noDataTitle = "데이터 없음"
-    static let incomeDateKey = "incomeDate"
     static let todayHarubyTitle = "오늘의 하루비"
     static let remainingHarubyTitle = "오늘의 남은 하루비"
 }
@@ -40,3 +39,4 @@ enum MainViewHarubyState {
         }
     }
 }
+

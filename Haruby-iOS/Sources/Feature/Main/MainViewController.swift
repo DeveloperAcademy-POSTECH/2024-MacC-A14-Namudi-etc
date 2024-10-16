@@ -123,62 +123,62 @@ final class MainViewController: UIViewController, View {
     }
     
     private func bindState(reactor: MainViewReactor) {
-        reactor.state.map { $0.avgAmount.decimalWithWon }
+        reactor.state.map { $0.viewState.avgAmount.decimalWithWon }
             .distinctUntilChanged()
             .bind(to: headerView.topAvgHarubyText2.rx.text)
             .disposed(by: disposeBag)
         
-        reactor.state.map { $0.title }
+        reactor.state.map { $0.viewState.title }
             .distinctUntilChanged()
             .bind(to: receiptView.titleLabel.rx.text)
             .disposed(by: disposeBag)
         
-        reactor.state.map { $0.remainingAmount.decimalWithWon }
+        reactor.state.map { $0.viewState.remainingAmount.decimalWithWon }
             .distinctUntilChanged()
             .bind(to: receiptView.amountLabel.rx.text)
             .disposed(by: disposeBag)
         
-        reactor.state.map { $0.date.formattedDateToStringforMainView }
+        reactor.state.map { $0.viewState.date.formattedDateToStringforMainView }
             .distinctUntilChanged()
             .bind(to: receiptView.dateLabel.rx.text)
             .disposed(by: disposeBag)
         
-        reactor.state.map { $0.harubyState.uiProperties.image }
+        reactor.state.map { $0.viewState.harubyState.uiProperties.image }
             .distinctUntilChanged()
             .bind(to: receiptView.harubyImageView.rx.image)
             .disposed(by: disposeBag)
         
-        reactor.state.map { $0.harubyState.uiProperties.boxColor }
+        reactor.state.map { $0.viewState.harubyState.uiProperties.boxColor }
             .distinctUntilChanged()
             .bind(to: receiptView.amountBox.rx.backgroundColor)
             .disposed(by: disposeBag)
         
-        reactor.state.map { $0.harubyState.uiProperties.labelColor }
+        reactor.state.map { $0.viewState.harubyState.uiProperties.labelColor }
             .distinctUntilChanged()
             .bind(to: receiptView.amountLabel.rx.textColor)
             .disposed(by: disposeBag)
         
         reactor.state
-            .map { $0.usedAmount == 0 }
+            .map { $0.viewState.usedAmount == 0 }
             .distinctUntilChanged()
             .bind(to: receiptView.expenseAmountStackView.rx.isHidden)
             .disposed(by: disposeBag)
         
         reactor.state
-            .map { $0.todayAmount.decimalWithWon }
+            .map { $0.viewState.todayAmount.decimalWithWon }
             .distinctUntilChanged()
             .bind(to: receiptView.expenseAmountText2.rx.text)
             .disposed(by: disposeBag)
         
         reactor.state
-            .map { $0.usedAmount.decimalWithWon }
+            .map { $0.viewState.usedAmount.decimalWithWon }
             .distinctUntilChanged()
             .bind(to: receiptView.expenseAmountText4.rx.text)
             .disposed(by: disposeBag)
         
         reactor.state
             .map { state -> UIColor in
-                state.usedAmount > state.todayAmount ? .Haruby.red : .Haruby.green
+                state.viewState.usedAmount > state.viewState.todayAmount ? .Haruby.red : .Haruby.green
             }
             .distinctUntilChanged()
             .bind(to: receiptView.expenseAmountText4.rx.textColor)
