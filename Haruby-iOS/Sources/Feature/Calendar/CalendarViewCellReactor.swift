@@ -30,6 +30,7 @@ final class CalendarViewCellReactor: Reactor {
         var showRedDot: Bool
         var showBlueDot: Bool
         var harubyNumber: String?              // 하루비
+        var isPastHaruby: Bool
         
 
     }
@@ -57,7 +58,6 @@ final class CalendarViewCellReactor: Reactor {
         } else {
             harubyNumber = nil
         }
-        
 
         initialState = State(
             dayNumber: dayNumber == 1 ? "\(monthNumber)/\(dayNumber)" : "\(dayNumber)",
@@ -66,7 +66,8 @@ final class CalendarViewCellReactor: Reactor {
             showHiglight: isInSalaryPeriod,
             showRedDot: !isExpenseExist && isInSalaryPeriod,
             showBlueDot: dailyBudget.haruby != nil,
-            harubyNumber: harubyNumber
+            harubyNumber: harubyNumber,
+            isPastHaruby: isPastDay
         )
     }
     

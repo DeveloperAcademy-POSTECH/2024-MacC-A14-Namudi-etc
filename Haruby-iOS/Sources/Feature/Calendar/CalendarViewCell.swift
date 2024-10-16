@@ -104,6 +104,11 @@ final class CalendarViewCell: UICollectionViewCell, View {
                     .bind(to: harubyLabel.rx.text)
                     .disposed(by: disposeBag)
         
+        reactor.state.map{ $0.isPastHaruby ? .Haruby.textBlack40 : .Haruby.main }
+                    .bind(to: harubyLabel.rx.textColor)
+                    .disposed(by: disposeBag)
+        
+        
         reactor.state.map{ $0.showHiglight ? .Haruby.whiteDeep : .clear }
                     .bind(to: highlightView.rx.backgroundColor)
                     .disposed(by: disposeBag)
