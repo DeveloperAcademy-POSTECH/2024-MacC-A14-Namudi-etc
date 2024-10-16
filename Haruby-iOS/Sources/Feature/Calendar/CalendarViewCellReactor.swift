@@ -20,38 +20,53 @@ final class CalendarViewCellReactor: Reactor {
     }
     
     struct State {
+        var currentDate: Date = .now
+        
+        // UI표시
         var dayNumber: String           // 날짜 숫자
         var isVisible: Bool             // 셀이 표시 가능한지 여부
-        var isToday: Bool               // 오늘 날짜인지 여부
-        var haruby: String?             // 하루비
-        var memo: String?               // 메모
-        var expense: TransactionRecord? // 지출
-        var income: TransactionRecord?  // 수입
+        var showTodayIndicator: Bool    // 오늘 인디케이터를 보여줄지
+        var showHiglight: Bool          // 날짜에 하이라이트를 보여줄지
+        var showRedDot: Bool
+        var showBlueDot: Bool
+        var harubyNumber: String?              // 하루비
+        
+
     }
     
     let initialState: State
     
-    // 2. 데이터 바인딩
-    //      case1-dailyBudget에 있는 날짜이면 하이라이트
-    //              a. 하루비를 조정했는지 여부
-    //              b. 오늘날짜를 지났으면 지출을 입력했는지 여부
-    //              c. 하루비를 조정했다면 조정 하루비 보여주기, 조정을 안했다면 기본 하루비 보여주기
-    //      case2 -dailyBudget에 없는 날짜이면 하이라이트 없기
-    
-    init(dailyBudget: DailyBudget) {
+    init(dailyBudget: DailyBudget, salaryStartDate: Date, salaryEndDate: Date, defaultHaruby: Int) {
         
+        let currentDay = Date()
         let calendar = Calendar.current
+        let dayNumber = dailyBudget.date.dayValue
+        let monthNumber = dailyBudget.date.monthValue
         
-        let dayNumber = "\(calendar.component(.day, from: dailyBudget.date))"
-        let monthNumber = "\(calendar.component(.month, from: dailyBudget.date))"
-
-        let isFirstDayOfMonth = dayNumber == "1" ? true : false
+        let isInSalaryPeriod = dailyBudget.date >= salaryStartDate && dailyBudget.date <= salaryEndDate
+        let isPastDay = dailyBudget.date < currentDay
+        let isExpenseExist = !dailyBudget.expense.transactionItems.isEmpty
+        
+        var harubyNumber: String?
+        if isInSalaryPeriod {
+            if isPastDay {
+                harubyNumber = isExpenseExist ? dailyBudget.expense.total.decimal : nil
+            } else {
+                harubyNumber = dailyBudget.haruby?.decimal ?? defaultHaruby.decimal
+            }
+        } else {
+            harubyNumber = nil
+        }
+        
 
         initialState = State(
-            dayNumber: isFirstDayOfMonth ? "\(monthNumber)/\(dayNumber)" : dayNumber,
+            dayNumber: dayNumber == 1 ? "\(monthNumber)/\(dayNumber)" : "\(dayNumber)",
             isVisible: dailyBudget.date != Date.distantPast ? true : false,
-            isToday: calendar.isDate(dailyBudget.date, inSameDayAs: Date()),
-            haruby: dailyBudget.haruby?.decimal ?? nil
+            showTodayIndicator: calendar.isDate(dailyBudget.date, inSameDayAs: currentDay),
+            showHiglight: isInSalaryPeriod,
+            showRedDot: !isExpenseExist && isInSalaryPeriod,
+            showBlueDot: dailyBudget.haruby != nil,
+            harubyNumber: harubyNumber
         )
     }
     

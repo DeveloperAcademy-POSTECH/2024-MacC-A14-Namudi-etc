@@ -38,6 +38,21 @@ final class CalendarViewCell: UICollectionViewCell, View {
         return label
     }()
     
+    lazy private var todayIndicator: UIView = {
+        let view = UIView()
+        view.backgroundColor = .Haruby.main
+        view.layer.cornerRadius = 10.5
+        view.addSubview(numberLabel)
+        return view
+    }()
+    
+    lazy private var highlightView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .Haruby.whiteDeep
+        view.addSubview(todayIndicator)
+        return view
+    }()
+    
     lazy private var harubyLabel: UILabel = {
         let label = UILabel()
         label.font = .pretendardMedium_11
@@ -85,23 +100,40 @@ final class CalendarViewCell: UICollectionViewCell, View {
                     .bind(to: numberLabel.rx.text)
                     .disposed(by: disposeBag)
         
-        reactor.state.map{ !$0.isVisible }
-                    .bind(to: numberLabel.rx.isHidden)
-                    .disposed(by: disposeBag)
-        
-        reactor.state.map{ $0.haruby }
+        reactor.state.map{ $0.harubyNumber }
                     .bind(to: harubyLabel.rx.text)
                     .disposed(by: disposeBag)
         
-        reactor.state.map{ !$0.isVisible }
-                    .bind(to: topLine.rx.isHidden)
+        reactor.state.map{ $0.showHiglight ? .Haruby.whiteDeep : .clear }
+                    .bind(to: highlightView.rx.backgroundColor)
                     .disposed(by: disposeBag)
         
-        reactor.state.map{ !$0.isVisible }
-                    .bind(to: dotStackView.rx.isHidden)
-                    .disposed(by: disposeBag)
+        reactor.state.map{ $0.showTodayIndicator }
+                    .bind{ isToday in
+                        self.numberLabel.textColor = isToday ? .Haruby.white : .Haruby.textBlack
+                        self.todayIndicator.backgroundColor = isToday ? .Haruby.main : .clear
+                    }.disposed(by: disposeBag)
         
+        reactor.state.map{ $0.isVisible }
+                    .bind{ isVisible in
+                        self.numberLabel.isHidden = !isVisible
+                        self.topLine.isHidden = !isVisible
+                        self.dotStackView.isHidden = !isVisible
+                    }.disposed(by: disposeBag)
         
+        reactor.state.map{ $0.showBlueDot }
+                    .bind{ show in
+                        if !show {
+                            self.blueDot.removeFromSuperview()
+                        }
+                    }.disposed(by: disposeBag)
+        
+        reactor.state.map{ $0.showRedDot }
+                    .bind{ show in
+                        if !show {
+                            self.redDot.removeFromSuperview()
+                        }
+                    }.disposed(by: disposeBag)
     }
     
     // MARK: - setup
@@ -112,7 +144,7 @@ final class CalendarViewCell: UICollectionViewCell, View {
     }
     
     private func addSubviews() {
-        contentView.addSubview(numberLabel)
+        contentView.addSubview(highlightView)
         contentView.addSubview(harubyLabel)
         contentView.addSubview(dotStackView)
         contentView.addSubview(topLine)
@@ -128,7 +160,18 @@ final class CalendarViewCell: UICollectionViewCell, View {
         }
         
         numberLabel.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(8)
+            make.verticalEdges.equalToSuperview().inset(3)
+            make.horizontalEdges.equalToSuperview()
+        }
+        
+        todayIndicator.snp.makeConstraints { make in
+            make.verticalEdges.equalToSuperview()
+            make.centerX.equalToSuperview()
+            make.width.equalTo(42)
+        }
+        
+        highlightView.snp.makeConstraints { make in
+            make.top.equalToSuperview().offset(4)
             make.horizontalEdges.equalToSuperview()
         }
         
