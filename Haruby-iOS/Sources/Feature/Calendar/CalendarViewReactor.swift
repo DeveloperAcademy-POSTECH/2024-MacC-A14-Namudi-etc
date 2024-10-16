@@ -21,10 +21,17 @@ final class CalendarViewReactor: Reactor {
     }
     
     struct State {
+        var salaryBudget: SalaryBudget
         var monthlySections: [MonthlySection] = []
     }
     
-    let initialState: State = State()
+    let initialState: State
+    
+    init(salaryBudget: SalaryBudget) {
+        salaryBudget.dailyBudgets.forEach { print($0.date.formattedDateToStringforMainView) }
+        
+        initialState = State(salaryBudget: salaryBudget)
+    }
     
     func mutate(action: Action) -> Observable<Mutation> {
         switch action {
