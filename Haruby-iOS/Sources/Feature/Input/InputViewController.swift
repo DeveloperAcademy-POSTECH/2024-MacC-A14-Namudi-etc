@@ -26,6 +26,7 @@ class InputViewController: UIViewController, View {
         label.text = "날짜"
         label.textColor = .Haruby.textBlack
         label.font = .pretendardMedium_20
+        label.textAlignment = .left
         return label
     }()
     
@@ -34,6 +35,8 @@ class InputViewController: UIViewController, View {
         button.setTitle("2024.09.28", for: .normal)
         button.setTitleColor(.Haruby.main, for: .normal)
         button.titleLabel?.font = .pretendardRegular_20
+        button.setContentHuggingPriority(.defaultHigh, for: .horizontal)
+        button.titleLabel?.textAlignment = .right
         return button
     }()
     
@@ -41,7 +44,6 @@ class InputViewController: UIViewController, View {
         let view = UIStackView(arrangedSubviews: [self.dateLabel, self.datePickerButton])
         view.axis = .horizontal
         view.alignment = .fill
-        view.spacing = 195
         
         return view
     }()
@@ -86,7 +88,16 @@ class InputViewController: UIViewController, View {
         view.rowHeight = UITableView.automaticDimension
         view.estimatedRowHeight = 49
         view.separatorStyle = .none
+        view.backgroundColor = .blue
         return view
+    }()
+    
+    private lazy var addDetailCellButton: UIButton = {
+        let button = UIButton()
+        button.setTitle("+ 지출 추가", for: .normal)
+        button.setTitleColor(.Haruby.main, for: .normal)
+        button.titleLabel?.font = .pretendardMedium_16
+        return button
     }()
     
 //    private let bottomButtonView = BottomButton()
@@ -120,6 +131,7 @@ class InputViewController: UIViewController, View {
         self.view.addSubview(amountTextField)
         self.view.addSubview(detailInputButtonStackView)
         self.view.addSubview(detailInputTableView)
+        self.view.addSubview(addDetailCellButton)
 //        self.view.addSubview(bottomButtonView)
         
     }
@@ -149,7 +161,13 @@ class InputViewController: UIViewController, View {
         detailInputTableView.snp.makeConstraints { make in
             make.top.equalTo(self.detailInputButtonStackView.snp.bottom).offset(30)
             make.horizontalEdges.equalTo(view.safeAreaLayoutGuide).inset(0)
-            make.bottom.equalTo(16)
+        }
+        
+        addDetailCellButton.snp.makeConstraints { make in
+            make.centerX.equalToSuperview()
+            make.top.equalTo(self.detailInputTableView.snp.bottom).offset(22)
+            make.horizontalEdges.equalTo(view.safeAreaLayoutGuide).inset(28)
+            make.height.equalTo(35)
         }
         
 //        bottomButtonView.snp.makeConstraints { make in
