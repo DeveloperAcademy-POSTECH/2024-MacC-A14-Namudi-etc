@@ -20,35 +20,29 @@ final class MainViewReactor: Reactor {
     
     // MARK: - Mutation
     enum Mutation {
-        case updateState(State)
+        case updateState(SalaryBudget, DailyBudget)
+        case updateViewState(ViewState)
     }
     
     // MARK: - State
     struct State {
-        var title: String
-        var avgAmount: Int
-        var remainingAmount: Int
-        var todayAmount: Int
-        var date: Date
-        var harubyState: MainViewHarubyState
-        var usedAmount: Int
-        
-        // 초기 상태를 나타내는 정적 프로퍼티
-        static var initial: State {
-            State(
-                title: MainViewConstants.noDataTitle,
-                avgAmount: 0,
-                remainingAmount: 0,
-                todayAmount: 0,
-                date: Date(),
-                harubyState: .initial,
-                usedAmount: 0
-            )
-        }
+        var viewState: ViewState
+        var salaryBudget: SalaryBudget?
+        var dailyBudget: DailyBudget?
+    }
+    
+    struct ViewState {
+        var title: String = ""
+        var avgAmount: Int = 0
+        var remainingAmount: Int = 0
+        var todayAmount: Int = 0
+        var date: Date = Date()
+        var harubyState: MainViewHarubyState = MainViewHarubyState.initial
+        var usedAmount: Int = 0
     }
     
     // MARK: - Properties
-    let initialState = State.initial
+    let initialState = State(viewState: ViewState())
     private let container = DIContainer.shared
     private let salaryBudgetRepository: SalaryBudgetRepository
     
@@ -82,63 +76,58 @@ final class MainViewReactor: Reactor {
     
     // MARK: - Reduce
     func reduce(state: State, mutation: Mutation) -> State {
+        var newState = state
         switch mutation {
-        case .updateState(let newState):
-            return newState
+        case .updateState(let salaryBudget, let dailyBudget):
+            newState.salaryBudget = salaryBudget
+            newState.dailyBudget = dailyBudget
+            newState.viewState = processViewState(salaryBudget: salaryBudget, dailyBudget: dailyBudget)
+        case .updateViewState(let viewState):
+            newState.viewState = viewState
         }
+        return newState
     }
-    
-    // MARK: - Private Methods
+}
+
+// MARK: - Private Methods
+extension MainViewReactor {
     /// 오늘의 하루비 정보를 가져와 처리하는 메서드
     private func fetchAndProcessHarubyInfo() -> Observable<Mutation> {
-        let currentDate = Date()
-        let startDate = calculateStartDate(from: currentDate).formattedDate
+        let incomeDate = UserDefaultsManager.getIncomeDate()
+        let startDate = BudgetManager.calculateStartDate(from: Date(), incomeDate: incomeDate)
         
         return salaryBudgetRepository.read(startDate)
-            .map { [weak self] salaryBudget -> State in
-                guard let self = self, let salaryBudget = salaryBudget else {
-                    return .initial
+            .map { salaryBudget -> Mutation in
+                guard let salaryBudget = salaryBudget else {
+                    print("salaryBudget not found")
+                    return .updateViewState(ViewState())
                 }
-                return self.processHarubyInfo(salaryBudget: salaryBudget, currentDate: currentDate)
+                let dailyBudget = salaryBudget.dailyBudgets.first {
+                    Calendar.current.isDate($0.date, inSameDayAs: Date())
+                }
+                guard let dailyBudget else {
+                    print("dailyBudget not found")
+                    return .updateViewState(ViewState())
+                }
+                return .updateState(salaryBudget, dailyBudget)
             }
-            .map { Mutation.updateState($0) }
     }
     
-    /// 이번 기간의 시작 날짜를 계산하는 메서드
-    private func calculateStartDate(from currentDate: Date) -> Date {
-        let calendar = Calendar.current
-        let incomeDate = UserDefaults.standard.integer(forKey: MainViewConstants.incomeDateKey)
-        var startDate = currentDate
+    /// 오늘의 하루비 정보로 뷰 상태를 업데이트하는 메서드
+    private func processViewState(salaryBudget: SalaryBudget, dailyBudget: DailyBudget) -> ViewState {
+        let (title, remainingAmount) = self.setTitleAndRemain(for: dailyBudget)
+        let avgAmount = HarubyCalculateManager
+            .getAverageHarubyFromNow(endDate: salaryBudget.endDate, balance: salaryBudget.balance)
+        let harubyState = MainViewHarubyState(remainingAmount: remainingAmount, todayDailyBudget: dailyBudget)
         
-        // incomeDate와 일치하는 날짜를 찾을 때까지 하루씩 뒤로 이동
-        while true {
-            let components = calendar.dateComponents([.day], from: startDate)
-            if components.day == incomeDate { break }
-            startDate = calendar.date(byAdding: .day, value: -1, to: startDate)!
-        }
-        
-        return startDate
-    }
-    
-    /// 오늘의 하루비 정보를 처리하는 메서드
-    private func processHarubyInfo(salaryBudget: SalaryBudget, currentDate: Date) -> State {
-        let calendar = Calendar.current
-        let todayDailyBudget = salaryBudget.dailyBudgets.first {
-            calendar.isDate($0.date, inSameDayAs: currentDate)
-        }
-        
-        let (title, remainingAmount) = setTitleAndRemain(for: todayDailyBudget)
-        let avgAmount = calculateAverageHaruby(endDate: salaryBudget.endDate, balance: salaryBudget.balance)
-        let harubyState = MainViewHarubyState(remainingAmount: remainingAmount, todayDailyBudget: todayDailyBudget)
-        
-        return State(
+        return ViewState(
             title: title,
             avgAmount: avgAmount,
             remainingAmount: remainingAmount,
-            todayAmount: todayDailyBudget?.haruby ?? 0,
-            date: todayDailyBudget?.date ?? currentDate,
+            todayAmount: dailyBudget.haruby ?? 0,
+            date: dailyBudget.date,
             harubyState: harubyState,
-            usedAmount: todayDailyBudget?.expense.total ?? 0
+            usedAmount: dailyBudget.expense.total
         )
     }
     
@@ -153,10 +142,5 @@ final class MainViewReactor: Reactor {
         } else {
             return (MainViewConstants.remainingHarubyTitle, (dailyBudget.haruby ?? 0) - dailyBudget.expense.total)
         }
-    }
-    
-    /// 평균 하루비를 계산하는 메서드
-    private func calculateAverageHaruby(endDate: Date, balance: Int) -> Int {
-        HarubyCalculateManager.getAverageHarubyFromNow(endDate: endDate, balance: balance)
     }
 }

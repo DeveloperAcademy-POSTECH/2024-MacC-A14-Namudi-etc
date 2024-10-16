@@ -12,7 +12,7 @@ final class DIContainer {
   
   private var dependencies: [String: Any] = [:]
   
-  init() {
+  private init() {
     self.registerDependencies()
   }
   
