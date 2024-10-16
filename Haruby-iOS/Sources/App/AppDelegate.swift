@@ -22,6 +22,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             // UserDefaults에서 급여일(incomeDate)를 가져옵니다.
             let incomeDate = UserDefaults.standard.integer(forKey: "incomeDate")
             
+            // 접속한 날짜에 급여일을 가지고 startDate와 endDate를 구합니다.
             let (startDate, endDate) =
             calculateBudgetPeriod(incomeDate: incomeDate)
             
