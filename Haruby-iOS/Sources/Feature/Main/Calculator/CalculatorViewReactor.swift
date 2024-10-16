@@ -67,24 +67,27 @@ extension CalculatorViewReactor {
         
         switch keypadType {
         case .plus, .minus, .multiply, .divide:
-            return processOperator(keypadType.title)
+            return processOperator(keypadType)
         case .equal:
             return processEqual()
         case .deleteAll, .deleteLast:
-            return processDelete(keypadType.title)
+            return processDelete(keypadType)
         default:
-            return processNumber(keypadType.title)
+            return processNumber(keypadType)
         }
     }
     
-    private func processOperator(_ op: String) -> Observable<Mutation> {
+    private func processOperator(_ keypadType: KeypadButtonType) -> Observable<Mutation> {
         let currentInputFieldText = self.currentState.inputFieldText
         let lastText = currentInputFieldText.last?.description ?? ""
         
-        if CalculatorSymbol.operators.contains(lastText)
+        let operatorTexts = KeypadButtonType.operators.map { $0.title }
+        
+        if operatorTexts.contains(lastText)
             || currentInputFieldText.isEmpty {
             return .empty()
         } else {
+            let op = keypadType.title
             return .just(.updateInputField(currentInputFieldText + op))
         }
     }
@@ -104,11 +107,11 @@ extension CalculatorViewReactor {
         ])
     }
     
-    private func processDelete(_ symbol: String) -> Observable<Mutation> {
-        switch symbol {
-        case CalculatorSymbol.deleteAll:
+    private func processDelete(_ keypadType: KeypadButtonType) -> Observable<Mutation> {
+        switch keypadType {
+        case .deleteAll:
             return .just(.updateInputField(""))
-        case CalculatorSymbol.deleteLast:
+        case .deleteLast:
             let newText = String(currentState.inputFieldText.dropLast())
             return .just(.updateInputField(newText))
         default:
@@ -116,15 +119,19 @@ extension CalculatorViewReactor {
         }
     }
     
-    private func processNumber(_ number: String) -> Observable<Mutation> {
+    private func processNumber(_ keypadType: KeypadButtonType) -> Observable<Mutation> {
         let currentInputFieldText = self.currentState.inputFieldText
         let lastText = currentInputFieldText.last?.description ?? ""
         
-        if CalculatorSymbol.zeros.contains(number)
-            && (CalculatorSymbol.operators.contains(lastText)
+        let zeroTypes = KeypadButtonType.zeros
+        let operatorTexts = KeypadButtonType.operators.map { $0.title }
+        
+        if zeroTypes.contains(keypadType)
+            && (operatorTexts.contains(lastText)
                 || currentInputFieldText.isEmpty) {
             return .empty()
         } else {
+            let number = keypadType.title
             return .just(.updateInputField(currentInputFieldText + number))
         }
     }

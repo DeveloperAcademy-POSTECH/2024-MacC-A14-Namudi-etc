@@ -144,6 +144,9 @@ enum KeypadButtonType: Int {
     // rawValue 14 ~ 18
     case plus, minus, multiply, divide, equal
     
+    static let operators: [KeypadButtonType] = [.plus, .minus, .multiply, .divide]
+    static let zeros: [KeypadButtonType] = [.zero, .doubleZero, .tripleZero]
+    
     var style: Self.Style {
         switch self.rawValue {
         case 0...12: .text
