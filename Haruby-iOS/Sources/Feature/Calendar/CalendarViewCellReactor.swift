@@ -31,6 +31,13 @@ final class CalendarViewCellReactor: Reactor {
     
     let initialState: State
     
+    // 2. 데이터 바인딩
+    //      case1-dailyBudget에 있는 날짜이면 하이라이트
+    //              a. 하루비를 조정했는지 여부
+    //              b. 오늘날짜를 지났으면 지출을 입력했는지 여부
+    //              c. 하루비를 조정했다면 조정 하루비 보여주기, 조정을 안했다면 기본 하루비 보여주기
+    //      case2 -dailyBudget에 없는 날짜이면 하이라이트 없기
+    
     init(dailyBudget: DailyBudget) {
         
         let calendar = Calendar.current
