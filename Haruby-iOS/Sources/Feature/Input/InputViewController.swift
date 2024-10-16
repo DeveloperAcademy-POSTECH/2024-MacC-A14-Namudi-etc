@@ -16,6 +16,17 @@ class InputViewController: UIViewController, View {
     var disposeBag = DisposeBag()
     typealias Reactor = InputViewReactor
     
+    var transactionType: String = "지출" {
+        didSet {
+            amountTextField.placeholder = "총 \(transactionType) 금액을 입력하세요"
+        }
+    }
+    
+    let segmentedControl: UISegmentedControl = {
+        let control = UISegmentedControl(items: ["지출", "수입"])
+        return control
+    }()
+    
     private lazy var dateLabel: UILabel = {
         let label = UILabel()
         label.text = "날짜"
@@ -43,7 +54,7 @@ class InputViewController: UIViewController, View {
     
     private lazy var amountTextField : RoundedTextField = {
         let textField = RoundedTextField()
-        textField.placeholder = "총 지출 금액을 입력하세요"
+        textField.placeholder = "총 \(transactionType) 금액을 입력하세요"
         textField.keyboardType = .numberPad
         return textField
     }()
@@ -72,7 +83,11 @@ class InputViewController: UIViewController, View {
         return view
     }()
     
-    private lazy var detailInputScrollView = DetailInputScrollView()
+    private lazy var detailInputScrollView: DetailInputScrollView = {
+        let view = DetailInputScrollView()
+        view.transactionType = transactionType
+        return view
+    }()
     
 //    private let bottomButtonView = BottomButton()
     
@@ -93,9 +108,14 @@ class InputViewController: UIViewController, View {
     private func setupView() {
         setupSubviews()
         setupConstraints()
+        setupNavigationBar()
+
+        segmentedControl.selectedSegmentIndex = 0
+        segmentedControl.addTarget(self, action: #selector(segmentedControlChanged), for: .valueChanged)
     }
     
     private func setupSubviews() {
+        self.view.addSubview(segmentedControl)
         self.view.addSubview(dateStackView)
         self.view.addSubview(amountTextField)
         self.view.addSubview(detailInputButtonStackView)
@@ -106,8 +126,14 @@ class InputViewController: UIViewController, View {
     }
     
     private func setupConstraints() {
+        segmentedControl.snp.makeConstraints { make in
+            make.horizontalEdges.equalToSuperview().inset(16)
+            make.top.equalTo(view.safeAreaLayoutGuide.snp.top).inset(39)
+            make.height.equalTo(28)
+        }
+        
         dateStackView.snp.makeConstraints { make in
-            make.top.equalTo(view.safeAreaLayoutGuide).offset(58)
+            make.top.equalTo(self.segmentedControl.snp.bottom).offset(58)
             make.horizontalEdges.equalTo(view.safeAreaLayoutGuide).inset(24)
         }
         
@@ -130,6 +156,14 @@ class InputViewController: UIViewController, View {
 //            make.leading.trailing.equalToSuperview()
 //            make.bottom.equalTo(view.snp.bottom)
 //        }
+    }
+    
+    private func setupNavigationBar() {
+        title = "지출 및 수입 입력"
+        
+        self.navigationController?.navigationBar.titleTextAttributes = [
+            .foregroundColor: UIColor.black
+        ]
     }
     
     @objc private func dismissKeyboard() {
@@ -175,6 +209,16 @@ class InputViewController: UIViewController, View {
                 self.presentSheet()
             })
             .disposed(by: disposeBag)
+        
+        reactor.state
+            .map { $0.transactionType }  // Observe transactionType changes
+            .distinctUntilChanged()
+            .subscribe(onNext: { [weak self] newType in
+                self?.transactionType = newType
+                self?.amountTextField.placeholder = "총 \(newType) 금액을 입력하세요"
+                self?.detailInputScrollView.transactionType = newType
+            })
+            .disposed(by: disposeBag)
     }
     
     private func presentSheet() {
@@ -190,5 +234,10 @@ class InputViewController: UIViewController, View {
         }
         
         present(sheetViewController, animated: true, completion: nil)
+    }
+    
+    @objc private func segmentedControlChanged() {
+        let newType = segmentedControl.selectedSegmentIndex == 0 ? "지출" : "수입"
+        reactor?.action.onNext(.selectTransactionType(newType))
     }
 }

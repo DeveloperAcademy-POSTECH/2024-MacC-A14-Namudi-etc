@@ -11,9 +11,15 @@ class DetailInputScrollView: UIView {
     private let scrollView = UIScrollView()
     private let contentView = UIView()
     
+    var transactionType: String = "지출" {
+        didSet {
+            addButton.setTitle("+ \(transactionType) 추가", for: .normal)
+        }
+    }
+    
     private lazy var addButton: UIButton = {
         let button = UIButton()
-        button.setTitle("+ 지출 추가", for: .normal)
+        button.setTitle("+ \(transactionType) 추가", for: .normal)
         button.setTitleColor(.Haruby.main, for: .normal)
         button.titleLabel?.font = .pretendardMedium_16
         button.backgroundColor = .clear
@@ -66,6 +72,7 @@ class DetailInputScrollView: UIView {
     
     @objc private func addDetailItem() {
         let newExpenseCell = DetailInputCell()
+        newExpenseCell.transactionType = transactionType
         contentView.addSubview(newExpenseCell)
         
         newExpenseCell.snp.makeConstraints { make in
