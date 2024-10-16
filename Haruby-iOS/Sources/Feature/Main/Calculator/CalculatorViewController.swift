@@ -239,7 +239,7 @@ final class CalculatorViewController: UIViewController, View {
     private func bindAction(reactor: Reactor) {
         let observableButtons = calculationKeypad.keypadButtons.map { button in
             button.rx.tap.map { _ in
-                Reactor.Action.keypadButtonTapped(button.titleLabel?.text ?? "")
+                Reactor.Action.keypadButtonTapped(KeypadButtonType(rawValue: button.tag)!)
             }
         }
         

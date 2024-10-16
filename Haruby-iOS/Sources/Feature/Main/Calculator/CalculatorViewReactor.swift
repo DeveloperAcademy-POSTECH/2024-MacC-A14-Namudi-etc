@@ -12,7 +12,7 @@ import RxSwift
 final class CalculatorViewReactor: Reactor {
     enum Action {
         case viewDidLoad
-        case keypadButtonTapped(String)
+        case keypadButtonTapped(KeypadButtonType)
     }
     
     enum Mutation {
@@ -37,8 +37,8 @@ final class CalculatorViewReactor: Reactor {
         switch action {
         case .viewDidLoad:
             return .just(.initializeData)
-        case .keypadButtonTapped(let text):
-            return processKeypad(text)
+        case .keypadButtonTapped(let keypadType):
+            return processKeypad(keypadType)
             
         }
     }
@@ -63,16 +63,17 @@ final class CalculatorViewReactor: Reactor {
 // MARK: - Mutate 함수
 extension CalculatorViewReactor {
     
-    private func processKeypad(_ text: String) -> Observable<Mutation> {
+    private func processKeypad(_ keypadType: KeypadButtonType) -> Observable<Mutation> {
         
-        if CalculatorSymbol.operators.contains(text) { // +, -, ×, ÷
-            return processOperator(text)
-        } else if text == CalculatorSymbol.equal { // =
+        switch keypadType {
+        case .plus, .minus, .multiply, .divide:
+            return processOperator(keypadType.title)
+        case .equal:
             return processEqual()
-        } else if CalculatorSymbol.deletes.contains(text) { // "AC", "Delete"
-            return processDelete(text)
-        } else { // Numbers
-            return processNumber(text)
+        case .deleteAll, .deleteLast:
+            return processDelete(keypadType.title)
+        default:
+            return processNumber(keypadType.title)
         }
     }
     

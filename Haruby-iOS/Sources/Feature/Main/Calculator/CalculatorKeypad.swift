@@ -10,56 +10,6 @@ import SnapKit
 
 final class CalculatorKeypad: UIView {
     
-    enum KeypadButtonType {
-        case number(String)
-        case operatorSymbol(String)
-        case delete(String)
-        
-        var title: String {
-            switch self {
-            case .number(let value), .operatorSymbol(let value), .delete(let value):
-                return value
-            }
-        }
-        
-        var textColor: UIColor {
-            switch self {
-            case .number:
-                return .Haruby.textBlack
-            case .operatorSymbol(let symbol):
-                return symbol == CalculatorSymbol.equal ? .Haruby.white : .Haruby.main
-            case .delete:
-                return .Haruby.main
-            }
-        }
-        
-        var backgroundColor: UIColor {
-            switch self {
-            case .number:
-                return .Haruby.white
-            case .operatorSymbol(let symbol):
-                return symbol == CalculatorSymbol.equal ? .Haruby.main : .Haruby.mainBright15
-            case .delete:
-                return .Haruby.mainBright15
-            }
-        }
-        
-        var font: UIFont {
-            switch self {
-            case .number, .delete:
-                return .pretendardRegular_24
-            case .operatorSymbol:
-                return .pretendardExtraLight_37()
-            }
-        }
-        
-        var isSquare: Bool {
-            if case let .operatorSymbol(type) = self,
-               type == CalculatorSymbol.equal { return false }
-            return true
-        }
-    }
-    
     // MARK: - Properties
 
     private let horizontalSpacing: CGFloat = 27
@@ -71,10 +21,10 @@ final class CalculatorKeypad: UIView {
     }
     
     private let keypadTypes: [[KeypadButtonType]] = [
-        [.delete(CalculatorSymbol.deleteAll), .number("1"), .number("4"), .number("7"), .number("0")],
-        [.operatorSymbol(CalculatorSymbol.divide), .number("2"), .number("5"), .number("8"), .number("00")],
-        [.operatorSymbol(CalculatorSymbol.multiply), .number("3"), .number("6"), .number("9"), .number("000")],
-        [.delete(CalculatorSymbol.deleteLast), .operatorSymbol(CalculatorSymbol.minus), .operatorSymbol(CalculatorSymbol.plus), .operatorSymbol(CalculatorSymbol.equal)]
+        [.deleteAll, .one, .four, .seven, .zero],
+        [.divide, .two, .five, .eight, .doubleZero],
+        [.multiply, .three, .six, .nine, .tripleZero],
+        [.deleteLast, .minus, .plus, .equal]
     ]
     
     var keypadButtons: [UIButton] = []
@@ -131,13 +81,6 @@ final class CalculatorKeypad: UIView {
             for buttonType in keypad {
                 let button = createButton(buttonType)
                 keypadButtons.append(button)
-//                if case .number = buttonType {
-//                    numberButtons.append(button)
-//                } else if case .operatorSymbol = buttonType {
-//                    operatorButtons.append(button)
-//                } else if case .delete = buttonType {
-//                    deleteButtons.append(button)
-//                }
                 stackView.addArrangedSubview(button)
             }
             
@@ -163,15 +106,18 @@ extension CalculatorKeypad {
     
     private func createButton(_ type: KeypadButtonType) -> UIButton {
         let button = UIButton()
-        if type.title.isEmpty {
-            button.setImage(.delete, for: .normal)
-            button.imageView?.tintColor = type.textColor
-            button.imageView?.contentMode = .scaleAspectFit
-            button.imageView?.backgroundColor = type.backgroundColor
-        } else {
+        
+        button.tag = type.rawValue
+        
+        if type.style == .text {
             button.setTitle(type.title, for: .normal)
-            button.setTitleColor(type.textColor, for: .normal)
+            button.setTitleColor(type.foregroundColor, for: .normal)
             button.titleLabel?.font = type.font
+            button.backgroundColor = type.backgroundColor
+        } else {
+            button.setImage(type.image, for: .normal)
+            button.imageView?.tintColor = type.foregroundColor
+            button.imageView?.contentMode = .scaleAspectFit
             button.backgroundColor = type.backgroundColor
         }
         
@@ -185,3 +131,101 @@ extension CalculatorKeypad {
     }
 }
 
+enum KeypadButtonType: Int {
+    enum Style {
+        case text
+        case image
+    }
+    
+    // rawValue 0 ~ 11
+    case zero, one, two, three, four, five, six, seven, eight, nine, doubleZero, tripleZero
+    // rawValue 12 ~ 13
+    case deleteAll, deleteLast
+    // rawValue 14 ~ 18
+    case plus, minus, multiply, divide, equal
+    
+    var style: Self.Style {
+        switch self.rawValue {
+        case 0...12: .text
+        default: .image
+        }
+    }
+    
+    var title: String {
+        switch self {
+        case .one, .two, .three, .four, .five, .six, .seven, .eight, .nine, .zero:
+            return String(self.rawValue)
+        case .doubleZero: // 00
+            return "00"
+        case .tripleZero: // 000
+            return "000"
+        case .deleteAll:
+            return "AC"
+            
+        case .plus:
+            return CalculatorSymbol.plus
+        case .minus:
+            return CalculatorSymbol.minus
+        case .multiply:
+            return CalculatorSymbol.multiply
+        case .divide:
+            return CalculatorSymbol.divide
+        case .equal:
+            return CalculatorSymbol.equal
+        case .deleteLast:
+            return CalculatorSymbol.deleteLast
+//        default:
+//            return ""
+        }
+    }
+    
+    var image: UIImage? {
+        switch self {
+        case .plus:
+            return UIImage(systemName: "plus")
+        case .minus:
+            return UIImage(systemName: "minus")
+        case .multiply:
+            return UIImage(systemName: "multiply")
+        case .divide:
+            return UIImage(systemName: "divide")
+        case .equal:
+            return UIImage(systemName: "equal")
+        case .deleteLast:
+            return UIImage(systemName: "delete.left.fill")
+        default:
+            return nil
+        }
+    }
+    
+    var foregroundColor: UIColor {
+        switch self {
+        case .one, .two, .three, .four, .five, .six, .seven, .eight, .nine, .zero, .doubleZero, .tripleZero:
+            return .Haruby.textBlack
+        case .equal:
+            return .Haruby.white
+        case .plus, .minus, .multiply, .divide, .deleteAll, .deleteLast:
+            return .Haruby.main
+        }
+    }
+    
+    var backgroundColor: UIColor {
+        switch self {
+        case .one, .two, .three, .four, .five, .six, .seven, .eight, .nine, .zero, .doubleZero, .tripleZero:
+            return .Haruby.white
+        case .equal:
+            return .Haruby.main
+        case .plus, .minus, .multiply, .divide, .deleteAll, .deleteLast:
+            return .Haruby.mainBright15
+        }
+    }
+    
+    var font: UIFont {
+        return .pretendardRegular_24
+    }
+    
+    var isSquare: Bool {
+        if case .equal = self { return false }
+        else { return true }
+    }
+}
