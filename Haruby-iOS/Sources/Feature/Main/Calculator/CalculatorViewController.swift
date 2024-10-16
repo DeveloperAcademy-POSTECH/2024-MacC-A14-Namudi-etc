@@ -18,6 +18,7 @@ final class CalculatorViewController: UIViewController, View {
     // MARK: - Properties
     var disposeBag = DisposeBag()
     
+    
     // MARK: - UI Components
     private lazy var topStackView: UIStackView = {
         let view = UIStackView()
