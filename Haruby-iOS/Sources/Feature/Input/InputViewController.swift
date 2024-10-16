@@ -78,6 +78,17 @@ class InputViewController: UIViewController, View {
         return view
     }()
     
+    private lazy var detailInputTableView: UITableView = {
+        let view = UITableView()
+        view.register(DetailInputCell.self, forCellReuseIdentifier: DetailInputCell.cellId)
+        view.dataSource = self
+        view.delegate = self
+        view.rowHeight = UITableView.automaticDimension
+        view.estimatedRowHeight = 49
+        view.separatorStyle = .none
+        return view
+    }()
+    
 //    private let bottomButtonView = BottomButton()
     
     // MARK: - Lifecycle
@@ -108,6 +119,7 @@ class InputViewController: UIViewController, View {
         self.view.addSubview(dateStackView)
         self.view.addSubview(amountTextField)
         self.view.addSubview(detailInputButtonStackView)
+        self.view.addSubview(detailInputTableView)
 //        self.view.addSubview(bottomButtonView)
         
     }
@@ -132,6 +144,12 @@ class InputViewController: UIViewController, View {
         detailInputButtonStackView.snp.makeConstraints { make in
             make.top.equalTo(self.amountTextField.snp.bottom).offset(10)
             make.leading.equalTo(view.safeAreaLayoutGuide).inset(28)
+        }
+        
+        detailInputTableView.snp.makeConstraints { make in
+            make.top.equalTo(self.detailInputButtonStackView.snp.bottom).offset(30)
+            make.horizontalEdges.equalTo(view.safeAreaLayoutGuide).inset(0)
+            make.bottom.equalTo(16)
         }
         
 //        bottomButtonView.snp.makeConstraints { make in
@@ -218,5 +236,18 @@ class InputViewController: UIViewController, View {
     @objc private func segmentedControlChanged() {
         let newType = segmentedControl.selectedSegmentIndex == 0 ? "지출" : "수입"
         reactor?.action.onNext(.selectTransactionType(newType))
+    }
+}
+
+extension InputViewController: UITableViewDelegate, UITableViewDataSource {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return 1
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: DetailInputCell.cellId, for: indexPath) as? DetailInputCell else { return UITableViewCell() }
+        
+        
+        return cell
     }
 }
