@@ -16,12 +16,6 @@ class InputViewController: UIViewController, View {
     var disposeBag = DisposeBag()
     typealias Reactor = InputViewReactor
     
-    var transactionType: String = "지출" {
-        didSet {
-            amountTextField.placeholder = "총 \(transactionType) 금액을 입력하세요"
-        }
-    }
-    
     let segmentedControl: UISegmentedControl = {
         let control = UISegmentedControl(items: ["지출", "수입"])
         return control
@@ -54,7 +48,8 @@ class InputViewController: UIViewController, View {
     
     private lazy var amountTextField : RoundedTextField = {
         let textField = RoundedTextField()
-        textField.placeholder = "총 \(transactionType) 금액을 입력하세요"
+        // default값, 아래 bind()에서 '지출' '수입'을 바꿔주도록 함
+        textField.placeholder = "총 지출 금액을 입력하세요"
         textField.keyboardType = .numberPad
         return textField
     }()
@@ -85,7 +80,6 @@ class InputViewController: UIViewController, View {
     
     private lazy var detailInputScrollView: DetailInputScrollView = {
         let view = DetailInputScrollView()
-        view.transactionType = transactionType
         return view
     }()
     
@@ -214,7 +208,6 @@ class InputViewController: UIViewController, View {
             .map { $0.transactionType }  // Observe transactionType changes
             .distinctUntilChanged()
             .subscribe(onNext: { [weak self] newType in
-                self?.transactionType = newType
                 self?.amountTextField.placeholder = "총 \(newType) 금액을 입력하세요"
                 self?.detailInputScrollView.transactionType = newType
             })
