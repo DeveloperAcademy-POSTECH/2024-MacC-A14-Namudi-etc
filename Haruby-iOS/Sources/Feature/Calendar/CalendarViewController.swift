@@ -259,6 +259,10 @@ final class CalendarViewController: UIViewController, View, CoordinatorCompatibl
         reactor.state.map { $0.monthlySections }
             .bind(to: collectionView.rx.items(dataSource: createDataSource()))
             .disposed(by: disposeBag)
+        
+        reactor.state.map { !$0.showWarning }
+            .bind(to: warningLabel.rx.isHidden)
+            .disposed(by: disposeBag)
     }
     
     
@@ -280,8 +284,7 @@ final class CalendarViewController: UIViewController, View, CoordinatorCompatibl
                 let salaryEndDate = (self.reactor?.currentState.salaryBudget.endDate)!
                 let defaultHaruby = (self.reactor?.currentState.salaryBudget.defaultHaruby)!
                 
-                let reactor = CalendarViewCellReactor(dailyBudget: item, salaryStartDate: salaryStartDate, salaryEndDate: salaryEndDate, defaultHaruby: defaultHaruby)
-                
+                let reactor = CalendarViewCellReactor(dailyBudget: item, salaryStartDate: salaryStartDate, salaryEndDate: salaryEndDate, defaultHaruby: defaultHaruby, indexPath: indexPath)
                 cell.reactor = reactor
                 return cell
             }

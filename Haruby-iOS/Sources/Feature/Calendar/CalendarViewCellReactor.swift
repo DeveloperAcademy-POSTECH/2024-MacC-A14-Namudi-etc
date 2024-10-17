@@ -17,14 +17,14 @@ final class CalendarViewCellReactor: Reactor {
     }
     
     enum Mutation {
-        case updateState(State)
     }
     
     struct State {
         var currentDate: Date = .now
+        var dailyBudget: DailyBudget?
         
         var viewState: ViewState
-        var dailyBudget: DailyBudget?
+        
     }
     
     struct ViewState {
@@ -36,28 +36,47 @@ final class CalendarViewCellReactor: Reactor {
         var showRedXMark: Bool = false
         var harubyNumber: String? = nil
         var isPastHaruby: Bool = false
+        var highlightType: CellHighlightType
     }
     
     let initialState: State
     
-    init(dailyBudget: DailyBudget, salaryStartDate: Date, salaryEndDate: Date, defaultHaruby: Int) {
+    init(dailyBudget: DailyBudget, salaryStartDate: Date, salaryEndDate: Date, defaultHaruby: Int, indexPath: IndexPath) {
         
         let currentDay = Date()
         let calendar = Calendar.current
         
         let dayNumber = dailyBudget.date.dayValue
         let monthNumber = dailyBudget.date.monthValue
+        let lastDay = calendar.range(of: .day, in: .month, for: dailyBudget.date)?.last
+
         let isInSalaryPeriod = dailyBudget.date >= salaryStartDate && dailyBudget.date <= salaryEndDate
         let isPastDay = dailyBudget.date < currentDay
         let isExpenseExist = !dailyBudget.expense.transactionItems.isEmpty
         
         var harubyNumber: String?
         
-        // 월급 구간안에 있고 과거이면 실제 지출, 미래이면 조정된 하루비, 조정된 하루비가 없으면 기본 하루비
         if isInSalaryPeriod {
             harubyNumber = isPastDay ? (isExpenseExist ? dailyBudget.expense.total.decimal : nil) : (dailyBudget.haruby?.decimal ?? defaultHaruby.decimal)
         }
         
+        var highlightType: CellHighlightType = .normal
+        
+        if dailyBudget.date == salaryStartDate {
+            highlightType = .leftRound
+        } else if dailyBudget.date == salaryEndDate {
+            highlightType = .rightRound
+        } else if dayNumber == 1 {
+            highlightType = .leftRound
+        } else if dayNumber == lastDay {
+            highlightType = .rightRound
+        } else if indexPath.item % 7 == 0 {
+            highlightType = .leftRound
+        } else if indexPath.item % 7 == 6 {
+            highlightType = .rightRound
+        } else {
+            highlightType = .normal
+        }
         
         let initialViewState = ViewState(
             dayNumber: dayNumber == 1 ? "\(monthNumber)/\(dayNumber)" : "\(dayNumber)",
@@ -67,14 +86,14 @@ final class CalendarViewCellReactor: Reactor {
             showBlueDot: dailyBudget.haruby != nil,
             showRedXMark: isInSalaryPeriod && isPastDay && !isExpenseExist,
             harubyNumber: harubyNumber,
-            isPastHaruby: isPastDay
+            isPastHaruby: isPastDay,
+            highlightType: highlightType
         )
         
-        self.initialState = State(viewState: initialViewState, dailyBudget: dailyBudget)
+        self.initialState = State(dailyBudget: dailyBudget, viewState: initialViewState)
     }
     
     func mutate(action: Action) -> Observable<Mutation> {
-        // code
         switch action {
         case .viewDidLoad:
             return .empty()
@@ -85,44 +104,14 @@ final class CalendarViewCellReactor: Reactor {
     }
     
     func reduce(state: State, mutation: Mutation) -> State {
-        var newState = state
-        switch mutation {
-        case .updateState(let newStateData):
-            newState.viewState = newStateData.viewState
-            newState.dailyBudget = newStateData.dailyBudget
-        }
-        return newState
+        // code
     }
     
     
 }
 
-extension CalendarViewCellReactor {
-    // MARK: - Private Methods
-    /// 하루비와 관련된 상태 계산 로직
-    private func calculateViewState(dailyBudget: DailyBudget, salaryStartDate: Date, salaryEndDate: Date, defaultHaruby: Int) -> ViewState {
-        let currentDay = Date()
-        let calendar = Calendar.current
-        
-        let dayNumber = dailyBudget.date.dayValue
-        let monthNumber = dailyBudget.date.monthValue
-        let isInSalaryPeriod = dailyBudget.date >= salaryStartDate && dailyBudget.date <= salaryEndDate
-        let isPastDay = dailyBudget.date < currentDay
-        let isExpenseExist = !dailyBudget.expense.transactionItems.isEmpty
-        
-        var harubyNumber: String?
-        if isInSalaryPeriod {
-            harubyNumber = isPastDay ? (isExpenseExist ? dailyBudget.expense.total.decimal : nil) : (dailyBudget.haruby?.decimal ?? defaultHaruby.decimal)
-        }
-        
-        return ViewState(
-            dayNumber: dayNumber == 1 ? "\(monthNumber)/\(dayNumber)" : "\(dayNumber)",
-            isVisible: dailyBudget.date != Date.distantPast,
-            showTodayIndicator: calendar.isDate(dailyBudget.date, inSameDayAs: currentDay),
-            showHiglight: isInSalaryPeriod,
-            showBlueDot: dailyBudget.haruby != nil,
-            harubyNumber: harubyNumber,
-            isPastHaruby: isPastDay
-        )
-    }
+enum CellHighlightType {
+    case leftRound
+    case rightRound
+    case normal
 }
