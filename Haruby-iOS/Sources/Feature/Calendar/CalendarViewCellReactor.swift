@@ -12,7 +12,7 @@ import RxSwift
 
 final class CalendarViewCellReactor: Reactor {
     enum Action {
-        
+        case cellTapped
     }
     
     enum Mutation {
@@ -22,17 +22,14 @@ final class CalendarViewCellReactor: Reactor {
     struct State {
         var currentDate: Date = .now
         
-        // UI표시
-        var dayNumber: String           // 날짜 숫자
-        var isVisible: Bool             // 셀이 표시 가능한지 여부
-        var showTodayIndicator: Bool    // 오늘 인디케이터를 보여줄지
-        var showHiglight: Bool          // 날짜에 하이라이트를 보여줄지
+        var dayNumber: String
+        var isVisible: Bool
+        var showTodayIndicator: Bool
+        var showHiglight: Bool
         var showRedDot: Bool
         var showBlueDot: Bool
-        var harubyNumber: String?              // 하루비
+        var harubyNumber: String?
         var isPastHaruby: Bool
-        
-
     }
     
     let initialState: State
@@ -41,6 +38,7 @@ final class CalendarViewCellReactor: Reactor {
         
         let currentDay = Date()
         let calendar = Calendar.current
+        
         let dayNumber = dailyBudget.date.dayValue
         let monthNumber = dailyBudget.date.monthValue
         
@@ -73,6 +71,11 @@ final class CalendarViewCellReactor: Reactor {
     
     func mutate(action: Action) -> Observable<Mutation> {
         // code
+        switch action {
+            case .cellTapped:
+                print("cellTapped")
+            return .empty()
+        }
     }
     
     func reduce(state: State, mutation: Mutation) -> State {

@@ -95,6 +95,10 @@ final class CalendarViewCell: UICollectionViewCell, View {
     
     // MARK: - Binding
     func bind(reactor: CalendarViewCellReactor) {
+        // Action
+        
+        
+        
         // State
         reactor.state.map{ $0.dayNumber }
                     .bind(to: numberLabel.rx.text)
