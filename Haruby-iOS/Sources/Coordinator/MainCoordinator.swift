@@ -7,19 +7,15 @@
 
 import UIKit
 
-final class MainCoordinator: Coordinator {
-    var navigationController: UINavigationController
-    weak var parentCoordinator: Coordinator?
-    var childCoordinators: [Coordinator] = []
-    
-    init(navigationController: UINavigationController) {
-        self.navigationController = navigationController
-    }
-    
-    func start() {
-        let reactor = MainViewReactor(coordinator: self)
+final class MainCoordinator: BaseCoordinator {
+    override func start() {
+        let reactor = MainViewReactor()
         let vc = MainViewController()
         vc.reactor = reactor
+        vc.coordinator = self
+        vc.didFinish = { [weak self] in
+            self?.finish()
+        }
         navigationController.pushViewController(vc, animated: false)
     }
     
@@ -45,6 +41,6 @@ final class MainCoordinator: Coordinator {
     }
     
     func showExpenseInputFlow() {
-        // TODO: - 실제 지출 및 입력 뷰 설정
+        // TODO: 실제 지출 및 입력 뷰 설정
     }
 }

@@ -12,9 +12,11 @@ import SnapKit
 import ReactorKit
 import RxCocoa
 
-final class MainViewController: UIViewController, View {
+final class MainViewController: UIViewController, View, CoordinatorCompatible {
     // MARK: - Properties
+    weak var coordinator: MainCoordinator?
     var disposeBag = DisposeBag()
+    var didFinish: (() -> Void)?
     
     // MARK: - UI Components
     private lazy var headerView = MainHeaderView()
@@ -51,6 +53,10 @@ final class MainViewController: UIViewController, View {
         setupView()
         
         reactor?.action.onNext(.viewDidLoad)
+    }
+    
+    deinit {
+        didFinish?()
     }
     
     // MARK: - Setup View
@@ -104,23 +110,27 @@ final class MainViewController: UIViewController, View {
     
     private func bindAction(reactor: MainViewReactor) {
         footerView.navigateCalculatorButton.rx.tap
-            .map { Reactor.Action.calculatorButtonTapped }
-            .bind(to: reactor.action)
+            .subscribe(onNext: { [weak self] in
+                self?.coordinator?.showCalculatorFlow()
+            })
             .disposed(by: disposeBag)
         
         footerView.navigateCalendarButton.rx.tap
-            .map { Reactor.Action.calendarButtonTapped }
-            .bind(to: reactor.action)
+            .subscribe(onNext: { [weak self] in
+                self?.coordinator?.showCalendarFlow()
+            })
             .disposed(by: disposeBag)
         
         footerView.navigateManagementButton.rx.tap
-            .map { Reactor.Action.managementButtonTapped }
-            .bind(to: reactor.action)
+            .subscribe(onNext: { [weak self] in
+                self?.coordinator?.showManagementFlow()
+            })
             .disposed(by: disposeBag)
         
         receiptView.inputButton.rx.tap
-            .map { Reactor.Action.inputButtonTapped }
-            .bind(to: reactor.action)
+            .subscribe(onNext: { [weak self] in
+                self?.coordinator?.showExpenseInputFlow()
+            })
             .disposed(by: disposeBag)
     }
     
@@ -187,3 +197,4 @@ final class MainViewController: UIViewController, View {
             .disposed(by: disposeBag)
     }
 }
+

@@ -25,11 +25,6 @@ final class CalendarViewReactor: Reactor {
     }
     
     let initialState: State = State()
-    weak var coordinator: CalendarCoordinator?
-    
-    init(coordinator: CalendarCoordinator) {
-        self.coordinator = coordinator
-    }
     
     func mutate(action: Action) -> Observable<Mutation> {
         switch action {

@@ -7,19 +7,15 @@
 
 import UIKit
 
-final class CalendarCoordinator: Coordinator {
-    var navigationController: UINavigationController
-    weak var parentCoordinator: Coordinator?
-    var childCoordinators: [Coordinator] = []
-    
-    init(navigationController: UINavigationController) {
-        self.navigationController = navigationController
-    }
-    
-    func start() {
-        let reactor = CalendarViewReactor(coordinator: self)
+final class CalendarCoordinator: BaseCoordinator {
+    override func start() {
+        let reactor = CalendarViewReactor()
         let vc = CalendarViewController()
         vc.reactor = reactor
+        vc.coordinator = self
+        vc.didFinish = { [weak self] in
+            self?.finish()
+        }
         navigationController.pushViewController(vc, animated: true)
     }
     

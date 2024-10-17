@@ -7,19 +7,15 @@
 
 import UIKit
 
-final class CalculatorCoordinator: Coordinator {
-    var navigationController: UINavigationController
-    weak var parentCoordinator: Coordinator?
-    var childCoordinators: [Coordinator] = []
-    
-    init(navigationController: UINavigationController) {
-        self.navigationController = navigationController
-    }
-    
-    func start() {
-        let reactor = CalculatorViewReactor(coordinator: self)
+final class CalculatorCoordinator: BaseCoordinator {
+    override func start() {
+        let reactor = CalculatorViewReactor()
         let vc = CalculatorViewController()
         vc.reactor = reactor
+        vc.coordinator = self
+        vc.didFinish = { [weak self] in
+            self?.finish()
+        }
         navigationController.pushViewController(vc, animated: true)
     }
 }

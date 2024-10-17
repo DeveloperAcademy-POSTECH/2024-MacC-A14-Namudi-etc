@@ -11,13 +11,14 @@ import ReactorKit
 import RxSwift
 import RxCocoa
 
-final class CalculatorViewController: UIViewController, View {
+final class CalculatorViewController: UIViewController, View, CoordinatorCompatible {
     
     typealias Reactor = CalculatorViewReactor
     
     // MARK: - Properties
+    weak var coordinator: CalculatorCoordinator?
     var disposeBag = DisposeBag()
-    
+    var didFinish: (() -> Void)?
     
     // MARK: - UI Components
     private lazy var headerStackView: UIStackView = {
@@ -111,6 +112,10 @@ final class CalculatorViewController: UIViewController, View {
         super.viewDidLoad()
 
         setupView()
+    }
+    
+    deinit {
+        didFinish?()
     }
 
     // MARK: - Setup View

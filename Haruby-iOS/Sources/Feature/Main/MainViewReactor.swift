@@ -45,15 +45,13 @@ final class MainViewReactor: Reactor {
     let initialState = State(viewState: ViewState())
     private let container = DIContainer.shared
     private let salaryBudgetRepository: SalaryBudgetRepository
-    weak var coordinator: MainCoordinator?
     
     // MARK: - Initialization
-    init(coordinator: MainCoordinator) {
+    init() {
         guard let repository = container.resolve(SalaryBudgetRepository.self) else {
             fatalError("SalaryBudgetRepository is not resolved")
         }
         self.salaryBudgetRepository = repository
-        self.coordinator = coordinator
     }
     
     // MARK: - Mutate
@@ -63,11 +61,9 @@ final class MainViewReactor: Reactor {
             return fetchAndProcessHarubyInfo()
             
         case .calculatorButtonTapped:
-            coordinator?.showCalculatorFlow()
             return .empty()
             
         case .calendarButtonTapped:
-            coordinator?.showCalendarFlow()
             return .empty()
             
         case .managementButtonTapped:
