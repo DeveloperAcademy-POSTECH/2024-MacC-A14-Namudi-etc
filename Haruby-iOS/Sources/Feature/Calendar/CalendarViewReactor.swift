@@ -69,7 +69,7 @@ extension CalendarViewReactor {
         let salaryStartDate = self.currentState.salaryBudget.startDate
         
         // 월급일로부터 1년간의 달력데이터를 생성합니다.
-        return (0...12).map { monthOffset in
+        return (0...4).map { monthOffset in
             guard let monthDate = calendar.date(byAdding: .month, value: monthOffset, to: salaryStartDate) else {
                 fatalError("Failed to create date")
             }

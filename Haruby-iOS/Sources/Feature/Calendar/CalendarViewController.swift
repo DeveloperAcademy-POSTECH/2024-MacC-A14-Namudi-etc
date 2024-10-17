@@ -145,7 +145,7 @@ final class CalendarViewController: UIViewController, View, CoordinatorCompatibl
     }()
     
     private lazy var warningLabel: UIView = {
-       let label = UILabel()
+        let label = UILabel()
         label.text = "아직 입력하지 않은 지출 및 수입이 있어요!"
         label.font = .pretendardMedium_12
         label.textColor = .Haruby.red
@@ -185,7 +185,7 @@ final class CalendarViewController: UIViewController, View, CoordinatorCompatibl
     
     // MARK: - setup
     private func setupView() {
-        title = "캘린더"
+        title = "하루비 달력"
         view.backgroundColor = .Haruby.main
         
         addSubviews()
@@ -281,6 +281,7 @@ final class CalendarViewController: UIViewController, View, CoordinatorCompatibl
                 let defaultHaruby = (self.reactor?.currentState.salaryBudget.defaultHaruby)!
                 
                 let reactor = CalendarViewCellReactor(dailyBudget: item, salaryStartDate: salaryStartDate, salaryEndDate: salaryEndDate, defaultHaruby: defaultHaruby)
+                
                 cell.reactor = reactor
                 return cell
             }
