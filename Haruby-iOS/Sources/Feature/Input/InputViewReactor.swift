@@ -28,7 +28,8 @@ final class InputViewReactor: Reactor {
         var isDetailVisible: Bool = false
         var isDatePickerVisible: Bool = false
         var transactionType: String = "지출"
-        var detailTransaction: [String] = []
+        var detailExpense: [String] = []
+        var detailIncome: [String] = []
     }
     
     private(set) var initialState: State = State()
@@ -64,7 +65,11 @@ final class InputViewReactor: Reactor {
             newState.transactionType = newType
             
         case .addDetailTransaction:
-            newState.detailTransaction.append("New Cell")
+            if currentState.transactionType == "지출" {
+                newState.detailExpense.append("new cell")
+            } else {
+                newState.detailIncome.append("new cell")
+            }
         }
         
         return newState
