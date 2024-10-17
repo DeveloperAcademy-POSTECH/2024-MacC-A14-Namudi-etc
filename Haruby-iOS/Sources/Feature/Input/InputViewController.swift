@@ -245,6 +245,7 @@ class InputViewController: UIViewController, View {
             .subscribe(onNext: { [weak self] newType in
                 guard let self = self else { return }
                 self.amountTextField.placeholder = "총 \(newType) 금액을 입력하세요"
+                self.addDetailTransactionButton.setTitle("+ \(newType) 추가", for: .normal)
             })
             .disposed(by: disposeBag)
         
