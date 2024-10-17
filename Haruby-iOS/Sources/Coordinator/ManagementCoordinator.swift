@@ -7,7 +7,7 @@
 
 import UIKit
 
-class ManagementCoordinator: Coordinator {
+final class ManagementCoordinator: Coordinator {
     var navigationController: UINavigationController
     weak var parentCoordinator: Coordinator?
     var childCoordinators: [Coordinator] = []

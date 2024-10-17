@@ -79,7 +79,7 @@ final class MainViewController: UIViewController, View {
         }
         
         headerView.snp.makeConstraints { make in
-            make.top.equalTo(view.safeAreaLayoutGuide)
+            make.top.equalTo(view.safeAreaLayoutGuide).offset(18)
             make.leading.trailing.equalToSuperview()
         }
         

@@ -7,7 +7,7 @@
 
 import UIKit
 
-class MainCoordinator: Coordinator {
+final class MainCoordinator: Coordinator {
     var navigationController: UINavigationController
     weak var parentCoordinator: Coordinator?
     var childCoordinators: [Coordinator] = []
@@ -42,5 +42,9 @@ class MainCoordinator: Coordinator {
         coordinator.parentCoordinator = self
         addChildCoordinator(coordinator)
         coordinator.start()
+    }
+    
+    func showExpenseInputFlow() {
+        // TODO: - 실제 지출 및 입력 뷰 설정
     }
 }

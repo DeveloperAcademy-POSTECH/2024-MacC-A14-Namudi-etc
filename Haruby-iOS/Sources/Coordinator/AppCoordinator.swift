@@ -16,7 +16,27 @@ class AppCoordinator: Coordinator {
         self.navigationController = navigationController
     }
     
+    func updateNavigationBarColor() {
+        let appearance = UINavigationBarAppearance()
+        appearance.configureWithTransparentBackground()
+        
+        let textAttributes: [NSAttributedString.Key: Any] = [
+            .foregroundColor: UIColor.Haruby.white
+        ]
+        
+        appearance.titleTextAttributes = textAttributes
+        appearance.largeTitleTextAttributes = textAttributes
+        
+        navigationController.navigationBar.standardAppearance = appearance
+        navigationController.navigationBar.scrollEdgeAppearance = appearance
+        navigationController.navigationBar.compactAppearance = appearance
+        
+        navigationController.navigationBar.tintColor = .Haruby.white
+        navigationController.navigationBar.isTranslucent = true
+    }
+    
     func start() {
+        updateNavigationBarColor()
         showMain()
     }
     

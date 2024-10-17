@@ -75,7 +75,7 @@ final class MainHeaderView: UIView {
     
     private func setupConstraints() {
         topAvgHarubyStackView.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(62)
+            make.top.equalToSuperview()
             make.centerX.equalToSuperview()
             make.bottom.equalToSuperview()
         }
