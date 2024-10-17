@@ -198,5 +198,30 @@ final class CalendarViewCell: UICollectionViewCell, View {
         reactor.state.map{ !$0.viewState.showRedXMark }
                     .bind(to: redXMark.rx.isHidden )
                     .disposed(by: disposeBag)
+        
+        reactor.state.map{ $0.viewState.highlightType }
+                    .bind{ highlightType in
+                        self.updateCornerRadius(highlightType)
+                    }
+                    .disposed(by: disposeBag)
+    }
+}
+
+extension CalendarViewCell {
+    private func updateCornerRadius(_ highlightType: CellHighlightType) {
+
+        let cornerRadius: CGFloat = 5
+
+        switch highlightType {
+        case .leftRound:
+            highlightView.layer.cornerRadius = cornerRadius
+            highlightView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMinXMaxYCorner]
+        case .rightRound:
+            highlightView.layer.cornerRadius = cornerRadius
+            highlightView.layer.maskedCorners = [.layerMaxXMinYCorner, .layerMaxXMaxYCorner]
+        case .normal:
+            highlightView.layer.cornerRadius = 0
+        }
+        contentView.layer.masksToBounds = true
     }
 }

@@ -18,36 +18,27 @@ final class CalendarViewReactor: Reactor {
     
     enum Mutation {
         case updateMonthSections([MonthlySection])
+        case checkExpense
     }
     
     struct State {
         var salaryBudget: SalaryBudget
+        var showWarning: Bool = false
         var monthlySections: [MonthlySection] = []
     }
     
     let initialState: State
     
     init(salaryBudget: SalaryBudget) {
-        //salaryBudget.dailyBudgets.forEach { print($0.date.formattedDateToStringforMainView) }
-        // 1. 월 생성
-        //      1-1. salaryBudget의 startDate가 1~(현재날짜-1)에 속하면 이번달부터 달력 데이터 생성
-        //      1-2. salaryBudget의 startDate가 (현재날짜)~월말에 속하면 전달부터 달력데이터 생성
-        
-        // 2. 데이터 바인딩
-        //      case1-dailyBudget에 있는 날짜이면 하이라이트
-        //              a. 하루비를 조정했는지 여부
-        //              b. 오늘날짜를 지났으면 지출을 입력했는지 여부
-        //              c. 하루비를 조정했다면 조정 하루비 보여주기, 조정을 안했다면 기본 하루비 보여주기
-        //      case2 -dailyBudget에 없는 날짜이면 하이라이트 없기
-        
-        
         initialState = State(salaryBudget: salaryBudget)
     }
     
     func mutate(action: Action) -> Observable<Mutation> {
         switch action {
         case .viewDidLoad:
-            return Observable.just(Mutation.updateMonthSections(createMonthSections()))
+            let updateSections = Observable.just(Mutation.updateMonthSections(createMonthSections()))
+            let checkExpense = Observable.just(Mutation.checkExpense)
+            return Observable.concat([updateSections, checkExpense])
         }
     }
     
@@ -56,6 +47,11 @@ final class CalendarViewReactor: Reactor {
         switch mutation {
         case .updateMonthSections(let monthlySections):
             newState.monthlySections = monthlySections
+        case .checkExpense:
+            let hasEmptyTransactionItems = state.salaryBudget.dailyBudgets.contains { dailyBudget in
+                dailyBudget.expense.transactionItems.isEmpty
+            }
+            newState.showWarning = hasEmptyTransactionItems
         }
         return newState
     }
@@ -68,7 +64,7 @@ extension CalendarViewReactor {
         let calendar = Calendar.current
         let salaryStartDate = self.currentState.salaryBudget.startDate
         
-        // 월급일로부터 1년간의 달력데이터를 생성합니다.
+        // 월급일로부터 4달의 달력데이터를 생성합니다.
         return (0...4).map { monthOffset in
             guard let monthDate = calendar.date(byAdding: .month, value: monthOffset, to: salaryStartDate) else {
                 fatalError("Failed to create date")
