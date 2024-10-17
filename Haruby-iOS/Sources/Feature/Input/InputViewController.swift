@@ -56,7 +56,7 @@ class InputViewController: UIViewController, View {
         return textField
     }()
     
-    private lazy var detailInputButton: UIButton = {
+    private lazy var detailButton: UIButton = {
         let button = UIButton()
         button.setTitle("상세 내역 기록하기", for: .normal)
         button.setTitleColor(.Haruby.textBright, for: .normal)
@@ -64,7 +64,7 @@ class InputViewController: UIViewController, View {
         return button
     }()
     
-    private lazy var detailInputChevron: UIButton = {
+    private lazy var detailChevron: UIButton = {
         let button = UIButton()
         button.setImage(UIImage(systemName: "chevron.down"), for: .normal)
         button.tintColor = .Haruby.textBright
@@ -72,32 +72,27 @@ class InputViewController: UIViewController, View {
         return button
     }()
     
-    private lazy var detailInputButtonStackView: UIStackView = {
-        let view = UIStackView(arrangedSubviews: [self.detailInputButton, self.detailInputChevron])
+    private lazy var detailButtonStackView: UIStackView = {
+        let view = UIStackView(arrangedSubviews: [self.detailButton, self.detailChevron])
         view.axis = .horizontal
         view.alignment = .fill
         view.spacing = 2
         return view
     }()
     
-    private lazy var detailInputScrollView: UIScrollView = {
-        let view = UIScrollView()
-        return view
-    }()
-    
-    private lazy var detailInputTableView: UITableView = {
+    private lazy var detailTransactionTableView: UITableView = {
         let view = UITableView()
         view.register(DetailInputCell.self, forCellReuseIdentifier: DetailInputCell.cellId)
         view.dataSource = self
         view.delegate = self
-        view.rowHeight = UITableView.automaticDimension
         view.estimatedRowHeight = 49
         view.separatorStyle = .none
-        view.isScrollEnabled = false
+        view.isScrollEnabled = true
+        view.backgroundColor = .green
         return view
     }()
     
-    private lazy var addDetailCellButton: UIButton = {
+    private lazy var addDetailTransactionButton: UIButton = {
         let button = UIButton()
         button.setTitle("+ 지출 추가", for: .normal)
         button.setTitleColor(.Haruby.main, for: .normal)
@@ -138,10 +133,9 @@ class InputViewController: UIViewController, View {
         self.view.addSubview(segmentedControl)
         self.view.addSubview(dateStackView)
         self.view.addSubview(amountTextField)
-        self.view.addSubview(detailInputButtonStackView)
-        self.view.addSubview(detailInputScrollView)
-        self.view.addSubview(detailInputTableView)
-        self.view.addSubview(addDetailCellButton)
+        self.view.addSubview(detailButtonStackView)
+        self.view.addSubview(detailTransactionTableView)
+        self.view.addSubview(addDetailTransactionButton)
         self.view.addSubview(bottomButton)
         
     }
@@ -163,31 +157,25 @@ class InputViewController: UIViewController, View {
             make.horizontalEdges.equalTo(view.safeAreaLayoutGuide).inset(16)
         }
         
-        detailInputButtonStackView.snp.makeConstraints { make in
+        detailButtonStackView.snp.makeConstraints { make in
             make.top.equalTo(self.amountTextField.snp.bottom).offset(10)
             make.leading.equalTo(view.safeAreaLayoutGuide).inset(28)
         }
         
-        detailInputScrollView.snp.makeConstraints { make in
-            make.top.equalTo(self.detailInputButtonStackView.snp.bottom).offset(16)
-            make.horizontalEdges.equalTo(view.safeAreaLayoutGuide).inset(0)
-            make.bottom.equalTo(self.bottomButton.snp.top).offset(0)
+        detailTransactionTableView.snp.makeConstraints { make in
+            make.top.equalTo(self.detailButtonStackView.snp.bottom).offset(16)
+            make.horizontalEdges.equalToSuperview()
         }
         
-        detailInputTableView.snp.makeConstraints { make in
-            make.top.equalTo(self.detailInputScrollView.snp.top).inset(0)
-            make.horizontalEdges.equalTo(self.detailInputScrollView.snp.horizontalEdges).inset(0)
-            make.height.equalTo(49)
-        }
-        
-        addDetailCellButton.snp.makeConstraints { make in
+        addDetailTransactionButton.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
-            make.top.equalTo(self.detailInputTableView.snp.bottom).offset(14)
-            make.horizontalEdges.equalTo(view.safeAreaLayoutGuide).inset(28)
+            make.top.equalTo(self.detailTransactionTableView.snp.bottom).offset(20)
+            make.horizontalEdges.equalToSuperview().inset(28)
             make.height.equalTo(35)
         }
         
         bottomButton.snp.makeConstraints { make in
+            make.top.equalTo(self.addDetailTransactionButton.snp.bottom).offset(54)
             make.leading.trailing.equalToSuperview()
             make.bottom.equalTo(view.snp.bottom)
         }
@@ -206,12 +194,12 @@ class InputViewController: UIViewController, View {
     }
     
     func bind(reactor: InputViewReactor) {
-        detailInputChevron.rx.tap
+        detailChevron.rx.tap
             .map { Reactor.Action.toggleDetailButton }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
         
-        detailInputButton.rx.tap
+        detailButton.rx.tap
             .map { Reactor.Action.toggleDetailButton }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
@@ -229,7 +217,7 @@ class InputViewController: UIViewController, View {
                 
                 let angle: CGFloat = isVisible ? .pi : 0
                 UIView.animate(withDuration: 0.1) {
-                    self.detailInputChevron.transform = CGAffineTransform(rotationAngle: angle)
+                    self.detailChevron.transform = CGAffineTransform(rotationAngle: angle)
                 }
             })
             .disposed(by: disposeBag)
@@ -248,7 +236,8 @@ class InputViewController: UIViewController, View {
             .map { $0.transactionType }  // Observe transactionType changes
             .distinctUntilChanged()
             .subscribe(onNext: { [weak self] newType in
-                self?.amountTextField.placeholder = "총 \(newType) 금액을 입력하세요"
+                guard let self = self else { return }
+                self.amountTextField.placeholder = "총 \(newType) 금액을 입력하세요"
             })
             .disposed(by: disposeBag)
     }
