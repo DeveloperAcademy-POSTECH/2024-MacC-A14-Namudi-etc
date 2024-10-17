@@ -23,9 +23,9 @@ final class CalculatorViewReactor: Reactor {
     struct State {
         var isResultButtonClicked: Bool = false
         var averageHaruby: Int = 0
-        var remainTotalHaruby: Int = 170000
+        var remainTotalHaruby: Int = 0
         var estimatedPrice: Int = 0
-        var remainingDays: Int = 15
+        var remainingDays: Int = 0
         var inputFieldText: String = ""
     }
     
