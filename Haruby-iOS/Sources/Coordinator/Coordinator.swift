@@ -31,3 +31,15 @@ extension Coordinator {
         parentCoordinator?.removeChildCoordinator(self)
     }
 }
+
+extension Coordinator {
+    func logCoordinatorHierarchy() {
+        print("Current Coordinator: \(type(of: self))")
+        print("Child Coordinators:")
+        for (index, coordinator) in childCoordinators.enumerated() {
+            print("  \(index + 1). \(type(of: coordinator))")
+        }
+        print("Parent Coordinator: \(String(describing: type(of: parentCoordinator)))")
+        print("----------------------------------------")
+    }
+}

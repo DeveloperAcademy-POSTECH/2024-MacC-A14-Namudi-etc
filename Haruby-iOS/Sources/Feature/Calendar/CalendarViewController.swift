@@ -13,11 +13,11 @@ import RxDataSources
 import RxSwift
 import SnapKit
 
-final class CalendarViewController: UIViewController, View {
-    
+final class CalendarViewController: UIViewController, View, CoordinatorCompatible {
     var disposeBag = DisposeBag()
     typealias Reactor = CalendarViewReactor
-    
+    var didFinish: (() -> Void)?
+    weak var coordinator: CalendarCoordinator?
     
     // MARK: - Properties
     private let cellId: String = "CalendarCell"
@@ -169,6 +169,10 @@ final class CalendarViewController: UIViewController, View {
         setupView()
     }
     
+    deinit {
+        print("CalendarViewController deinit")
+        didFinish?()
+    }
     
     // MARK: - Binding
     func bind(reactor: CalendarViewReactor) {
@@ -256,7 +260,7 @@ final class CalendarViewController: UIViewController, View {
     
     private func createDataSource() -> RxCollectionViewSectionedReloadDataSource<MonthlySection> {
         return RxCollectionViewSectionedReloadDataSource<MonthlySection>(
-            configureCell: { dataSource, collectionView, indexPath, item in
+            configureCell: { [unowned self] dataSource, collectionView, indexPath, item in
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: self.cellId, for: indexPath) as! CalendarViewCell
                 let reactor = CalendarViewCellReactor(dailyBudget: item)
                 cell.reactor = reactor

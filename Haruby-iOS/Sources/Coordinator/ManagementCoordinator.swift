@@ -7,16 +7,8 @@
 
 import UIKit
 
-final class ManagementCoordinator: Coordinator {
-    var navigationController: UINavigationController
-    weak var parentCoordinator: Coordinator?
-    var childCoordinators: [Coordinator] = []
-    
-    init(navigationController: UINavigationController) {
-        self.navigationController = navigationController
-    }
-    
-    func start() {
+final class ManagementCoordinator: BaseCoordinator {
+    override func start() {
         // TODO: - 하루비 관리 뷰 설정
     }
     

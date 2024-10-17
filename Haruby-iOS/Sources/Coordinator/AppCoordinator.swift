@@ -7,13 +7,10 @@
 
 import UIKit
 
-class AppCoordinator: Coordinator {
-    var navigationController: UINavigationController
-    var parentCoordinator: Coordinator?
-    var childCoordinators: [Coordinator] = []
-    
-    init(navigationController: UINavigationController) {
-        self.navigationController = navigationController
+final class AppCoordinator: BaseCoordinator {
+    override func start() {
+        updateNavigationBarColor()
+        showMain()
     }
     
     func updateNavigationBarColor() {
@@ -35,15 +32,10 @@ class AppCoordinator: Coordinator {
         navigationController.navigationBar.isTranslucent = true
     }
     
-    func start() {
-        updateNavigationBarColor()
-        showMain()
-    }
-    
     func showMain() {
         let mainCoordinator = MainCoordinator(navigationController: navigationController)
         mainCoordinator.parentCoordinator = self
-        self.addChildCoordinator(mainCoordinator)
+        addChildCoordinator(mainCoordinator)
         mainCoordinator.start()
     }
 }
