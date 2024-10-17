@@ -88,7 +88,6 @@ class InputViewController: UIViewController, View {
         view.estimatedRowHeight = 49
         view.separatorStyle = .none
         view.isScrollEnabled = true
-        view.backgroundColor = .green
         return view
     }()
     
@@ -208,12 +207,20 @@ class InputViewController: UIViewController, View {
             .map { Reactor.Action.toggleDatePicker }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
+        
+        addDetailTransactionButton.rx.tap
+            .map { Reactor.Action.tapAddDetailTransactionButton }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
 
         reactor.state
             .map { $0.isDetailVisible }
             .distinctUntilChanged()
             .subscribe(onNext: { [weak self] isVisible in
                 guard let self = self else { return }
+                
+                self.detailTransactionTableView.isHidden = !isVisible
+                self.addDetailTransactionButton.isHidden = !isVisible
                 
                 let angle: CGFloat = isVisible ? .pi : 0
                 UIView.animate(withDuration: 0.1) {
@@ -238,6 +245,21 @@ class InputViewController: UIViewController, View {
             .subscribe(onNext: { [weak self] newType in
                 guard let self = self else { return }
                 self.amountTextField.placeholder = "총 \(newType) 금액을 입력하세요"
+            })
+            .disposed(by: disposeBag)
+        
+        reactor.state
+            .map { $0.detailTransaction }
+            .distinctUntilChanged()
+            .subscribe(onNext: { [weak self] transactions in
+                guard let self = self else { return }
+                self.detailTransactionTableView.reloadData()
+                
+                // 가장 나중에 추가한 cell에 포커스되도록 하는 코드
+                if transactions.count > 0 {
+                    let lastRowIndex = IndexPath(row: transactions.count - 1, section: 0)
+                    self.detailTransactionTableView.scrollToRow(at: lastRowIndex, at: .bottom, animated: true)
+                }
             })
             .disposed(by: disposeBag)
     }
@@ -265,12 +287,13 @@ class InputViewController: UIViewController, View {
 
 extension InputViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 1
+        guard let cellCount = reactor?.currentState.detailTransaction.count, cellCount > 0 else { return 1 }
+        return cellCount
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: DetailInputCell.cellId, for: indexPath) as? DetailInputCell else { return UITableViewCell() }
-        
+                
         
         return cell
     }

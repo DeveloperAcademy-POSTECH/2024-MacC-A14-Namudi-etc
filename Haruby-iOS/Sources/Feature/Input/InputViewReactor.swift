@@ -14,18 +14,21 @@ final class InputViewReactor: Reactor {
         case toggleDetailButton
         case toggleDatePicker
         case selectTransactionType(String)
+        case tapAddDetailTransactionButton // 너무 긴가 ..
     }
     
     enum Mutation {
         case setDetailVisible(Bool)
         case setDatePickerVisible(Bool)
         case setTransactionType(String)
+        case addDetailTransaction
     }
     
     struct State {
         var isDetailVisible: Bool = false
         var isDatePickerVisible: Bool = false
         var transactionType: String = "지출"
+        var detailTransaction: [String] = []
     }
     
     private(set) var initialState: State = State()
@@ -42,6 +45,9 @@ final class InputViewReactor: Reactor {
             
         case .selectTransactionType(let newType):
             return Observable.just(.setTransactionType(newType))
+            
+        case .tapAddDetailTransactionButton:
+            return Observable.just(.addDetailTransaction)
         }
     }
     
@@ -56,6 +62,9 @@ final class InputViewReactor: Reactor {
             
         case let .setTransactionType(newType):
             newState.transactionType = newType
+            
+        case .addDetailTransaction:
+            newState.detailTransaction.append("New Cellㅋ")
         }
         
         return newState
