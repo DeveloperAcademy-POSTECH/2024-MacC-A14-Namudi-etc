@@ -17,24 +17,15 @@ class ManagementCoordinator: Coordinator {
     }
     
     func start() {
-        print("Parents: \(String(describing: parentCoordinator))")
-        let vc = HarubyManagementViewController(reactor: HarubyManagementReactor(coordinator: self))
-        navigationController.pushViewController(vc, animated: true)
-    }
-    
-    func showAppSettings() {
-        let vc = AppSettingsViewController(reactor: AppSettingsReactor())
-        navigationController.pushViewController(vc, animated: true)
+        // TODO: - 하루비 관리 뷰 설정
     }
     
     func showFixedIncomeManagement() {
-        let vc = FixedIncomeManagementViewController(reactor: FixedIncomeManagementReactor())
-        navigationController.pushViewController(vc, animated: true)
+        // TODO: - 고정 수입 관리 뷰 설정
     }
     
     func showFixedExpenseManagement() {
-        let vc = FixedExpenseManagementViewController(reactor: FixedExpenseManagementReactor())
-        navigationController.pushViewController(vc, animated: true)
+        // TODO: - 고정 지출 관리 뷰 설정
     }
 }
 

@@ -61,17 +61,19 @@ final class MainViewReactor: Reactor {
         switch action {
         case .viewDidLoad:
             return fetchAndProcessHarubyInfo()
+            
         case .calculatorButtonTapped:
-            // TODO: - 하루비 계산기 네비게이션 코디네이터 적용
-            coordinator?.showCalculatorView()
+            coordinator?.showCalculatorFlow()
             return .empty()
+            
         case .calendarButtonTapped:
-            // TODO: - 하루비 달력 네비게이션 코디네이터 적용
-            coordinator?.showCalendarView()
+            coordinator?.showCalendarFlow()
             return .empty()
+            
         case .managementButtonTapped:
             // TODO: - 하루비 관리 네비게이션 코디네이터 적용
             return .empty()
+            
         case .inputButtonTapped:
             // TODO: - 실제 지출 입력 네비게이션 코디네이터 적용
             return .empty()
