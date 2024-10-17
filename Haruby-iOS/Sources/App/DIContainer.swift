@@ -29,12 +29,20 @@ final class DIContainer {
     private func registerDependencies() {
         self.register(
             SalaryBudgetRepository.self,
+<<<<<<< HEAD
             dependency: SalaryBudgetRepositoryImpl()
+=======
+            dependency: SalaryBudgetRepositoryImpl() // Stub 객체
+>>>>>>> 61abb18 (Feature/#11: SalaryBudget fetch 추가)
         )
         
         self.register(
             DailyBudgetRepository.self,
+<<<<<<< HEAD
             dependency: DailyBudgetRepositoryImpl()
+=======
+            dependency: DailyBudgetRepositoryImpl() // Stub 객체
+>>>>>>> 61abb18 (Feature/#11: SalaryBudget fetch 추가)
         )
     }
 }

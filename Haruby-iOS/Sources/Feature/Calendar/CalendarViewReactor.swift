@@ -17,34 +17,49 @@ final class CalendarViewReactor: Reactor {
     }
     
     enum Mutation {
+        case setSalaryBudget(SalaryBudget)
         case updateMonthSections([MonthlySection])
         case checkExpense
     }
     
     struct State {
-        var salaryBudget: SalaryBudget
+        var salaryBudget: SalaryBudget = SalaryBudget(startDate: Date(), endDate: Date(), fixedIncome: 0, fixedExpense: [], balance: 0, defaultHaruby: 0, dailyBudgets: [])
         var showWarning: Bool = false
         var monthlySections: [MonthlySection] = []
     }
     
-    let initialState: State
+    let initialState: State = .init()
     
-    init(salaryBudget: SalaryBudget) {
-        initialState = State(salaryBudget: salaryBudget)
+    private let salaryBudgetRepository: SalaryBudgetRepository
+    
+    init(salaryBudgetRepository: SalaryBudgetRepository) {
+        self.salaryBudgetRepository = salaryBudgetRepository
     }
     
     func mutate(action: Action) -> Observable<Mutation> {
         switch action {
         case .viewDidLoad:
-            let updateSections = Observable.just(Mutation.updateMonthSections(createMonthSections()))
+            let setSalaryBudget = salaryBudgetRepository.fetch().map { salaryBudget in
+                Mutation.setSalaryBudget(salaryBudget.first!)
+            }
+
+            // 상태가 업데이트된 후 createMonthSections 실행
+            let updateSections = setSalaryBudget.flatMap { _ in
+                Observable.just(Mutation.updateMonthSections(self.createMonthSections()))
+            }
+            
+            // let updateSections = Observable.just(Mutation.updateMonthSections(self.createMonthSections()))
+
             let checkExpense = Observable.just(Mutation.checkExpense)
-            return Observable.concat([updateSections, checkExpense])
+            return Observable.concat([setSalaryBudget, updateSections, checkExpense])
         }
     }
     
     func reduce(state: State, mutation: Mutation) -> State {
         var newState = state
         switch mutation {
+        case .setSalaryBudget(let salaryBudget):
+            newState.salaryBudget = salaryBudget
         case .updateMonthSections(let monthlySections):
             newState.monthlySections = monthlySections
         case .checkExpense:
@@ -86,6 +101,9 @@ extension CalendarViewReactor {
         
         let salaryStartDate = self.currentState.salaryBudget.startDate
         let salaryEndDate = self.currentState.salaryBudget.endDate
+        
+        //print(self.currentState.salaryBudget)
+        
         
         var dailyBudgets: [DailyBudget] = []
         
