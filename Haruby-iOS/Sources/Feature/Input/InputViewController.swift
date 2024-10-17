@@ -246,11 +246,12 @@ class InputViewController: UIViewController, View {
                 guard let self = self else { return }
                 self.amountTextField.placeholder = "총 \(newType) 금액을 입력하세요"
                 self.addDetailTransactionButton.setTitle("+ \(newType) 추가", for: .normal)
+                self.detailTransactionTableView.reloadData()
             })
             .disposed(by: disposeBag)
         
         reactor.state
-            .map { $0.detailTransaction }
+            .map { $0.transactionType == "지출" ? $0.detailExpense : $0.detailIncome }
             .distinctUntilChanged()
             .subscribe(onNext: { [weak self] transactions in
                 guard let self = self else { return }
@@ -283,18 +284,29 @@ class InputViewController: UIViewController, View {
     @objc private func segmentedControlChanged() {
         let newType = segmentedControl.selectedSegmentIndex == 0 ? "지출" : "수입"
         reactor?.action.onNext(.selectTransactionType(newType))
+        
+        self.detailTransactionTableView.reloadData()
     }
 }
 
 extension InputViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        guard let cellCount = reactor?.currentState.detailTransaction.count, cellCount > 0 else { return 1 }
-        return cellCount
+        guard let reactor = reactor else { return 1 }
+        
+        if reactor.currentState.transactionType == "지출" {
+            
+            return reactor.currentState.detailExpense.count == 0 ? 1 : reactor.currentState.detailExpense.count
+        } else {
+            return reactor.currentState.detailIncome.count == 0 ? 1 : reactor.currentState.detailIncome.count
+        }
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: DetailInputCell.cellId, for: indexPath) as? DetailInputCell else { return UITableViewCell() }
-                
+        let transactionType = reactor?.currentState.transactionType ?? "지출"
+        
+        cell.detailNameTextField.textField.placeholder = "\(transactionType) 이름"
+        cell.detailAmountTextField.textField.placeholder = "\(transactionType) 금액"
         
         return cell
     }
