@@ -23,7 +23,7 @@ class AppCoordinator: Coordinator {
     func showMain() {
         let mainCoordinator = MainCoordinator(navigationController: navigationController)
         mainCoordinator.parentCoordinator = self
-        addChildCoordinator(mainCoordinator)
+        self.addChildCoordinator(mainCoordinator)
         mainCoordinator.start()
     }
 }

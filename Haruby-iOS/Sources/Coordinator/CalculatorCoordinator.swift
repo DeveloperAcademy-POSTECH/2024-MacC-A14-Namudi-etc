@@ -17,7 +17,6 @@ class CalculatorCoordinator: Coordinator {
     }
     
     func start() {
-        print("Parents: \(String(describing: parentCoordinator))")
         let reactor = CalculatorViewReactor(coordinator: self)
         let vc = CalculatorViewController()
         vc.reactor = reactor

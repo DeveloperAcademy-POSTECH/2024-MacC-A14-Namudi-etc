@@ -17,14 +17,21 @@ class CalendarCoordinator: Coordinator {
     }
     
     func start() {
-        print("Parents: \(String(describing: parentCoordinator))")
         let reactor = CalendarViewReactor(coordinator: self)
         let vc = CalendarViewController()
         vc.reactor = reactor
         navigationController.pushViewController(vc, animated: true)
     }
     
-    func showSpendingInput() {
-        
+    func showHarubyEditFlow() {
+        // TODO: - 하루비 수정 뷰 설정
+    }
+    
+    func showExpenseEditFlow() {
+        // TODO: - 실제 지출 입력 뷰 설정
+    }
+    
+    func presentEditSheet() {
+        // TODO: - 하루비 수정과 실제 지출을 분기하는 시트 설정
     }
 }

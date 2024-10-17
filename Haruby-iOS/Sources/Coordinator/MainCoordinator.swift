@@ -17,29 +17,27 @@ class MainCoordinator: Coordinator {
     }
     
     func start() {
-        print("Parents: \(String(describing: parentCoordinator))")
         let reactor = MainViewReactor(coordinator: self)
         let vc = MainViewController()
         vc.reactor = reactor
         navigationController.pushViewController(vc, animated: false)
     }
     
-    func showCalculatorView() {
-        print(#function)
+    func showCalculatorFlow() {
         let coordinator = CalculatorCoordinator(navigationController: navigationController)
         coordinator.parentCoordinator = self
         addChildCoordinator(coordinator)
         coordinator.start()
     }
     
-    func showCalendarView() {
+    func showCalendarFlow() {
         let coordinator = CalendarCoordinator(navigationController: navigationController)
         coordinator.parentCoordinator = self
         addChildCoordinator(coordinator)
         coordinator.start()
     }
     
-    func showManagementView() {
+    func showManagementFlow() {
         let coordinator = ManagementCoordinator(navigationController: navigationController)
         coordinator.parentCoordinator = self
         addChildCoordinator(coordinator)
