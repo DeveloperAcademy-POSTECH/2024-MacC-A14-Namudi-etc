@@ -64,7 +64,7 @@ final class InputViewReactor: Reactor {
             newState.transactionType = newType
             
         case .addDetailTransaction:
-            newState.detailTransaction.append("New Cellㅋ")
+            newState.detailTransaction.append("New Cell")
         }
         
         return newState
