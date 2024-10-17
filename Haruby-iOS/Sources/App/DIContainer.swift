@@ -34,7 +34,7 @@ final class DIContainer {
         
         self.register(
             DailyBudgetRepository.self,
-            dependency: StubDailyBudgetRepository()
+            dependency: StubDailyBudgetRepository() // Stub 객체
         )
     }
 }
