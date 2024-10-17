@@ -149,7 +149,7 @@ final class SalaryBudgetRepositoryImpl: SalaryBudgetRepository {
             realm.delete(realmSalaryBudget)
         }
         
-        return .empty()
+        return .just(())
     }
 }
 
@@ -204,9 +204,4 @@ final class StubSalaryBudgetRepository: SalaryBudgetRepository {
     }
 }
 
-extension SalaryBudgetRepositoryImpl {
-    private func getSalaryBudgetFromKey(id: String) -> RealmSalaryBudget? {
-        let realmSalaryBudget = realm.object(ofType: RealmSalaryBudget.self, forPrimaryKey: id)
-        return realmSalaryBudget
-    }
-}
+
