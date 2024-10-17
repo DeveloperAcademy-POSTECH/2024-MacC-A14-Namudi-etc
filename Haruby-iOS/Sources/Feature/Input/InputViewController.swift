@@ -109,23 +109,18 @@ class InputViewController: UIViewController, View {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        view.backgroundColor = .white
-        
         setupView()
-        
-        let tapGestureKeyBoard = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
-        view.addGestureRecognizer(tapGestureKeyBoard)
-        
     }
     
     // MARK: - UI Setup
     private func setupView() {
+        view.backgroundColor = .Haruby.white
+        
         setupSubviews()
         setupConstraints()
         setupNavigationBar()
-
-        segmentedControl.selectedSegmentIndex = 0
-        segmentedControl.addTarget(self, action: #selector(segmentedControlChanged), for: .valueChanged)
+        setupKeyboardDismissGesture()
+        setupSegmentedControl()
     }
     
     private func setupSubviews() {
@@ -136,7 +131,6 @@ class InputViewController: UIViewController, View {
         self.view.addSubview(detailTransactionTableView)
         self.view.addSubview(addDetailTransactionButton)
         self.view.addSubview(bottomButton)
-        
     }
     
     private func setupConstraints() {
@@ -178,18 +172,6 @@ class InputViewController: UIViewController, View {
             make.leading.trailing.equalToSuperview()
             make.bottom.equalTo(view.snp.bottom)
         }
-    }
-    
-    private func setupNavigationBar() {
-        title = "지출 및 수입 입력"
-        
-        self.navigationController?.navigationBar.titleTextAttributes = [
-            .foregroundColor: UIColor.black
-        ]
-    }
-    
-    @objc private func dismissKeyboard() {
-        view.endEditing(true)
     }
     
     func bind(reactor: InputViewReactor) {
@@ -265,28 +247,6 @@ class InputViewController: UIViewController, View {
             })
             .disposed(by: disposeBag)
     }
-    
-    private func presentSheet() {
-        let sheetViewController = DatePickerSheet()
-        sheetViewController.modalPresentationStyle = .pageSheet
-        
-        if let sheet = sheetViewController.sheetPresentationController {
-            let customDetent = UISheetPresentationController.Detent.custom { context in
-                return 400
-            }
-            sheet.detents = [customDetent]
-            sheet.prefersGrabberVisible = false
-        }
-        
-        present(sheetViewController, animated: true, completion: nil)
-    }
-    
-    @objc private func segmentedControlChanged() {
-        let newType = segmentedControl.selectedSegmentIndex == 0 ? "지출" : "수입"
-        reactor?.action.onNext(.selectTransactionType(newType))
-        
-        self.detailTransactionTableView.reloadData()
-    }
 }
 
 extension InputViewController: UITableViewDelegate, UITableViewDataSource {
@@ -309,5 +269,51 @@ extension InputViewController: UITableViewDelegate, UITableViewDataSource {
         cell.detailAmountTextField.textField.placeholder = "\(transactionType) 금액"
         
         return cell
+    }
+}
+
+extension InputViewController {
+    private func presentSheet() {
+        let sheetViewController = DatePickerSheet()
+        sheetViewController.modalPresentationStyle = .pageSheet
+        
+        if let sheet = sheetViewController.sheetPresentationController {
+            let customDetent = UISheetPresentationController.Detent.custom { context in
+                return 400
+            }
+            sheet.detents = [customDetent]
+            sheet.prefersGrabberVisible = false
+        }
+        
+        present(sheetViewController, animated: true, completion: nil)
+    }
+    
+    private func setupNavigationBar() {
+        title = "지출 및 수입 입력"
+        
+        self.navigationController?.navigationBar.titleTextAttributes = [
+            .foregroundColor: UIColor.black
+        ]
+    }
+    
+    private func setupKeyboardDismissGesture() {
+        let tapGestureKeyBoard = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        view.addGestureRecognizer(tapGestureKeyBoard)
+    }
+    
+    private func setupSegmentedControl() {
+        segmentedControl.selectedSegmentIndex = 0
+        segmentedControl.addTarget(self, action: #selector(segmentedControlChanged), for: .valueChanged)
+    }
+    
+    @objc private func dismissKeyboard() {
+        view.endEditing(true)
+    }
+    
+    @objc private func segmentedControlChanged() {
+        let newType = segmentedControl.selectedSegmentIndex == 0 ? "지출" : "수입"
+        reactor?.action.onNext(.selectTransactionType(newType))
+        
+        self.detailTransactionTableView.reloadData()
     }
 }
