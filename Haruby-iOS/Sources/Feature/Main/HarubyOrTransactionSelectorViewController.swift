@@ -26,7 +26,7 @@ final class HarubyOrTransactionSelectorViewController: UIViewController, View {
         return button
     }()
     
-    private let navigateHarubyButton: NavigationButton = {
+    private let harubyNavigationButton: NavigationButton = {
         let button = NavigationButton()
         button.customTitleLabel.text = "하루비 조정하기"
         button.customSubTitleLabel.text = "오늘의 하루비를 조정하고, 메모를 남겨요"
@@ -39,7 +39,7 @@ final class HarubyOrTransactionSelectorViewController: UIViewController, View {
         return button
     }()
     
-    private let navigateTransactionButton: NavigationButton = {
+    private let transactionNavigationButton: NavigationButton = {
         let button = NavigationButton()
         button.customTitleLabel.text = "지출 및 수입 입력하기"
         button.customSubTitleLabel.text = "오늘의 실제 지출 혹은 수입을 입력해요"
@@ -71,20 +71,20 @@ final class HarubyOrTransactionSelectorViewController: UIViewController, View {
     }
     
     private func setupAddSubviews() {
-        view.addSubview(navigateHarubyButton)
-        view.addSubview(navigateTransactionButton)
+        view.addSubview(harubyNavigationButton)
+        view.addSubview(transactionNavigationButton)
     }
     
     private func setupConstraints() {
-        navigateHarubyButton.snp.makeConstraints { make in
+        harubyNavigationButton.snp.makeConstraints { make in
             make.height.equalTo(105)
             make.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(40)
             make.horizontalEdges.equalToSuperview().inset(horizontalPadding)
         }
         
-        navigateTransactionButton.snp.makeConstraints { make in
+        transactionNavigationButton.snp.makeConstraints { make in
             make.height.equalTo(105)
-            make.top.equalTo(navigateHarubyButton.snp.bottom).offset(12)
+            make.top.equalTo(harubyNavigationButton.snp.bottom).offset(12)
             make.horizontalEdges.equalToSuperview().inset(horizontalPadding)
         }
     }
@@ -97,12 +97,12 @@ final class HarubyOrTransactionSelectorViewController: UIViewController, View {
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
         
-        navigateHarubyButton.rx.tap
+        harubyNavigationButton.rx.tap
             .map{ Reactor.Action.harubyButtonTapped }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
         
-        navigateTransactionButton.rx.tap
+        transactionNavigationButton.rx.tap
             .map{ Reactor.Action.transactionButtonTapped }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
