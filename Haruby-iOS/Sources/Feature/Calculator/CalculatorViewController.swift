@@ -112,7 +112,6 @@ final class CalculatorViewController: UIViewController, View {
 
         setupView()
     }
-    
 
     // MARK: - Setup View
     private func setupView() {
@@ -121,6 +120,7 @@ final class CalculatorViewController: UIViewController, View {
         setupSubviews()
         setupConstraints()
         setupNavigationBar()
+        setupInitialViewData()
     }
     
     private func setupSubviews() {
@@ -170,14 +170,6 @@ final class CalculatorViewController: UIViewController, View {
         }
     }
     
-    private func setupNavigationBar() {
-        title = "하루비 계산기"
-        
-        self.navigationController?.navigationBar.titleTextAttributes = [
-            .foregroundColor: UIColor.white
-        ]
-    }
-    
     // MARK: - Binding
     
     func bind(reactor: Reactor) {
@@ -186,29 +178,17 @@ final class CalculatorViewController: UIViewController, View {
     }
     
     private func bindState(reactor: Reactor) {
-        // 계산된 평균 하루비
-        reactor.state.map { $0.averageHaruby.decimalWithWon }
-            .distinctUntilChanged()
-            .bind(to: self.bottomPriceLabel.rx.text)
-            .disposed(by: disposeBag)
         
-        // 남은 총 하루비
-        reactor.state.map { $0.remainTotalHaruby.decimalWithWon }
-            .distinctUntilChanged()
-            .bind(to: self.calculationProcessView.totalHaruby.rx.text)
-            .disposed(by: disposeBag)
-        
-        // 지출 예정 금액
-        reactor.state.map { $0.estimatedPrice.decimalWithWon }
-            .distinctUntilChanged()
-            .bind(to: self.calculationProcessView.estimatedPrice.rx.text)
-            .disposed(by: disposeBag)
-        
-        // 남은 일수
-        reactor.state.map { String($0.remainingDays) + "일" }
-            .distinctUntilChanged()
-            .bind(to: self.calculationProcessView.remainingDay.rx.text)
-            .disposed(by: disposeBag)
+        // 계산된 평균 하루비, 지출 예정 금액
+        Observable.zip(
+            reactor.state.map { $0.averageHaruby.decimalWithWon },
+            reactor.state.map { $0.estimatedPrice.decimalWithWon }
+        )
+        .subscribe { [weak self] haruby, price in
+            self?.bottomPriceLabel.text = haruby
+            self?.calculationProcessView.estimatedPrice.text = price
+        }
+        .disposed(by: disposeBag)
         
         // 계산식
         reactor.state.map { $0.inputFieldText }
@@ -239,6 +219,21 @@ final class CalculatorViewController: UIViewController, View {
 }
 
 extension CalculatorViewController {
+    private func setupNavigationBar() {
+        title = "하루비 계산기"
+        
+        self.navigationController?.navigationBar.titleTextAttributes = [
+            .foregroundColor: UIColor.white
+        ]
+    }
+    
+    private func setupInitialViewData() {
+        guard let currentState = self.reactor?.currentState else { return }
+        
+        self.calculationProcessView.totalHaruby.text = currentState.remainTotalHaruby.decimalWithWon
+        self.calculationProcessView.remainingDay.text = "\(currentState.remainingDays)일"
+    }
+    
     private func updateTopView() {
         bottomImageView.isHidden = false
         bottomPriceLabel.isHidden = false

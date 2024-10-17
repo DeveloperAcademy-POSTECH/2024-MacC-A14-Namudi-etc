@@ -37,7 +37,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 let newSalaryBudget = BudgetManager.createSalaryBudget(startDate: startDate, endDate: endDate)
                 return self.salaryBudgetRepository.create(newSalaryBudget)
             }
-            .subscribe(onDisposed:  {})
+            .subscribe(onDisposed: {})
             .disposed(by: disposeBag)
     }
 }
