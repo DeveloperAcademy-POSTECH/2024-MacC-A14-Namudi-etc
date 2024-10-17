@@ -141,7 +141,7 @@ final class CalculatorProcessView: UIView {
     
     lazy var remainingDayTitle: UILabel = {
         let view = UILabel()
-        view.text = "남은 일자"
+        view.text = "남은 일수"
         view.textColor = .Haruby.textBright
         view.font = .pretendardSemibold_11
         return view
