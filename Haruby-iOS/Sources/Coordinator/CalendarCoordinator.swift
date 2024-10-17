@@ -7,7 +7,7 @@
 
 import UIKit
 
-class CalendarCoordinator: Coordinator {
+final class CalendarCoordinator: Coordinator {
     var navigationController: UINavigationController
     weak var parentCoordinator: Coordinator?
     var childCoordinators: [Coordinator] = []
