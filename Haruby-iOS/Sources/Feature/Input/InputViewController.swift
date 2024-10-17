@@ -169,12 +169,12 @@ class InputViewController: UIViewController, View {
         addDetailTransactionButton.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
             make.top.equalTo(self.detailTransactionTableView.snp.bottom).offset(20)
+            make.bottom.equalTo(view.safeAreaLayoutGuide).offset(-162)
             make.horizontalEdges.equalToSuperview().inset(28)
             make.height.equalTo(35)
         }
         
         bottomButton.snp.makeConstraints { make in
-            make.top.equalTo(self.addDetailTransactionButton.snp.bottom).offset(54)
             make.leading.trailing.equalToSuperview()
             make.bottom.equalTo(view.snp.bottom)
         }
