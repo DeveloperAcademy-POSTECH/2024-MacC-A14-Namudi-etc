@@ -11,12 +11,10 @@ import RxSwift
 
 final class CalculatorViewReactor: Reactor {
     enum Action {
-        case viewDidLoad
         case keypadButtonTapped(KeypadButtonType)
     }
     
     enum Mutation {
-        case initializeData
         case updateAverageHaruby(Int) // 평균 하루비, 지출 예정 금액, 입력 필드 업데이트
         case updateEstimatedPrice(Int)
         case updateInputField(String)
@@ -31,23 +29,25 @@ final class CalculatorViewReactor: Reactor {
         var inputFieldText: String = ""
     }
     
-    var initialState: State = State()
+    var initialState: State
+    
+    init(salaryBudget: SalaryBudget) {
+        let remainTotalHaruby = salaryBudget.balance
+        let remainingDays = Int(salaryBudget.endDate.timeIntervalSince(.now.formattedDate) / 86400) + 1
+        
+        self.initialState = State(remainTotalHaruby: remainTotalHaruby, remainingDays: remainingDays)
+    }
     
     func mutate(action: Action) -> Observable<Mutation> {
         switch action {
-        case .viewDidLoad:
-            return .just(.initializeData)
         case .keypadButtonTapped(let keypadType):
             return processKeypad(keypadType)
-            
         }
     }
     
     func reduce(state: State, mutation: Mutation) -> State {
         var newState = state
         switch mutation {
-        case .initializeData:
-            break
         case .updateAverageHaruby(let haruby):
             newState.averageHaruby = haruby
             newState.isResultButtonClicked = true
