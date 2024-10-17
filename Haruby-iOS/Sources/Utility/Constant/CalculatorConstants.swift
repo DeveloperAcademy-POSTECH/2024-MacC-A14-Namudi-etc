@@ -110,6 +110,18 @@ enum KeypadButtonType: Int {
         }
     }
     
+    var touchDownBackgroundColor: UIColor {
+        switch self {
+        case .one, .two, .three, .four, .five, .six, .seven, .eight, .nine, .zero, .doubleZero, .tripleZero:
+            return .Haruby.textBlack10
+        case .equal:
+            return .Haruby.main.withAlphaComponent(0.8)
+        case .plus, .minus, .multiply, .divide, .deleteAll, .deleteLast:
+            return .Haruby.mainBright.withAlphaComponent(0.5)
+        
+        }
+    }
+    
     var font: UIFont {
         return .pretendardRegular_24
     }

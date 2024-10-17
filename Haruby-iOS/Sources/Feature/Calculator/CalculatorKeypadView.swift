@@ -7,10 +7,14 @@
 
 import UIKit
 import SnapKit
+import RxSwift
+import RxCocoa
 
 final class CalculatorKeypadView: UIView {
     
     // MARK: - Properties
+    
+    private let disposeBag = DisposeBag()
 
     private let horizontalSpacing: CGFloat = 27
     private let verticalSpacing: CGFloat = 18
@@ -41,7 +45,6 @@ final class CalculatorKeypadView: UIView {
     }()
     
     
-
     override init(frame: CGRect) {
         super.init(frame: frame)
         
@@ -82,6 +85,7 @@ final class CalculatorKeypadView: UIView {
                 let button = createButton(buttonType)
                 keypadButtons.append(button)
                 stackView.addArrangedSubview(button)
+                bindButtonTouchDownUpEvent(button, type: buttonType)
             }
             
             containerStackView.addArrangedSubview(stackView)
@@ -105,9 +109,7 @@ extension CalculatorKeypadView {
     }
     
     private func createButton(_ type: KeypadButtonType) -> UIButton {
-        let button = UIButton()
-        
-        button.tag = type.rawValue
+        let button = UIButton(type: .custom)
         
         if type.style == .text {
             button.setTitle(type.title, for: .normal)
@@ -115,10 +117,12 @@ extension CalculatorKeypadView {
             button.titleLabel?.font = type.font
         } else {
             button.setImage(type.image, for: .normal)
+            button.setImage(type.image, for: .highlighted)
             button.imageView?.tintColor = type.foregroundColor
             button.imageView?.contentMode = .scaleAspectFit
         }
         
+        button.tag = type.rawValue
         button.backgroundColor = type.backgroundColor
         
         if type.isSquare {
@@ -128,6 +132,26 @@ extension CalculatorKeypadView {
         }
         
         return button
+    }
+    
+    private func bindButtonTouchDownUpEvent(_ button: UIButton, type: KeypadButtonType) {
+        
+        button.rx.controlEvent([.touchDown, .touchDragInside])
+            .subscribe { _ in
+                UIView.animate(withDuration: 0.1) {
+                    button.backgroundColor = type.touchDownBackgroundColor
+                }
+                
+            }
+            .disposed(by: disposeBag)
+        
+        button.rx.controlEvent([.touchUpInside, .touchUpOutside, .touchDragOutside])
+            .subscribe { _ in
+                UIView.animate(withDuration: 0.1) {
+                    button.backgroundColor = type.backgroundColor
+                }
+            }
+            .disposed(by: disposeBag)
     }
 }
 
