@@ -17,6 +17,7 @@ final class CalendarViewCellReactor: Reactor {
     }
     
     enum Mutation {
+        case setNavigate(Bool)
     }
     
     struct State {
@@ -24,6 +25,7 @@ final class CalendarViewCellReactor: Reactor {
         
         var dayType: DayType
         var dailyBudget: DailyBudget?
+        var navigateToNextView: Bool = false
         
         var viewState: ViewState
         
@@ -42,6 +44,7 @@ final class CalendarViewCellReactor: Reactor {
     }
     
     let initialState: State
+    let stateSubject = PublishSubject<State>()
     
     init(dailyBudget: DailyBudget, salaryStartDate: Date, salaryEndDate: Date, defaultHaruby: Int, indexPath: IndexPath) {
         
@@ -89,17 +92,25 @@ final class CalendarViewCellReactor: Reactor {
     }
     
     func mutate(action: Action) -> Observable<Mutation> {
+        stateSubject.onNext(self.currentState)
         switch action {
         case .viewDidLoad:
             return .empty()
         case .cellTapped:
-            print(currentState.dayType)
-            return .empty()
+            let setNavigateTrue = Observable.just(Mutation.setNavigate(true))
+            let setNavigateFalse = Observable.just(Mutation.setNavigate(false))
+
+            return Observable.concat([setNavigateTrue, setNavigateFalse])
         }
     }
     
     func reduce(state: State, mutation: Mutation) -> State {
-        // code
+        var newState = state
+        switch mutation {
+        case .setNavigate(let navigate):
+            newState.navigateToNextView = navigate
+        }
+        return newState
     }
     
     
