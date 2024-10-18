@@ -39,10 +39,9 @@ final class CalendarViewCellReactor: Reactor {
         var highlightType: CellHighlightType
     }
     
-    var parentStateObservable: Observable<CalendarViewReactor.State>
     let initialState: State
     
-    init(dailyBudget: DailyBudget, salaryStartDate: Date, salaryEndDate: Date, defaultHaruby: Int, indexPath: IndexPath, parentStateObservable: Observable<CalendarViewReactor.State>) {
+    init(dailyBudget: DailyBudget, salaryStartDate: Date, salaryEndDate: Date, defaultHaruby: Int, indexPath: IndexPath) {
         
         let currentDay = Date()
         let calendar = Calendar.current
@@ -91,7 +90,6 @@ final class CalendarViewCellReactor: Reactor {
             highlightType: highlightType
         )
         
-        self.parentStateObservable = parentStateObservable
         self.initialState = State(dailyBudget: dailyBudget, viewState: initialViewState)
     }
     
@@ -100,7 +98,6 @@ final class CalendarViewCellReactor: Reactor {
         case .viewDidLoad:
             return .empty()
         case .cellTapped:
-            print("cellTapped")
             return .empty()
         }
     }
@@ -116,4 +113,11 @@ enum CellHighlightType {
     case leftRound
     case rightRound
     case normal
+}
+
+enum DayType {
+    case past
+    case today
+    case future
+    case none
 }
