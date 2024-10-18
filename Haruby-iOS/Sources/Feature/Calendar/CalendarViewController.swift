@@ -25,6 +25,16 @@ final class CalendarViewController: UIViewController, View, CoordinatorCompatibl
     private let horizontalPadding: CGFloat = 16
     
     // MARK: - UI Component
+    private lazy var yearLabel: UILabel = {
+        let label = UILabel()
+        label.text = "2024년"
+        label.font = .pretendardRegular_16
+        label.textColor = .Haruby.white
+        
+        return label
+    }()
+    
+    
     private lazy var monthLabel: UILabel = {
         let label = UILabel()
         label.text = "9월"
@@ -188,12 +198,14 @@ final class CalendarViewController: UIViewController, View, CoordinatorCompatibl
         title = "하루비 달력"
         view.backgroundColor = .Haruby.main
         
+        reactor?.action.onNext(.viewDidLoad)
+        
         addSubviews()
         setupConstraints()
-        bindScrollEvent()
     }
     
     private func addSubviews() {
+        view.addSubview(yearLabel)
         view.addSubview(monthLabel)
         view.addSubview(remainTotalHarubyBox)
         view.addSubview(topRoundedContainer)
@@ -202,10 +214,16 @@ final class CalendarViewController: UIViewController, View, CoordinatorCompatibl
     
     
     private func setupConstraints() {
+        yearLabel.snp.makeConstraints { make in
+            make.height.equalTo(19)
+            make.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(8)
+            make.leading.equalToSuperview().offset(18)
+            
+        }
         
         monthLabel.snp.makeConstraints { make in
             make.height.equalTo(54)
-            make.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(17)
+            make.top.equalTo(yearLabel.snp.bottom).offset(-5)
             make.leading.equalToSuperview().offset(16)
         }
         
@@ -252,10 +270,11 @@ final class CalendarViewController: UIViewController, View, CoordinatorCompatibl
     
     // MARK: - Binding
     func bind(reactor: CalendarViewReactor) {
-        // Action
-        reactor.action.onNext(.viewDidLoad)
-        
-        // State
+        bindState(reactor: reactor)
+        bindAction(reactor: reactor)
+    }
+    
+    private func bindState(reactor: CalendarViewReactor) {
         reactor.state.map { $0.monthlySections }
             .bind(to: collectionView.rx.items(dataSource: createDataSource()))
             .disposed(by: disposeBag)
@@ -265,16 +284,16 @@ final class CalendarViewController: UIViewController, View, CoordinatorCompatibl
             .disposed(by: disposeBag)
     }
     
-    
-    // MARK: - Private Methods
-    private func bindScrollEvent() {
+    private func bindAction(reactor: CalendarViewReactor) {
         collectionView.rx.didScroll
-            .subscribe(onNext: { [unowned self] in
-                self.updateMonthLabel()
+            .subscribe(onNext: { [weak self] in
+                self?.updateYearAndMonthLabel()
             })
             .disposed(by: disposeBag)
     }
     
+    
+    // MARK: - Private Methods
     private func createDataSource() -> RxCollectionViewSectionedReloadDataSource<MonthlySection> {
         return RxCollectionViewSectionedReloadDataSource<MonthlySection>(
             configureCell: { [unowned self] dataSource, collectionView, indexPath, item in
@@ -286,22 +305,30 @@ final class CalendarViewController: UIViewController, View, CoordinatorCompatibl
                 
                 let reactor = CalendarViewCellReactor(dailyBudget: item, salaryStartDate: salaryStartDate, salaryEndDate: salaryEndDate, defaultHaruby: defaultHaruby, indexPath: indexPath)
                 cell.reactor = reactor
+                
                 return cell
             }
         )
     }
     
-    private func updateMonthLabel() {
-        guard let topVisibleSection = collectionView.indexPathsForVisibleItems
-                .min(by: { $0.section < $1.section })?.section,
+    private func getTopVisibleSection() -> Int? {
+        return collectionView.indexPathsForVisibleItems.min(by: { $0.section < $1.section })?.section
+    }
+    
+    private func updateYearAndMonthLabel() {
+        guard let topVisibleSection = getTopVisibleSection(),
               let sectionData = reactor?.currentState.monthlySections[topVisibleSection]
         else { return }
         
+        let newYearText = "\(sectionData.firstDayOfMonth.yearValue)년"
         let newMonthText = "\(sectionData.firstDayOfMonth.monthValue)월"
         
-        // 현재 텍스트와 다를 경우에만 업데이트
         if monthLabel.text != newMonthText {
             monthLabel.text = newMonthText
+        }
+        
+        if yearLabel.text != newYearText {
+            yearLabel.text = newYearText
         }
     }
     

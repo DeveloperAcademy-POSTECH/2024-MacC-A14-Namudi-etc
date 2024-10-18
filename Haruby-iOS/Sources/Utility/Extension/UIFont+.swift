@@ -49,6 +49,7 @@ extension UIFont {
     static let pretendardMedium_11: UIFont = HarubyIOSFontFamily.Pretendard.medium.font(size: 11)
 
     // MARK: Pretendard Regular
+    static let pretendardRegular_16: UIFont = HarubyIOSFontFamily.Pretendard.regular.font(size: 16)
     static let pretendardRegular_24: UIFont = HarubyIOSFontFamily.Pretendard.regular.font(size: 24)
     static let pretendardRegular_20: UIFont = HarubyIOSFontFamily.Pretendard.regular.font(size: 20)
     
