@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct TransactionItem {
+struct TransactionItem: Equatable {
     var id: String = UUID().uuidString
     var name: String
     var price: Int
