@@ -19,8 +19,9 @@ final class MainCoordinator: BaseCoordinator {
         navigationController.pushViewController(vc, animated: false)
     }
     
-    func showCalculatorFlow() {
-        let coordinator = CalculatorCoordinator(navigationController: navigationController)
+    func showCalculatorFlow(salaryBudget: SalaryBudget) {
+        let coordinator = CalculatorCoordinator(
+            navigationController: navigationController, salaryBudget: salaryBudget)
         coordinator.parentCoordinator = self
         addChildCoordinator(coordinator)
         coordinator.start()
@@ -40,7 +41,8 @@ final class MainCoordinator: BaseCoordinator {
         coordinator.start()
     }
     
-    func showExpenseInputFlow() {
-        // TODO: 실제 지출 및 입력 뷰 설정
+    func showExpenseInputFlow(dailyBudget: DailyBudget) {
+        // TODO: 1. 실제 지출 및 입력 뷰 설정
+        // TODO: 2. 코디네이터에서 리액터에 데이터 전달하기
     }
 }

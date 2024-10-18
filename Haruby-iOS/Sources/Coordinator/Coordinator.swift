@@ -33,6 +33,7 @@ extension Coordinator {
 }
 
 extension Coordinator {
+    /// 코디네이터의 로깅을 위한 임시 메서드
     func logCoordinatorHierarchy() {
         print("Current Coordinator: \(type(of: self))")
         print("Child Coordinators:")

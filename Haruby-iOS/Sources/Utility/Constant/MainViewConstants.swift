@@ -19,15 +19,6 @@ struct MainViewConstants {
 enum MainViewHarubyState {
     case initial, positive, negative
     
-    init(remainingAmount: Int, todayDailyBudget: DailyBudget?) {
-        if let todayDailyBudget = todayDailyBudget, todayDailyBudget.expense.total > 0 {
-            self = remainingAmount >= 0 ? .positive : .negative
-        } else {
-            self = .initial
-        }
-    }
-    
-    /// 지출이 없는지, 있다면 하루비를 초과했는지 아닌지에 따른 UI 속성 설정
     var uiProperties: (boxColor: UIColor, labelColor: UIColor, image: UIImage) {
         switch self {
         case .initial:
@@ -38,5 +29,13 @@ enum MainViewHarubyState {
             return (UIColor.Haruby.red10, UIColor.Haruby.red, .redHaruby)
         }
     }
+    
+    var title: String {
+        switch self {
+        case .initial:
+            return MainViewConstants.todayHarubyTitle
+        case .positive, .negative:
+            return MainViewConstants.remainingHarubyTitle
+        }
+    }
 }
-
