@@ -17,7 +17,10 @@ final class TransactionInputViewController: UIViewController, View {
     typealias Reactor = TransactionInputViewReactor
     
     private lazy var segmentedControl: UISegmentedControl = {
-        let control = UISegmentedControl(items: ["지출", "수입"])
+        let control = UISegmentedControl(items: [
+            TransactionType.expense.text, TransactionType.income.text
+        ])
+        control.selectedSegmentIndex = TransactionType.expense.rawValue
         return control
     }()
     
@@ -176,22 +179,30 @@ final class TransactionInputViewController: UIViewController, View {
     
     func bind(reactor: TransactionInputViewReactor) {
         detailChevron.rx.tap
-            .map { Reactor.Action.toggleDetailButton }
+            .map { Reactor.Action.detailButtonTapped }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
         
         detailButton.rx.tap
-            .map { Reactor.Action.toggleDetailButton }
+            .map { Reactor.Action.detailButtonTapped }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
         
         datePickerButton.rx.tap
-            .map { Reactor.Action.toggleDatePicker }
+            .map { Reactor.Action.datePickerTapped }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
         
         addDetailTransactionButton.rx.tap
-            .map { Reactor.Action.tapAddDetailTransactionButton }
+            .map { Reactor.Action.addingTransactionButtonTapped }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        segmentedControl.rx.selectedSegmentIndex
+            .map {
+                let newType = TransactionType(rawValue: $0) ?? .expense
+                return Reactor.Action.transactionTypeButtonTapped(newType)
+            }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
 
@@ -226,14 +237,18 @@ final class TransactionInputViewController: UIViewController, View {
             .distinctUntilChanged()
             .subscribe(onNext: { [weak self] newType in
                 guard let self = self else { return }
-                self.amountTextField.placeholder = "총 \(newType) 금액을 입력하세요"
-                self.addDetailTransactionButton.setTitle("+ \(newType) 추가", for: .normal)
+                self.amountTextField.placeholder = "총 \(newType.text) 금액을 입력하세요"
+                self.addDetailTransactionButton.setTitle("+ \(newType.text) 추가", for: .normal)
                 self.detailTransactionTableView.reloadData()
             })
             .disposed(by: disposeBag)
         
         reactor.state
-            .map { $0.transactionType == "지출" ? $0.detailExpense : $0.detailIncome }
+            .map {
+                $0.transactionType == .expense 
+                ? $0.dailyBudget.expense.transactionItems
+                : $0.dailyBudget.income.transactionItems
+            }
             .distinctUntilChanged()
             .subscribe(onNext: { [weak self] transactions in
                 guard let self = self else { return }
@@ -251,22 +266,21 @@ final class TransactionInputViewController: UIViewController, View {
 
 extension TransactionInputViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        guard let reactor = reactor else { return 1 }
+        guard let currentState = reactor?.currentState else { return 0 }
         
-        if reactor.currentState.transactionType == "지출" {
-            
-            return reactor.currentState.detailExpense.count == 0 ? 1 : reactor.currentState.detailExpense.count
+        if currentState.transactionType == .expense {
+            return currentState.dailyBudget.expense.transactionItems.count
         } else {
-            return reactor.currentState.detailIncome.count == 0 ? 1 : reactor.currentState.detailIncome.count
+            return currentState.dailyBudget.income.transactionItems.count
         }
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: DetailInputCell.cellId, for: indexPath) as? DetailInputCell else { return UITableViewCell() }
-        let transactionType = reactor?.currentState.transactionType ?? "지출"
+        let transactionType = reactor?.currentState.transactionType ?? .expense
         
-        cell.detailNameTextField.textField.placeholder = "\(transactionType) 이름"
-        cell.detailAmountTextField.textField.placeholder = "\(transactionType) 금액"
+        cell.detailNameTextField.textField.placeholder = "\(transactionType.text) 이름"
+        cell.detailAmountTextField.textField.placeholder = "\(transactionType.text) 금액"
         
         return cell
     }
@@ -302,18 +316,18 @@ extension TransactionInputViewController {
     }
     
     private func setupSegmentedControl() {
-        segmentedControl.selectedSegmentIndex = 0
-        segmentedControl.addTarget(self, action: #selector(segmentedControlChanged), for: .valueChanged)
+//        segmentedControl.selectedSegmentIndex = 0
+//        segmentedControl.addTarget(self, action: #selector(segmentedControlChanged), for: .valueChanged)
     }
     
     @objc private func dismissKeyboard() {
         view.endEditing(true)
     }
     
-    @objc private func segmentedControlChanged() {
-        let newType = segmentedControl.selectedSegmentIndex == 0 ? "지출" : "수입"
-        reactor?.action.onNext(.selectTransactionType(newType))
-        
-        self.detailTransactionTableView.reloadData()
-    }
+//    @objc private func segmentedControlChanged() {
+//        let newType = segmentedControl.selectedSegmentIndex == 0 ? TransactionType.expense.text : TransactionType.income.text
+//        reactor?.action.onNext(.transactionTypeButtonTapped(newType))
+//        
+//        self.detailTransactionTableView.reloadData()
+//    }
 }
