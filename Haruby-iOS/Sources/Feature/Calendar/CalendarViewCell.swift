@@ -183,6 +183,14 @@ final class CalendarViewCell: UICollectionViewCell, View {
                 self.updateCornerRadius(state.highlightType)
             }
             .disposed(by: disposeBag)
+        
+        reactor.state.map{ $0.navigateToNextView }
+            .subscribe(onNext: { navigateToNextView in
+                if navigateToNextView {
+                    reactor.stateSubject.onNext(reactor.currentState)
+                }
+            })
+            .disposed(by: disposeBag)
     }
 }
 

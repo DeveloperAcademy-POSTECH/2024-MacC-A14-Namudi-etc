@@ -315,6 +315,7 @@ final class CalendarViewController: UIViewController, View, CoordinatorCompatibl
         reactor.state.map { !$0.showWarning }
             .bind(to: warningLabel.rx.isHidden)
             .disposed(by: disposeBag)
+        
     }
     
     private func bindAction(reactor: CalendarViewReactor) {
@@ -343,6 +344,28 @@ extension CalendarViewController {
                 
                 let reactor = CalendarViewCellReactor(dailyBudget: item, salaryStartDate: salaryStartDate, salaryEndDate: salaryEndDate, defaultHaruby: defaultHaruby, indexPath: indexPath)
                 cell.reactor = reactor
+                
+                reactor.stateSubject.map{ ($0.navigateToNextView, $0.dayType, $0.dailyBudget) }
+                    .subscribe(onNext: { [weak self] navigateToNextView, dayType, dailyBudget in
+                        if navigateToNextView {
+                            switch dayType {
+                            case .future:
+                                let vc = HarubyEditViewController()
+                                vc.reactor = HarubyEditViewReactor()
+                                self?.navigationController?.pushViewController(vc, animated: true)
+                            case .today:
+                                let vc = HarubyOrTransactionSelectorViewController()
+                                vc.reactor = HarubyOrTransactionSelectorViewReactor()
+                                self?.navigationController?.pushViewController(vc, animated: true)
+                            case .past:
+                                break
+                            case .none:
+                                break
+                            }
+                            
+                            
+                        }
+                    }).disposed(by: cell.disposeBag)
                 
                 return cell
             }
