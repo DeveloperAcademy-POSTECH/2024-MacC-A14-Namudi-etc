@@ -7,7 +7,7 @@
 
 import UIKit
 
-class InputTextField: UIView {
+final class BackgroundTextField: UIView {
     lazy var containerView: UIView = {
         let view = UIView()
         view.layer.cornerRadius = 7
