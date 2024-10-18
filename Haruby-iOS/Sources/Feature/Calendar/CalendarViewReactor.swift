@@ -48,7 +48,6 @@ final class CalendarViewReactor: Reactor {
                 Observable.just(Mutation.updateMonthSections(self.createMonthSections()))
             }
             
-            // let updateSections = Observable.just(Mutation.updateMonthSections(self.createMonthSections()))
 
             let checkExpense = Observable.just(Mutation.checkExpense)
             return Observable.concat([setSalaryBudget, updateSections, checkExpense])

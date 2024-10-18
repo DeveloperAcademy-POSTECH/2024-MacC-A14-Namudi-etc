@@ -70,7 +70,7 @@ final class CalendarViewCell: UICollectionViewCell, View {
         return view
     }()
     
-    lazy private var topLine: UIView = {
+    var topLine: UIView = {
         let view = UIView()
         view.backgroundColor = .Haruby.textBlack10
         view.isHidden = true
@@ -154,56 +154,36 @@ final class CalendarViewCell: UICollectionViewCell, View {
     
     // MARK: - Binding
     func bind(reactor: CalendarViewCellReactor) {
-        // Action
+        bindAction(reactor: reactor)
+        bindState(reactor: reactor)
+    }
+    
+    private func bindAction(reactor: CalendarViewCellReactor) {
         tapGesture.rx.event
                     .map{ _ in Reactor.Action.cellTapped }
                     .bind(to: reactor.action)
                     .disposed(by: disposeBag)
+    }
+    
+    private func bindState(reactor: CalendarViewCellReactor) {
         
         
-        // State
-        reactor.state.map{ $0.viewState.dayNumber }
-                    .bind(to: numberLabel.rx.text)
-                    .disposed(by: disposeBag)
-        
-        reactor.state.map{ $0.viewState.harubyNumber }
-                    .bind(to: harubyLabel.rx.text)
-                    .disposed(by: disposeBag)
-        
-        reactor.state.map{ $0.viewState.isPastHaruby ? .Haruby.textBlack40 : .Haruby.main }
-                    .bind(to: harubyLabel.rx.textColor)
-                    .disposed(by: disposeBag)
-        
-        
-        reactor.state.map{ $0.viewState.showHiglight ? .Haruby.whiteDeep : .clear }
-                    .bind(to: highlightView.rx.backgroundColor)
-                    .disposed(by: disposeBag)
-        
-        reactor.state.map{ $0.viewState.showTodayIndicator }
-                    .bind{ isToday in
-                        self.numberLabel.textColor = isToday ? .Haruby.white : .Haruby.textBlack
-                        self.todayIndicator.backgroundColor = isToday ? .Haruby.main : .clear
-                    }.disposed(by: disposeBag)
-        
-        reactor.state.map{ $0.viewState.isVisible }
-                    .bind{ isVisible in
-                        self.numberLabel.isHidden = !isVisible
-                        self.topLine.isHidden = !isVisible
-                    }.disposed(by: disposeBag)
-        
-        reactor.state.map{ !$0.viewState.showBlueDot }
-                    .bind(to: blueDot.rx.isHidden )
-                    .disposed(by: disposeBag)
-        
-        reactor.state.map{ !$0.viewState.showRedXMark }
-                    .bind(to: redXMark.rx.isHidden )
-                    .disposed(by: disposeBag)
-        
-        reactor.state.map{ $0.viewState.highlightType }
-                    .bind{ highlightType in
-                        self.updateCornerRadius(highlightType)
-                    }
-                    .disposed(by: disposeBag)
+        reactor.state.map { $0.viewState }
+            .subscribe { [unowned self] state in
+                guard let state = state.element else { return }
+                self.numberLabel.text = state.dayNumber
+                self.harubyLabel.text = state.harubyNumber
+                self.harubyLabel.textColor = state.isPastHaruby ? .Haruby.textBlack40 : .Haruby.main
+                self.highlightView.backgroundColor = state.showHiglight ? .Haruby.whiteDeep : .clear
+                self.numberLabel.textColor = state.showTodayIndicator ? .Haruby.white : .Haruby.textBlack
+                self.todayIndicator.backgroundColor = state.showTodayIndicator ? .Haruby.main : .clear
+                self.numberLabel.isHidden = !state.isVisible
+                self.topLine.isHidden = !state.isVisible
+                self.blueDot.isHidden = !state.showBlueDot
+                self.redXMark.isHidden = !state.showRedXMark
+                self.updateCornerRadius(state.highlightType)
+            }
+            .disposed(by: disposeBag)
     }
 }
 
@@ -214,11 +194,9 @@ extension CalendarViewCell {
 
         switch highlightType {
         case .leftRound:
-            highlightView.layer.cornerRadius = cornerRadius
-            highlightView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMinXMaxYCorner]
+            highlightView.roundCorners(cornerRadius: cornerRadius, maskedCorners: [.topLeft, .bottomLeft])
         case .rightRound:
-            highlightView.layer.cornerRadius = cornerRadius
-            highlightView.layer.maskedCorners = [.layerMaxXMinYCorner, .layerMaxXMaxYCorner]
+            highlightView.roundCorners(cornerRadius: cornerRadius, maskedCorners: [.topRight, .bottomRight])
         case .normal:
             highlightView.layer.cornerRadius = 0
         }

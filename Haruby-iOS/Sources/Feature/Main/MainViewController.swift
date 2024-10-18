@@ -18,10 +18,17 @@ final class MainViewController: UIViewController, View, CoordinatorCompatible {
     
     // MARK: - UI Components
     private lazy var headerView = MainHeaderView()
+    
+    let segmentedControl: UISegmentedControl = {
+        let control = UISegmentedControl(items: ["지출", "수입"])
+        return control
+    }()
+    
     private lazy var receiptView: MainReceiptView = {
         let view = MainReceiptView(frame: .zero)
         return view
     }()
+    
     private lazy var footerView = MainFooterView()
     
     private lazy var backgroundRectangle: UIView = {
@@ -72,6 +79,7 @@ final class MainViewController: UIViewController, View, CoordinatorCompatible {
     }
     
     private func setupConstraints() {
+        
         backgroundRectangle.snp.makeConstraints { make in
             make.top.equalToSuperview()
             make.width.equalToSuperview()
@@ -110,6 +118,7 @@ final class MainViewController: UIViewController, View, CoordinatorCompatible {
     }
     
     private func bindAction(reactor: MainViewReactor) {
+        
         footerView.navigateCalculatorButton.rx.tap
             .subscribe(onNext: { [weak self] in
                 let salaryBudget = reactor.currentState.salaryBudget!
