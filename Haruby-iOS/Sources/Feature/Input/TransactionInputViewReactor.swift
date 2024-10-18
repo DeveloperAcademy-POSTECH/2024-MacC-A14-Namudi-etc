@@ -9,7 +9,7 @@ import UIKit
 import ReactorKit
 import RxSwift
 
-final class InputViewReactor: Reactor {
+final class TransactionInputViewReactor: Reactor {
     enum Action {
         case toggleDetailButton
         case toggleDatePicker

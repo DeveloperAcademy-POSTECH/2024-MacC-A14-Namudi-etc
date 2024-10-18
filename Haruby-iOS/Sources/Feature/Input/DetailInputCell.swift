@@ -7,31 +7,25 @@
 
 import UIKit
 
-class DetailInputCell: UITableViewCell {
+final class DetailInputCell: UITableViewCell {
     
     static let cellId = "DetailInputCell"
     
-    var transactionType: String = "지출" {
-        didSet {
-            detailNameTextField.textField.placeholder = "\(transactionType) 이름"
-            detailAmountTextField.textField.placeholder = "\(transactionType) 금액"
-        }
-    }
     
-    lazy var detailNameTextField: InputTextField = {
-        let textfield = InputTextField()
-        textfield.textField.placeholder = "\(transactionType) 이름"
+    lazy var detailNameTextField: BackgroundTextField = {
+        let textfield = BackgroundTextField()
+        textfield.textField.placeholder = "지출 이름"
         return textfield
     }()
     
-    lazy var detailAmountTextField: InputTextField = {
-        let textfield = InputTextField()
-        textfield.textField.placeholder = "\(transactionType) 금액"
+    lazy var detailAmountTextField: BackgroundTextField = {
+        let textfield = BackgroundTextField()
+        textfield.textField.placeholder = "지출 금액"
         textfield.textField.keyboardType = .numberPad
         return textfield
     }()
     
-    private lazy var detailTextFieldStackView: UIStackView = {
+    lazy var detailTextFieldStackView: UIStackView = {
         let view = UIStackView(arrangedSubviews: [self.detailNameTextField, self.detailAmountTextField])
         view.axis = .horizontal
         view.spacing = 8
@@ -39,14 +33,14 @@ class DetailInputCell: UITableViewCell {
         return view
     }()
     
-    let deleteButtonBackground: UIView = {
+    lazy var deleteButtonBackground: UIView = {
         let view = UIView()
         view.backgroundColor = .Haruby.textBright60
         view.layer.cornerRadius = 13
         return view
     }()
     
-    let deleteButton: UIButton = {
+    lazy var deleteButton: UIButton = {
         let button = UIButton()
         button.setImage(UIImage(systemName: "minus"), for: .normal)
         button.tintColor = .Haruby.white

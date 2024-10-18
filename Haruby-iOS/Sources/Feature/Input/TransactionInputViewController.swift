@@ -11,12 +11,12 @@ import RxSwift
 import RxCocoa
 import SnapKit
 
-class InputViewController: UIViewController, View {
+final class TransactionInputViewController: UIViewController, View {
     // MARK: - Properties
     var disposeBag = DisposeBag()
-    typealias Reactor = InputViewReactor
+    typealias Reactor = TransactionInputViewReactor
     
-    let segmentedControl: UISegmentedControl = {
+    private lazy var segmentedControl: UISegmentedControl = {
         let control = UISegmentedControl(items: ["지출", "수입"])
         return control
     }()
@@ -174,7 +174,7 @@ class InputViewController: UIViewController, View {
         }
     }
     
-    func bind(reactor: InputViewReactor) {
+    func bind(reactor: TransactionInputViewReactor) {
         detailChevron.rx.tap
             .map { Reactor.Action.toggleDetailButton }
             .bind(to: reactor.action)
@@ -249,7 +249,7 @@ class InputViewController: UIViewController, View {
     }
 }
 
-extension InputViewController: UITableViewDelegate, UITableViewDataSource {
+extension TransactionInputViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         guard let reactor = reactor else { return 1 }
         
@@ -272,9 +272,9 @@ extension InputViewController: UITableViewDelegate, UITableViewDataSource {
     }
 }
 
-extension InputViewController {
+extension TransactionInputViewController {
     private func presentSheet() {
-        let sheetViewController = DatePickerSheet()
+        let sheetViewController = DatePickerView()
         sheetViewController.modalPresentationStyle = .pageSheet
         
         if let sheet = sheetViewController.sheetPresentationController {

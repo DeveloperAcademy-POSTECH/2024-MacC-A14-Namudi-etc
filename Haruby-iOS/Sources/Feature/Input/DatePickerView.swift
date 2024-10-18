@@ -8,8 +8,8 @@
 import UIKit
 import SnapKit
 
-class DatePickerSheet: UIViewController, UISheetPresentationControllerDelegate {
-    private lazy var datePicker: UIDatePicker = {
+final class DatePickerView: UIViewController {
+    lazy var datePicker: UIDatePicker = {
         let picker = UIDatePicker()
         picker.datePickerMode = .date
         picker.preferredDatePickerStyle = .inline
@@ -21,13 +21,6 @@ class DatePickerSheet: UIViewController, UISheetPresentationControllerDelegate {
         super.viewDidLoad()
         
         setupView()
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        if let sheet = self.sheetPresentationController {
-            sheet.delegate = self
-        }
     }
     
     private func setupView() {
@@ -46,10 +39,6 @@ class DatePickerSheet: UIViewController, UISheetPresentationControllerDelegate {
             make.leading.trailing.equalToSuperview().inset(15)
             make.center.equalToSuperview()
         }
-    }
-    
-    func presentationControllerDidAttemptToDismiss(_ presentationController: UIPresentationController) {
-        self.dismiss(animated: true, completion: nil)
     }
 }
 
