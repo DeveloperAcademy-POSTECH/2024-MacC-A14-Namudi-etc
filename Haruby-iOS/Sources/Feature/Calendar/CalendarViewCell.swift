@@ -183,19 +183,6 @@ final class CalendarViewCell: UICollectionViewCell, View {
                 self.updateCornerRadius(state.highlightType)
             }
             .disposed(by: disposeBag)
-        
-        reactor.parentStateObservable.map{ $0.monthlySections[$0.focusSection].firstDayOfMonth.monthValue }
-            .subscribe { monthValue in
-                if !reactor.currentState.viewState.showTodayIndicator {
-                    UIView.animate(withDuration: 0.1) {
-                        if reactor.currentState.dailyBudget?.date.monthValue == monthValue {
-                            self.numberLabel.textColor = .Haruby.textBlack
-                        } else {
-                            self.numberLabel.textColor = .Haruby.textBlack10
-                        }
-                    }
-                }
-            }.disposed(by: disposeBag)
     }
 }
 

@@ -25,6 +25,15 @@ final class CalendarViewController: UIViewController, View, CoordinatorCompatibl
     private let horizontalPadding: CGFloat = 16
     
     // MARK: - UI Component
+    private lazy var gradientView: CalendarGradientView = {
+        
+        let view = CalendarGradientView()
+        view.backgroundColor = .clear
+        view.isUserInteractionEnabled = false
+        
+        return view
+    }()
+    
     private lazy var yearLabel: UILabel = {
         let label = UILabel()
         label.text = "2024년"
@@ -185,6 +194,11 @@ final class CalendarViewController: UIViewController, View, CoordinatorCompatibl
         return rootView
     }()
     
+    deinit {
+        print("CalendarViewController deinit")
+        didFinish?()
+    }
+    
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -205,15 +219,21 @@ final class CalendarViewController: UIViewController, View, CoordinatorCompatibl
     }
     
     private func addSubviews() {
+        
         view.addSubview(yearLabel)
         view.addSubview(monthLabel)
         view.addSubview(remainTotalHarubyBox)
         view.addSubview(topRoundedContainer)
+        view.addSubview(gradientView)
         view.addSubview(warningLabel)
     }
     
     
     private func setupConstraints() {
+        gradientView.snp.makeConstraints { make in
+            make.edges.equalTo(collectionView)
+        }
+        
         yearLabel.snp.makeConstraints { make in
             make.height.equalTo(19)
             make.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(8)
@@ -276,10 +296,12 @@ final class CalendarViewController: UIViewController, View, CoordinatorCompatibl
     
     private func bindState(reactor: CalendarViewReactor) {
         reactor.state.map { "\($0.yearNumber)년" }
+            .distinctUntilChanged()
             .bind(to: yearLabel.rx.text)
             .disposed(by: disposeBag)
         
         reactor.state.map { "\($0.monthNumber)월" }
+            .distinctUntilChanged()
             .bind(to: monthLabel.rx.text)
             .disposed(by: disposeBag)
         
@@ -296,7 +318,7 @@ final class CalendarViewController: UIViewController, View, CoordinatorCompatibl
         
         collectionView.rx.didScroll
             .map{ [unowned self] in
-                self.getCenterVisibleSection() ?? 0
+                self.getTopVisibleSection() ?? 0
             }.distinctUntilChanged()
             .map{ Reactor.Action.scrollCalendar($0) }
             .bind(to: reactor.action)
@@ -311,12 +333,12 @@ extension CalendarViewController {
             configureCell: { [unowned self] dataSource, collectionView, indexPath, item in
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: self.cellId, for: indexPath) as! CalendarViewCell
                 
-
+                
                 let salaryStartDate = (self.reactor?.currentState.salaryBudget.startDate)!
                 let salaryEndDate = (self.reactor?.currentState.salaryBudget.endDate)!
                 let defaultHaruby = (self.reactor?.currentState.salaryBudget.defaultHaruby)!
                 
-                let reactor = CalendarViewCellReactor(dailyBudget: item, salaryStartDate: salaryStartDate, salaryEndDate: salaryEndDate, defaultHaruby: defaultHaruby, indexPath: indexPath, parentStateObservable: Observable.just(self.reactor!.currentState))
+                let reactor = CalendarViewCellReactor(dailyBudget: item, salaryStartDate: salaryStartDate, salaryEndDate: salaryEndDate, defaultHaruby: defaultHaruby, indexPath: indexPath)
                 cell.reactor = reactor
                 
                 return cell
@@ -325,25 +347,9 @@ extension CalendarViewController {
     }
     
     // CollectionView에서 맨위에 보이는 Section의 인덱스를 전달하는 메서드
-//    private func getTopVisibleSection() -> Int? {
-//        return collectionView.indexPathsForVisibleItems.min(by: { $0.section < $1.section })?.section
-//    }
-    private func getCenterVisibleSection() -> Int? {
-        // CollectionView의 중앙 좌표 구하기
-        let centerPoint = CGPoint(x: collectionView.bounds.midX, y: collectionView.bounds.midY - 200)
-        
-        // 중앙 좌표에 위치한 셀의 indexPath 찾기
-        guard let centerIndexPath = collectionView.indexPathForItem(at: centerPoint) else {
-            return nil
-        }
-        
-        // 해당 셀의 섹션 리턴
-        return centerIndexPath.section
+    private func getTopVisibleSection() -> Int? {
+        return collectionView.indexPathsForVisibleItems.min(by: { $0.section < $1.section })?.section
     }
     
-    deinit {
-        print("CalendarViewController deinit")
-        didFinish?()
-    }
+    
 }
-
