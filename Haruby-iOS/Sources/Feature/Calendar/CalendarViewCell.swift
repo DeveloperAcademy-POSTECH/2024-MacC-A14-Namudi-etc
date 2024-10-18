@@ -70,7 +70,7 @@ final class CalendarViewCell: UICollectionViewCell, View {
         return view
     }()
     
-    var topLine: UIView = {
+    lazy private var topLine: UIView = {
         let view = UIView()
         view.backgroundColor = .Haruby.textBlack10
         view.isHidden = true
@@ -167,7 +167,6 @@ final class CalendarViewCell: UICollectionViewCell, View {
     
     private func bindState(reactor: CalendarViewCellReactor) {
         
-        
         reactor.state.map { $0.viewState }
             .subscribe { [unowned self] state in
                 guard let state = state.element else { return }
@@ -184,6 +183,19 @@ final class CalendarViewCell: UICollectionViewCell, View {
                 self.updateCornerRadius(state.highlightType)
             }
             .disposed(by: disposeBag)
+        
+        reactor.parentStateObservable.map{ $0.monthlySections[$0.focusSection].firstDayOfMonth.monthValue }
+            .subscribe { monthValue in
+                if !reactor.currentState.viewState.showTodayIndicator {
+                    UIView.animate(withDuration: 0.1) {
+                        if reactor.currentState.dailyBudget?.date.monthValue == monthValue {
+                            self.numberLabel.textColor = .Haruby.textBlack
+                        } else {
+                            self.numberLabel.textColor = .Haruby.textBlack10
+                        }
+                    }
+                }
+            }.disposed(by: disposeBag)
     }
 }
 
