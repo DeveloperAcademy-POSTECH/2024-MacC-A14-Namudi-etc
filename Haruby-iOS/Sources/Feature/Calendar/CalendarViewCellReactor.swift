@@ -21,6 +21,8 @@ final class CalendarViewCellReactor: Reactor {
     
     struct State {
         var currentDate: Date = .now
+        
+        var dayType: DayType
         var dailyBudget: DailyBudget?
         
         var viewState: ViewState
@@ -43,54 +45,47 @@ final class CalendarViewCellReactor: Reactor {
     
     init(dailyBudget: DailyBudget, salaryStartDate: Date, salaryEndDate: Date, defaultHaruby: Int, indexPath: IndexPath) {
         
-        let currentDay = Date()
         let calendar = Calendar.current
+        let currentDay = calendar.startOfDay(for: Date())
         
+        // 날짜 관련 값 계산
         let dayNumber = dailyBudget.date.dayValue
         let monthNumber = dailyBudget.date.monthValue
         let lastDay = calendar.range(of: .day, in: .month, for: dailyBudget.date)?.last
+        
+        // 상태 계산 함수 호출
+        let dayType = Self.determineDayType(for: dailyBudget.date,
+                                            salaryStartDate: salaryStartDate,
+                                            salaryEndDate: salaryEndDate,
+                                            currentDay: currentDay,
+                                            calendar: calendar)
 
-        let isInSalaryPeriod = dailyBudget.date >= salaryStartDate && dailyBudget.date <= salaryEndDate
-        let isPastDay = dailyBudget.date < currentDay
-        let isExpenseExist = !dailyBudget.expense.transactionItems.isEmpty
+        let harubyNumber = Self.calculateHarubyNumber(for: dailyBudget,
+                                                      isInSalaryPeriod: dailyBudget.date >= salaryStartDate && dailyBudget.date <= salaryEndDate,
+                                                      currentDate: currentDay,
+                                                      isPastDay: dayType == .past,
+                                                      defaultHaruby: defaultHaruby,
+                                                      calendar: calendar)
         
-        var harubyNumber: String?
-        
-        if isInSalaryPeriod {
-            harubyNumber = isPastDay ? (isExpenseExist ? dailyBudget.expense.total.decimal : nil) : (dailyBudget.haruby?.decimal ?? defaultHaruby.decimal)
-        }
-        
-        var highlightType: CellHighlightType = .normal
-        
-        if dailyBudget.date == salaryStartDate {
-            highlightType = .leftRound
-        } else if dailyBudget.date == salaryEndDate {
-            highlightType = .rightRound
-        } else if dayNumber == 1 {
-            highlightType = .leftRound
-        } else if dayNumber == lastDay {
-            highlightType = .rightRound
-        } else if indexPath.item % 7 == 0 {
-            highlightType = .leftRound
-        } else if indexPath.item % 7 == 6 {
-            highlightType = .rightRound
-        } else {
-            highlightType = .normal
-        }
+        let highlightType = Self.determineHighlightType(dayNumber: dayNumber,
+                                                        lastDay: lastDay,
+                                                        salaryStartDate: salaryStartDate,
+                                                        salaryEndDate: salaryEndDate,
+                                                        indexPath: indexPath)
         
         let initialViewState = ViewState(
             dayNumber: dayNumber == 1 ? "\(monthNumber)/\(dayNumber)" : "\(dayNumber)",
             isVisible: dailyBudget.date != Date.distantPast,
-            showTodayIndicator: calendar.isDate(dailyBudget.date, inSameDayAs: currentDay),
-            showHiglight: isInSalaryPeriod,
+            showTodayIndicator: dayType == .today,
+            showHiglight: dayType != .none,
             showBlueDot: dailyBudget.haruby != nil,
-            showRedXMark: isInSalaryPeriod && isPastDay && !isExpenseExist,
+            showRedXMark: (dayType == .past || dayType == .today) && dailyBudget.expense.transactionItems.isEmpty,
             harubyNumber: harubyNumber,
-            isPastHaruby: isPastDay,
+            isPastHaruby: dayType == .past,
             highlightType: highlightType
         )
         
-        self.initialState = State(dailyBudget: dailyBudget, viewState: initialViewState)
+        self.initialState = State(dayType: dayType, dailyBudget: dailyBudget, viewState: initialViewState)
     }
     
     func mutate(action: Action) -> Observable<Mutation> {
@@ -98,6 +93,7 @@ final class CalendarViewCellReactor: Reactor {
         case .viewDidLoad:
             return .empty()
         case .cellTapped:
+            print(currentState.dayType)
             return .empty()
         }
     }
@@ -107,6 +103,48 @@ final class CalendarViewCellReactor: Reactor {
     }
     
     
+}
+
+extension CalendarViewCellReactor {
+    // DayType을 결정하는 함수
+    private static func determineDayType(for date: Date, salaryStartDate: Date, salaryEndDate: Date, currentDay: Date, calendar: Calendar) -> DayType {
+        if date >= salaryStartDate && date <= salaryEndDate {
+            if date < currentDay {
+                return .past
+            } else if calendar.isDate(date, inSameDayAs: currentDay) {
+                return .today
+            } else {
+                return .future
+            }
+        }
+        return .none
+    }
+
+    // HarubyNumber 계산 함수
+    private static func calculateHarubyNumber(for dailyBudget: DailyBudget, isInSalaryPeriod: Bool, currentDate: Date, isPastDay: Bool, defaultHaruby: Int, calendar: Calendar) -> String? {
+        guard isInSalaryPeriod else {
+            return nil
+        }
+        
+        if isPastDay || calendar.isDate(dailyBudget.date, inSameDayAs: currentDate) {
+            // 과거인 경우, 지출이 있으면 지출 총액을 표시, 없으면 nil
+            return !dailyBudget.expense.transactionItems.isEmpty ? dailyBudget.expense.total.decimal : nil
+        } else {
+            // 미래 또는 오늘인 경우, 하루비가 있으면 그 값, 없으면 기본 하루비
+            return dailyBudget.haruby?.decimal ?? defaultHaruby.decimal
+        }
+    }
+
+
+    private static func determineHighlightType(dayNumber: Int, lastDay: Int?, salaryStartDate: Date, salaryEndDate: Date, indexPath: IndexPath) -> CellHighlightType {
+        if dayNumber == 1 || indexPath.item % 7 == 0 || salaryStartDate.dayValue == dayNumber {
+            return .leftRound
+        } else if lastDay == dayNumber || indexPath.item % 7 == 6 || salaryEndDate.dayValue == dayNumber {
+            return .rightRound
+        } else {
+            return .normal
+        }
+    }
 }
 
 enum CellHighlightType {

@@ -36,7 +36,6 @@ final class CalendarViewController: UIViewController, View, CoordinatorCompatibl
     
     private lazy var yearLabel: UILabel = {
         let label = UILabel()
-        label.text = "2024년"
         label.font = .pretendardRegular_16
         label.textColor = .Haruby.white
         
@@ -46,7 +45,6 @@ final class CalendarViewController: UIViewController, View, CoordinatorCompatibl
     
     private lazy var monthLabel: UILabel = {
         let label = UILabel()
-        label.text = "9월"
         label.font = .pretendardSemibold_36
         label.textColor = .Haruby.white
         
@@ -303,6 +301,11 @@ final class CalendarViewController: UIViewController, View, CoordinatorCompatibl
         reactor.state.map { "\($0.monthNumber)월" }
             .distinctUntilChanged()
             .bind(to: monthLabel.rx.text)
+            .disposed(by: disposeBag)
+        
+        reactor.state.map { $0.salaryBudget.balance.decimalWithWon }
+            .distinctUntilChanged()
+            .bind(to: totalHarubyValueLabel.rx.text)
             .disposed(by: disposeBag)
         
         reactor.state.map { $0.monthlySections }
