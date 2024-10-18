@@ -14,18 +14,24 @@ import RxSwift
 final class CalendarViewReactor: Reactor {
     enum Action {
         case viewDidLoad
+        case scrollCalendar(Int)
     }
     
     enum Mutation {
         case setSalaryBudget(SalaryBudget)
         case updateMonthSections([MonthlySection])
+        case setFocusedSection(Int)
         case checkExpense
     }
     
     struct State {
         var salaryBudget: SalaryBudget = SalaryBudget(startDate: Date(), endDate: Date(), fixedIncome: 0, fixedExpense: [], balance: 0, defaultHaruby: 0, dailyBudgets: [])
-        var showWarning: Bool = false
         var monthlySections: [MonthlySection] = []
+        
+        var showWarning: Bool = false
+        var yearNumber: Int = 0
+        var monthNumber: Int = 0
+        var focusSection: Int = 0
     }
     
     let initialState: State = .init()
@@ -42,15 +48,14 @@ final class CalendarViewReactor: Reactor {
             let setSalaryBudget = salaryBudgetRepository.fetch().map { salaryBudget in
                 Mutation.setSalaryBudget(salaryBudget.first!)
             }
-
             // 상태가 업데이트된 후 createMonthSections 실행
             let updateSections = setSalaryBudget.flatMap { _ in
                 Observable.just(Mutation.updateMonthSections(self.createMonthSections()))
             }
-            
-
             let checkExpense = Observable.just(Mutation.checkExpense)
             return Observable.concat([setSalaryBudget, updateSections, checkExpense])
+        case .scrollCalendar(let sectionIndex):
+            return Observable.just(Mutation.setFocusedSection(sectionIndex))
         }
     }
     
@@ -61,11 +66,17 @@ final class CalendarViewReactor: Reactor {
             newState.salaryBudget = salaryBudget
         case .updateMonthSections(let monthlySections):
             newState.monthlySections = monthlySections
+            newState.yearNumber = monthlySections.first!.firstDayOfMonth.yearValue
+            newState.monthNumber = monthlySections.first!.firstDayOfMonth.monthValue
         case .checkExpense:
             let hasEmptyTransactionItems = state.salaryBudget.dailyBudgets.contains { dailyBudget in
                 dailyBudget.expense.transactionItems.isEmpty
             }
             newState.showWarning = hasEmptyTransactionItems
+        case .setFocusedSection(let sectionIndex):
+            newState.focusSection = sectionIndex
+            newState.monthNumber = currentState.monthlySections[sectionIndex].firstDayOfMonth.monthValue
+            newState.yearNumber = currentState.monthlySections[sectionIndex].firstDayOfMonth.yearValue
         }
         return newState
     }
@@ -83,7 +94,6 @@ extension CalendarViewReactor {
             guard let monthDate = calendar.date(byAdding: .month, value: monthOffset, to: salaryStartDate) else {
                 fatalError("Failed to create date")
             }
-            // 9월 1일부터
             let days = generateDaysForMonth(monthDate)
             return MonthlySection(firstDayOfMonth: monthDate, items: days)
         }
@@ -100,8 +110,6 @@ extension CalendarViewReactor {
         
         let salaryStartDate = self.currentState.salaryBudget.startDate
         let salaryEndDate = self.currentState.salaryBudget.endDate
-        
-        //print(self.currentState.salaryBudget)
         
         
         var dailyBudgets: [DailyBudget] = []

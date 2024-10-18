@@ -275,6 +275,14 @@ final class CalendarViewController: UIViewController, View, CoordinatorCompatibl
     }
     
     private func bindState(reactor: CalendarViewReactor) {
+        reactor.state.map { "\($0.yearNumber)년" }
+            .bind(to: yearLabel.rx.text)
+            .disposed(by: disposeBag)
+        
+        reactor.state.map { "\($0.monthNumber)월" }
+            .bind(to: monthLabel.rx.text)
+            .disposed(by: disposeBag)
+        
         reactor.state.map { $0.monthlySections }
             .bind(to: collectionView.rx.items(dataSource: createDataSource()))
             .disposed(by: disposeBag)
@@ -285,25 +293,30 @@ final class CalendarViewController: UIViewController, View, CoordinatorCompatibl
     }
     
     private func bindAction(reactor: CalendarViewReactor) {
+        
         collectionView.rx.didScroll
-            .subscribe(onNext: { [weak self] in
-                self?.updateYearAndMonthLabel()
-            })
+            .map{ [unowned self] in
+                self.getCenterVisibleSection() ?? 0
+            }.distinctUntilChanged()
+            .map{ Reactor.Action.scrollCalendar($0) }
+            .bind(to: reactor.action)
             .disposed(by: disposeBag)
     }
-    
-    
+}
+
+extension CalendarViewController {
     // MARK: - Private Methods
     private func createDataSource() -> RxCollectionViewSectionedReloadDataSource<MonthlySection> {
         return RxCollectionViewSectionedReloadDataSource<MonthlySection>(
             configureCell: { [unowned self] dataSource, collectionView, indexPath, item in
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: self.cellId, for: indexPath) as! CalendarViewCell
                 
+
                 let salaryStartDate = (self.reactor?.currentState.salaryBudget.startDate)!
                 let salaryEndDate = (self.reactor?.currentState.salaryBudget.endDate)!
                 let defaultHaruby = (self.reactor?.currentState.salaryBudget.defaultHaruby)!
                 
-                let reactor = CalendarViewCellReactor(dailyBudget: item, salaryStartDate: salaryStartDate, salaryEndDate: salaryEndDate, defaultHaruby: defaultHaruby, indexPath: indexPath)
+                let reactor = CalendarViewCellReactor(dailyBudget: item, salaryStartDate: salaryStartDate, salaryEndDate: salaryEndDate, defaultHaruby: defaultHaruby, indexPath: indexPath, parentStateObservable: Observable.just(self.reactor!.currentState))
                 cell.reactor = reactor
                 
                 return cell
@@ -311,25 +324,21 @@ final class CalendarViewController: UIViewController, View, CoordinatorCompatibl
         )
     }
     
-    private func getTopVisibleSection() -> Int? {
-        return collectionView.indexPathsForVisibleItems.min(by: { $0.section < $1.section })?.section
-    }
-    
-    private func updateYearAndMonthLabel() {
-        guard let topVisibleSection = getTopVisibleSection(),
-              let sectionData = reactor?.currentState.monthlySections[topVisibleSection]
-        else { return }
+    // CollectionView에서 맨위에 보이는 Section의 인덱스를 전달하는 메서드
+//    private func getTopVisibleSection() -> Int? {
+//        return collectionView.indexPathsForVisibleItems.min(by: { $0.section < $1.section })?.section
+//    }
+    private func getCenterVisibleSection() -> Int? {
+        // CollectionView의 중앙 좌표 구하기
+        let centerPoint = CGPoint(x: collectionView.bounds.midX, y: collectionView.bounds.midY - 200)
         
-        let newYearText = "\(sectionData.firstDayOfMonth.yearValue)년"
-        let newMonthText = "\(sectionData.firstDayOfMonth.monthValue)월"
-        
-        if monthLabel.text != newMonthText {
-            monthLabel.text = newMonthText
+        // 중앙 좌표에 위치한 셀의 indexPath 찾기
+        guard let centerIndexPath = collectionView.indexPathForItem(at: centerPoint) else {
+            return nil
         }
         
-        if yearLabel.text != newYearText {
-            yearLabel.text = newYearText
-        }
+        // 해당 셀의 섹션 리턴
+        return centerIndexPath.section
     }
     
     deinit {
@@ -337,3 +346,4 @@ final class CalendarViewController: UIViewController, View, CoordinatorCompatibl
         didFinish?()
     }
 }
+
