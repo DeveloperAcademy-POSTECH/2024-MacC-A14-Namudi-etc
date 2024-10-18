@@ -11,11 +11,7 @@ import ReactorKit
 final class MainViewReactor: Reactor {
     // MARK: - Action
     enum Action {
-        case viewDidLoad
-        case calculatorButtonTapped
-        case calendarButtonTapped
-        case managementButtonTapped
-        case inputButtonTapped
+        case initView
     }
     
     // MARK: - Mutation
@@ -37,8 +33,8 @@ final class MainViewReactor: Reactor {
         var remainingAmount: Int = 0
         var todayAmount: Int = 0
         var date: Date = Date()
-        var harubyState: MainViewHarubyState = MainViewHarubyState.initial
         var usedAmount: Int = 0
+        var harubyState: MainViewHarubyState = .initial
     }
     
     // MARK: - Properties
@@ -57,22 +53,8 @@ final class MainViewReactor: Reactor {
     // MARK: - Mutate
     func mutate(action: Action) -> Observable<Mutation> {
         switch action {
-        case .viewDidLoad:
+        case .initView:
             return fetchAndProcessHarubyInfo()
-            
-        case .calculatorButtonTapped:
-            return .empty()
-            
-        case .calendarButtonTapped:
-            return .empty()
-            
-        case .managementButtonTapped:
-            // TODO: - 하루비 관리 네비게이션 코디네이터 적용
-            return .empty()
-            
-        case .inputButtonTapped:
-            // TODO: - 실제 지출 입력 네비게이션 코디네이터 적용
-            return .empty()
         }
     }
     
@@ -93,56 +75,37 @@ final class MainViewReactor: Reactor {
 
 // MARK: - Private Methods
 extension MainViewReactor {
-    /// 오늘의 하루비 정보를 가져와 처리하는 메서드
     private func fetchAndProcessHarubyInfo() -> Observable<Mutation> {
         let incomeDate = UserDefaultsManager.getIncomeDate()
         let startDate = BudgetManager.calculateStartDate(from: Date(), incomeDate: incomeDate)
         
         return salaryBudgetRepository.read(startDate)
             .map { salaryBudget -> Mutation in
-                guard let salaryBudget = salaryBudget else {
-                    print("salaryBudget not found")
-                    return .updateViewState(ViewState())
-                }
-                let dailyBudget = salaryBudget.dailyBudgets.first {
-                    Calendar.current.isDate($0.date, inSameDayAs: Date())
-                }
-                guard let dailyBudget else {
-                    print("dailyBudget not found")
+                guard let salaryBudget = salaryBudget,
+                      let dailyBudget = salaryBudget.dailyBudgets.first(where: { Calendar.current.isDate($0.date, inSameDayAs: Date()) }) else {
+                    print("salaryBudget or dailyBudget not found")
                     return .updateViewState(ViewState())
                 }
                 return .updateState(salaryBudget, dailyBudget)
             }
     }
     
-    /// 오늘의 하루비 정보로 뷰 상태를 업데이트하는 메서드
     private func processViewState(salaryBudget: SalaryBudget, dailyBudget: DailyBudget) -> ViewState {
-        let (title, remainingAmount) = self.setTitleAndRemain(for: dailyBudget)
-        let avgAmount = HarubyCalculateManager
-            .getAverageHarubyFromNow(endDate: salaryBudget.endDate, balance: salaryBudget.balance)
-        let harubyState = MainViewHarubyState(remainingAmount: remainingAmount, todayDailyBudget: dailyBudget)
+        let avgAmount = HarubyCalculateManager.getAverageHarubyFromNow(endDate: salaryBudget.endDate, balance: salaryBudget.balance)
+        let todayAmount = dailyBudget.haruby ?? salaryBudget.defaultHaruby
+        let totalExpense = dailyBudget.expense.total
+        let remainingAmount = todayAmount - totalExpense
+        let harubyState: MainViewHarubyState =
+        totalExpense > 0 ? (remainingAmount >= 0 ? .positive : .negative) : .initial
         
         return ViewState(
-            title: title,
+            title: harubyState.title,
             avgAmount: avgAmount,
             remainingAmount: remainingAmount,
-            todayAmount: dailyBudget.haruby ?? 0,
+            todayAmount: todayAmount,
             date: dailyBudget.date,
-            harubyState: harubyState,
-            usedAmount: dailyBudget.expense.total
+            usedAmount: totalExpense,
+            harubyState: harubyState
         )
-    }
-    
-    /// 실제 지출을 입력했는지 여부에 따라 타이틀과 남은 금액 설정
-    private func setTitleAndRemain(for dailyBudget: DailyBudget?) -> (title: String, amount: Int) {
-        guard let dailyBudget = dailyBudget else {
-            return (MainViewConstants.todayHarubyTitle, 0)
-        }
-        
-        if dailyBudget.expense.total == 0 {
-            return (MainViewConstants.todayHarubyTitle, dailyBudget.haruby ?? 0)
-        } else {
-            return (MainViewConstants.remainingHarubyTitle, (dailyBudget.haruby ?? 0) - dailyBudget.expense.total)
-        }
     }
 }

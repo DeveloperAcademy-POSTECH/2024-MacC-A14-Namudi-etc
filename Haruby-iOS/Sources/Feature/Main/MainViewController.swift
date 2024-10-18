@@ -51,8 +51,11 @@ final class MainViewController: UIViewController, View, CoordinatorCompatible {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
-        
-        reactor?.action.onNext(.viewDidLoad)
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(true)
+        reactor?.action.onNext(.initView)
     }
     
     deinit {
@@ -111,7 +114,8 @@ final class MainViewController: UIViewController, View, CoordinatorCompatible {
     private func bindAction(reactor: MainViewReactor) {
         footerView.navigateCalculatorButton.rx.tap
             .subscribe(onNext: { [weak self] in
-                self?.coordinator?.showCalculatorFlow()
+                let salaryBudget = reactor.currentState.salaryBudget!
+                self?.coordinator?.showCalculatorFlow(salaryBudget: salaryBudget)
             })
             .disposed(by: disposeBag)
         
@@ -129,7 +133,8 @@ final class MainViewController: UIViewController, View, CoordinatorCompatible {
         
         receiptView.inputButton.rx.tap
             .subscribe(onNext: { [weak self] in
-                self?.coordinator?.showExpenseInputFlow()
+                let dailyBudget = reactor.currentState.dailyBudget!
+                self?.coordinator?.showExpenseInputFlow(dailyBudget: dailyBudget)
             })
             .disposed(by: disposeBag)
     }

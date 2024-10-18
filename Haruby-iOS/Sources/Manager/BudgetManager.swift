@@ -47,13 +47,29 @@ final class BudgetManager {
     
     /// startDate와 endDate로 salaryBudget을 생성해 반환하는 함수
     static func createSalaryBudget(startDate: Date, endDate: Date) -> SalaryBudget {
+        let fixedIncomes: [TransactionItem] = [
+            TransactionItem(name: "학습장학금", price: 1000000)
+        ]
+        let fixedIncome = fixedIncomes.reduce(0) { $0 + $1.price }
+        
+        let fixedExpenses: [TransactionItem] = [
+            TransactionItem(name: "통신비", price: 53000),
+            TransactionItem(name: "구독료", price: 32000),
+            TransactionItem(name: "적금", price: 100000)
+        ]
+        let fixedExpense = fixedExpenses.reduce(0) { $0 + $1.price }
+        
+        let remainingDays = Calendar.current.dateComponents([.day], from: startDate, to: endDate).day! + 1
+        let balance = fixedIncome - fixedExpense // 온보딩시엔 이번 기간에 이미 지출한 금액을 빼서 계산
+        let defaultHaruby = balance / remainingDays
+        
         let dailyBudgets = createDailyBudgets(from: startDate, to: endDate)
         return SalaryBudget(startDate: startDate,
                             endDate: endDate,
-                            fixedIncome: 0,
-                            fixedExpense: [],
-                            balance: 0,
-                            defaultHaruby: 0,
+                            fixedIncome: fixedIncome,
+                            fixedExpense: fixedExpenses,
+                            balance: balance,
+                            defaultHaruby: defaultHaruby,
                             dailyBudgets: dailyBudgets)
     }
     

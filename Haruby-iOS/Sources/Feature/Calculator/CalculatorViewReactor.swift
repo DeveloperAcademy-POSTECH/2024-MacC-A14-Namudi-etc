@@ -32,12 +32,18 @@ final class CalculatorViewReactor: Reactor {
     var initialState: State
     weak var coordinator: CalculatorCoordinator?
     
+    /*
     init(coordinator: CalculatorCoordinator, salaryBudget: SalaryBudget) {
         let remainTotalHaruby = salaryBudget.balance
         let remainingDays = Int(salaryBudget.endDate.timeIntervalSince(.now.formattedDate) / 86400) + 1
         
         self.initialState = State(remainTotalHaruby: remainTotalHaruby, remainingDays: remainingDays)
         self.coordinator = coordinator
+    }
+     */
+    init(coordinator: CalculatorCoordinator) {
+        self.coordinator = coordinator
+        self.initialState = .init()
     }
     
     func mutate(action: Action) -> Observable<Mutation> {

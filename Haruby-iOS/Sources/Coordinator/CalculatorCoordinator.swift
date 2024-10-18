@@ -8,8 +8,16 @@
 import UIKit
 
 final class CalculatorCoordinator: BaseCoordinator {
+    let salaryBudget: SalaryBudget
+    
+    init(navigationController: UINavigationController, salaryBudget: SalaryBudget) {
+        self.salaryBudget = salaryBudget
+        super.init(navigationController: navigationController)
+    }
+    
     override func start() {
-        let reactor = CalculatorViewReactor()
+        // TODO: 리액터에 데이터 전달 필요
+        let reactor = CalculatorViewReactor(coordinator: self)
         let vc = CalculatorViewController()
         vc.reactor = reactor
         vc.coordinator = self
