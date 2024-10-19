@@ -36,6 +36,7 @@ final class HarubyEditViewReactor: Reactor {
     func mutate(action: Action) -> Observable<Mutation> {
         switch action {
         case .editHarubyText(let harubyText):
+            print(harubyText)
             return Observable.just(.setHarubyText(harubyText))
             
         case .editMemoText(let memoText):

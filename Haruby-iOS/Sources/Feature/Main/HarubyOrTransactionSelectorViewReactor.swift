@@ -22,10 +22,14 @@ class HarubyOrTransactionSelectorViewReactor: Reactor {
     }
     
     struct State {
-        
+        var dailyBudget: DailyBudget
     }
     
-    let initialState: State = State()
+    let initialState: State
+    
+    init(dailyBudget: DailyBudget){
+        self.initialState = State(dailyBudget: dailyBudget)
+    }
     
     func mutate(action: Action) -> Observable<Mutation> {
         // code

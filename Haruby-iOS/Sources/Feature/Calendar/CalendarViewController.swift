@@ -102,7 +102,7 @@ final class CalendarViewController: UIViewController, View, CoordinatorCompatibl
         view.backgroundColor = .Haruby.white
         view.layer.cornerRadius = 20
         view.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
-
+        
         view.addSubview(bodyStackView)
         
         return view
@@ -200,7 +200,7 @@ final class CalendarViewController: UIViewController, View, CoordinatorCompatibl
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         // Do any additional setup after loading the view.
         setupView()
     }
@@ -338,36 +338,54 @@ extension CalendarViewController {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: self.cellId, for: indexPath) as! CalendarViewCell
                 
                 
-                let salaryStartDate = (self.reactor?.currentState.salaryBudget.startDate)!
-                let salaryEndDate = (self.reactor?.currentState.salaryBudget.endDate)!
-                let defaultHaruby = (self.reactor?.currentState.salaryBudget.defaultHaruby)!
+                guard let salaryStartDate = self.reactor?.currentState.salaryBudget.startDate,
+                      let salaryEndDate = self.reactor?.currentState.salaryBudget.endDate,
+                      let defaultHaruby = self.reactor?.currentState.salaryBudget.defaultHaruby else { return cell }
                 
                 let reactor = CalendarViewCellReactor(dailyBudget: item, salaryStartDate: salaryStartDate, salaryEndDate: salaryEndDate, defaultHaruby: defaultHaruby, indexPath: indexPath)
                 cell.reactor = reactor
                 
                 reactor.stateSubject.map{ ($0.navigateToNextView, $0.dayType, $0.dailyBudget) }
                     .subscribe(onNext: { [weak self] navigateToNextView, dayType, dailyBudget in
+                        
+                        
+                        guard let dailyBudget = dailyBudget else { return }
+                        
                         if navigateToNextView {
-                            switch dayType {
-                            case .future:
-                                let vc = HarubyEditViewController()
-                                vc.reactor = HarubyEditViewReactor(dailyBudget: dailyBudget!)
-                                self?.navigationController?.pushViewController(vc, animated: true)
-                            case .today:
-                                let vc = HarubyOrTransactionSelectorViewController()
-                                vc.reactor = HarubyOrTransactionSelectorViewReactor()
-                                self?.navigationController?.pushViewController(vc, animated: true)
-                            case .past:
-                                break
-                            case .none:
-                                break
-                            }
+                            guard let viewController = self?.createNextViewController(dayType: dayType, dailyBudget: dailyBudget) else { return }
+                            self?.presentFullScreen(viewController)
                         }
+                        
                     }).disposed(by: cell.disposeBag)
                 
                 return cell
             }
         )
+    }
+    
+    private func createNextViewController(dayType: DayType, dailyBudget: DailyBudget) -> UIViewController? {
+        switch dayType {
+        case .past:
+            return nil
+            
+        case .future:
+            let vc = HarubyEditViewController()
+            vc.reactor = HarubyEditViewReactor(dailyBudget: dailyBudget)
+            return UINavigationController(rootViewController: vc)
+            
+        case .today:
+            let vc = HarubyOrTransactionSelectorViewController()
+            vc.reactor = HarubyOrTransactionSelectorViewReactor(dailyBudget: dailyBudget)
+            return UINavigationController(rootViewController: vc)
+            
+        case .none:
+            return nil
+        }
+    }
+    
+    private func presentFullScreen(_ viewController: UIViewController) {
+        viewController.modalPresentationStyle = .fullScreen
+        self.present(viewController, animated: true)
     }
     
     // CollectionView에서 맨위에 보이는 Section의 인덱스를 전달하는 메서드
