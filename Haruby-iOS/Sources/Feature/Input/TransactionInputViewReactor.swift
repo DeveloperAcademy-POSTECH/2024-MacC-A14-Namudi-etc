@@ -32,8 +32,6 @@ final class TransactionInputViewReactor: Reactor {
         var isDetailVisible: Bool = false
         var isDatePickerVisible: Bool = false
         var transactionType: TransactionType = .expense
-//        var detailExpense: [String] = []
-//        var detailIncome: [String] = []
         var dailyBudget: DailyBudget
     }
     
