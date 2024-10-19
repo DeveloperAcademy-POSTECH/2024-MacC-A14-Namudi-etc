@@ -9,8 +9,6 @@ import UIKit
 import ReactorKit
 import RxCocoa
 import SnapKit
-import ReactorKit
-import RxCocoa
 
 final class MainViewController: UIViewController, View, CoordinatorCompatible {
     // MARK: - Properties

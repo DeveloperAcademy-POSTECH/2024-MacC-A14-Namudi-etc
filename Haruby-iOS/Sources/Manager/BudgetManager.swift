@@ -53,8 +53,10 @@ final class BudgetManager {
         let fixedIncome = fixedIncomes.reduce(0) { $0 + $1.price }
         
         let fixedExpenses: [TransactionItem] = [
-            TransactionItem(name: "통신비", price: 53000),
-            TransactionItem(name: "구독료", price: 32000),
+            TransactionItem(name: "통신비", price: 52000),
+            TransactionItem(name: "넷플릭스", price: 17000),
+            TransactionItem(name: "ChatGPT", price: 30000),
+            TransactionItem(name: "쿠팡와우", price: 10000),
             TransactionItem(name: "적금", price: 100000)
         ]
         let fixedExpense = fixedExpenses.reduce(0) { $0 + $1.price }
