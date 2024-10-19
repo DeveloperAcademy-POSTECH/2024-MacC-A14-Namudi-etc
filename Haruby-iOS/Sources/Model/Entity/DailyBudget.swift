@@ -8,7 +8,7 @@
 import Foundation
 import SwiftUI
 
-struct DailyBudget {
+struct DailyBudget: Equatable {
     var id: String = UUID().uuidString
     var date: Date
     var haruby: Int?

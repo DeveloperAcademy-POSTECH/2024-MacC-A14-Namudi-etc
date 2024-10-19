@@ -8,7 +8,7 @@
 import Foundation
 
 // TODO: 모델명 수정
-struct TransactionRecord {
+struct TransactionRecord: Equatable {
     var id: String = UUID().uuidString
     var total: Int
     var transactionItems: [TransactionItem]

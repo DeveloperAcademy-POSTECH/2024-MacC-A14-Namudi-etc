@@ -51,7 +51,7 @@ final class TransactionInputViewController: UIViewController, View {
         return view
     }()
     
-    private lazy var amountTextField : RoundedTextField = {
+    private lazy var totalPriceTextField : RoundedTextField = {
         let textField = RoundedTextField()
         textField.placeholder = "총 지출 금액을 입력하세요"
         textField.keyboardType = .numberPad
@@ -130,7 +130,7 @@ final class TransactionInputViewController: UIViewController, View {
     private func setupSubviews() {
         self.view.addSubview(segmentedControl)
         self.view.addSubview(dateStackView)
-        self.view.addSubview(amountTextField)
+        self.view.addSubview(totalPriceTextField)
         self.view.addSubview(detailButtonStackView)
         self.view.addSubview(detailTransactionTableView)
         self.view.addSubview(addDetailTransactionButton)
@@ -149,13 +149,13 @@ final class TransactionInputViewController: UIViewController, View {
             make.horizontalEdges.equalTo(view.safeAreaLayoutGuide).inset(24)
         }
         
-        amountTextField.snp.makeConstraints { make in
+        totalPriceTextField.snp.makeConstraints { make in
             make.top.equalTo(self.dateStackView.snp.bottom).offset(32)
             make.horizontalEdges.equalTo(view.safeAreaLayoutGuide).inset(16)
         }
         
         detailButtonStackView.snp.makeConstraints { make in
-            make.top.equalTo(self.amountTextField.snp.bottom).offset(10)
+            make.top.equalTo(self.totalPriceTextField.snp.bottom).offset(10)
             make.leading.equalTo(view.safeAreaLayoutGuide).inset(28)
         }
         
@@ -210,6 +210,18 @@ final class TransactionInputViewController: UIViewController, View {
             })
             .disposed(by: disposeBag)
         
+        reactor.state.map { $0.isTextFieldEditting }
+            .distinctUntilChanged()
+            .subscribe { [weak self] _ in
+                guard let currentState = self?.reactor?.currentState else { return }
+                let total = currentState.transactionType == .expense
+                ? currentState.dailyBudget.expense.total
+                : currentState.dailyBudget.income.total
+                
+                self?.totalPriceTextField.textField.text = total.decimalWithWon
+            }
+            .disposed(by: disposeBag)
+        
         reactor.state
             .map { $0.transactionType }  // Observe transactionType changes
             .distinctUntilChanged()
@@ -217,10 +229,10 @@ final class TransactionInputViewController: UIViewController, View {
                 guard let self = self else { return }
                 let dailyBudget = self.reactor?.currentState.dailyBudget
                 
-                self.amountTextField.textField.text = newType == .expense
+                self.totalPriceTextField.textField.text = newType == .expense
                 ? dailyBudget?.expense.total.decimalWithWon
                 : dailyBudget?.income.total.decimalWithWon
-                self.amountTextField.placeholder = "총 \(newType.text) 금액을 입력하세요"
+                self.totalPriceTextField.placeholder = "총 \(newType.text) 금액을 입력하세요"
                 self.addDetailTransactionButton.setTitle("+ \(newType.text) 추가", for: .normal)
             })
             .disposed(by: disposeBag)
@@ -265,6 +277,7 @@ final class TransactionInputViewController: UIViewController, View {
         detailTransactionTableView.rx.setDelegate(self)
             .disposed(by: disposeBag)
             
+       
     }
     
     private func bindAction(reactor: Reactor) {
@@ -296,8 +309,8 @@ final class TransactionInputViewController: UIViewController, View {
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
 
-        amountTextField.textField.rx.text.orEmpty
-            .map { Reactor.Action.amountTextFieldEditting($0) }
+        totalPriceTextField.textField.rx.text.orEmpty
+            .map { Reactor.Action.totalPriceTextFieldEditting($0) }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
     }
