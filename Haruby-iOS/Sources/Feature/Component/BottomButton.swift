@@ -90,20 +90,20 @@ class BottomButton: UIButton {
 extension BottomButton {
     // MARK: - Private Methods
     private func handleKeyboardChangeFrame(notification: Notification) {
-           guard let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect else { return }
-           
-           let keyboardHeight = UIScreen.main.bounds.height - keyboardFrame.origin.y
-           let isKeyboardShowing = keyboardHeight > 0
-           
-           UIView.animate(withDuration: 0) {
-               self.snp.updateConstraints { make in
-                   make.height.equalTo(isKeyboardShowing ? self.compactHeight : self.normalHeight)
-                   make.bottom.equalToSuperview().inset(isKeyboardShowing ? keyboardHeight : 0)
-               }
-               self.label.snp.updateConstraints { make in
-                   make.top.equalToSuperview().offset(isKeyboardShowing ? self.compactLabelPostion : self.normalLabelPostion)
-               }
-               self.superview?.layoutIfNeeded()
-           }
-       }
+        guard let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect else { return }
+        guard let superview = self.superview else { return }
+        let keyboardHeight = UIScreen.main.bounds.height - keyboardFrame.origin.y
+        let isKeyboardShowing = keyboardHeight > 0
+        
+        UIView.animate(withDuration: 0) {
+            self.snp.updateConstraints { make in
+                make.height.equalTo(isKeyboardShowing ? self.compactHeight : self.normalHeight)
+                make.bottom.equalToSuperview().inset(isKeyboardShowing ? keyboardHeight : 0)
+            }
+            self.label.snp.updateConstraints { make in
+                make.top.equalToSuperview().offset(isKeyboardShowing ? self.compactLabelPostion : self.normalLabelPostion)
+            }
+            superview.layoutIfNeeded()
+        }
+    }
 }

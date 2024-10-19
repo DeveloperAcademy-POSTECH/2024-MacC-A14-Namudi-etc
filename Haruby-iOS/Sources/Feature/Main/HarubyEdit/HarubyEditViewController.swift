@@ -133,6 +133,10 @@ final class HarubyEditViewController: UIViewController, View {
                     .bind(to: reactor.action)
                     .disposed(by: disposeBag)
         // State
+        reactor.state.map{ $0.harubyText }
+            .bind(to: harubyTextField.textField.rx.text)
+                    .disposed(by: disposeBag)
+        
         reactor.state.map{ $0.memoText }
             .bind(to: memoTextField.textField.rx.text)
                     .disposed(by: disposeBag)
