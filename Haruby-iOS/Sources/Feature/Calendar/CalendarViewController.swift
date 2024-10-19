@@ -351,7 +351,7 @@ extension CalendarViewController {
                             switch dayType {
                             case .future:
                                 let vc = HarubyEditViewController()
-                                vc.reactor = HarubyEditViewReactor()
+                                vc.reactor = HarubyEditViewReactor(dailyBudget: dailyBudget!)
                                 self?.navigationController?.pushViewController(vc, animated: true)
                             case .today:
                                 let vc = HarubyOrTransactionSelectorViewController()
@@ -362,8 +362,6 @@ extension CalendarViewController {
                             case .none:
                                 break
                             }
-                            
-                            
                         }
                     }).disposed(by: cell.disposeBag)
                 
