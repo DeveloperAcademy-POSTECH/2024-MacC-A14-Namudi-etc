@@ -10,7 +10,7 @@ import UIKit
 final class AppCoordinator: BaseCoordinator {
     override func start() {
         updateNavigationBarColor()
-        showMain()
+        showOnboarding()
     }
     
     func updateNavigationBarColor() {
@@ -32,10 +32,24 @@ final class AppCoordinator: BaseCoordinator {
         navigationController.navigationBar.isTranslucent = true
     }
     
+    func showOnboarding() {
+        let coordinator = OnboardingCoordinator(navigationController: navigationController)
+        coordinator.parentCoordinator = self
+        addChildCoordinator(coordinator)
+        coordinator.start()
+    }
+    
+    func onboardingDidFinish() {
+        childCoordinators.removeAll { $0 is OnboardingCoordinator }
+        navigationController.setNavigationBarHidden(false, animated: true)
+        showMain()
+    }
+    
     func showMain() {
-        let mainCoordinator = MainCoordinator(navigationController: navigationController)
-        mainCoordinator.parentCoordinator = self
-        addChildCoordinator(mainCoordinator)
-        mainCoordinator.start()
+        navigationController.viewControllers.removeAll()
+        let coordinator = MainCoordinator(navigationController: navigationController)
+        coordinator.parentCoordinator = self
+        addChildCoordinator(coordinator)
+        coordinator.start()
     }
 }

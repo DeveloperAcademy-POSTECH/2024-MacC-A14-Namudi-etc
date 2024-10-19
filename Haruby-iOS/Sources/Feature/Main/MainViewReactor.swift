@@ -91,12 +91,15 @@ extension MainViewReactor {
     }
     
     private func processViewState(salaryBudget: SalaryBudget, dailyBudget: DailyBudget) -> ViewState {
-        let avgAmount = HarubyCalculateManager.getAverageHarubyFromNow(endDate: salaryBudget.endDate, balance: salaryBudget.balance)
+        let avgAmount = HarubyCalculateManager.getAverageHarubyFromNow(
+            endDate: salaryBudget.endDate,
+            balance: salaryBudget.balance)
         let todayAmount = dailyBudget.haruby ?? salaryBudget.defaultHaruby
         let totalExpense = dailyBudget.expense.total
         let remainingAmount = todayAmount - totalExpense
         let harubyState: MainViewHarubyState =
         totalExpense > 0 ? (remainingAmount >= 0 ? .positive : .negative) : .initial
+        print("avearage: \(avgAmount), today: \(todayAmount), total: \(totalExpense), remaining: \(remainingAmount), harubyState: \(harubyState)")
         
         return ViewState(
             title: harubyState.title,

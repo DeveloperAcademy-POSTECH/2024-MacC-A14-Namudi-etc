@@ -7,7 +7,7 @@
 
 import UIKit
 
-class BaseCoordinator: NSObject, Coordinator {
+class BaseCoordinator: Coordinator {
     var navigationController: UINavigationController
     weak var parentCoordinator: Coordinator?
     var childCoordinators: [Coordinator] = []
@@ -18,6 +18,12 @@ class BaseCoordinator: NSObject, Coordinator {
     
     func start() {
         fatalError("start() method must be implemented by subclass")
+    }
+    
+    func finish() {
+        childCoordinators.forEach { $0.finish() }
+        childCoordinators.removeAll()
+        parentCoordinator?.removeChildCoordinator(self)
     }
 }
 

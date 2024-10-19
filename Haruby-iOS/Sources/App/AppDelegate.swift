@@ -17,7 +17,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }()
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        UserDefaultsManager.setIncomeDate(14)
+        UserDefaultsManager.setIncomeDate(19)
         initializeBudget()
         return true
     }

@@ -32,7 +32,7 @@ final class MainHeaderView: UIView {
         label.textColor = .Haruby.whiteDeep50
         label.font = .pretendardMedium_14
         label.textAlignment = .center
-        label.text = "입니다 "
+        label.text = "입니다."
         return label
     }()
     
@@ -40,6 +40,7 @@ final class MainHeaderView: UIView {
         let imageView = UIImageView()
         imageView.image = UIImage(systemName: "info.circle")
         imageView.tintColor = .Haruby.whiteDeep50
+        imageView.isHidden = true
         return imageView
     }()
     
