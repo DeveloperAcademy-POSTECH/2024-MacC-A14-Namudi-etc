@@ -239,8 +239,8 @@ final class TransactionInputViewController: UIViewController, View {
                 cellType: DetailInputCell.self
             )) { [weak self] (row, transaction, cell) in
                 let type = self?.reactor?.currentState.transactionType
-                cell.detailNameTextField.textField.placeholder = type?.text ?? ""
-                cell.detailAmountTextField.textField.placeholder = type?.text ?? ""
+                cell.detailNameTextField.textField.placeholder = (type?.text ?? "") + " 이름"
+                cell.detailAmountTextField.textField.placeholder = (type?.text ?? "") + " 금액"
 
             }
             .disposed(by: disposeBag)
