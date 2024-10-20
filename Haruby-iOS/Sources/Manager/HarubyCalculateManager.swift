@@ -26,7 +26,7 @@ final class HarubyCalculateManager {
         
         // 2. 현재 날짜로부터 endDate까지 DailyBudget을 순차적으로 방문
         for dailyBudget in salaryBudget.dailyBudgets {
-            if dailyBudget.date > now { continue }
+            if dailyBudget.date < now { continue }
             
             // 2.1. if 방문 날짜의 haruby가 nil인 경우: nil += 1
             //      else balance - 방문 날짜의 하루비
