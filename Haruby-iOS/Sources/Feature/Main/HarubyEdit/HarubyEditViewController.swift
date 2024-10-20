@@ -90,7 +90,7 @@ final class HarubyEditViewController: UIViewController, View {
         setupNavigationBar()
         setupSubviews()
         setupConstraints()
-        setupTapGesture()
+        //setupTapGesture()
     }
     
     private func setupSubviews() {
@@ -159,6 +159,15 @@ final class HarubyEditViewController: UIViewController, View {
                     .map{ "\($0)/30" }
                     .bind(to: memoFooterLabel.rx.text)
                     .disposed(by: disposeBag)
+        
+        reactor.state.map{ $0.savedSuccessfully }
+            .bind { savedSuccessfully in
+                if savedSuccessfully {
+                    self.dismiss(animated: true)
+                }
+            }.disposed(by: disposeBag)
+                
+            
     }
     
     private func bindAction(reactor: HarubyEditViewReactor) {
@@ -193,6 +202,7 @@ final class HarubyEditViewController: UIViewController, View {
                     .map{ Reactor.Action.bottomButtonTapped }
                     .bind(to: reactor.action)
                     .disposed(by: disposeBag)
+        
     }
     
     private func setupNavigationBar() {
@@ -210,11 +220,8 @@ extension HarubyEditViewController {
     // 빈공간 터치 했을때 키보드 내리는 메서드
     private func setupTapGesture() {
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
-        tapGesture.cancelsTouchesInView = false
         view.addGestureRecognizer(tapGesture)
     }
-    
-   
     
     @objc private func dismissKeyboard() {
         view.endEditing(true)

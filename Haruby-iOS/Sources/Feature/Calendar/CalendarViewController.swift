@@ -205,11 +205,14 @@ final class CalendarViewController: UIViewController, View, CoordinatorCompatibl
         setupView()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        reactor?.action.onNext(.viewDidLoad)
+    }
+    
     // MARK: - setup
     private func setupView() {
         view.backgroundColor = .Haruby.main
-        
-        reactor?.action.onNext(.viewDidLoad)
         
         setupNavigationBar()
         addSubviews()
