@@ -7,6 +7,7 @@
 
 import ReactorKit
 import RxSwift
+import Foundation
 
 final class HarubyEditViewReactor: Reactor {
     enum Action {
@@ -20,7 +21,6 @@ final class HarubyEditViewReactor: Reactor {
         case setHarubyText(String)
         case setMemoText(String)
         case setNewBalance(Int)
-        case calculateDefaultHaruby(SalaryBudget)
         case allUpdatesSuccess(Bool)
     }
     
@@ -39,7 +39,6 @@ final class HarubyEditViewReactor: Reactor {
     let dailyBudgetRepository: DailyBudgetRepository
     
     init(salaryBudget: SalaryBudget, dailyBudget: DailyBudget){
-        // TODO: SalaryBudget의 default하루비 가져오기
         self.initialState = State(salaryBudget: salaryBudget,
                                   dailyBudget: dailyBudget,
                                   memoText: dailyBudget.memo)
@@ -72,31 +71,31 @@ final class HarubyEditViewReactor: Reactor {
             return Observable.just(.setMemoText(prefixedText))
             
         case .bottomButtonTapped:
+//            let setSalaryBudget = salaryBudgetRepository.fetch().map { salaryBudget in
+//                Mutation.setSalaryBudget(salaryBudget.first!)
+//            }
             let salaryBudgetId = self.currentState.salaryBudget.id
             let dailyBudgetId = self.currentState.dailyBudget.id
             
             let newHaruby = self.currentState.haruby
             let oldHaruby = self.currentState.dailyBudget.haruby ?? self.currentState.salaryBudget.defaultHaruby
-            let newBalance = calculateNewBalance(newHaruby: newHaruby, oldHaruby: oldHaruby, currentBalance: self.currentState.salaryBudget.balance)
             let newMemo = self.currentState.memoText
             
-            let setNewBalance = Observable.just(Mutation.setNewBalance(newBalance))
-            let calculateDefaultHaruby = Observable.just(Mutation.calculateDefaultHaruby(self.currentState.salaryBudget))
+            let newDefaultHaruby = getDefaultHaruby(salaryBudget: self.currentState.salaryBudget,
+                                                    newHaruby: newHaruby,
+                                                    oldHaruby: oldHaruby)
             
             let updateDailyBudgetHaruby = dailyBudgetRepository.updateHaruby(dailyBudgetId, haruby: newHaruby)
             let updateDailyBudgetMemo = dailyBudgetRepository.updateMemo(dailyBudgetId, memo: newMemo)
-            let updateBalance = salaryBudgetRepository.updateBalance(salaryBudgetId, balance: newBalance)
-            let updateDefaultHaruby = salaryBudgetRepository.updateDefaultHaruby(salaryBudgetId, defaultHaruby: self.currentState.salaryBudget.defaultHaruby)
+            let updateDefaultHaruby = salaryBudgetRepository.updateDefaultHaruby(salaryBudgetId, defaultHaruby: newDefaultHaruby)
             
             let allUpdates = performAllUpdates(
                 harubyUpdate: updateDailyBudgetHaruby,
                 memoUpdate: updateDailyBudgetMemo,
-                balanceUpdate: updateBalance,
                 defaultHarubyUpdate: updateDefaultHaruby
             )
             
-            // 상태 업데이트와 비동기 업데이트의 결합
-            return Observable.concat([setNewBalance, calculateDefaultHaruby, allUpdates])
+            return Observable.concat([allUpdates])
         }
     }
     
@@ -111,9 +110,6 @@ final class HarubyEditViewReactor: Reactor {
             newState.memoText = memoText
         case .setNewBalance(let newBalance):
             newState.salaryBudget.balance = newBalance
-        case .calculateDefaultHaruby(let salaryBudget):
-            let newDefaultHaruby = HarubyCalculateManager.getDefaultHarubyFromNow(salaryBudget: salaryBudget)
-            newState.salaryBudget.defaultHaruby = newDefaultHaruby
         case .allUpdatesSuccess(let saveSuccess):
             newState.savedSuccessfully = saveSuccess
         }
@@ -139,8 +135,23 @@ final class HarubyEditViewReactor: Reactor {
         return currentBalance - (newHaruby - oldHaruby)
     }
     
-    private func performAllUpdates(harubyUpdate: Observable<Void>, memoUpdate: Observable<Void>, balanceUpdate: Observable<Void>, defaultHarubyUpdate: Observable<Void>) -> Observable<Mutation> {
-        return Observable.zip(harubyUpdate, memoUpdate, balanceUpdate, defaultHarubyUpdate)
+    private func performAllUpdates(harubyUpdate: Observable<Void>, memoUpdate: Observable<Void>, defaultHarubyUpdate: Observable<Void>) -> Observable<Mutation> {
+        return Observable.zip(harubyUpdate, memoUpdate, defaultHarubyUpdate)
             .flatMap { _ in Observable.just(Mutation.allUpdatesSuccess(true)) }
+    }
+    
+    private func getDefaultHaruby(salaryBudget: SalaryBudget, newHaruby: Int, oldHaruby: Int) -> Int {
+        let harubyDifference = oldHaruby - newHaruby
+        
+        var nilCount = 0
+        let now = Date().formattedDate
+        
+        for dailyBudget in salaryBudget.dailyBudgets {
+            if dailyBudget.date >= now && dailyBudget.haruby == nil {
+                nilCount += 1
+            }
+        }
+        
+        return nilCount == 0 ? salaryBudget.defaultHaruby : harubyDifference / (nilCount - 1) + salaryBudget.defaultHaruby
     }
 }
