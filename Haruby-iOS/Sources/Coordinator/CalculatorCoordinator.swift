@@ -17,7 +17,7 @@ final class CalculatorCoordinator: BaseCoordinator {
     
     override func start() {
         // TODO: 리액터에 데이터 전달 필요
-        let reactor = CalculatorViewReactor(coordinator: self)
+        let reactor = CalculatorViewReactor(salaryBudget: salaryBudget)
         let vc = CalculatorViewController()
         vc.reactor = reactor
         vc.coordinator = self
