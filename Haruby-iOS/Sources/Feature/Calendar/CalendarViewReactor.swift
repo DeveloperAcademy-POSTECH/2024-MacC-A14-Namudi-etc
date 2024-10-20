@@ -38,7 +38,10 @@ final class CalendarViewReactor: Reactor {
     
     private let salaryBudgetRepository: SalaryBudgetRepository
     
-    init(salaryBudgetRepository: SalaryBudgetRepository) {
+    init() {
+        guard let salaryBudgetRepository = DIContainer.shared.resolve(SalaryBudgetRepository.self) else {
+            fatalError("SalaryBudgetRepository is not registered.")
+        }
         self.salaryBudgetRepository = salaryBudgetRepository
     }
     
