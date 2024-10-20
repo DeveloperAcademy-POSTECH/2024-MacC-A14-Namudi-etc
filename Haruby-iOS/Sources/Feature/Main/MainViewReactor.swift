@@ -95,8 +95,13 @@ extension MainViewReactor {
             endDate: salaryBudget.endDate,
             balance: salaryBudget.balance)
         let todayAmount = dailyBudget.haruby ?? salaryBudget.defaultHaruby
+        
+        // TODO: 확인 사항
+        // 지출, 수입 모두 반영해서 remainingAmount 값을 구했습니다.
         let totalExpense = dailyBudget.expense.total
-        let remainingAmount = todayAmount - totalExpense
+        let totalIncome = dailyBudget.income.total
+        let remainingAmount = todayAmount - totalExpense + totalIncome
+        
         let harubyState: MainViewHarubyState =
         totalExpense > 0 ? (remainingAmount >= 0 ? .positive : .negative) : .initial
         print("avearage: \(avgAmount), today: \(todayAmount), total: \(totalExpense), remaining: \(remainingAmount), harubyState: \(harubyState)")
@@ -107,7 +112,7 @@ extension MainViewReactor {
             remainingAmount: remainingAmount,
             todayAmount: todayAmount,
             date: dailyBudget.date,
-            usedAmount: totalExpense,
+            usedAmount: totalExpense - totalIncome, // 오늘의 총 지출 : 지출(-) + 수입(+)
             harubyState: harubyState
         )
     }

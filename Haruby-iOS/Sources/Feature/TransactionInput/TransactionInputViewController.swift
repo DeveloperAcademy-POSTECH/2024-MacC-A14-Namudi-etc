@@ -11,10 +11,15 @@ import RxSwift
 import RxCocoa
 import SnapKit
 
-final class TransactionInputViewController: UIViewController, View {
+final class TransactionInputViewController: UIViewController, View, CoordinatorCompatible {
+    
+    typealias Reactor = TransactionInputViewReactor
+    
     // MARK: - Properties
     var disposeBag = DisposeBag()
-    typealias Reactor = TransactionInputViewReactor
+    
+    weak var coordinator: TransactionInputCoordinator?
+    var didFinish: (() -> Void)?
     
     private lazy var segmentedControl: UISegmentedControl = {
         let control = UISegmentedControl(items: [
@@ -96,6 +101,10 @@ final class TransactionInputViewController: UIViewController, View {
         button.title = "저장하기"
         return button
     }()
+    
+    deinit {
+        self.didFinish?()
+    }
     
     // MARK: - Lifecycle
     override func viewDidLoad() {
@@ -213,7 +222,7 @@ final class TransactionInputViewController: UIViewController, View {
             .disposed(by: disposeBag)
         
         reactor.state
-            .map { $0.transactionType }  // Observe transactionType changes
+            .map { $0.transactionType }
             .distinctUntilChanged()
             .subscribe(onNext: { [weak self] newType in
                 guard let self = self else { return }
@@ -224,6 +233,16 @@ final class TransactionInputViewController: UIViewController, View {
                 : dailyBudget?.income.total.decimalWithWon
                 self.totalPriceTextField.placeholder = "총 \(newType.text) 금액을 입력하세요"
                 self.addDetailTransactionButton.setTitle("+ \(newType.text) 추가", for: .normal)
+            })
+            .disposed(by: disposeBag)
+        
+        reactor.state
+            .map { $0.isDismiss }
+            .distinctUntilChanged()
+            .filter { $0 }
+            .subscribe(onNext: { [weak self] isDismiss in
+                guard let self else { return }
+                self.didFinish?()
             })
             .disposed(by: disposeBag)
         

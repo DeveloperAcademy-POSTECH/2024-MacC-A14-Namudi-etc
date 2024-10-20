@@ -133,10 +133,14 @@ extension TransactionInputViewReactor {
                 income: dailyBudget.income
             )
             
-            return Observable.zip(expenseObs, incomeObs).map { _ in .dismiss }
+            return Observable.zip(expenseObs, incomeObs).map { _ in
+                print("Dismiss")
+                return .dismiss
+            }
                 
         }
         
+        print("Else")
         return .empty()
     }
 }
