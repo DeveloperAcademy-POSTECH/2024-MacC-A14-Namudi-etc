@@ -19,6 +19,9 @@ final class HarubyEditViewReactor: Reactor {
         case setHaruby(Int)
         case setHarubyText(String)
         case setMemoText(String)
+        case setNewBalance(Int)
+        case calculateDefaultHaruby(SalaryBudget)
+        case allUpdatesSuccess(Bool)
     }
     
     struct State {
@@ -27,11 +30,13 @@ final class HarubyEditViewReactor: Reactor {
         var haruby = 0
         var harubyText = ""
         var memoText = ""
+        var savedSuccessfully = false
     }
     
     let initialState: State
     
-    let repository: SalaryBudgetRepository
+    let salaryBudgetRepository: SalaryBudgetRepository
+    let dailyBudgetRepository: DailyBudgetRepository
     
     init(salaryBudget: SalaryBudget, dailyBudget: DailyBudget){
         // TODO: SalaryBudget의 default하루비 가져오기
@@ -39,10 +44,16 @@ final class HarubyEditViewReactor: Reactor {
                                   dailyBudget: dailyBudget,
                                   memoText: dailyBudget.memo)
         
-        guard let repository = DIContainer.shared.resolve(SalaryBudgetRepository.self) else {
+        guard let salaryBudgetRepository = DIContainer.shared.resolve(SalaryBudgetRepository.self) else {
             fatalError("SalaryBudgetRepository is not registered.")
         }
-        self.repository = repository
+        guard let dailyBudgetRepository = DIContainer.shared.resolve(DailyBudgetRepository.self) else {
+            fatalError("DailyBudgetRepository is not registered.")
+        }
+        
+        
+        self.salaryBudgetRepository = salaryBudgetRepository
+        self.dailyBudgetRepository = dailyBudgetRepository
     }
     
     
@@ -61,8 +72,31 @@ final class HarubyEditViewReactor: Reactor {
             return Observable.just(.setMemoText(prefixedText))
             
         case .bottomButtonTapped:
-            print("bottomButtonTapped")
-            return .empty()
+            let salaryBudgetId = self.currentState.salaryBudget.id
+            let dailyBudgetId = self.currentState.dailyBudget.id
+            
+            let newHaruby = self.currentState.haruby
+            let oldHaruby = self.currentState.dailyBudget.haruby ?? self.currentState.salaryBudget.defaultHaruby
+            let newBalance = calculateNewBalance(newHaruby: newHaruby, oldHaruby: oldHaruby, currentBalance: self.currentState.salaryBudget.balance)
+            let newMemo = self.currentState.memoText
+            
+            let setNewBalance = Observable.just(Mutation.setNewBalance(newBalance))
+            let calculateDefaultHaruby = Observable.just(Mutation.calculateDefaultHaruby(self.currentState.salaryBudget))
+            
+            let updateDailyBudgetHaruby = dailyBudgetRepository.updateHaruby(dailyBudgetId, haruby: newHaruby)
+            let updateDailyBudgetMemo = dailyBudgetRepository.updateMemo(dailyBudgetId, memo: newMemo)
+            let updateBalance = salaryBudgetRepository.updateBalance(salaryBudgetId, balance: newBalance)
+            let updateDefaultHaruby = salaryBudgetRepository.updateDefaultHaruby(salaryBudgetId, defaultHaruby: self.currentState.salaryBudget.defaultHaruby)
+            
+            let allUpdates = performAllUpdates(
+                harubyUpdate: updateDailyBudgetHaruby,
+                memoUpdate: updateDailyBudgetMemo,
+                balanceUpdate: updateBalance,
+                defaultHarubyUpdate: updateDefaultHaruby
+            )
+            
+            // 상태 업데이트와 비동기 업데이트의 결합
+            return Observable.concat([setNewBalance, calculateDefaultHaruby, allUpdates])
         }
     }
     
@@ -75,6 +109,13 @@ final class HarubyEditViewReactor: Reactor {
             newState.harubyText = harubyText
         case .setMemoText(let memoText):
             newState.memoText = memoText
+        case .setNewBalance(let newBalance):
+            newState.salaryBudget.balance = newBalance
+        case .calculateDefaultHaruby(let salaryBudget):
+            let newDefaultHaruby = HarubyCalculateManager.getDefaultHarubyFromNow(salaryBudget: salaryBudget)
+            newState.salaryBudget.defaultHaruby = newDefaultHaruby
+        case .allUpdatesSuccess(let saveSuccess):
+            newState.savedSuccessfully = saveSuccess
         }
         return newState
     }
@@ -92,5 +133,14 @@ final class HarubyEditViewReactor: Reactor {
         }
         
         return (harubyNumber, newText)
+    }
+    
+    private func calculateNewBalance(newHaruby: Int, oldHaruby: Int, currentBalance: Int) -> Int {
+        return currentBalance - (newHaruby - oldHaruby)
+    }
+    
+    private func performAllUpdates(harubyUpdate: Observable<Void>, memoUpdate: Observable<Void>, balanceUpdate: Observable<Void>, defaultHarubyUpdate: Observable<Void>) -> Observable<Mutation> {
+        return Observable.zip(harubyUpdate, memoUpdate, balanceUpdate, defaultHarubyUpdate)
+            .flatMap { _ in Observable.just(Mutation.allUpdatesSuccess(true)) }
     }
 }
