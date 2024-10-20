@@ -142,7 +142,7 @@ final class HarubyEditViewController: UIViewController, View {
     
     private func bindState(reactor: HarubyEditViewReactor) {
         
-        reactor.state.map{ $0.dailyBudget?.haruby?.decimalWithWon }
+        reactor.state.map{ $0.dailyBudget.haruby?.decimalWithWon ?? $0.salaryBudget.defaultHaruby.decimalWithWon }
             .bind(to: harubyTextField.textField.rx.placeholder)
                     .disposed(by: disposeBag)
         

@@ -22,6 +22,7 @@ class HarubyOrTransactionSelectorViewReactor: Reactor {
     }
     
     struct State {
+        var salaryBudget: SalaryBudget
         var dailyBudget: DailyBudget
         var isHarubyButtonTapped = false
         var isTransactionButtonTapped = false
@@ -29,8 +30,8 @@ class HarubyOrTransactionSelectorViewReactor: Reactor {
     
     let initialState: State
     
-    init(dailyBudget: DailyBudget){
-        self.initialState = State(dailyBudget: dailyBudget)
+    init(salaryBudget: SalaryBudget, dailyBudget: DailyBudget){
+        self.initialState = State(salaryBudget: salaryBudget, dailyBudget: dailyBudget)
     }
     
     func mutate(action: Action) -> Observable<Mutation> {
