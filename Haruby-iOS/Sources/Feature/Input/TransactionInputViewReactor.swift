@@ -17,6 +17,7 @@ final class TransactionInputViewReactor: Reactor {
         case detailButtonTapped
         case addingTransactionButtonTapped
         case deletingTransactionButtonTapped(IndexPath)
+        case saveButtonTapped
     }
     
     enum Mutation {
@@ -26,6 +27,7 @@ final class TransactionInputViewReactor: Reactor {
         case setDetailVisible(Bool)
         case addDetailTransaction
         case deleteDetailTransaction
+        case dismiss
     }
     
     struct State {
@@ -34,6 +36,7 @@ final class TransactionInputViewReactor: Reactor {
         var transactionType: TransactionType = .expense
         var dailyBudget: DailyBudget
         var isTextFieldEditting: Bool = false
+        var isDismiss: Bool = false
     }
     
     var initialState: State
@@ -61,6 +64,8 @@ final class TransactionInputViewReactor: Reactor {
             return updateTotalPrice(text)
         case .deletingTransactionButtonTapped(_):
             return .empty()
+        case .saveButtonTapped:
+            return updateTransactionRecord()
         }
     }
     
@@ -94,6 +99,8 @@ final class TransactionInputViewReactor: Reactor {
             newState.isTextFieldEditting.toggle()
         case .deleteDetailTransaction:
             break
+        case .dismiss:
+            newState.isDismiss = true
         }
         
         return newState
@@ -111,5 +118,25 @@ extension TransactionInputViewReactor {
             ? text.numberFormat! // 입력된 경우
             : String(text.dropLast()).numberFormat ?? 0 // 삭제한 경우
         ))
+    }
+    
+    private func updateTransactionRecord() -> Observable<Mutation> {
+        if let repository = DIContainer.shared.resolve(DailyBudgetRepository.self) {
+            let dailyBudget = currentState.dailyBudget
+            let expenseObs = repository.updateExpense(
+                dailyBudget.id,
+                expense: dailyBudget.expense
+            )
+            
+            let incomeObs = repository.updateIncome(
+                dailyBudget.id,
+                income: dailyBudget.income
+            )
+            
+            return Observable.zip(expenseObs, incomeObs).map { _ in .dismiss }
+                
+        }
+        
+        return .empty()
     }
 }
