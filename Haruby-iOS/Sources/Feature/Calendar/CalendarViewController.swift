@@ -346,11 +346,9 @@ extension CalendarViewController {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: self.cellId, for: indexPath) as! CalendarViewCell
                 
                 
-                guard let salaryStartDate = self.reactor?.currentState.salaryBudget.startDate,
-                      let salaryEndDate = self.reactor?.currentState.salaryBudget.endDate,
-                      let defaultHaruby = self.reactor?.currentState.salaryBudget.defaultHaruby else { return cell }
+                guard let salaryBudget = self.reactor?.currentState.salaryBudget else { return cell }
                 
-                let reactor = CalendarViewCellReactor(dailyBudget: item, salaryStartDate: salaryStartDate, salaryEndDate: salaryEndDate, defaultHaruby: defaultHaruby, indexPath: indexPath)
+                let reactor = CalendarViewCellReactor(dailyBudget: item, salaryStartDate: salaryBudget.startDate, salaryEndDate: salaryBudget.endDate, defaultHaruby: salaryBudget.defaultHaruby, indexPath: indexPath)
                 cell.reactor = reactor
                 
                 reactor.stateSubject.map{ ($0.navigateToNextView, $0.dayType, $0.dailyBudget) }
@@ -360,7 +358,7 @@ extension CalendarViewController {
                         guard let dailyBudget = dailyBudget else { return }
                         
                         if navigateToNextView {
-                            guard let viewController = self?.createNextViewController(dayType: dayType, dailyBudget: dailyBudget) else { return }
+                            guard let viewController = self?.createNextViewController(dayType: dayType, salaryBudget: salaryBudget, dailyBudget: dailyBudget) else { return }
                             self?.presentFullScreen(viewController)
                         }
                         
@@ -371,19 +369,19 @@ extension CalendarViewController {
         )
     }
     
-    private func createNextViewController(dayType: DayType, dailyBudget: DailyBudget) -> UIViewController? {
+    private func createNextViewController(dayType: DayType, salaryBudget: SalaryBudget, dailyBudget: DailyBudget) -> UIViewController? {
         switch dayType {
         case .past:
             return nil
             
         case .future:
             let vc = HarubyEditViewController()
-            vc.reactor = HarubyEditViewReactor(dailyBudget: dailyBudget)
+            vc.reactor = HarubyEditViewReactor(salaryBudget: salaryBudget, dailyBudget: dailyBudget)
             return UINavigationController(rootViewController: vc)
             
         case .today:
             let vc = HarubyOrTransactionSelectorViewController()
-            vc.reactor = HarubyOrTransactionSelectorViewReactor(dailyBudget: dailyBudget)
+            vc.reactor = HarubyOrTransactionSelectorViewReactor(salaryBudget: salaryBudget, dailyBudget: dailyBudget)
             return UINavigationController(rootViewController: vc)
             
         case .none:

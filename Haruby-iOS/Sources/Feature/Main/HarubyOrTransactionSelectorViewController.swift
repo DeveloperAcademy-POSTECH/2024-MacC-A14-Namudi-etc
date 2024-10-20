@@ -111,11 +111,11 @@ final class HarubyOrTransactionSelectorViewController: UIViewController, View {
     }
     
     private func bindState(reactor: HarubyOrTransactionSelectorViewReactor) {
-        reactor.state.map{ ($0.isHarubyButtonTapped, $0.dailyBudget) }
-            .bind{ [unowned self] (isHarubyButtonTapped, dailyBudget) in
+        reactor.state.map{ ($0.isHarubyButtonTapped, $0.salaryBudget, $0.dailyBudget) }
+            .bind{ [unowned self] (isHarubyButtonTapped, salaryBudget, dailyBudget) in
                 if isHarubyButtonTapped {
                     let vc = HarubyEditViewController()
-                    vc.reactor = HarubyEditViewReactor(dailyBudget: dailyBudget)
+                    vc.reactor = HarubyEditViewReactor(salaryBudget: salaryBudget, dailyBudget: dailyBudget)
                     self.navigationController?.pushViewController(vc, animated: true)
                 }
             }.disposed(by: disposeBag)

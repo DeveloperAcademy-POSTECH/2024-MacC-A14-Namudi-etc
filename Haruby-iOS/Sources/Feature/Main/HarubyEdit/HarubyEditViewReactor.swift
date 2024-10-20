@@ -22,21 +22,27 @@ final class HarubyEditViewReactor: Reactor {
     }
     
     struct State {
-        var dailyBudget: DailyBudget?
+        var salaryBudget: SalaryBudget
+        var dailyBudget: DailyBudget
         var haruby = 0
         var harubyText = ""
         var memoText = ""
     }
     
     let initialState: State
-    //let repository: SalaryBudgetRepository
     
-    init(dailyBudget: DailyBudget){
+    let repository: SalaryBudgetRepository
+    
+    init(salaryBudget: SalaryBudget, dailyBudget: DailyBudget){
         // TODO: SalaryBudget의 default하루비 가져오기
-        self.initialState = State(dailyBudget: dailyBudget, memoText: dailyBudget.memo)
-//        guard let repository = DIContainer.shared.resolve(SalaryBudgetRepository.self) else {
-//            fatalError("SalaryBudgetRepository is not registered.")
-//        }
+        self.initialState = State(salaryBudget: salaryBudget,
+                                  dailyBudget: dailyBudget,
+                                  memoText: dailyBudget.memo)
+        
+        guard let repository = DIContainer.shared.resolve(SalaryBudgetRepository.self) else {
+            fatalError("SalaryBudgetRepository is not registered.")
+        }
+        self.repository = repository
     }
     
     
