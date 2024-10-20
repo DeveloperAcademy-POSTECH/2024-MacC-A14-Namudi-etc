@@ -31,7 +31,7 @@ final class CalendarGradientView: UIView {
         gradientLayer.colors = [UIColor.Haruby.white.withAlphaComponent(0).cgColor,
                                 UIColor.Haruby.white.withAlphaComponent(0).cgColor,
                                 UIColor.Haruby.white.withAlphaComponent(0).cgColor,
-                                UIColor.Haruby.white.withAlphaComponent(0.6).cgColor,
+                                UIColor.Haruby.white.withAlphaComponent(0.4).cgColor,
                                 UIColor.Haruby.white.cgColor]
     }
     
