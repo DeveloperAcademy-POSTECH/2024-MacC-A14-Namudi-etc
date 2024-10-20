@@ -92,7 +92,6 @@ final class CalendarViewCellReactor: Reactor {
     }
     
     func mutate(action: Action) -> Observable<Mutation> {
-        stateSubject.onNext(self.currentState)
         switch action {
         case .viewDidLoad:
             return .empty()
