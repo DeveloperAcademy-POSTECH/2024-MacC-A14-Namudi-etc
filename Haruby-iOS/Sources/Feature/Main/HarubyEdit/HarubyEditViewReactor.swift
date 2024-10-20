@@ -71,9 +71,6 @@ final class HarubyEditViewReactor: Reactor {
             return Observable.just(.setMemoText(prefixedText))
             
         case .bottomButtonTapped:
-//            let setSalaryBudget = salaryBudgetRepository.fetch().map { salaryBudget in
-//                Mutation.setSalaryBudget(salaryBudget.first!)
-//            }
             let salaryBudgetId = self.currentState.salaryBudget.id
             let dailyBudgetId = self.currentState.dailyBudget.id
             
