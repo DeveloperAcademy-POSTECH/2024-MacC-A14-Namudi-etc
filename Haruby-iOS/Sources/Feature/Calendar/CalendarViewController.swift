@@ -207,11 +207,11 @@ final class CalendarViewController: UIViewController, View, CoordinatorCompatibl
     
     // MARK: - setup
     private func setupView() {
-        title = "하루비 달력"
         view.backgroundColor = .Haruby.main
         
         reactor?.action.onNext(.viewDidLoad)
         
+        setupNavigationBar()
         addSubviews()
         setupConstraints()
     }
@@ -283,6 +283,14 @@ final class CalendarViewController: UIViewController, View, CoordinatorCompatibl
             make.centerX.equalToSuperview()
             make.bottom.equalTo(self.view.safeAreaLayoutGuide.snp.bottom).offset(-6)
         }
+    }
+    
+    private func setupNavigationBar() {
+        title = "하루비 달력"
+        let textFont = UIFont.pretendardSemibold_20
+        let textColor = UIColor.Haruby.white
+        self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.font : textFont,
+                                                                        NSAttributedString.Key.foregroundColor: textColor]
     }
     
     
