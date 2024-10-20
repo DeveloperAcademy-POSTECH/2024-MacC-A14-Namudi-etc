@@ -168,7 +168,7 @@ final class StubSalaryBudgetRepository: SalaryBudgetRepository {
                 TransactionItem(name: "가스", price: 10000)
             ],
             balance: 600000,
-            defaultHaruby: 20000,
+            defaultHaruby: 15000,
             dailyBudgets: [
                 DailyBudget(
                     date: .now.formattedDate,
