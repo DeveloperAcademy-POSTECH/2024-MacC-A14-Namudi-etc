@@ -18,6 +18,19 @@ final class HarubyEditViewController: UIViewController, View {
     typealias Reactor = HarubyEditViewReactor
     
     // MARK: - UI Components
+    private lazy var closeButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setTitle("닫기", for: .normal)
+        button.setTitleColor(.Haruby.main, for: .normal)
+        button.titleLabel?.font = .pretendard(size: 18, weight: .bold)
+        
+        return button
+    }()
+    
+    private lazy var closeBarButtonItem: UIBarButtonItem = {
+        return UIBarButtonItem(customView: closeButton)
+    }()
+    
     private lazy var harubyTitleLabel: UILabel = {
         let label = UILabel()
         label.text = "하루비"
@@ -29,6 +42,9 @@ final class HarubyEditViewController: UIViewController, View {
     private lazy var harubyTextField: RoundedTextField = {
         let textField = RoundedTextField()
         textField.placeholder = "36,900원"
+        textField.keyboardType = .numberPad
+        textField.textField.tintColor = .clear
+        textField.textField.delegate = self
         return textField
     }()
     
@@ -69,9 +85,9 @@ final class HarubyEditViewController: UIViewController, View {
     
     //MARK: - setup
     private func setupView() {
-        title = "하루비 조정"
         view.backgroundColor = .Haruby.white
         
+        setupNavigationBar()
         setupSubviews()
         setupConstraints()
         setupTapGesture()
@@ -120,19 +136,16 @@ final class HarubyEditViewController: UIViewController, View {
     
     // MARK: - Binding
     func bind(reactor: HarubyEditViewReactor) {
-        // Action
-        memoTextField.textField.rx.text
-                    .orEmpty
-                    .distinctUntilChanged()
-                    .map{ Reactor.Action.editMemoText($0) }
-                    .bind(to: reactor.action)
+        bindState(reactor: reactor)
+        bindAction(reactor: reactor)
+    }
+    
+    private func bindState(reactor: HarubyEditViewReactor) {
+        
+        reactor.state.map{ $0.dailyBudget?.haruby?.decimalWithWon }
+            .bind(to: harubyTextField.textField.rx.placeholder)
                     .disposed(by: disposeBag)
         
-        bottomButton.rx.tap
-                    .map{ Reactor.Action.bottomButtonTapped }
-                    .bind(to: reactor.action)
-                    .disposed(by: disposeBag)
-        // State
         reactor.state.map{ $0.harubyText }
             .bind(to: harubyTextField.textField.rx.text)
                     .disposed(by: disposeBag)
@@ -147,6 +160,49 @@ final class HarubyEditViewController: UIViewController, View {
                     .bind(to: memoFooterLabel.rx.text)
                     .disposed(by: disposeBag)
     }
+    
+    private func bindAction(reactor: HarubyEditViewReactor) {
+        
+        closeButton.rx.tap
+            .bind{ [weak self] in
+                self?.dismiss(animated: true)
+            }
+            .disposed(by: disposeBag)
+        
+        harubyTextField.textField.rx.text
+                    .orEmpty
+                    .map{ Reactor.Action.editHarubyText($0) }
+                    .bind(to: reactor.action)
+                    .disposed(by: disposeBag)
+        
+        harubyTextField.textField.rx.text
+                    .orEmpty
+                    .subscribe(onNext: { [unowned self] _ in
+                        self.textFieldDidChangeSelection(self.harubyTextField.textField)
+                    })
+                    .disposed(by: disposeBag)
+        
+        memoTextField.textField.rx.text
+                    .orEmpty
+                    .distinctUntilChanged()
+                    .map{ Reactor.Action.editMemoText($0) }
+                    .bind(to: reactor.action)
+                    .disposed(by: disposeBag)
+        
+        bottomButton.rx.tap
+                    .map{ Reactor.Action.bottomButtonTapped }
+                    .bind(to: reactor.action)
+                    .disposed(by: disposeBag)
+    }
+    
+    private func setupNavigationBar() {
+        title = "하루비 조정"
+        navigationItem.rightBarButtonItem = closeBarButtonItem
+        let textFont = UIFont.pretendardSemibold_20
+        let textColor = UIColor.Haruby.textBlack
+        self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.font : textFont,
+                                                                        NSAttributedString.Key.foregroundColor: textColor]
+    }
 }
 
 extension HarubyEditViewController {
@@ -158,7 +214,19 @@ extension HarubyEditViewController {
         view.addGestureRecognizer(tapGesture)
     }
     
+   
+    
     @objc private func dismissKeyboard() {
         view.endEditing(true)
+    }
+}
+
+
+extension HarubyEditViewController: UITextFieldDelegate {
+    func textFieldDidChangeSelection(_ textField: UITextField) {
+        let endPosition = textField.endOfDocument
+        if let newPosition = textField.position(from: endPosition, offset: -1) {
+            textField.selectedTextRange = textField.textRange(from: newPosition, to: newPosition)
+        }
     }
 }

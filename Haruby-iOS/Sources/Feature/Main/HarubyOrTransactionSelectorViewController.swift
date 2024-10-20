@@ -21,9 +21,17 @@ final class HarubyOrTransactionSelectorViewController: UIViewController, View {
     private let horizontalPadding: CGFloat = 16
     
     // MARK: - UI Components
-    private lazy var closeButton: UIBarButtonItem = {
-        let button = UIBarButtonItem(title: "닫기", style: .plain, target: nil, action: nil)
+    private lazy var closeButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setTitle("닫기", for: .normal)
+        button.setTitleColor(.Haruby.main, for: .normal)
+        button.titleLabel?.font = .pretendard(size: 18, weight: .bold)
+        
         return button
+    }()
+    
+    private lazy var closeBarButtonItem: UIBarButtonItem = {
+        return UIBarButtonItem(customView: closeButton)
     }()
     
     private let harubyNavigationButton: NavigationButton = {
@@ -62,10 +70,8 @@ final class HarubyOrTransactionSelectorViewController: UIViewController, View {
     
     // MARK: - setup
     private func setupView() {
-        title = Date().formattedDateToStringforMainView
         view.backgroundColor = .Haruby.white
-        navigationItem.rightBarButtonItem = closeButton
-        
+        setupNavigationBar()
         setupAddSubviews()
         setupConstraints()
     }
@@ -89,12 +95,37 @@ final class HarubyOrTransactionSelectorViewController: UIViewController, View {
         }
     }
     
+    private func setupNavigationBar() {
+        title = Date().formattedDateToStringforMainView
+        navigationItem.rightBarButtonItem = closeBarButtonItem
+        let textFont = UIFont.pretendardSemibold_20
+        let textColor = UIColor.Haruby.textBlack
+        self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.font : textFont,
+                                                                        NSAttributedString.Key.foregroundColor: textColor]
+    }
+    
     // MARK: - Binding
     func bind(reactor: HarubyOrTransactionSelectorViewReactor) {
-        // TODO: 기능 구현때 분리
+        bindState(reactor: reactor)
+        bindAction(reactor: reactor)
+    }
+    
+    private func bindState(reactor: HarubyOrTransactionSelectorViewReactor) {
+        reactor.state.map{ ($0.isHarubyButtonTapped, $0.dailyBudget) }
+            .bind{ [unowned self] (isHarubyButtonTapped, dailyBudget) in
+                if isHarubyButtonTapped {
+                    let vc = HarubyEditViewController()
+                    vc.reactor = HarubyEditViewReactor(dailyBudget: dailyBudget)
+                    self.navigationController?.pushViewController(vc, animated: true)
+                }
+            }.disposed(by: disposeBag)
+    }
+    
+    private func bindAction(reactor: HarubyOrTransactionSelectorViewReactor) {
         closeButton.rx.tap
-            .map{ Reactor.Action.closeButtonTapped }
-            .bind(to: reactor.action)
+            .bind{ [unowned self] in
+                self.dismiss(animated: true)
+            }
             .disposed(by: disposeBag)
         
         harubyNavigationButton.rx.tap
