@@ -60,28 +60,15 @@ final class TransactionInputViewController: UIViewController, View {
         return textField
     }()
     
-    private lazy var detailButton: UIButton = {
+    private lazy var detailInputButton: UIButton = {
         let button = UIButton()
-        button.setTitle("상세 내역 기록하기", for: .normal)
+        button.setTitle("상세 내역 기록하기 ", for: .normal)
+        button.setImage(UIImage(systemName: "chevron.down"), for: .normal)
+        button.imageView?.tintColor = .Haruby.textBright
         button.setTitleColor(.Haruby.textBright, for: .normal)
         button.titleLabel?.font = .pretendardMedium_14
+        button.semanticContentAttribute = .forceRightToLeft
         return button
-    }()
-    
-    private lazy var detailChevron: UIButton = {
-        let button = UIButton()
-        button.setImage(UIImage(systemName: "chevron.down"), for: .normal)
-        button.tintColor = .Haruby.textBright
-        button.titleLabel?.font = .systemFont(ofSize: 14)
-        return button
-    }()
-    
-    private lazy var detailButtonStackView: UIStackView = {
-        let view = UIStackView(arrangedSubviews: [self.detailButton, self.detailChevron])
-        view.axis = .horizontal
-        view.alignment = .fill
-        view.spacing = 2
-        return view
     }()
     
     private lazy var detailTransactionTableView: UITableView = {
@@ -131,7 +118,7 @@ final class TransactionInputViewController: UIViewController, View {
         self.view.addSubview(segmentedControl)
         self.view.addSubview(dateStackView)
         self.view.addSubview(totalPriceTextField)
-        self.view.addSubview(detailButtonStackView)
+        self.view.addSubview(detailInputButton)
         self.view.addSubview(detailTransactionTableView)
         self.view.addSubview(addDetailTransactionButton)
         self.view.addSubview(bottomButton)
@@ -154,13 +141,13 @@ final class TransactionInputViewController: UIViewController, View {
             make.horizontalEdges.equalTo(view.safeAreaLayoutGuide).inset(16)
         }
         
-        detailButtonStackView.snp.makeConstraints { make in
+        detailInputButton.snp.makeConstraints { make in
             make.top.equalTo(self.totalPriceTextField.snp.bottom).offset(10)
             make.leading.equalTo(view.safeAreaLayoutGuide).inset(28)
         }
         
         detailTransactionTableView.snp.makeConstraints { make in
-            make.top.equalTo(self.detailButtonStackView.snp.bottom).offset(16)
+            make.top.equalTo(self.detailInputButton.snp.bottom).offset(16)
             make.horizontalEdges.equalToSuperview()
         }
         
@@ -193,9 +180,12 @@ final class TransactionInputViewController: UIViewController, View {
                 self.detailTransactionTableView.isHidden = !isVisible
                 self.addDetailTransactionButton.isHidden = !isVisible
                 
-                let angle: CGFloat = isVisible ? .pi : 0
+                
                 UIView.animate(withDuration: 0.1) {
-                    self.detailChevron.transform = CGAffineTransform(rotationAngle: angle)
+                    self.detailInputButton.setImage(isVisible
+                                                ? UIImage(systemName: "chevron.up")
+                                                : UIImage(systemName: "chevron.down"),
+                                                for: .normal)
                 }
             })
             .disposed(by: disposeBag)
@@ -237,25 +227,6 @@ final class TransactionInputViewController: UIViewController, View {
             })
             .disposed(by: disposeBag)
         
-//        reactor.state
-//            .map {
-//                $0.transactionType == .expense
-//                ? $0.dailyBudget.expense.transactionItems
-//                : $0.dailyBudget.income.transactionItems
-//            }
-//            .distinctUntilChanged()
-//            .subscribe(onNext: { [weak self] transactions in
-//                guard let self = self else { return }
-//                self.detailTransactionTableView.reloadData()
-//                
-//                // 가장 나중에 추가한 cell에 포커스되도록 하는 코드
-//                if transactions.count > 0 {
-//                    let lastRowIndex = IndexPath(row: transactions.count - 1, section: 0)
-//                    self.detailTransactionTableView.scrollToRow(at: lastRowIndex, at: .bottom, animated: true)
-//                }
-//            })
-//            .disposed(by: disposeBag)
-        
         reactor.state
             .map {
                 $0.transactionType == .expense
@@ -276,17 +247,10 @@ final class TransactionInputViewController: UIViewController, View {
         
         detailTransactionTableView.rx.setDelegate(self)
             .disposed(by: disposeBag)
-            
-       
     }
     
     private func bindAction(reactor: Reactor) {
-        detailChevron.rx.tap
-            .map { Reactor.Action.detailButtonTapped }
-            .bind(to: reactor.action)
-            .disposed(by: disposeBag)
-        
-        detailButton.rx.tap
+        detailInputButton.rx.tap
             .map { Reactor.Action.detailButtonTapped }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
@@ -311,6 +275,11 @@ final class TransactionInputViewController: UIViewController, View {
 
         totalPriceTextField.textField.rx.text.orEmpty
             .map { Reactor.Action.totalPriceTextFieldEditting($0) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        bottomButton.rx.tap
+            .map { Reactor.Action.saveButtonTapped }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
     }
