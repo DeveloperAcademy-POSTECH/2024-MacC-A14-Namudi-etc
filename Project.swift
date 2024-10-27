@@ -1,73 +1,73 @@
 import ProjectDescription
 
+let projectName = "Haruby-iOS"
+
+// MARK: - Settings
+let settings: Settings = .settings(
+  base: [:],
+  debug: [:],
+  release: [:],
+  defaultSettings: .recommended
+)
+
+// MARK: - Targets
 let project = Project(
-    name: "Haruby-iOS",
-    options: .options(
-        defaultKnownRegions: ["en", "ko"],
-        developmentRegion: "ko"
+  name: "Harubee-iOS",
+  organizationName: "namudiEtc",
+  targets: [
+    .target(
+      name: "Harubee-iOS",
+      destinations: .iOS,
+      product: .app,
+      bundleId: "etc.namudi.harubee-app",
+      infoPlist: .extendingDefault(
+        with: [
+          "UILaunchScreen": [
+            "UIColorName": "",
+            "UIImageName": "",
+          ],
+        ]
+      ),
+      sources: ["Harubee-iOS/Sources/**"],
+      resources: ["Harubee-iOS/Resources/**"],
+      dependencies: [
+        .target(name: "Domain"),
+        .target(name: "DesignSystem"),
+        .target(name: "Data")
+      ]
     ),
-    targets: [
-        .target(
-            name: "Haruby-iOS",
-            destinations: [.iPhone],
-            product: .app,
-            bundleId: "io.tuist.Haruby-iOS",
-            deploymentTargets: .iOS("16.0"),
-            infoPlist: .extendingDefault(
-                with: [
-                    "CFBundleDisplayName": "하루비",
-                    "UISupportedInterfaceOrientations": [
-                        "UIInterfaceOrientationPortrait"
-                    ],
-                    "UILaunchScreen": [
-                        "UIColorName": "",
-                        "UIImageName": "",
-                    ],
-                    "UIApplicationSceneManifest": [
-                        "UIApplicationSupportsMultipleScenes": false,
-                        "UISceneConfigurations": [
-                            "UIWindowSceneSessionRoleApplication": [
-                                [
-                                    "UISceneConfigurationName": "Default Configuration",
-                                    "UISceneDelegateClassName": "$(PRODUCT_MODULE_NAME).SceneDelegate"
-                                ]
-                            ]
-                        ]
-                    ]
-                ]
-            ),
-            sources: ["Haruby-iOS/Sources/**"],
-            resources: ["Haruby-iOS/Resources/**"],
-//            scripts: [
-//                .pre(script: """
-//                        cp ./.scripts/pre-commit ./.git/hooks
-//                        """, name: "PreCommitScript")
-//            ],
-            dependencies: [
-                .external(name: "RxSwift"),
-                .external(name: "RxCocoa"),
-                .external(name: "RxDataSources"),
-                .external(name: "SnapKit"),
-                .external(name: "ReactorKit"),
-                .external(name: "Hero"),
-                .external(name: "RealmSwift", condition: .when([.ios])),
-                .external(name: "Realm")
-            ]
-        ),
-        .target(
-            name: "Haruby-iOSTests",
-            destinations: .iOS,
-            product: .unitTests,
-            bundleId: "io.tuist.Haruby-iOSTests",
-            infoPlist: .default,
-            sources: ["Haruby-iOS/Tests/**"],
-            resources: [],
-            dependencies: [.target(name: "Haruby-iOS")]
-        ),
-    ],
-    resourceSynthesizers: [
-        .assets(),
-        .fonts(),
-        .strings()
-    ]
+    
+      .target(
+        name: "DesignSystem",
+        destinations: .iOS,
+        product: .framework,
+        bundleId: "etc.namudi.harubee-designsystem",
+        infoPlist: .default,
+        sources: ["DesignSystem/Sources/**"],
+        resources: ["DesignSystem/Resources/**"],
+        dependencies: []
+      ),
+    
+      .target(
+        name: "Domain",
+        destinations: .iOS,
+        product: .framework,
+        bundleId: "etc.namudi.harubee-domain",
+        infoPlist: .default,
+        sources: ["Domain/Sources/**"],
+        dependencies: []
+      ),
+    
+      .target(
+        name: "Data",
+        destinations: .iOS,
+        product: .framework,
+        bundleId: "etc.namudi.harubee-data",
+        infoPlist: .default,
+        sources: ["Data/Sources/**"],
+        dependencies: [
+          .target(name: "Domain")
+        ]
+      )
+  ]
 )
