@@ -9,14 +9,13 @@
 import Foundation
 
 public struct TransactionItem: Identifiable {
-  public let id: UUID
+  public let id: String = UUID().uuidString
   public var date: Date
-  public let name: String
-  public let price: Int
+  public var name: String
+  public var price: Int
   
   static var `default`: TransactionItem {
     .init(
-      id: .init(),
       date: .init(),
       name: "",
       price: 0
