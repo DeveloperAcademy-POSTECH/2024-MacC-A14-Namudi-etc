@@ -11,7 +11,7 @@ import Foundation
 public final class BudgetCalculationUseCaseImpl: BudgetCalculationUseCase {
   
   public init(
-    budgetRepository: BudgetRepository
+    salaryBudgetRepository: SalaryBudgetRepository
   ) {
     
   }

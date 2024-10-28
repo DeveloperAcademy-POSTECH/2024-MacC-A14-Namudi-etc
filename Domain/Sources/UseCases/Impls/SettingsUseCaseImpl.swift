@@ -11,7 +11,7 @@ import Foundation
 public final class SettingsUseCaseImpl: SettingsUseCase {
   
   public init(
-    settingsRepository: SettingsRepository
+    salaryBudgetRepository: SalaryBudgetRepository
   ) {
     
   }

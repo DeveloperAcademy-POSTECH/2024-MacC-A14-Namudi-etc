@@ -11,7 +11,8 @@ import Foundation
 public final class DailyBudgetUseCaseImpl: DailyBudgetUseCase {
   
   public init(
-    budgetRepository: BudgetRepository,
+    salaryBudgetRepository: SalaryBudgetRepository,
+    dailyBudgetRepository: DailyBudgetRepository,
     calculationUseCase: BudgetCalculationUseCase
   ) {
     
