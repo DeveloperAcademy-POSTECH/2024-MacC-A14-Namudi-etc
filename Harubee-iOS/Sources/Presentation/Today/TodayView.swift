@@ -111,18 +111,66 @@ private struct CalendarStreakView: View {
             .frame(width: 8, height: 12)
         }
         
-        HStack {
-          RoundedRectangle(cornerRadius: 10)
-            .frame(maxWidth: .infinity, maxHeight: 65)
-          RoundedRectangle(cornerRadius: 10)
-            .frame(maxWidth: 44, maxHeight: 65)
-          RoundedRectangle(cornerRadius: 10)
-            .frame(maxWidth: .infinity, maxHeight: 65)
+        HStack(spacing: 7) {
+          ZStack {
+            RoundedRectangle(cornerRadius: 10)
+              .frame(maxWidth: .infinity, maxHeight: 65)
+            HStack {
+              StreakCellView()
+              Spacer()
+              StreakCellView()
+              Spacer()
+              StreakCellView()
+            }.padding(.horizontal, 8)
+          }
+          
+          ZStack {
+            RoundedRectangle(cornerRadius: 10)
+              .frame(maxWidth: 44, maxHeight: 65)
+            VStack {
+              Text("오늘")
+                .font(Font.system(size: 12))
+                .foregroundStyle(.white)
+              
+              Image(systemName: "hexagon")
+                .resizable()
+                .frame(width:20, height: 20)
+                .foregroundStyle(.white)
+            }
+          }
+          
+          ZStack {
+            RoundedRectangle(cornerRadius: 10)
+              .frame(maxWidth: .infinity, maxHeight: 65)
+            HStack {
+              StreakCellView()
+              Spacer()
+              StreakCellView()
+              Spacer()
+              StreakCellView()
+            }.padding(.horizontal, 8)
+          }
         }
       }.padding(.top, 10)
     })
   }
 }
+
+private struct StreakCellView: View {
+  var body: some View {
+    VStack(spacing: 5) {
+      Text("19(일)")
+        .font(Font.system(size: 12))
+        .foregroundStyle(.white)
+      
+      Image(systemName: "hexagon")
+        .resizable()
+        .frame(width:20, height: 20)
+        .foregroundStyle(.white)
+    }
+  }
+}
+
 
 
 #Preview {
