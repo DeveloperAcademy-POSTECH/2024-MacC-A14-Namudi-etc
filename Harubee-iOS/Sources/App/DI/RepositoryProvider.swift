@@ -17,15 +17,17 @@ final class RepositoryProvider {
     self.storageProvider = storageProvider
   }
   
-  lazy var budgetRepository: BudgetRepository = {
-    BudgetRepositoryImpl(
+  lazy var salaryBudgetRepository: SalaryBudgetRepository = {
+    SalaryBudgetRepositoryImpl(
       modelContainer: storageProvider.modelContainer
     )
   }()
   
-  lazy var settingsRepository: SettingsRepository = {
-    SettingsRepositoryImpl(
-      userDefaults: storageProvider.userDefaults
+  lazy var dailyBudgetRepository: DailyBudgetRepository = {
+    DailyBudgetRepositoryImpl(
+      modelContainer: storageProvider.modelContainer
     )
   }()
+  
+  // TODO: - UserDefalts 관련 Repository 혹은 Manager 추가 필요
 }
