@@ -9,7 +9,7 @@
 import Foundation
 
 public struct DailyBudget: Identifiable {
-  public let id: UUID
+  public let id: String = UUID().uuidString
   public let date: Date
   public var harubee: Int?
   public var memo: [String]
@@ -18,7 +18,6 @@ public struct DailyBudget: Identifiable {
   
   static var `default`: DailyBudget {
     .init(
-      id: .init(),
       date: .init(),
       harubee: nil,
       memo: [],

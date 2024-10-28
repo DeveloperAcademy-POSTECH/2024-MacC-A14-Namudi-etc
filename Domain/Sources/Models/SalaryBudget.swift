@@ -9,18 +9,17 @@
 import Foundation
 
 public struct SalaryBudget: Identifiable {
-  public let id: UUID
+  public let id: String = UUID().uuidString
   public let startDate: Date
   public let endDate: Date
-  public let fixedIncome: Int
-  public let fixedExpense: [TransactionItem]
+  public var fixedIncome: Int
+  public var fixedExpense: [TransactionItem]
   public var balance: Int
-  public var defaultHarubee: Int
+  public var defaultHarubee: Double
   public var dailyBudgets: [DailyBudget]
   
   static var `default`: SalaryBudget {
     .init(
-      id: .init(),
       startDate: .init(),
       endDate: .init(),
       fixedIncome: 0,
