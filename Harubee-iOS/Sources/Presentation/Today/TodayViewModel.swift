@@ -7,3 +7,31 @@
 //
 
 import Foundation
+
+@Observable
+final class TodayViewModel {
+  // MARK: - State
+  struct State{
+    
+  }
+  
+  // MARK: - Action
+  enum Action {
+    
+  }
+  
+  private(set) var state: State = .init()
+  
+  init() {}
+  
+  // MARK: - Effect
+  func effect(_ action: Action) {
+    switch action {
+      // code
+    }
+  }
+}
+
+extension TodayViewModel {
+  // MARK: - Private Function
+}
