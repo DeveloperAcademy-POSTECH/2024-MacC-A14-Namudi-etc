@@ -8,12 +8,31 @@
 
 import SwiftUI
 
+// MARK: - TodayView
 struct TodayView: View {
-    var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+  var body: some View {
+    NavigationStack {
+      ZStack(alignment: .top) {
+        Color.blue.ignoresSafeArea()
+        
+      }
+      .toolbar {
+        ToolbarItem(placement: .topBarTrailing) {
+          Button(action: {
+            print("setting Button Tapped")
+          }, label: {
+            Image(systemName: "gearshape")
+              .resizable()
+              .frame(width: 25, height: 25)
+              .foregroundStyle(.white)
+          })
+        }
+      }
     }
+  }
 }
 
 #Preview {
-    TodayView()
+  TodayView()
 }
+
