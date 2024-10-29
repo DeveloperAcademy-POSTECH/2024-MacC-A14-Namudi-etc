@@ -13,19 +13,29 @@ import SwiftData
 final class StorageProvider {
   lazy var modelContainer: ModelContainer = {
     let schema = Schema([
-      /*
-       TODO: DTO 설정 후 주석 해제 필요
-       BudgetDTO.self,
-       DailyBudgetDTO.self,
-       TransactionItemDTO.self
-       */
+      SalaryBudgetDTO.self,
+      DailyBudgetDTO.self,
+      TransactionItemDTO.self
     ])
     
+    let configuration = ModelConfiguration(
+      schema: schema,
+      isStoredInMemoryOnly: false
+    )
+    
     do {
-      return try ModelContainer(for: schema)
+      let container = try ModelContainer(
+        for: schema,
+        configurations: configuration
+      )
+      return container
     } catch {
       fatalError("Failed to create ModelContainer: \(error)")
     }
+  }()
+  
+  lazy var modelContext: ModelContext = {
+    ModelContext(self.modelContainer)
   }()
   
   // UserDefaults 설정
