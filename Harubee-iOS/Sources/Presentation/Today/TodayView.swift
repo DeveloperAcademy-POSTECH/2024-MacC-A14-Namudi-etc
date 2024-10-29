@@ -38,11 +38,42 @@ struct TodayView: View {
 
 // MARK: - TodayPrimaryLayerView
 private struct TodayPrimaryLayerView: View {
+  
+  let screenWidth = UIScreen.main.bounds.width
+  let screenHeight = UIScreen.main.bounds.height
+  let hexgonSize = (UIScreen.main.bounds.height - 100)/3
+  let honeycombSpace = -10.0
+  
+  let hexGrid: [[Hexagon]] = [
+    [Hexagon(isStroked: true), Hexagon(isStroked: false)],
+    [Hexagon(isStroked: false), Hexagon(isStroked: true), Hexagon(isStroked: true)],
+    [Hexagon(isStroked: false), Hexagon(isStroked: true)],
+  ]
+  
   var body: some View {
-    Text("This is Today Primary Layer View")
-      .foregroundStyle(.white)
+    ZStack {
+      VStack(spacing: honeycombSpace - (hexgonSize/(4 * sqrt(3)))) {
+        ForEach(hexGrid.indices, id: \.self) { index in
+          HStack(spacing: honeycombSpace - 2) {
+            ForEach(hexGrid[index], id: \.self) { item in
+              RoundedHexagon()
+                .stroke(item.isStroked ? .white: .clear, lineWidth: 1.5)
+                .frame(width: hexgonSize, height: hexgonSize)
+            }
+          }
+        }
+      }
+    }
+    .offset(x: honeycombSpace - hexgonSize/5, y: -hexgonSize/5)
+    .frame(maxWidth: screenWidth, maxHeight: screenHeight, alignment: .top)
+    .ignoresSafeArea()
+  }
+  
+  struct Hexagon: Hashable {
+    var isStroked: Bool
   }
 }
+
 
 // MARK: - TodaySecondaryLayerView
 private struct TodaySecondaryLayerView: View {
@@ -116,11 +147,11 @@ private struct CalendarStreakView: View {
             RoundedRectangle(cornerRadius: 10)
               .frame(maxWidth: .infinity, maxHeight: 65)
             HStack {
-              StreakCellView()
+              StreakCell()
               Spacer()
-              StreakCellView()
+              StreakCell()
               Spacer()
-              StreakCellView()
+              StreakCell()
             }.padding(.horizontal, 8)
           }
           
@@ -134,6 +165,7 @@ private struct CalendarStreakView: View {
               
               Image(systemName: "hexagon")
                 .resizable()
+                .aspectRatio(contentMode: .fit)
                 .frame(width:20, height: 20)
                 .foregroundStyle(.white)
             }
@@ -143,11 +175,11 @@ private struct CalendarStreakView: View {
             RoundedRectangle(cornerRadius: 10)
               .frame(maxWidth: .infinity, maxHeight: 65)
             HStack {
-              StreakCellView()
+              StreakCell()
               Spacer()
-              StreakCellView()
+              StreakCell()
               Spacer()
-              StreakCellView()
+              StreakCell()
             }.padding(.horizontal, 8)
           }
         }
@@ -156,7 +188,7 @@ private struct CalendarStreakView: View {
   }
 }
 
-private struct StreakCellView: View {
+private struct StreakCell: View {
   var body: some View {
     VStack(spacing: 5) {
       Text("19(일)")
@@ -165,13 +197,47 @@ private struct StreakCellView: View {
       
       Image(systemName: "hexagon")
         .resizable()
+        .aspectRatio(contentMode: .fit)
         .frame(width:20, height: 20)
         .foregroundStyle(.white)
     }
   }
 }
 
-
+private struct RoundedHexagon: Shape {
+  
+  private let cornerRadius: CGFloat = 15
+  
+  func path(in rect: CGRect) -> Path {
+    var path = Path()
+    
+    let centerX = rect.width / 2
+    let centerY = rect.height / 2
+    let radius = min(rect.width, rect.height) / 2
+    
+    var points: [CGPoint] = []
+    
+    for i in 0..<6 {
+        let angle = (CGFloat(i) * (2 * .pi / 6)) - (.pi / 2)
+        let x = centerX + radius * cos(angle)
+        let y = centerY + radius * sin(angle)
+        points.append(CGPoint(x: x, y: y))
+    }
+    
+    path.move(to: CGPoint(x: points[5].x + CGFloat(sqrt(3) * 5), y: points[5].y - 5))
+    
+    path.addArc(tangent1End: points[0], tangent2End: points[1], radius: cornerRadius)
+    path.addArc(tangent1End: points[1], tangent2End: points[2], radius: cornerRadius)
+    path.addArc(tangent1End: points[2], tangent2End: points[3], radius: cornerRadius)
+    path.addArc(tangent1End: points[3], tangent2End: points[4], radius: cornerRadius)
+    path.addArc(tangent1End: points[4], tangent2End: points[5], radius: cornerRadius)
+    path.addArc(tangent1End: points[5], tangent2End: points[0], radius: cornerRadius)
+    
+    path.closeSubpath()
+    
+    return path
+  }
+}
 
 #Preview {
   TodayView()
