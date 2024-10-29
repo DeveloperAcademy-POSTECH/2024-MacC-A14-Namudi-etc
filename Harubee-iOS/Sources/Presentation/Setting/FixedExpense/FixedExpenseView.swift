@@ -10,50 +10,51 @@ import SwiftUI
 
 struct FixedExpenseView: View {
   var body: some View {
-    ZStack {
-      Color.blue
+    VStack(spacing: 0) {
+      HeaderView()
+      BodyView()
         .ignoresSafeArea()
-      VStack {
-        HeaderView()
-        BodyView()
-          .ignoresSafeArea()
-      }
     }
+    .frame(maxHeight: .infinity, alignment: .top)
   }
 }
 
 private struct HeaderView: View {
   var body: some View {
-    VStack(alignment: .leading, spacing: 6) {
-      Text("매월 나가는 지출 내역을")
-      Text("추가해 주세요")
+    VStack(alignment: .leading, spacing: 10) {
+      Text("총 0건")
+      Text("총 0원")
     }
-    .font(.system(size: 24, weight: .bold))
-    .foregroundStyle(Color.white)
+    .font(.system(size: 24, weight: .semibold))
     .frame(maxWidth: .infinity, alignment: .leading)
     .padding(.horizontal, 26)
-    .padding(.top, 32)
+    .padding(.top, 36)
+    
+    Rectangle()
+      .frame(height: 1)
+      .padding(.horizontal, 18)
+      .padding(.top, 12)
+      .foregroundStyle(.gray)
   }
 }
 
 private struct BodyView: View {
   var body: some View {
-    ZStack(alignment: .leading) {
-      Rectangle()
-        .fill(Color.white)
-        .clipShape(RoundedRectangle(cornerRadius: 20))
+    VStack(spacing: 0) {
+      Button(action: {}, label: {
+        Image(systemName: "plus")
+          .resizable()
+          .aspectRatio(contentMode: .fit)
+          .frame(width: 26, height: 29)
+          .foregroundStyle(.black)
+      })
+      .frame(maxWidth: .infinity, alignment: .trailing)
+      .padding(.horizontal, 16)
       
-      VStack {
-        Text("고정지출 내역")
-          .padding(.top, 38)
-          .padding(.horizontal, 24)
-          .font(.system(size: 20, weight: .semibold))
-          .frame(maxWidth: .infinity, alignment: .leading)
-        FixedExpenseInputCell(fixedExpenseName: "", fixedExpenseAmount: "")
-        
-      }
+      FixedExpenseList()
+        .padding(.top, 16)
     }
-    .padding(.top, 27)
+    .padding(.top, 14)
   }
 }
 
