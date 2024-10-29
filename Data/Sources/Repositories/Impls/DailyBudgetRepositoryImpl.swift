@@ -19,27 +19,27 @@ public final class DailyBudgetRepositoryImpl: DailyBudgetRepository {
   }
   
   public func readByDate(_ date: Date) async throws -> Domain.DailyBudget? {
-    print("Impl: ", #function)
+    print("Impl:", #function)
     return nil
   }
   
   public func updateHarubee(_ id: String, harubee: Int) async throws {
-    print("Impl: ", #function)
+    print("Impl:", #function)
     return
   }
   
   public func updateExpense(_ id: String, expense: Int) async throws {
-    print("Impl: ", #function)
+    print("Impl:", #function)
     return
   }
   
   public func updateIncome(_ id: String, income: Int) async throws {
-    print("Impl: ", #function)
+    print("Impl:", #function)
     return
   }
   
   public func updateMemo(_ id: String, memo: [String]) async throws {
-    print("Impl: ", #function)
+    print("Impl:", #function)
     return
   }
   

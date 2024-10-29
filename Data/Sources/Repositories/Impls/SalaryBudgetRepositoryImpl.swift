@@ -19,42 +19,42 @@ public final class SalaryBudgetRepositoryImpl: SalaryBudgetRepository {
   }
   
   public func create(_ salaryBudget: Domain.SalaryBudget) async throws {
-    print("Impl: ", #function)
+    print("Impl:", #function)
     return
   }
   
   public func readAll() async throws -> [Domain.SalaryBudget] {
-    print("Impl: ", #function)
+    print("Impl:", #function)
     return []
   }
   
   public func readByStartDate(_ startDate: Date) async throws -> Domain.SalaryBudget? {
-    print("Impl: ", #function)
+    print("Impl:", #function)
     return nil
   }
   
   public func updateTotalFixedIncome(_ id: String, totalFixedIncome: Int) async throws {
-    print("Impl: ", #function)
+    print("Impl:", #function)
     return
   }
   
   public func updateFixedExpenses(_ id: String, fixedExpenses: [Domain.TransactionItem]) async throws {
-    print("Impl: ", #function)
+    print("Impl:", #function)
     return
   }
   
   public func updateBalance(_ id: String, balance: Int) async throws {
-    print("Impl: ", #function)
+    print("Impl:", #function)
     return
   }
   
   public func updateDefaultHarubee(_ id: String, defaultHarubee: Double) async throws {
-    print("Impl: ", #function)
+    print("Impl:", #function)
     return
   }
   
   public func deleteById(_ id: String) async throws {
-    print("Impl: ", #function)
+    print("Impl:", #function)
     return
   }
   
