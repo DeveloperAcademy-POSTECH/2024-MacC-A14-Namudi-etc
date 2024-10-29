@@ -9,10 +9,22 @@
 import Foundation
 
 public struct TransactionItem: Identifiable {
-  public let id: String = UUID().uuidString
+  public let id: String
   public var date: Date
   public var name: String
   public var price: Int
+  
+  public init(
+    id: String = UUID().uuidString,
+    date: Date,
+    name: String,
+    price: Int
+  ) {
+    self.id = id
+    self.date = date
+    self.name = name
+    self.price = price
+  }
   
   static var `default`: TransactionItem {
     .init(

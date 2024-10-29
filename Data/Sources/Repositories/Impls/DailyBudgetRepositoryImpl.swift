@@ -12,10 +12,10 @@ import SwiftData
 
 public final class DailyBudgetRepositoryImpl: DailyBudgetRepository {
   
-  private let modelContainer: ModelContainer
+  private let modelContext: ModelContext
   
-  public init(modelContainer: ModelContainer) {
-    self.modelContainer = modelContainer
+  public init(modelContext: ModelContext) {
+    self.modelContext = modelContext
   }
   
   public func readByDate(_ date: Date) async throws -> Domain.DailyBudget? {

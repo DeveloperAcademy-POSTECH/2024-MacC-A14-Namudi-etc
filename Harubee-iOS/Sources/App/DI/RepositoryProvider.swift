@@ -19,13 +19,13 @@ final class RepositoryProvider {
   
   lazy var salaryBudgetRepository: SalaryBudgetRepository = {
     SalaryBudgetRepositoryImpl(
-      modelContainer: storageProvider.modelContainer
+      modelContext: storageProvider.modelContext
     )
   }()
   
   lazy var dailyBudgetRepository: DailyBudgetRepository = {
     DailyBudgetRepositoryImpl(
-      modelContainer: storageProvider.modelContainer
+      modelContext: storageProvider.modelContext
     )
   }()
   

@@ -12,10 +12,10 @@ import SwiftData
 
 public final class SalaryBudgetRepositoryImpl: SalaryBudgetRepository {
   
-  private let modelContainer: ModelContainer
+  private let modelContext: ModelContext
   
-  public init(modelContainer: ModelContainer) {
-    self.modelContainer = modelContainer
+  public init(modelContext: ModelContext) {
+    self.modelContext = modelContext
   }
   
   public func create(_ salaryBudget: Domain.SalaryBudget) async throws {
