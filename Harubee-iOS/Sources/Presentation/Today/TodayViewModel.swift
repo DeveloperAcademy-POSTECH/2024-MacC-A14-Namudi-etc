@@ -13,6 +13,8 @@ final class TodayViewModel {
   // MARK: - ViewState
   struct ViewState {
     var todayDate = Date()
+    var todayHarubee = 36000
+    var averageHarubee = 57400
   }
   
   // MARK: - Action
