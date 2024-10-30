@@ -7,6 +7,7 @@
 //
 
 import SwiftUI
+import DesignSystem
 
 public enum KeypadButtonType: Int {
   enum Style {
@@ -74,15 +75,28 @@ public enum KeypadButtonType: Int {
   var foregroundColor: Color {
     switch self {
     case .one, .two, .three, .four, .five, .six, .seven, .eight, .nine, .zero, .doubleZero, .tripleZero:
-      return .black
+      return .textBlack
     case .delete, .plus, .minus, .done:
-      return .blue
+      return .main
+    }
+  }
+  
+  var font: Font {
+    switch self {
+    case .one, .two, .three, .four, .five, .six, .seven, .eight, .nine, .zero, .doubleZero, .tripleZero:
+      return .pretendardMedium_24
+    case .delete:
+      return .system(size: 22, weight: .regular)
+    case .plus, .minus:
+      return .pretendardMedium_20
+    case .done:
+      return .pretendardSemibold_18
     }
   }
   
   
   var highlightBackgroundColor: Color {
-    return .gray.opacity(0.3)
+    return .whiteDeep
   }
 }
 
@@ -100,8 +114,8 @@ public struct NumberKeypadView: View {
   
   public var body: some View {
     VStack(spacing: 10) {
-      ForEach(keypads, id: \.self) { keypad in
-        NumberKeypadRowView(keypad: keypad)
+      ForEach(keypads, id: \.self) { rowKeypads in
+        NumberKeypadRowView(keypads: rowKeypads)
       }
     }
     .frame(maxWidth: .infinity)
@@ -112,16 +126,16 @@ public struct NumberKeypadView: View {
 // MARK: - NumberKeypadRowView
 private struct NumberKeypadRowView: View {
   
-  private let keypad: [KeypadButtonType]
+  private let keypads: [KeypadButtonType]
   
-  init(keypad: [KeypadButtonType]) {
-    self.keypad = keypad
+  init(keypads: [KeypadButtonType]) {
+    self.keypads = keypads
   }
   
   var body: some View {
     HStack(spacing: 10) {
-      ForEach(keypad, id: \.self) { button in
-        NumberKeypadColumnView(button: button)
+      ForEach(keypads, id: \.self) { columnKeypads in
+        NumberKeypadColumnView(keypad: columnKeypads)
       }
     }
   }
@@ -131,24 +145,25 @@ private struct NumberKeypadRowView: View {
 private struct NumberKeypadColumnView: View {
   @State private var isPressed = false
   
-  private let button: KeypadButtonType
+  private let keypad: KeypadButtonType
   
-  init(button: KeypadButtonType) {
-    self.button = button
+  init(keypad: KeypadButtonType) {
+    self.keypad = keypad
   }
   
   var body: some View {
     ZStack {
-      Color.gray
+      keypad.highlightBackgroundColor.opacity(isPressed ? 1 : 0.0)
       
       Group {
-        if button.style == .text {
-          Text(button.title)
+        if keypad.style == .text {
+          Text(keypad.title)
         } else {
-          button.image
+          keypad.image
         }
       }
-      .foregroundStyle(button.foregroundColor)
+      .foregroundStyle(keypad.foregroundColor)
+      .font(keypad.font)
     }
     .frame(maxWidth: .infinity, maxHeight: 50)
     .clipShape(RoundedRectangle(cornerRadius: 5))
@@ -156,10 +171,10 @@ private struct NumberKeypadColumnView: View {
     .onLongPressGesture(
       minimumDuration: 0.1,
       maximumDistance: 10) {
-      } onPressingChanged: { isChanged in
-        isPressed = isChanged
+      } onPressingChanged: { isPressed in
+        self.isPressed = isPressed
         
-        if !isPressed { print(button.title) }
+        if !isPressed {  }
       }
   }
 }
