@@ -96,7 +96,7 @@ private struct FixedExpenseList: View {
     .background(
       ZStack {
         RoundedRectangle(cornerRadius: 5)
-          .fill(Color.white)
+          .fill(Color.whiteDefault)
         RoundedRectangle(cornerRadius: 5)
           .stroke(lineWidth: 1)
           .foregroundStyle(Color.textBrighter)
