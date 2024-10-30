@@ -13,7 +13,9 @@ struct TodayView: View {
   var body: some View {
     NavigationStack {
       ZStack {
-        Color.blue.ignoresSafeArea()
+        //TODO: 디자인 시스템 적용
+        Color(red: 88/255, green: 73/255, blue: 228/255, opacity: 1)
+          .ignoresSafeArea()
         
         TodayPrimaryLayerView()
         
@@ -41,8 +43,40 @@ private struct TodayPrimaryLayerView: View {
   
   let screenWidth = UIScreen.main.bounds.width
   let screenHeight = UIScreen.main.bounds.height
-  let hexgonSize = (UIScreen.main.bounds.height - 100)/3
-  let honeycombSpace = -10.0
+  
+  var body: some View {
+    ZStack(alignment: .top) {
+      
+      Honeycomb(screenWidth: screenWidth, screenHeight: screenHeight)
+      
+      LinearGradient(
+        //TODO: 디자인 시스템 적용
+        gradient: Gradient(colors: [Color(red: 88/255, green: 73/255, blue: 228/255, opacity: 1), Color(red: 88/255, green: 73/255, blue: 228/255, opacity: 1), Color(red: 88/255, green: 73/255, blue: 228/255, opacity: 0)]),
+        startPoint: .top,
+        endPoint: .bottom
+      )
+      .frame(width: screenWidth, height: 130)
+    }
+    .frame(maxWidth: screenWidth, maxHeight: screenHeight, alignment: .top)
+    .ignoresSafeArea()
+  }
+}
+
+// MARK: - Honeycomb(Primary Layer)
+private struct Honeycomb: View {
+  
+  let screenWidth: CGFloat
+  let screenHeight: CGFloat
+  
+  let hexgonSize: CGFloat
+  let honeycombSpace: CGFloat
+  
+  init(screenWidth: CGFloat, screenHeight: CGFloat) {
+    self.screenWidth = screenWidth
+    self.screenHeight = screenHeight
+    self.hexgonSize = (screenHeight - 100)/3
+    self.honeycombSpace = -10.0
+  }
   
   let hexGrid: [[Hexagon]] = [
     [Hexagon(isStroked: true), Hexagon(isStroked: false)],
@@ -51,26 +85,102 @@ private struct TodayPrimaryLayerView: View {
   ]
   
   var body: some View {
-    ZStack {
-      VStack(spacing: honeycombSpace - (hexgonSize/(4 * sqrt(3)))) {
-        ForEach(hexGrid.indices, id: \.self) { index in
-          HStack(spacing: honeycombSpace - 2) {
-            ForEach(hexGrid[index], id: \.self) { item in
+    VStack(spacing: honeycombSpace - (hexgonSize/(4 * sqrt(3)))) {
+      ForEach(hexGrid.indices, id: \.self) { row in
+        HStack(spacing: honeycombSpace - 2) {
+          ForEach(hexGrid[row].indices, id: \.self) { col in
+            if row == 1 && col == 1 {
+              HarubeeHexagon(hexgonSize: hexgonSize)
+            } else if row == 2 && col == 1 {
+              AverageHarubeeHexagon(hexgonSize: hexgonSize)
+            } else {
               RoundedHexagon()
-                .stroke(item.isStroked ? .white: .clear, lineWidth: 1.5)
+                .stroke(hexGrid[row][col].isStroked ? .white: .clear, lineWidth: 1.5)
                 .frame(width: hexgonSize, height: hexgonSize)
             }
           }
         }
       }
-    }
-    .offset(x: honeycombSpace - hexgonSize/5, y: -hexgonSize/5)
-    .frame(maxWidth: screenWidth, maxHeight: screenHeight, alignment: .top)
-    .ignoresSafeArea()
+    }.offset(x: honeycombSpace - hexgonSize/5, y: -hexgonSize/5)
   }
   
   struct Hexagon: Hashable {
     var isStroked: Bool
+  }
+}
+
+
+// MARK: - HarubeeHexagon(Primary Layer)
+private struct HarubeeHexagon: View {
+  
+  @State private var xOffset: CGFloat = 0
+  let hexgonSize: CGFloat
+  
+  init(hexgonSize: CGFloat) {
+    self.hexgonSize = hexgonSize
+  }
+  
+  var body: some View {
+    Button(action: {
+      print("오늘의 하루비 Tapped")
+    }, label: {
+      ZStack {
+        RoundedHexagon()
+          .fill(.clear)
+          .stroke(.white, lineWidth: 1.5)
+          .frame(width: hexgonSize, height: hexgonSize)
+          .shadow(color: Color.black.opacity(0.5), radius: 10, x: 0, y: 10)
+        
+        Wave(xOffset: xOffset, fillPercentage: 0.6)
+          .fill(.white)
+          .frame(width: hexgonSize, height: hexgonSize)
+          .clipShape(RoundedHexagon())
+          .onAppear {
+            withAnimation(Animation.linear(duration: 4).repeatForever(autoreverses: false)) {
+              xOffset = hexgonSize
+            }
+          }
+        VStack {
+          Text("오늘의 하루비")
+          Text("36,000원")
+        }
+      }
+    })
+  }
+}
+
+// MARK: - AverageHarubeeHexagon(Primary Layer)
+private struct AverageHarubeeHexagon: View {
+  
+  @State private var xOffset: CGFloat
+  let hexgonSize: CGFloat
+  
+  init(hexgonSize: CGFloat) {
+    self.xOffset = hexgonSize / 2
+    self.hexgonSize = hexgonSize
+  }
+  
+  var body: some View {
+    ZStack {
+      RoundedHexagon()
+        .stroke(.white, lineWidth: 1.5)
+        .frame(width: hexgonSize, height: hexgonSize)
+      
+      Wave(xOffset: xOffset, fillPercentage: 0.4)
+        .fill(Color(red: 137/255, green: 142/255, blue: 235/255, opacity: 1))
+        .frame(width: hexgonSize - 1, height: hexgonSize - 1)
+        .clipShape(RoundedHexagon())
+        .onAppear {
+          withAnimation(Animation.linear(duration: 4).repeatForever(autoreverses: false)) {
+            xOffset = hexgonSize / 2 * 3
+          }
+        }
+      
+      VStack {
+        Text("평균 하루비")
+        Text("55,000원")
+      }
+    }
   }
 }
 
@@ -90,7 +200,7 @@ private struct TodaySecondaryLayerView: View {
   }
 }
 
-// MARK: - TodayHeaderView
+// MARK: - TodayHeaderView(Secondary Layer)
 private struct TodayHeaderView: View {
   var body: some View {
     HStack {
@@ -102,7 +212,7 @@ private struct TodayHeaderView: View {
   }
 }
 
-// MARK: - TodayFooterView
+// MARK: - TodayFooterView(Secondary Layer)
 private struct TodayFooterView: View {
   var body: some View {
     VStack(spacing: 0) {
@@ -127,7 +237,7 @@ private struct TodayFooterView: View {
   }
 }
 
-// MARK: - CalendarStreakView
+// MARK: - CalendarStreakView(Secondary Layer)
 private struct CalendarStreakView: View {
   var body: some View {
     Button(action: {
@@ -188,6 +298,7 @@ private struct CalendarStreakView: View {
   }
 }
 
+// MARK: - StreakCell(Secondary Layer)
 private struct StreakCell: View {
   var body: some View {
     VStack(spacing: 5) {
@@ -204,40 +315,6 @@ private struct StreakCell: View {
   }
 }
 
-private struct RoundedHexagon: Shape {
-  
-  private let cornerRadius: CGFloat = 15
-  
-  func path(in rect: CGRect) -> Path {
-    var path = Path()
-    
-    let centerX = rect.width / 2
-    let centerY = rect.height / 2
-    let radius = min(rect.width, rect.height) / 2
-    
-    var points: [CGPoint] = []
-    
-    for i in 0..<6 {
-        let angle = (CGFloat(i) * (2 * .pi / 6)) - (.pi / 2)
-        let x = centerX + radius * cos(angle)
-        let y = centerY + radius * sin(angle)
-        points.append(CGPoint(x: x, y: y))
-    }
-    
-    path.move(to: CGPoint(x: points[5].x + CGFloat(sqrt(3) * 5), y: points[5].y - 5))
-    
-    path.addArc(tangent1End: points[0], tangent2End: points[1], radius: cornerRadius)
-    path.addArc(tangent1End: points[1], tangent2End: points[2], radius: cornerRadius)
-    path.addArc(tangent1End: points[2], tangent2End: points[3], radius: cornerRadius)
-    path.addArc(tangent1End: points[3], tangent2End: points[4], radius: cornerRadius)
-    path.addArc(tangent1End: points[4], tangent2End: points[5], radius: cornerRadius)
-    path.addArc(tangent1End: points[5], tangent2End: points[0], radius: cornerRadius)
-    
-    path.closeSubpath()
-    
-    return path
-  }
-}
 
 #Preview {
   TodayView()
