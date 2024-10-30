@@ -25,6 +25,21 @@ public protocol SalaryBudgetRepository {
   func readByStartDate(_ startDate: Date) throws -> SalaryBudget?
   
   
+  /// 변경하고싶은 SalaryBudget의 프로퍼티를 변경합니다
+  /// - Parameters:
+  ///   - id: 변경할 SalaryBudget의 ID
+  ///   - fixedIncome: 변경할 고정 수입 금액
+  ///   - fixedExpenses: 변경할 고정 지출 내역
+  ///   - balance: 변경할 잔액
+  ///   - defaultHarubee: 변경할 기본 하루비 금액
+  func updateSalaryBudget(
+    _ id: String,
+    fixedIncome: UpdateValue<Int>,
+    fixedExpenses: UpdateValue<[TransactionItem]>,
+    balance: UpdateValue<Int>,
+    defaultHarubee: UpdateValue<Double>
+  ) throws
+  
   /// 총 고정 수입 금액을 변경합니다.
   /// - Parameters:
   ///   - id: 변경할 SalaryBudget의 ID

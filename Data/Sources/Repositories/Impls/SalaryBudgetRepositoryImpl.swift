@@ -55,20 +55,21 @@ public final class SalaryBudgetRepositoryImpl: SalaryBudgetRepository {
   
   public func updateSalaryBudget(
     _ id: String,
-    fixedIncome: Int? = nil,
-    fixedExpenses: [TransactionItem]? = nil,
-    balance: Int? = nil,
-    defaultHarubee: Double? = nil
+    fixedIncome: UpdateValue<Int> = .keep,
+    fixedExpenses: UpdateValue<[TransactionItem]> = .keep,
+    balance: UpdateValue<Int> = .keep,
+    defaultHarubee: UpdateValue<Double> = .keep
   ) throws {
+    print("Impl:", #function)
+    
     guard let model = try readById(id) else { return }
     
-    if let fixedIncome = fixedIncome { model.fixedIncome = fixedIncome }
-    if let fixedExpenses = fixedExpenses {
-      model.fixedExpenses.forEach { modelContext.delete($0) }
+    if case .set(let fixedIncome) = fixedIncome { model.fixedIncome = fixedIncome }
+    if case .set(let fixedExpenses) = fixedExpenses {
       model.fixedExpenses = fixedExpenses.map { TransactionItemDTO($0) }
     }
-    if let balance = balance { model.balance = balance }
-    if let defaultHarubee = defaultHarubee { model.defaultHarubee = defaultHarubee }
+    if case .set(let balance) = balance { model.balance = balance }
+    if case .set(let defaultHarubee) = defaultHarubee { model.defaultHarubee = defaultHarubee }
   }
   
   public func updateFixedIncome(_ id: String, fixedIncome: Int) throws {
@@ -106,7 +107,10 @@ public final class SalaryBudgetRepositoryImpl: SalaryBudgetRepository {
     guard let model = try readById(id) else { return }
     modelContext.delete(model)    
   }
-  
+}
+
+
+extension SalaryBudgetRepositoryImpl {
   private func readById(_ id: String) throws -> SalaryBudgetDTO? {
     print("Impl:", #function)
     
