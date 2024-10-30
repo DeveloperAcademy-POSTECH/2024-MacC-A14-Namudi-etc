@@ -9,97 +9,6 @@
 import SwiftUI
 import DesignSystem
 
-public enum KeypadButtonType: Int {
-  enum Style {
-    case text
-    case image
-  }
-  
-  enum Symbol: String {
-    case doubleZero = "00"
-    case tripleZero = "000"
-    case done = "입력"
-    case plus = "+"
-    case minus = "-"
-    case delete = "삭제"
-  }
-  
-  // rawValue 0 ~ 11
-  case zero, one, two, three, four, five, six, seven, eight, nine, doubleZero, tripleZero
-  // rawValue 12
-  case done
-  // rawValue 13 ~ 14
-  case plus, minus
-  // rawValue 15
-  case delete
-  
-  var style: Self.Style {
-    switch self.rawValue {
-    case 0...12: .text
-    default: .image
-    }
-  }
-  
-  var title: String {
-    switch self {
-    case .one, .two, .three, .four, .five, .six, .seven, .eight, .nine, .zero:
-      return String(self.rawValue)
-    case .doubleZero: // 00
-      return Self.Symbol.doubleZero.rawValue
-    case .tripleZero: // 000
-      return Self.Symbol.tripleZero.rawValue
-    case .delete:
-      return Self.Symbol.delete.rawValue
-    case .plus:
-      return Self.Symbol.plus.rawValue
-    case .minus:
-      return Self.Symbol.minus.rawValue
-    case .done:
-      return Self.Symbol.done.rawValue
-    }
-  }
-  
-  var image: Image {
-    switch self {
-    case .plus:
-      return Image(systemName: "plus")
-    case .minus:
-      return Image(systemName: "minus")
-    case .delete:
-      return Image(systemName: "delete.left.fill")
-    default:
-      return Image(systemName: "circle")
-    }
-  }
-  
-  var foregroundColor: Color {
-    switch self {
-    case .one, .two, .three, .four, .five, .six, .seven, .eight, .nine, .zero, .doubleZero, .tripleZero:
-      return .textBlack
-    case .delete, .plus, .minus, .done:
-      return .main
-    }
-  }
-  
-  var font: Font {
-    switch self {
-    case .one, .two, .three, .four, .five, .six, .seven, .eight, .nine, .zero, .doubleZero, .tripleZero:
-      return .pretendardMedium_24
-    case .delete:
-      return .system(size: 22, weight: .regular)
-    case .plus, .minus:
-      return .pretendardMedium_20
-    case .done:
-      return .pretendardSemibold_18
-    }
-  }
-  
-  
-  var highlightBackgroundColor: Color {
-    return .whiteDeep
-  }
-}
-
 // MARK: - NumberKeypadView
 struct NumberKeypadView: View {
   
@@ -190,6 +99,99 @@ private struct NumberKeypadColumnView: View {
   }
 }
 
+// MARK: - KeypadButtonType
+private enum KeypadButtonType: Int {
+  enum Style {
+    case text
+    case image
+  }
+  
+  enum Symbol: String {
+    case doubleZero = "00"
+    case tripleZero = "000"
+    case done = "입력"
+    case plus = "+"
+    case minus = "-"
+    case delete = "삭제"
+  }
+  
+  // rawValue 0 ~ 11
+  case zero, one, two, three, four, five, six, seven, eight, nine, doubleZero, tripleZero
+  // rawValue 12
+  case done
+  // rawValue 13 ~ 14
+  case plus, minus
+  // rawValue 15
+  case delete
+  
+  var style: Self.Style {
+    switch self.rawValue {
+    case 0...12: .text
+    default: .image
+    }
+  }
+  
+  var title: String {
+    switch self {
+    case .one, .two, .three, .four, .five, .six, .seven, .eight, .nine, .zero:
+      return String(self.rawValue)
+    case .doubleZero: // 00
+      return Self.Symbol.doubleZero.rawValue
+    case .tripleZero: // 000
+      return Self.Symbol.tripleZero.rawValue
+    case .delete:
+      return Self.Symbol.delete.rawValue
+    case .plus:
+      return Self.Symbol.plus.rawValue
+    case .minus:
+      return Self.Symbol.minus.rawValue
+    case .done:
+      return Self.Symbol.done.rawValue
+    }
+  }
+  
+  var image: Image {
+    switch self {
+    case .plus:
+      return Image(systemName: "plus")
+    case .minus:
+      return Image(systemName: "minus")
+    case .delete:
+      return Image(systemName: "delete.left.fill")
+    default:
+      return Image(systemName: "circle")
+    }
+  }
+  
+  var foregroundColor: Color {
+    switch self {
+    case .one, .two, .three, .four, .five, .six, .seven, .eight, .nine, .zero, .doubleZero, .tripleZero:
+      return .textBlack
+    case .delete, .plus, .minus, .done:
+      return .main
+    }
+  }
+  
+  var font: Font {
+    switch self {
+    case .one, .two, .three, .four, .five, .six, .seven, .eight, .nine, .zero, .doubleZero, .tripleZero:
+      return .pretendardMedium_24
+    case .delete:
+      return .system(size: 22, weight: .regular)
+    case .plus, .minus:
+      return .pretendardMedium_20
+    case .done:
+      return .pretendardSemibold_18
+    }
+  }
+  
+  
+  var highlightBackgroundColor: Color {
+    return .whiteDeep
+  }
+}
+
+// MARK: - Preview
 #Preview {
   @Previewable @State var text = "123"
   NumberKeypadView(text: $text)
