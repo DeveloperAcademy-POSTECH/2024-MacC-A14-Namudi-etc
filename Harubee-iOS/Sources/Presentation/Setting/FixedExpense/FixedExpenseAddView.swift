@@ -25,7 +25,9 @@ struct FixedExpenseAddView: View {
       
       Spacer()
       
-      Button(action: /*@START_MENU_TOKEN@*/{}/*@END_MENU_TOKEN@*/, label: {
+      Button {
+        
+      } label: {
         Text("저장하기")
           .font(.pretendardSemibold_18)
           .foregroundStyle(Color.whiteDeep)
@@ -36,7 +38,7 @@ struct FixedExpenseAddView: View {
               .fill(Color.main)
             // textfield 다 안 채워지면 Main_30
           )
-      })
+      }
       .padding(.bottom, 9)
     }
   }

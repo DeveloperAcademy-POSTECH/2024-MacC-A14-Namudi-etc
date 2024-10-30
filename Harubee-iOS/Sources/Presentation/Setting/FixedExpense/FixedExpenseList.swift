@@ -55,9 +55,9 @@ private struct BodyView: View {
 private struct ListItemView: View {
   @Binding var showingSheet: Bool
   var body: some View {
-    Button(action: {
+    Button {
       showingSheet.toggle()
-    }, label: {
+    } label: {
       HStack(spacing: 0) {
         Text("매달 12일")
           .font(.pretendardMedium_16)
@@ -82,7 +82,7 @@ private struct ListItemView: View {
       }
       .padding(.vertical, 10)
       .padding(.horizontal, 6)
-    })
+    }
     .sheet(isPresented: $showingSheet) {
       FixedExpenseAddView(fixedExpenseName: "", fixedExpenseAmount: "")
         .presentationDetents([.fraction(0.8)])

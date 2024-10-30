@@ -49,10 +49,12 @@ private struct BodyView: View {
         
         Spacer()
         
-        Button(action: {}, label: {
+        Button {
+          
+        } label: {
           Image(systemName: "plus")
             .frame(width: 19, height: 21)
-        })
+        }
       }
       .foregroundStyle(Color.textBlack)
       .padding(.leading, 22)
