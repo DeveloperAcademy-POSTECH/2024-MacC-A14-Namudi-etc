@@ -18,27 +18,27 @@ public final class DailyBudgetRepositoryImpl: DailyBudgetRepository {
     self.modelContext = modelContext
   }
   
-  public func readByDate(_ date: Date) async throws -> Domain.DailyBudget? {
+  public func readByDate(_ date: Date) throws -> Domain.DailyBudget? {
     print("Impl:", #function)
     return nil
   }
   
-  public func updateHarubee(_ id: String, harubee: Int) async throws {
+  public func updateHarubee(_ id: String, harubee: Int) throws {
     print("Impl:", #function)
     return
   }
   
-  public func updateExpense(_ id: String, expense: Int) async throws {
+  public func updateExpense(_ id: String, expense: Int) throws {
     print("Impl:", #function)
     return
   }
   
-  public func updateIncome(_ id: String, income: Int) async throws {
+  public func updateIncome(_ id: String, income: Int) throws {
     print("Impl:", #function)
     return
   }
   
-  public func updateMemo(_ id: String, memo: [String]) async throws {
+  public func updateMemo(_ id: String, memo: [String]) throws {
     print("Impl:", #function)
     return
   }
