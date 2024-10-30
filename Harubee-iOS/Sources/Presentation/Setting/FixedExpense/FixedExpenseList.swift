@@ -84,6 +84,7 @@ private struct ListItemView: View {
     .sheet(isPresented: $showingSheet) {
       FixedExpenseAddView(fixedExpenseName: "", fixedExpenseAmount: "")
         .presentationDetents([.fraction(0.8)])
+        .presentationCornerRadius(20)
     }
   }
 }
