@@ -27,16 +27,20 @@ public final class SalaryBudgetUseCaseImpl: SalaryBudgetUseCase {
     fixedIncome: Int,
     fixedExpenses: [TransactionItem]
   ) throws -> SalaryBudget {
-    // 초기 하루비 계산
+    // 1. 총 고정 지출 금액 계산하기
     let totalFixedExpenses = fixedExpenses.reduce(0) { $0 + $1.price }
+    
+    // 2. 고정 수입에서 고정 지출을 뺀 금액 잔액으로 설정하기
     let initialBalance = fixedIncome - totalFixedExpenses
     
+    // 3. 예산 기간의 일자 개수 구하기
     let calendar = Calendar.current
     let days = calendar.dateComponents([.day], from: startDate, to: endDate).day ?? 0
     
+    // 4. 잔액을 예산 기간의 일자 개수로 나누어 기본 하루비 설정하기
     let defaultHarubee = Double(initialBalance / days)
     
-    // 각 날짜별 DailyBudget 생성
+    // 5. 각 날짜별로 DailyBudget 생성하기
     let dailyBudgets = (0...days).compactMap { day -> DailyBudget? in
       guard let date = calendar.date(byAdding: .day, value: day, to: startDate) else { return nil }
       
@@ -50,7 +54,7 @@ public final class SalaryBudgetUseCaseImpl: SalaryBudgetUseCase {
       )
     }
     
-    // SalaryBudget 생성
+    // 6. SalaryBudget 생성하기
     let salaryBudget = SalaryBudget(
       id: UUID().uuidString,
       startDate: startDate,
@@ -62,6 +66,7 @@ public final class SalaryBudgetUseCaseImpl: SalaryBudgetUseCase {
       dailyBudgets: dailyBudgets
     )
     
+    // 7. 중복되는 SalaryBudget이 있는지 찾기
     let salaryBudgets = try salaryBudgetRepository.readAll()
     if salaryBudgets.contains(
       where: { $0.startDate == salaryBudget.startDate }
@@ -69,7 +74,7 @@ public final class SalaryBudgetUseCaseImpl: SalaryBudgetUseCase {
       throw DomainError.duplicateData
     }
     
-    // Repository에 저장
+    // 8. Repository에 저장하기
     salaryBudgetRepository.create(salaryBudget)
     
     return salaryBudget
@@ -78,12 +83,13 @@ public final class SalaryBudgetUseCaseImpl: SalaryBudgetUseCase {
   public func getSalaryBudget(
     date: Date?
   ) throws -> SalaryBudget {
+    // 1. date가 nil이면 오늘로 설정하기
     let targetDate = date ?? Date()
     
-    // 모든 SalaryBudget을 가져와서 해당 날짜가 포함된 것을 찾음
+    // 2. 모든 SalaryBudget 가져오기
     let salaryBudgets = try salaryBudgetRepository.readAll()
     
-    // first(where:)를 사용하여 조건에 맞는 예산을 찾음
+    // 3. date가 포함된 SalaryBudget 찾기
     guard let salaryBudget = salaryBudgets.first(
       where: { budget in
         let budgetRange = budget.startDate...budget.endDate
@@ -98,15 +104,10 @@ public final class SalaryBudgetUseCaseImpl: SalaryBudgetUseCase {
   public func updateBalance(
     salaryBudget: SalaryBudget, newBalance: Int
   ) throws {
-    // 기존 SalaryBudget이 존재하는지 확인
-    guard let _ = try salaryBudgetRepository.readByStartDate(salaryBudget.startDate) else {
-      throw DomainError.dataNotFound
-    }
-    
-    // 잔액 업데이트
+    // 1. 새로운 잔액으로 업데이트하기
     try salaryBudgetRepository.updateBalance(salaryBudget.id, balance: newBalance)
     
-    // 기본 하루비 재계산
+    // 2. 새로운 잔액으로 기본 하루비 다시 계산하기
     let newDefaultHarubee = try calculateUseCase.calculateDefaultHarubee(
       balance: newBalance,
       startDate: Date(),
@@ -114,7 +115,7 @@ public final class SalaryBudgetUseCaseImpl: SalaryBudgetUseCase {
       salaryBudget: salaryBudget
     )
     
-    // 기본 하루비 업데이트
+    // 3. SalaryBudget에 기본 하루비 업데이트하기
     try salaryBudgetRepository.updateDefaultHarubee(
       salaryBudget.id,
       defaultHarubee: Double(newDefaultHarubee)

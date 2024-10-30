@@ -27,9 +27,12 @@ public final class DailyBudgetUseCaseImpl: DailyBudgetUseCase {
   public func getDailyBudget(
     date: Date
   ) throws -> DailyBudget {
+    // 1. 오늘에 해당하는 DailyBudget 찾기
     guard let budget = try dailyBudgetRepository.readByDate(date) else {
       throw DomainError.dataNotFound
     }
+    
+    // 2. DailyBudget 반환하기
     return budget
   }
   
@@ -38,12 +41,15 @@ public final class DailyBudgetUseCaseImpl: DailyBudgetUseCase {
     date: Date,
     salaryBudget: SalaryBudget
   ) throws -> SalaryBudget {
-    // 해당 날짜의 DailyBudget 검색
+    // 1. DailyBudget 찾기
     guard let dailyBudget = try dailyBudgetRepository.readByDate(date) else {
       throw DomainError.dataNotFound
     }
     
-    // 새로운 defaultHarubee 계산
+    // 2. DailyBudget 업데이트
+    try dailyBudgetRepository.updateHarubee(dailyBudget.id, harubee: amount)
+    
+    // 3. 새로운 defaultHarubee 계산
     let newDefaultHarubee = try calculateUseCase.calculateDefaultHarubee(
       balance: salaryBudget.balance,
       startDate: date,
@@ -51,10 +57,7 @@ public final class DailyBudgetUseCaseImpl: DailyBudgetUseCase {
       salaryBudget: salaryBudget
     )
     
-    // DailyBudget 업데이트
-    try dailyBudgetRepository.updateHarubee(dailyBudget.id, harubee: amount)
-    
-    // SalaryBudget 업데이트
+    // 4. SalaryBudget 업데이트
     try salaryBudgetRepository.updateDefaultHarubee(salaryBudget.id, defaultHarubee: Double(newDefaultHarubee))
     
     return try salaryBudgetRepository.readByStartDate(salaryBudget.startDate) ?? salaryBudget
@@ -68,12 +71,12 @@ public final class DailyBudgetUseCaseImpl: DailyBudgetUseCase {
       throw DomainError.dateOutOfRange
     }
     
-    // 해당 날짜의 DailyBudget 검색
+    // 1. DailyBudget 찾기
     guard let dailyBudget = try dailyBudgetRepository.readByDate(date) else {
       throw DomainError.dataNotFound
     }
     
-    // DailyBudget 업데이트 (하루비를 nil로 설정)
+    // 2. DailyBudget 업데이트 (하루비를 nil로 설정)
     try dailyBudgetRepository.updateDailyBudget(
       dailyBudget.id,
       harubee: .set(nil),
@@ -82,7 +85,7 @@ public final class DailyBudgetUseCaseImpl: DailyBudgetUseCase {
       memo: .keep
     )
     
-    // 새로운 defaultHarubee 계산
+    // 3. 새로운 defaultHarubee 계산
     let newDefaultHarubee = try calculateUseCase.calculateDefaultHarubee(
       balance: salaryBudget.balance,
       startDate: date,
@@ -90,7 +93,7 @@ public final class DailyBudgetUseCaseImpl: DailyBudgetUseCase {
       salaryBudget: salaryBudget
     )
     
-    // SalaryBudget 업데이트
+    // 4. SalaryBudget 업데이트
     try salaryBudgetRepository.updateDefaultHarubee(salaryBudget.id, defaultHarubee: Double(newDefaultHarubee))
     
     return try salaryBudgetRepository.readByStartDate(salaryBudget.startDate) ?? salaryBudget
@@ -101,19 +104,22 @@ public final class DailyBudgetUseCaseImpl: DailyBudgetUseCase {
     date: Date,
     salaryBudget: SalaryBudget
   ) throws -> SalaryBudget {
-    // 해당 날짜의 DailyBudget 검색
+    // 1. DailyBudget 찾기
     guard let dailyBudget = try dailyBudgetRepository.readByDate(date) else {
       throw DomainError.dataNotFound
     }
     
-    // DailyBudget 업데이트
+    // 2. 이전 실제 지출 저장
+    let previousExpense = dailyBudget.expense ?? 0
+    
+    // 3. DailyBudget 업데이트 (실제 지출 기록)
     try dailyBudgetRepository.updateExpense(dailyBudget.id, expense: expense)
     
-    // 잔액 업데이트
-    let previousExpense = dailyBudget.expense ?? 0
+    // 3. 잔액 업데이트
     let balanceDifference = previousExpense - expense
     let newBalance = salaryBudget.balance + balanceDifference
     
+    // 4. SalaryBudget 업데이트
     try salaryBudgetRepository.updateBalance(salaryBudget.id, balance: newBalance)
     
     return try salaryBudgetRepository.readByStartDate(salaryBudget.startDate) ?? salaryBudget
@@ -124,19 +130,22 @@ public final class DailyBudgetUseCaseImpl: DailyBudgetUseCase {
     date: Date,
     salaryBudget: SalaryBudget
   ) throws -> SalaryBudget {
-    // 해당 날짜의 DailyBudget 검색
+    // 1. DailyBudget 찾기
     guard let dailyBudget = try dailyBudgetRepository.readByDate(date) else {
       throw DomainError.dataNotFound
     }
     
-    // DailyBudget 업데이트
+    // 2. 이전 실제 수입 저장
+    let previousIncome = dailyBudget.income ?? 0
+    
+    // 3. DailyBudget 업데이트 (실제 수입 기록)
     try dailyBudgetRepository.updateIncome(dailyBudget.id, income: income)
     
-    // 잔액 업데이트
-    let previousIncome = dailyBudget.income ?? 0
+    // 4. 잔액 업데이트
     let balanceDifference = income - previousIncome
     let newBalance = salaryBudget.balance + balanceDifference
     
+    // 4. SalaryBudget 업데이트
     try salaryBudgetRepository.updateBalance(salaryBudget.id, balance: newBalance)
     
     return try salaryBudgetRepository.readByStartDate(salaryBudget.startDate) ?? salaryBudget
@@ -146,15 +155,19 @@ public final class DailyBudgetUseCaseImpl: DailyBudgetUseCase {
     memo: String,
     date: Date
   ) throws -> DailyBudget {
+    // 1. DailyBudget 가져오기
     let dailyBudget = try getDailyBudget(date: date)
     
+    // 2. 중복된 메모 있는지 찾기
     guard !dailyBudget.memo.contains(memo) else {
       throw DomainError.duplicateData
     }
     
+    // 3. 새로운 메모 저장하기
     var updatedMemos = dailyBudget.memo
     updatedMemos.append(memo)
     
+    // 4.DailyBudget 업데이트
     try dailyBudgetRepository.updateMemo(dailyBudget.id, memo: updatedMemos)
     
     return try getDailyBudget(date: date)
@@ -165,19 +178,24 @@ public final class DailyBudgetUseCaseImpl: DailyBudgetUseCase {
     newMemo: String,
     date: Date
   ) throws -> DailyBudget {
+    // 1. DailyBudget 가져오기
     let dailyBudget = try getDailyBudget(date: date)
     
+    // 2. 수정할 메모 찾기
     guard let index = dailyBudget.memo.firstIndex(of: oldMemo) else {
       throw DomainError.dataNotFound
     }
     
+    // 3. 중복된 메모 있는지 찾기
     guard !dailyBudget.memo.contains(newMemo) else {
       throw DomainError.duplicateData
     }
     
+    // 4. 메모 업데이트
     var updatedMemos = dailyBudget.memo
     updatedMemos[index] = newMemo
     
+    // 5. DailyBudget 업데이트
     try dailyBudgetRepository.updateMemo(dailyBudget.id, memo: updatedMemos)
     
     return try getDailyBudget(date: date)
@@ -187,14 +205,18 @@ public final class DailyBudgetUseCaseImpl: DailyBudgetUseCase {
     memo: String,
     date: Date
   ) throws -> DailyBudget {
+    // 1. DailyBudget 가져오기
     let dailyBudget = try getDailyBudget(date: date)
     
+    // 2. 삭제할 메모 체크하기
     guard dailyBudget.memo.contains(memo) else {
       throw DomainError.dataNotFound
     }
     
+    // 3. 삭제하려는 메모를 제외한 나머지 메모만 저장하기
     let updatedMemos = dailyBudget.memo.filter { $0 != memo }
     
+    // 4. DailyBudget 업데이트
     try dailyBudgetRepository.updateMemo(dailyBudget.id, memo: updatedMemos)
     
     return try getDailyBudget(date: date)

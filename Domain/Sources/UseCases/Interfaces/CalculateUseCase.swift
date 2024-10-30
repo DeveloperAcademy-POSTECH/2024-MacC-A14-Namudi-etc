@@ -35,6 +35,6 @@ public protocol CalculateUseCase {
   ///   - `DomainError.dateOutOfRange`: 시작일이 예산 기간을 벗어난 경우
   func calculateAverageHarubee(
     salaryBudget: SalaryBudget,
-    fromDate: Date?
+    startDate: Date?
   ) throws -> Double
 }
