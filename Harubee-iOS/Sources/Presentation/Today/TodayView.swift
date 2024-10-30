@@ -10,6 +10,9 @@ import SwiftUI
 
 // MARK: - TodayView
 struct TodayView: View {
+  
+  @Environment(TodayViewModel.self) var todayViewModel
+  
   var body: some View {
     NavigationStack {
       ZStack {
@@ -19,7 +22,7 @@ struct TodayView: View {
         
         TodayPrimaryLayerView()
         
-        TodaySecondaryLayerView()
+        TodaySecondaryLayerView(todayViewModel: todayViewModel)
         
       }
       .toolbar {
@@ -78,10 +81,10 @@ private struct Honeycomb: View {
     self.honeycombSpace = -10.0
   }
   
-  let hexGrid: [[Hexagon]] = [
-    [Hexagon(isStroked: true), Hexagon(isStroked: false)],
-    [Hexagon(isStroked: false), Hexagon(isStroked: true), Hexagon(isStroked: true)],
-    [Hexagon(isStroked: false), Hexagon(isStroked: true)],
+  let hexGrid: [[Bool]] = [
+    [true, false],
+    [false, true, true],
+    [false, true]
   ]
   
   var body: some View {
@@ -95,7 +98,7 @@ private struct Honeycomb: View {
               AverageHarubeeHexagon(hexgonSize: hexgonSize)
             } else {
               RoundedHexagon()
-                .stroke(hexGrid[row][col].isStroked ? .white: .clear, lineWidth: 1.5)
+                .stroke(hexGrid[row][col] ? .white: .clear, lineWidth: 1.5)
                 .frame(width: hexgonSize, height: hexgonSize)
             }
           }
@@ -103,17 +106,13 @@ private struct Honeycomb: View {
       }
     }.offset(x: honeycombSpace - hexgonSize/5, y: -hexgonSize/5)
   }
-  
-  struct Hexagon: Hashable {
-    var isStroked: Bool
-  }
 }
 
 
 // MARK: - HarubeeHexagon(Primary Layer)
 private struct HarubeeHexagon: View {
   
-  @State private var xOffset: CGFloat = 0
+  @State private var xOffset = 0.0
   let hexgonSize: CGFloat
   
   init(hexgonSize: CGFloat) {
@@ -136,13 +135,18 @@ private struct HarubeeHexagon: View {
           .frame(width: hexgonSize, height: hexgonSize)
           .clipShape(RoundedHexagon())
           .onAppear {
-            withAnimation(Animation.linear(duration: 4).repeatForever(autoreverses: false)) {
+            withAnimation(Animation.linear(duration: 8).repeatForever(autoreverses: false)) {
               xOffset = hexgonSize
             }
           }
         VStack {
           Text("오늘의 하루비")
-          Text("36,000원")
+          ZStack {
+            RoundedRectangle(cornerRadius: 8)
+              .frame(width: 148, height: 39)
+            Text("36,000원")
+              .foregroundStyle(.white)
+          }
         }
       }
     })
@@ -152,11 +156,13 @@ private struct HarubeeHexagon: View {
 // MARK: - AverageHarubeeHexagon(Primary Layer)
 private struct AverageHarubeeHexagon: View {
   
-  @State private var xOffset: CGFloat
+  @State private var firstWaveOffset: CGFloat
+  @State private var secondWaveOffset: CGFloat
   let hexgonSize: CGFloat
   
   init(hexgonSize: CGFloat) {
-    self.xOffset = hexgonSize / 2
+    self.firstWaveOffset = hexgonSize / 2
+    self.secondWaveOffset = hexgonSize / 2
     self.hexgonSize = hexgonSize
   }
   
@@ -166,19 +172,30 @@ private struct AverageHarubeeHexagon: View {
         .stroke(.white, lineWidth: 1.5)
         .frame(width: hexgonSize, height: hexgonSize)
       
-      Wave(xOffset: xOffset, fillPercentage: 0.4)
+      Wave(xOffset: firstWaveOffset, fillPercentage: 0.4)
+        .fill(Color(red: 33/255, green: 33/255, blue: 46/255, opacity: 0.1))
+        .frame(width: hexgonSize - 1, height: hexgonSize - 1)
+        .clipShape(RoundedHexagon())
+        .onAppear {
+          withAnimation(Animation.linear(duration: 7).repeatForever(autoreverses: false)) {
+            firstWaveOffset = hexgonSize / 2 * 3
+          }
+        }
+      
+      Wave(xOffset: secondWaveOffset, fillPercentage: 0.4)
         .fill(Color(red: 137/255, green: 142/255, blue: 235/255, opacity: 1))
         .frame(width: hexgonSize - 1, height: hexgonSize - 1)
         .clipShape(RoundedHexagon())
         .onAppear {
-          withAnimation(Animation.linear(duration: 4).repeatForever(autoreverses: false)) {
-            xOffset = hexgonSize / 2 * 3
+          withAnimation(Animation.linear(duration: 8).repeatForever(autoreverses: false)) {
+            secondWaveOffset = hexgonSize / 2 * 3
           }
         }
       
       VStack {
         Text("평균 하루비")
         Text("55,000원")
+        
       }
     }
   }
@@ -187,10 +204,17 @@ private struct AverageHarubeeHexagon: View {
 
 // MARK: - TodaySecondaryLayerView
 private struct TodaySecondaryLayerView: View {
+  
+  let todayViewModel: TodayViewModel
+  
+  init(todayViewModel: TodayViewModel) {
+    self.todayViewModel = todayViewModel
+  }
+  
   var body: some View {
     VStack {
       
-      TodayHeaderView()
+      TodayHeaderView(todayViewModel: todayViewModel)
       
       Spacer()
       
@@ -202,9 +226,16 @@ private struct TodaySecondaryLayerView: View {
 
 // MARK: - TodayHeaderView(Secondary Layer)
 private struct TodayHeaderView: View {
+  
+  let todayViewModel: TodayViewModel
+  
+  init(todayViewModel: TodayViewModel) {
+    self.todayViewModel = todayViewModel
+  }
+  
   var body: some View {
     HStack {
-      Text("2024년 10월 8일 (화)")
+      Text(todayViewModel.viewState.todayDate.toKoreanFullDateString)
         .bold()
         .foregroundStyle(.white)
     }.frame(maxWidth: .infinity, alignment: .trailing)
@@ -231,7 +262,7 @@ private struct TodayFooterView: View {
       .padding(.top, 17)
       .frame(maxWidth: .infinity, minHeight: 50)
     }
-    .frame(maxWidth: .infinity, maxHeight: 182, alignment: .top)
+    .frame(maxWidth: .infinity, maxHeight: 190, alignment: .top)
     .padding(.horizontal, 18)
     .background(.white)
   }
@@ -318,5 +349,6 @@ private struct StreakCell: View {
 
 #Preview {
   TodayView()
+    .environment(TodayViewModel())
 }
 
