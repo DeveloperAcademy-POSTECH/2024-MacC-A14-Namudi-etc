@@ -13,7 +13,6 @@ struct FixedExpenseView: View {
     VStack(spacing: 0) {
       HeaderView()
       BodyView()
-        .ignoresSafeArea()
     }
     .frame(maxHeight: .infinity, alignment: .top)
   }
@@ -28,33 +27,38 @@ private struct HeaderView: View {
     .font(.system(size: 24, weight: .semibold))
     .frame(maxWidth: .infinity, alignment: .leading)
     .padding(.horizontal, 26)
-    .padding(.top, 36)
+    .padding(.top, 44)
     
     Rectangle()
       .frame(height: 1)
+      .foregroundStyle(.gray)
       .padding(.horizontal, 18)
       .padding(.top, 12)
-      .foregroundStyle(.gray)
   }
 }
 
 private struct BodyView: View {
   var body: some View {
     VStack(spacing: 0) {
-      Button(action: {}, label: {
-        Image(systemName: "plus")
-          .resizable()
-          .aspectRatio(contentMode: .fit)
-          .frame(width: 26, height: 29)
-          .foregroundStyle(.black)
-      })
-      .frame(maxWidth: .infinity, alignment: .trailing)
-      .padding(.horizontal, 16)
+      HStack(spacing: 0) {
+        Text("내역")
+          .font(.system(size: 16, weight: .semibold))
+        
+        Spacer()
+        
+        Button(action: {}, label: {
+          Image(systemName: "plus")
+            .frame(width: 19, height: 21)
+        })
+      }
+      .foregroundStyle(.black)
+      .padding(.leading, 22)
+      .padding(.trailing, 18)
+      .padding(.top, 33)
       
       FixedExpenseList()
         .padding(.top, 16)
     }
-    .padding(.top, 14)
   }
 }
 
