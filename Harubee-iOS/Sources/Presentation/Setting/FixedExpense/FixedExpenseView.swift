@@ -20,20 +20,22 @@ struct FixedExpenseView: View {
 
 private struct HeaderView: View {
   var body: some View {
-    VStack(alignment: .leading, spacing: 10) {
-      Text("총 0건")
-      Text("총 0원")
+    VStack(spacing: 0) {
+      VStack(alignment: .leading, spacing: 10) {
+        Text("총 0건")
+        Text("총 0원")
+      }
+      .font(.system(size: 24, weight: .semibold))
+      .frame(maxWidth: .infinity, alignment: .leading)
+      .padding(.horizontal, 26)
+      .padding(.top, 44)
+      
+      Rectangle()
+        .frame(height: 1)
+        .foregroundStyle(.gray)
+        .padding(.horizontal, 18)
+        .padding(.top, 12)
     }
-    .font(.system(size: 24, weight: .semibold))
-    .frame(maxWidth: .infinity, alignment: .leading)
-    .padding(.horizontal, 26)
-    .padding(.top, 44)
-    
-    Rectangle()
-      .frame(height: 1)
-      .foregroundStyle(.gray)
-      .padding(.horizontal, 18)
-      .padding(.top, 12)
   }
 }
 
