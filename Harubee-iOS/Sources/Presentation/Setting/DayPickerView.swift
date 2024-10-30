@@ -67,5 +67,5 @@ private struct DayPickerButton: View {
 }
 
 #Preview {
-  DayPickerView()
+  DayPickerView(selectedDay: .constant(1))
 }

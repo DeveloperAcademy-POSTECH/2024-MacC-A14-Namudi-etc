@@ -10,10 +10,11 @@ import SwiftUI
 import DesignSystem
 
 struct FixedExpenseView: View {
+  @State private var mode: Mode = .add
   var body: some View {
     VStack(spacing: 0) {
       HeaderView()
-      BodyView()
+      BodyView(mode: $mode)
     }
     .frame(maxHeight: .infinity, alignment: .top)
   }
@@ -41,6 +42,9 @@ private struct HeaderView: View {
 }
 
 private struct BodyView: View {
+  @Binding var mode: Mode
+  @State private var showingSheet = false
+  
   var body: some View {
     VStack(spacing: 0) {
       HStack(spacing: 0) {
@@ -50,10 +54,16 @@ private struct BodyView: View {
         Spacer()
         
         Button {
-          
+          mode = .add
+          showingSheet.toggle()
         } label: {
           Image(systemName: "plus")
             .frame(width: 19, height: 21)
+        }
+        .sheet(isPresented: $showingSheet) {
+          FixedExpenseAddView(mode: mode)
+            .presentationDetents([.fraction(0.8)])
+            .presentationCornerRadius(20)
         }
       }
       .foregroundStyle(Color.textBlack)
@@ -61,7 +71,7 @@ private struct BodyView: View {
       .padding(.trailing, 18)
       .padding(.top, 33)
       
-      FixedExpenseList()
+      FixedExpenseList(mode: $mode)
         .padding(.top, 16)
     }
   }

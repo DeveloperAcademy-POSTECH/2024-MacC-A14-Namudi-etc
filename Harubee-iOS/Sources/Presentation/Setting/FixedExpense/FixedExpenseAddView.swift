@@ -9,15 +9,42 @@
 import SwiftUI
 import DesignSystem
 
+enum Mode {
+  case add
+  case modify
+  
+  var title: String {
+    switch self {
+    case .add:
+      return "추가"
+    case .modify:
+      return "수정"
+    }
+  }
+}
+
 struct FixedExpenseAddView: View {
   
-  @State var fixedExpenseName: String
-  @State var fixedExpenseAmount: String
-  @State private var selectedDay: Int = 1
+  private let mode: Mode
+  @State private var fixedExpenseName: String
+  @State private var fixedExpenseAmount: String
+  @State private var selectedDay: Int
+  
+  init(
+    mode: Mode,
+    fixedExpenseName: String = "",
+    fixedExpenseAmount: String = "",
+    selectedDay: Int = 1
+  ) {
+    self.mode = mode
+    self._fixedExpenseName = State(initialValue: fixedExpenseName)
+    self._fixedExpenseAmount = State(initialValue: fixedExpenseAmount)
+    self._selectedDay = State(initialValue: selectedDay)
+  }
   
   var body: some View {
     VStack(spacing: 0) {
-      Text("고정지출 내역 추가")
+      Text("고정지출 내역 \(mode.title)")
         .font(.pretendardMedium_18)
         .padding(.top, 20)
       
@@ -62,5 +89,5 @@ private struct BodyView: View {
 }
 
 #Preview {
-  FixedExpenseAddView(fixedExpenseName: "", fixedExpenseAmount: "")
+  FixedExpenseAddView(mode: .add)
 }
