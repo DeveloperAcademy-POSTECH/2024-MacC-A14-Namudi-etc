@@ -18,14 +18,14 @@ public final class SalaryBudgetRepositoryImpl: SalaryBudgetRepository {
     self.modelContext = modelContext
   }
   
-  public func create(_ salaryBudget: SalaryBudget) async {
+  public func create(_ salaryBudget: SalaryBudget) {
     print("Impl:", #function)
     
     let model = SalaryBudgetDTO(salaryBudget)
     modelContext.insert(model)
   }
   
-  public func readAll() async throws -> [SalaryBudget] {
+  public func readAll() throws -> [SalaryBudget] {
     print("Impl:", #function)
     
     let sort = SortDescriptor(\SalaryBudgetDTO.startDate, order: .forward)
@@ -39,7 +39,7 @@ public final class SalaryBudgetRepositoryImpl: SalaryBudgetRepository {
     }
   }
   
-  public func readByStartDate(_ startDate: Date) async throws -> SalaryBudget? {
+  public func readByStartDate(_ startDate: Date) throws -> SalaryBudget? {
     print("Impl:", #function)
     
     let predicate = #Predicate<SalaryBudgetDTO> { $0.startDate == startDate }
@@ -53,7 +53,7 @@ public final class SalaryBudgetRepositoryImpl: SalaryBudgetRepository {
     }
   }
   
-  public func updateFixedIncome(_ id: String, fixedIncome: Int) async throws {
+  public func updateFixedIncome(_ id: String, fixedIncome: Int) throws {
     print("Impl:", #function)
     
     guard let model = try readById(id) else { return }
@@ -62,7 +62,7 @@ public final class SalaryBudgetRepositoryImpl: SalaryBudgetRepository {
     return
   }
   
-  public func updateFixedExpenses(_ id: String, fixedExpenses: [TransactionItem]) async throws {
+  public func updateFixedExpenses(_ id: String, fixedExpenses: [TransactionItem]) throws {
     print("Impl:", #function)
     
     guard let model = try readById(id) else { return }
@@ -71,7 +71,7 @@ public final class SalaryBudgetRepositoryImpl: SalaryBudgetRepository {
     return
   }
   
-  public func updateBalance(_ id: String, balance: Int) async throws {
+  public func updateBalance(_ id: String, balance: Int) throws {
     print("Impl:", #function)
     
     guard let model = try readById(id) else { return }
@@ -80,7 +80,7 @@ public final class SalaryBudgetRepositoryImpl: SalaryBudgetRepository {
     return
   }
   
-  public func updateDefaultHarubee(_ id: String, defaultHarubee: Double) async throws {
+  public func updateDefaultHarubee(_ id: String, defaultHarubee: Double) throws {
     print("Impl:", #function)
     
     guard let model = try readById(id) else { return }
@@ -89,7 +89,7 @@ public final class SalaryBudgetRepositoryImpl: SalaryBudgetRepository {
     return
   }
   
-  public func deleteById(_ id: String) async throws {
+  public func deleteById(_ id: String) throws {
     print("Impl:", #function)
     
 //    guard let model = try readById(id) else { return }
