@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Domain
 
 @Observable
 final class TodayViewModel {
@@ -15,6 +16,9 @@ final class TodayViewModel {
     var todayDate = Date()
     var todayHarubee = 36000
     var averageHarubee = 57400
+    var weeklyStreaks = [DailyBudget]()
+    
+    var tempWeeklyStreaks = ["19(일)", "20(월)", "21(화)", "22(수)", "23(목)", "24(금)", "25(토)"]
   }
   
   // MARK: - Action
