@@ -1,0 +1,106 @@
+//
+//  FixedExpenseAddView.swift
+//  Harubee-iOS
+//
+//  Created by Seo-Jooyoung on 10/30/24.
+//  Copyright © 2024 namudiEtc. All rights reserved.
+//
+
+import SwiftUI
+
+struct FixedExpenseAddView: View {
+  
+  @State var fixedExpenseName: String
+  @State var fixedExpenseAmount: String
+  
+  var body: some View {
+    Text("고정지출 내역 추가")
+      .font(.system(size: 18))
+      .padding(.top, 20)
+    BodyView(fixedExpenseName: $fixedExpenseName, fixedExpenseAmount: $fixedExpenseAmount)
+      .padding(.top, 37)
+    Spacer()
+    FooterView()
+      .padding(.bottom, 9)
+  }
+}
+
+private struct BodyView: View {
+  
+  @Binding var fixedExpenseName: String
+  @Binding var fixedExpenseAmount: String
+  
+  var body: some View {
+    VStack(spacing: 20) {
+      HStack(spacing: 0) {
+        Text("날짜")
+        Spacer()
+        DatePickerButton()
+      }
+      .padding(.horizontal, 16)
+      
+      CustomTextfield(title: "이름", text: $fixedExpenseName)
+      CustomTextfield(title: "금액", text: $fixedExpenseAmount)
+    }
+  }
+}
+
+private struct FooterView: View {
+  var body: some View {
+    Button(action: /*@START_MENU_TOKEN@*/{}/*@END_MENU_TOKEN@*/, label: {
+      Text("저장하기")
+        .font(.system(size: 18))
+        .foregroundStyle(.white)
+        .padding(.horizontal, 149)
+        .padding(.vertical, 20)
+        .background(
+          RoundedRectangle(cornerRadius: 10)
+            .fill(.purple)
+        )
+    })
+  }
+}
+
+private struct DatePickerButton: View {
+  var body: some View {
+    Button {
+      
+    } label: {
+      Text("매달 12일")
+        .font(.system(size: 16))
+        .foregroundStyle(.black)
+        .padding(.vertical, 6)
+        .padding(.horizontal, 11)
+        .background(
+          RoundedRectangle(cornerRadius: 6)
+            .foregroundStyle(Color.gray)
+        )
+    }
+  }
+}
+
+private struct CustomTextfield: View {
+  var title: String
+  @Binding var text: String
+  
+  var body: some View {
+    VStack(spacing: 0) {
+      Text(title)
+        .font(.system(size: 12))
+        .frame(maxWidth: .infinity, alignment: .leading)
+      TextField(title, text: $text)
+        .frame(maxWidth: .infinity)
+        .font(.system(size: 16))
+        .padding(.top, 4)
+      Rectangle()
+        .frame(height: 1)
+        .foregroundStyle(Color.gray)
+        .padding(.top, 8)
+    }
+    .padding(.horizontal, 16)
+  }
+}
+
+#Preview {
+  FixedExpenseAddView(fixedExpenseName: "", fixedExpenseAmount: "")
+}
