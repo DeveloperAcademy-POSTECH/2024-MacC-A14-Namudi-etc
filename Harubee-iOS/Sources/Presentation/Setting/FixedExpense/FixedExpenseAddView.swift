@@ -43,20 +43,20 @@ private struct BodyView: View {
   @Binding var fixedExpenseName: String
   @Binding var fixedExpenseAmount: String
   
-  @State private var showDatePicker: Bool = false
-  @State private var selectedDate: Date = Date()
+  @State private var showDayPicker: Bool = false
+  @State private var selectedDay: Date = Date()
   
   var body: some View {
     VStack(spacing: 20) {
       HStack(spacing: 0) {
         Text("날짜")
         Spacer()
-        DatePickerButton(showDatePicker: $showDatePicker, selectedDate: $selectedDate)
+        DayPickerButton(showDayPicker: $showDayPicker, selectedDay: $selectedDay)
       }
       .padding(.horizontal, 16)
       
-      if showDatePicker {
-        Picker("날짜 선택", selection: $selectedDate) {
+      if showDayPicker {
+        Picker("날짜 선택", selection: $selectedDay) {
           ForEach(1..<32) { day in
             Text("\(day)일").tag(day)
           }
@@ -72,12 +72,12 @@ private struct BodyView: View {
   }
 }
 
-private struct DatePickerButton: View {
-  @Binding var showDatePicker: Bool
-  @Binding var selectedDate: Date
+private struct DayPickerButton: View {
+  @Binding var showDayPicker: Bool
+  @Binding var selectedDay: Date
   var body: some View {
     Button {
-      showDatePicker.toggle()
+      showDayPicker.toggle()
     } label: {
       Text("매달 1일")
         .font(.system(size: 16))
