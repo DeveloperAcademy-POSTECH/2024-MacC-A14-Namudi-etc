@@ -12,9 +12,11 @@ import DesignSystem
 struct FixedExpenseList: View {
   @State private var showingSheet = false
   @State private var items: [String] = ["지출 항목 1", "지출 항목 2"]
+  @Binding var mode: Mode
+  
   var body: some View {
     VStack(spacing: 0) {
-      BodyView(showingSheet: $showingSheet, items: $items)
+      BodyView(showingSheet: $showingSheet, items: $items, mode: $mode)
     }
   }
   
@@ -26,11 +28,12 @@ struct FixedExpenseList: View {
 private struct BodyView: View {
   @Binding var showingSheet: Bool
   @Binding var items: [String]
+  @Binding var mode: Mode
   
   var body: some View {
     VStack(spacing: 0) {
       ForEach(items.indices, id: \.self) { index in
-        ListItemView(showingSheet: $showingSheet)
+        ListItemView(showingSheet: $showingSheet, mode: $mode)
         
         if index < items.count - 1 {
           Divider()
@@ -54,8 +57,11 @@ private struct BodyView: View {
 
 private struct ListItemView: View {
   @Binding var showingSheet: Bool
+  @Binding var mode: Mode
+  
   var body: some View {
     Button {
+      mode = .modify
       showingSheet.toggle()
     } label: {
       HStack(spacing: 0) {
@@ -84,14 +90,14 @@ private struct ListItemView: View {
       .padding(.horizontal, 6)
     }
     .sheet(isPresented: $showingSheet) {
-      FixedExpenseAddView(fixedExpenseName: "", fixedExpenseAmount: "")
+      FixedExpenseAddView(mode: mode)
         .presentationDetents([.fraction(0.8)])
         .presentationCornerRadius(20)
     }
   }
 }
 
-  #Preview {
-    FixedExpenseList()
-  }
+#Preview {
+  FixedExpenseList(mode: .constant(.add))
+}
 
