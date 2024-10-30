@@ -7,6 +7,7 @@
 //
 
 import SwiftUI
+import DesignSystem
 
 struct DayPickerView: View {
   
@@ -17,18 +18,20 @@ struct DayPickerView: View {
     VStack(spacing: 0) {
       HStack(spacing: 0) {
         Text("날짜")
+          .font(.pretendardMedium_18)
+          .foregroundStyle(Color.textBlack)
         Spacer()
         DayPickerButton(showDayPicker: $showDayPicker, selectedDay: $selectedDay)
       }
       .padding(.horizontal, 16)
       
-      Rectangle()
-        .frame(height: 1)
-        .foregroundStyle(.gray)
-        .padding(.top, 14)
-        .padding(.horizontal, 16)
-      
       if showDayPicker {
+        Rectangle()
+          .frame(height: 1)
+          .foregroundStyle(Color.textBrighter30)
+          .padding(.top, 14)
+          .padding(.horizontal, 16)
+        
         Picker("날짜 선택", selection: $selectedDay) {
           ForEach(1..<32) { day in
             Text("\(day)일").tag(day)
@@ -51,13 +54,13 @@ private struct DayPickerButton: View {
       showDayPicker.toggle()
     } label: {
       Text("매달 1일")
-        .font(.system(size: 16))
-        .foregroundStyle(.black)
+        .font(.pretendardMedium_16)
+        .foregroundStyle(Color.textBlack)
         .padding(.vertical, 6)
         .padding(.horizontal, 11)
         .background(
           RoundedRectangle(cornerRadius: 6)
-            .foregroundStyle(Color.gray)
+            .foregroundStyle(Color.textBrighter30)
         )
     }
   }

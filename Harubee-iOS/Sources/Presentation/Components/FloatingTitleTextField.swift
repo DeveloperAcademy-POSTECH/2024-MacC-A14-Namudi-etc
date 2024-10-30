@@ -7,6 +7,7 @@
 //
 
 import SwiftUI
+import DesignSystem
 
 struct FloatingTitleTextField: View {
   var title: String
@@ -16,17 +17,18 @@ struct FloatingTitleTextField: View {
   var body: some View {
     VStack(spacing: 0) {
       Text(title)
-        .font(.system(size: 12))
+        .font(.pretendardMedium_12)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .foregroundStyle(isFocused || !text.isEmpty ? .black : .clear)
+        .foregroundStyle(isFocused || !text.isEmpty ? Color.main : .clear)
         .offset(y: isFocused || !text.isEmpty ? -4 : 0)
         .animation(.easeOut(duration: 0.2), value: isFocused || !text.isEmpty)
       TextField(title, text: $text)
         .frame(maxWidth: .infinity)
-        .font(.system(size: 16))
+        .font(.pretendardMedium_18)
       Rectangle()
         .frame(height: 1)
-        .foregroundStyle(Color.gray)
+        .foregroundStyle(Color.textBrighter)
+      // textfield 작성중일 때 Main
         .padding(.top, 8)
     }
     .padding(.horizontal, 16)
