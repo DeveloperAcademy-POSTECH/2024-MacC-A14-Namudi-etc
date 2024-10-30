@@ -7,6 +7,7 @@
 //
 
 import SwiftUI
+import DesignSystem
 
 struct FixedExpenseList: View {
   @State private var showingSheet = false
@@ -33,7 +34,8 @@ private struct BodyView: View {
         
         if index < items.count - 1 {
           Divider()
-            .foregroundStyle(Color.gray)
+            .frame(height: 1)
+            .foregroundStyle(Color.textBrighter)
         }
       }
     }
@@ -41,7 +43,7 @@ private struct BodyView: View {
       ZStack {
         RoundedRectangle(cornerRadius: 5)
           .stroke(lineWidth: 1)
-          .foregroundStyle(Color.gray)
+          .foregroundStyle(Color.textBrighter)
         RoundedRectangle(cornerRadius: 5)
           .fill(Color.white)
       }
@@ -58,24 +60,24 @@ private struct ListItemView: View {
     }, label: {
       HStack(spacing: 0) {
         Text("매달 12일")
-          .font(.system(size: 16))
-          .foregroundStyle(.black)
+          .font(.pretendardMedium_16)
+          .foregroundStyle(Color.textBlack)
           .padding(.vertical, 6)
           .padding(.horizontal, 11)
           .background(
             RoundedRectangle(cornerRadius: 6)
-              .foregroundStyle(Color.gray)
+              .foregroundStyle(Color.textBrighter30)
           )
         
         Spacer()
         
         Text("청약")
-          .font(.system(size: 20))
-          .foregroundStyle(.black)
+          .font(.pretendardMedium_20)
+          .foregroundStyle(Color.textBlack)
           .padding(.trailing, 10)
         Text("100,000원")
-          .font(.system(size: 18, weight: .semibold))
-          .foregroundStyle(.black)
+          .font(.pretendardSemibold_18)
+          .foregroundStyle(Color.textBlack)
           .padding(.trailing, 6)
       }
       .padding(.vertical, 10)

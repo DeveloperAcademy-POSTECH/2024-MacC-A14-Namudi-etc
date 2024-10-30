@@ -7,6 +7,7 @@
 //
 
 import SwiftUI
+import DesignSystem
 
 struct FixedExpenseView: View {
   var body: some View {
@@ -25,14 +26,14 @@ private struct HeaderView: View {
         Text("총 0건")
         Text("총 0원")
       }
-      .font(.system(size: 24, weight: .semibold))
+      .font(.pretendardSemibold_24)
       .frame(maxWidth: .infinity, alignment: .leading)
       .padding(.horizontal, 26)
       .padding(.top, 44)
       
       Rectangle()
         .frame(height: 1)
-        .foregroundStyle(.gray)
+        .foregroundStyle(Color.textBrighter30)
         .padding(.horizontal, 18)
         .padding(.top, 12)
     }
@@ -44,7 +45,7 @@ private struct BodyView: View {
     VStack(spacing: 0) {
       HStack(spacing: 0) {
         Text("내역")
-          .font(.system(size: 16, weight: .semibold))
+          .font(.pretendardSemibold_16)
         
         Spacer()
         
@@ -53,7 +54,7 @@ private struct BodyView: View {
             .frame(width: 19, height: 21)
         })
       }
-      .foregroundStyle(.black)
+      .foregroundStyle(Color.textBlack)
       .padding(.leading, 22)
       .padding(.trailing, 18)
       .padding(.top, 33)

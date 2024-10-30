@@ -7,6 +7,7 @@
 //
 
 import SwiftUI
+import DesignSystem
 
 struct FixedExpenseAddView: View {
   
@@ -16,7 +17,7 @@ struct FixedExpenseAddView: View {
   var body: some View {
     VStack(spacing: 0) {
       Text("고정지출 내역 추가")
-        .font(.system(size: 18))
+        .font(.pretendardMedium_18)
         .padding(.top, 20)
       
       BodyView(fixedExpenseName: $fixedExpenseName, fixedExpenseAmount: $fixedExpenseAmount)
@@ -26,13 +27,14 @@ struct FixedExpenseAddView: View {
       
       Button(action: /*@START_MENU_TOKEN@*/{}/*@END_MENU_TOKEN@*/, label: {
         Text("저장하기")
-          .font(.system(size: 18))
-          .foregroundStyle(.white)
+          .font(.pretendardSemibold_18)
+          .foregroundStyle(Color.whiteDeep)
           .padding(.horizontal, 149)
           .padding(.vertical, 20)
           .background(
             RoundedRectangle(cornerRadius: 10)
-              .fill(.purple)
+              .fill(Color.main)
+            // textfield 다 안 채워지면 Main_30
           )
       })
       .padding(.bottom, 9)
