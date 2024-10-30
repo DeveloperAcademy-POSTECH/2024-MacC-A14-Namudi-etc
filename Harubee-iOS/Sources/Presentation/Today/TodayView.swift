@@ -20,7 +20,7 @@ struct TodayView: View {
         Color(red: 88/255, green: 73/255, blue: 228/255, opacity: 1)
           .ignoresSafeArea()
         
-        TodayPrimaryLayerView()
+        TodayPrimaryLayerView(todayViewModel: todayViewModel)
         
         TodaySecondaryLayerView(todayViewModel: todayViewModel)
         
@@ -44,13 +44,23 @@ struct TodayView: View {
 // MARK: - TodayPrimaryLayerView
 private struct TodayPrimaryLayerView: View {
   
-  let screenWidth = UIScreen.main.bounds.width
-  let screenHeight = UIScreen.main.bounds.height
+  let todayViewModel: TodayViewModel
+  let screenWidth: CGFloat
+  let screenHeight: CGFloat
+  
+  
+  init(todayViewModel: TodayViewModel) {
+    self.todayViewModel = todayViewModel
+    self.screenWidth = UIScreen.main.bounds.width
+    self.screenHeight = UIScreen.main.bounds.height
+  }
   
   var body: some View {
     ZStack(alignment: .top) {
       
-      Honeycomb(screenWidth: screenWidth, screenHeight: screenHeight)
+      Honeycomb(todayViewModel: todayViewModel,
+                screenWidth: screenWidth,
+                screenHeight: screenHeight)
       
       LinearGradient(
         //TODO: 디자인 시스템 적용
@@ -68,13 +78,16 @@ private struct TodayPrimaryLayerView: View {
 // MARK: - Honeycomb(Primary Layer)
 private struct Honeycomb: View {
   
+  let todayViewModel: TodayViewModel
+  
   let screenWidth: CGFloat
   let screenHeight: CGFloat
   
   let hexgonSize: CGFloat
   let honeycombSpace: CGFloat
   
-  init(screenWidth: CGFloat, screenHeight: CGFloat) {
+  init(todayViewModel: TodayViewModel, screenWidth: CGFloat, screenHeight: CGFloat) {
+    self.todayViewModel = todayViewModel
     self.screenWidth = screenWidth
     self.screenHeight = screenHeight
     self.hexgonSize = (screenHeight - 100)/3
@@ -93,9 +106,9 @@ private struct Honeycomb: View {
         HStack(spacing: honeycombSpace - 2) {
           ForEach(hexGrid[row].indices, id: \.self) { col in
             if row == 1 && col == 1 {
-              HarubeeHexagon(hexgonSize: hexgonSize)
+              HarubeeHexagon(todayViewModel: todayViewModel, hexgonSize: hexgonSize)
             } else if row == 2 && col == 1 {
-              AverageHarubeeHexagon(hexgonSize: hexgonSize)
+              AverageHarubeeHexagon(todayViewModel: todayViewModel, hexgonSize: hexgonSize)
             } else {
               RoundedHexagon()
                 .stroke(hexGrid[row][col] ? .white: .clear, lineWidth: 1.5)
@@ -112,10 +125,15 @@ private struct Honeycomb: View {
 // MARK: - HarubeeHexagon(Primary Layer)
 private struct HarubeeHexagon: View {
   
-  @State private var xOffset = 0.0
+  @State private var waveOffset: CGFloat
+  
+  let todayViewModel: TodayViewModel
   let hexgonSize: CGFloat
   
-  init(hexgonSize: CGFloat) {
+  init(todayViewModel: TodayViewModel, hexgonSize: CGFloat) {
+    self.waveOffset = 0.0
+    
+    self.todayViewModel = todayViewModel
     self.hexgonSize = hexgonSize
   }
   
@@ -124,27 +142,29 @@ private struct HarubeeHexagon: View {
       print("오늘의 하루비 Tapped")
     }, label: {
       ZStack {
-        RoundedHexagon()
-          .fill(.clear)
-          .stroke(.white, lineWidth: 1.5)
-          .frame(width: hexgonSize, height: hexgonSize)
-          .shadow(color: Color.black.opacity(0.5), radius: 10, x: 0, y: 10)
         
-        Wave(xOffset: xOffset, fillPercentage: 0.6)
+        Wave(xOffset: waveOffset, fillPercentage: 0.6)
           .fill(.white)
           .frame(width: hexgonSize, height: hexgonSize)
           .clipShape(RoundedHexagon())
           .onAppear {
-            withAnimation(Animation.linear(duration: 8).repeatForever(autoreverses: false)) {
-              xOffset = hexgonSize
+            withAnimation(Animation.linear(duration: 5).repeatForever(autoreverses: false)) {
+              waveOffset = hexgonSize
             }
           }
+        
+        RoundedHexagon()
+          .fill(.clear)
+          .stroke(.white, lineWidth: 1.5)
+          .frame(width: hexgonSize, height: hexgonSize)
+          .shadow(color: Color.black.opacity(0.2), radius: 5, x: 0, y: 10)
+        
         VStack {
           Text("오늘의 하루비")
           ZStack {
             RoundedRectangle(cornerRadius: 8)
               .frame(width: 148, height: 39)
-            Text("36,000원")
+            Text(todayViewModel.viewState.todayHarubee.decimalWithWon)
               .foregroundStyle(.white)
           }
         }
@@ -158,44 +178,48 @@ private struct AverageHarubeeHexagon: View {
   
   @State private var firstWaveOffset: CGFloat
   @State private var secondWaveOffset: CGFloat
+  
+  let todayViewModel: TodayViewModel
   let hexgonSize: CGFloat
   
-  init(hexgonSize: CGFloat) {
+  init(todayViewModel: TodayViewModel, hexgonSize: CGFloat) {
     self.firstWaveOffset = hexgonSize / 2
     self.secondWaveOffset = hexgonSize / 2
+    
+    self.todayViewModel = todayViewModel
     self.hexgonSize = hexgonSize
   }
   
   var body: some View {
     ZStack {
-      RoundedHexagon()
-        .stroke(.white, lineWidth: 1.5)
-        .frame(width: hexgonSize, height: hexgonSize)
-      
+
       Wave(xOffset: firstWaveOffset, fillPercentage: 0.4)
         .fill(Color(red: 33/255, green: 33/255, blue: 46/255, opacity: 0.1))
-        .frame(width: hexgonSize - 1, height: hexgonSize - 1)
+        .frame(width: hexgonSize, height: hexgonSize)
         .clipShape(RoundedHexagon())
         .onAppear {
-          withAnimation(Animation.linear(duration: 7).repeatForever(autoreverses: false)) {
+          withAnimation(Animation.linear(duration: 6).repeatForever(autoreverses: false)) {
             firstWaveOffset = hexgonSize / 2 * 3
           }
         }
       
       Wave(xOffset: secondWaveOffset, fillPercentage: 0.4)
         .fill(Color(red: 137/255, green: 142/255, blue: 235/255, opacity: 1))
-        .frame(width: hexgonSize - 1, height: hexgonSize - 1)
+        .frame(width: hexgonSize, height: hexgonSize)
         .clipShape(RoundedHexagon())
         .onAppear {
-          withAnimation(Animation.linear(duration: 8).repeatForever(autoreverses: false)) {
+          withAnimation(Animation.linear(duration: 5).repeatForever(autoreverses: false)) {
             secondWaveOffset = hexgonSize / 2 * 3
           }
         }
       
+      RoundedHexagon()
+        .stroke(.white, lineWidth: 1.5)
+        .frame(width: hexgonSize, height: hexgonSize)
+      
       VStack {
         Text("평균 하루비")
-        Text("55,000원")
-        
+        Text(todayViewModel.viewState.averageHarubee.decimalWithWon)
       }
     }
   }
