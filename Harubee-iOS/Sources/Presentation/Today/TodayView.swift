@@ -7,6 +7,7 @@
 //
 
 import SwiftUI
+import DesignSystem
 
 // MARK: - TodayView
 struct TodayView: View {
@@ -16,9 +17,7 @@ struct TodayView: View {
   var body: some View {
     NavigationStack {
       ZStack {
-        //TODO: 디자인 시스템 적용
-        Color(red: 88/255, green: 73/255, blue: 228/255, opacity: 1)
-          .ignoresSafeArea()
+        Color.main.ignoresSafeArea()
         
         TodayPrimaryLayerView(todayViewModel: todayViewModel)
         
@@ -33,7 +32,7 @@ struct TodayView: View {
             Image(systemName: "gearshape")
               .resizable()
               .frame(width: 25, height: 25)
-              .foregroundStyle(.white)
+              .foregroundStyle(Color.whiteDefault)
           })
         }
       }
@@ -63,8 +62,7 @@ private struct TodayPrimaryLayerView: View {
                 screenHeight: screenHeight)
       
       LinearGradient(
-        //TODO: 디자인 시스템 적용
-        gradient: Gradient(colors: [Color(red: 88/255, green: 73/255, blue: 228/255, opacity: 1), Color(red: 88/255, green: 73/255, blue: 228/255, opacity: 1), Color(red: 88/255, green: 73/255, blue: 228/255, opacity: 0)]),
+        gradient: Gradient(colors: [Color.main, Color.main, .clear]),
         startPoint: .top,
         endPoint: .bottom
       )
@@ -111,7 +109,7 @@ private struct Honeycomb: View {
               AverageHarubeeHexagon(todayViewModel: todayViewModel, hexgonSize: hexgonSize)
             } else {
               RoundedHexagon()
-                .stroke(hexGrid[row][col] ? .white: .clear, lineWidth: 1.5)
+                .stroke(hexGrid[row][col] ? Color.whiteDefault: .clear, lineWidth: 1.5)
                 .frame(width: hexgonSize, height: hexgonSize)
             }
           }
@@ -125,13 +123,15 @@ private struct Honeycomb: View {
 // MARK: - HarubeeHexagon(Primary Layer)
 private struct HarubeeHexagon: View {
   
-  @State private var waveOffset: CGFloat
+  @State private var firstWaveOffset: CGFloat
+  @State private var secondWaveOffset: CGFloat
   
   let todayViewModel: TodayViewModel
   let hexgonSize: CGFloat
   
   init(todayViewModel: TodayViewModel, hexgonSize: CGFloat) {
-    self.waveOffset = 0.0
+    self.firstWaveOffset = 0.0
+    self.secondWaveOffset = 0.0
     
     self.todayViewModel = todayViewModel
     self.hexgonSize = hexgonSize
@@ -143,29 +143,47 @@ private struct HarubeeHexagon: View {
     }, label: {
       ZStack {
         
-        Wave(xOffset: waveOffset, fillPercentage: 0.6)
-          .fill(.white)
+        RoundedHexagon()
+          .fill(Color.main)
+          .frame(width: hexgonSize, height: hexgonSize)
+          .shadow(color: Color.black.opacity(0.2), radius: 5, x: 0, y: 10)
+        
+        Wave(xOffset: firstWaveOffset, fillPercentage: 0.6)
+          .fill(Color.textBrighter30)
           .frame(width: hexgonSize, height: hexgonSize)
           .clipShape(RoundedHexagon())
           .onAppear {
             withAnimation(Animation.linear(duration: 5).repeatForever(autoreverses: false)) {
-              waveOffset = hexgonSize
+              firstWaveOffset = hexgonSize
+            }
+          }
+        
+        Wave(xOffset: secondWaveOffset, fillPercentage: 0.6)
+          .fill(Color.whiteDefault)
+          .frame(width: hexgonSize, height: hexgonSize)
+          .clipShape(RoundedHexagon())
+          .onAppear {
+            withAnimation(Animation.linear(duration: 6).repeatForever(autoreverses: false)) {
+              secondWaveOffset = hexgonSize
             }
           }
         
         RoundedHexagon()
           .fill(.clear)
-          .stroke(.white, lineWidth: 1.5)
+          .stroke(Color.whiteDefault, lineWidth: 1.5)
           .frame(width: hexgonSize, height: hexgonSize)
-          .shadow(color: Color.black.opacity(0.2), radius: 5, x: 0, y: 10)
         
-        VStack {
+        VStack(spacing: 9) {
           Text("오늘의 하루비")
+            .foregroundStyle(Color.textBlack)
+            .font(.pretendardSemibold_20)
           ZStack {
             RoundedRectangle(cornerRadius: 8)
+              .foregroundStyle(Color.mainBrighter60)
               .frame(width: 148, height: 39)
             Text(todayViewModel.viewState.todayHarubee.decimalWithWon)
-              .foregroundStyle(.white)
+              .foregroundStyle(Color.main)
+              .font(.pretendardSemibold_24)
           }
         }
       }
@@ -214,12 +232,16 @@ private struct AverageHarubeeHexagon: View {
         }
       
       RoundedHexagon()
-        .stroke(.white, lineWidth: 1.5)
+        .stroke(Color.whiteDefault, lineWidth: 1.5)
         .frame(width: hexgonSize, height: hexgonSize)
       
-      VStack {
+      VStack(spacing: 4) {
         Text("평균 하루비")
+          .font(.pretendardSemibold_16)
+          .foregroundStyle(Color.whiteDeep50)
         Text(todayViewModel.viewState.averageHarubee.decimalWithWon)
+          .font(.pretendardSemibold_20)
+          .foregroundStyle(Color.whiteDefault)
       }
     }
   }
@@ -260,8 +282,8 @@ private struct TodayHeaderView: View {
   var body: some View {
     HStack {
       Text(todayViewModel.viewState.todayDate.toKoreanFullDateString)
-        .bold()
-        .foregroundStyle(.white)
+        .font(.pretendardSemibold_14)
+        .foregroundStyle(Color.whiteDefault)
     }.frame(maxWidth: .infinity, alignment: .trailing)
       .padding(EdgeInsets(top: 6, leading: 0, bottom: 0, trailing: 16))
   }
@@ -270,25 +292,24 @@ private struct TodayHeaderView: View {
 // MARK: - TodayFooterView(Secondary Layer)
 private struct TodayFooterView: View {
   var body: some View {
-    VStack(spacing: 0) {
+    VStack(spacing: 16) {
       CalendarStreakView()
       
       Button(action: {
         print("실제 지출 입력하기 버튼 Tapped")
       }, label: {
         Text("실제 지출 및 수입 입력하기")
-          .bold()
-          .foregroundColor(.white)
+          .font(.pretendardSemibold_18)
+          .foregroundColor(Color.white)
           .frame(maxWidth: .infinity, maxHeight: 56)
-          .background(Color.blue)
+          .background(Color.main)
           .cornerRadius(10)
       })
-      .padding(.top, 17)
       .frame(maxWidth: .infinity, minHeight: 50)
     }
-    .frame(maxWidth: .infinity, maxHeight: 190, alignment: .top)
+    .frame(maxWidth: .infinity, maxHeight: 196, alignment: .top)
     .padding(.horizontal, 18)
-    .background(.white)
+    .background(Color.whiteDefault)
   }
 }
 
@@ -301,15 +322,19 @@ private struct CalendarStreakView: View {
       VStack {
         HStack {
           Text("캘린더")
+            .font(.pretendardSemibold_14)
+            .foregroundStyle(Color.textBlack)
           Spacer()
           Image(systemName: "chevron.right")
             .resizable()
+            .foregroundStyle(Color.textBlack)
             .frame(width: 8, height: 12)
         }
         
         HStack(spacing: 7) {
           ZStack {
             RoundedRectangle(cornerRadius: 10)
+              .foregroundStyle(Color.whiteDeep50)
               .frame(maxWidth: .infinity, maxHeight: 65)
             HStack {
               StreakCell()
@@ -322,22 +347,27 @@ private struct CalendarStreakView: View {
           
           ZStack {
             RoundedRectangle(cornerRadius: 10)
+              .stroke(Color.mainBright, lineWidth: 2)
+              .foregroundStyle(Color.whiteDeep50)
               .frame(maxWidth: 44, maxHeight: 65)
-            VStack {
+            
+            
+            VStack(spacing: 15) {
               Text("오늘")
-                .font(Font.system(size: 12))
-                .foregroundStyle(.white)
+                .font(.pretendardSemibold_12)
+                .foregroundStyle(Color.main)
               
               Image(systemName: "hexagon")
                 .resizable()
                 .aspectRatio(contentMode: .fit)
-                .frame(width:20, height: 20)
-                .foregroundStyle(.white)
+                .frame(width: 23, height: 23)
+                .foregroundStyle(Color.main30)
             }
           }
           
           ZStack {
             RoundedRectangle(cornerRadius: 10)
+              .foregroundStyle(Color.whiteDeep50)
               .frame(maxWidth: .infinity, maxHeight: 65)
             HStack {
               StreakCell()
@@ -356,16 +386,16 @@ private struct CalendarStreakView: View {
 // MARK: - StreakCell(Secondary Layer)
 private struct StreakCell: View {
   var body: some View {
-    VStack(spacing: 5) {
+    VStack(spacing: 15) {
       Text("19(일)")
-        .font(Font.system(size: 12))
-        .foregroundStyle(.white)
+        .font(.pretendardSemibold_12)
+        .foregroundStyle(Color.textBright)
       
       Image(systemName: "hexagon")
         .resizable()
         .aspectRatio(contentMode: .fit)
-        .frame(width:20, height: 20)
-        .foregroundStyle(.white)
+        .frame(width:23, height: 23)
+        .foregroundStyle(Color.main30)
     }
   }
 }
