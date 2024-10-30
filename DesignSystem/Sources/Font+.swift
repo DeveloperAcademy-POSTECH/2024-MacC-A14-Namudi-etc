@@ -9,7 +9,7 @@
 import SwiftUI
 
 public extension Font {
-    enum PretendardWeight: String, CaseIterable {
+  enum PretendardWeight: String, CaseIterable {
     case black = "Pretendard-Black"
     case bold = "Pretendard-Bold"
     case extraBold = "Pretendard-ExtraBold"
