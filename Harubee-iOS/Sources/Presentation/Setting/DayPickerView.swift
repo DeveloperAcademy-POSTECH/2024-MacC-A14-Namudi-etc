@@ -12,7 +12,7 @@ import DesignSystem
 struct DayPickerView: View {
   
   @State private var showDayPicker: Bool = false
-  @State private var selectedDay: Date = Date()
+  @Binding var selectedDay: Int
   
   var body: some View {
     VStack(spacing: 0) {
@@ -48,12 +48,12 @@ struct DayPickerView: View {
 
 private struct DayPickerButton: View {
   @Binding var showDayPicker: Bool
-  @Binding var selectedDay: Date
+  @Binding var selectedDay: Int
   var body: some View {
     Button {
       showDayPicker.toggle()
     } label: {
-      Text("매달 1일")
+      Text("매달 \(selectedDay)일")
         .font(.pretendardMedium_16)
         .foregroundStyle(Color.textBlack)
         .padding(.vertical, 6)

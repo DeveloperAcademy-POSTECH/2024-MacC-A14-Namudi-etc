@@ -13,6 +13,7 @@ struct FixedExpenseAddView: View {
   
   @State var fixedExpenseName: String
   @State var fixedExpenseAmount: String
+  @State private var selectedDay: Int = 1
   
   var body: some View {
     VStack(spacing: 0) {
@@ -20,7 +21,7 @@ struct FixedExpenseAddView: View {
         .font(.pretendardMedium_18)
         .padding(.top, 20)
       
-      BodyView(fixedExpenseName: $fixedExpenseName, fixedExpenseAmount: $fixedExpenseAmount)
+      BodyView(fixedExpenseName: $fixedExpenseName, fixedExpenseAmount: $fixedExpenseAmount, selectedDay: $selectedDay)
         .padding(.top, 37)
       
       Spacer()
@@ -48,10 +49,11 @@ private struct BodyView: View {
   
   @Binding var fixedExpenseName: String
   @Binding var fixedExpenseAmount: String
+  @Binding var selectedDay: Int
   
   var body: some View {
     VStack(spacing: 20) {
-      DayPickerView()
+      DayPickerView(selectedDay: $selectedDay)
       
       FloatingTitleTextField(title: "이름", text: $fixedExpenseName)
       FloatingTitleTextField(title: "금액", text: $fixedExpenseAmount)
