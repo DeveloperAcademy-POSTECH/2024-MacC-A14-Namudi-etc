@@ -87,7 +87,7 @@ private struct FixedExpenseList: View {
         ListItemView(showingSheet: $showingSheet, mode: $mode)
         
         if index < items.count - 1 {
-          Divider()
+          Rectangle()
             .frame(height: 1)
             .foregroundStyle(Color.textBrighter)
         }
@@ -96,10 +96,10 @@ private struct FixedExpenseList: View {
     .background(
       ZStack {
         RoundedRectangle(cornerRadius: 5)
+          .fill(Color.white)
+        RoundedRectangle(cornerRadius: 5)
           .stroke(lineWidth: 1)
           .foregroundStyle(Color.textBrighter)
-        RoundedRectangle(cornerRadius: 5)
-          .fill(Color.white)
       }
     )
     .padding(.horizontal, 16)
