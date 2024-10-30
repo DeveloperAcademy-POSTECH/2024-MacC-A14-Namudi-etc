@@ -62,7 +62,7 @@ private struct BodyView: View {
           }
         }
         .pickerStyle(.wheel)
-        .frame(maxWidth: .infinity)
+        .frame(maxWidth: .infinity, maxHeight: 150)
         .padding(.horizontal, 10)
       }
       
