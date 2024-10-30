@@ -11,7 +11,7 @@ import SwiftUI
 struct FixedExpenseList: View {
   @State private var items: [String] = ["지출 항목 1", "지출 항목 2"]
   var body: some View {
-    VStack {
+    VStack(spacing: 0) {
       BodyView(items: $items)
     }
   }
@@ -28,7 +28,6 @@ private struct BodyView: View {
     VStack(spacing: 0) {
       ForEach(items.indices, id: \.self) { index in
         ListItemView(fixedExpenseName: items[index], fixedExpenseAmount: items[index])
-          .padding(.horizontal)
         
         if index < items.count - 1 {
           Divider()
@@ -55,23 +54,30 @@ private struct ListItemView: View {
   
   var body: some View {
     HStack(spacing: 0) {
-      Text("청약")
-        .font(.system(size: 16))
-      Text("|")
-        .font(.system(size: 18))
-        .padding(.leading, 8)
       Text("매달 12일")
         .font(.system(size: 16))
-        .padding(.leading, 8)
+        .foregroundStyle(.black)
+        .padding(.vertical, 6)
+        .padding(.horizontal, 11)
+        .background(
+          RoundedRectangle(cornerRadius: 6)
+            .foregroundStyle(Color.gray)
+        )
+      
+      Spacer()
+      
+      Text("청약")
+        .font(.system(size: 20))
+        .padding(.trailing, 10)
       Text("100,000원")
         .font(.system(size: 18, weight: .semibold))
-        .padding(.leading, 130)
+        .padding(.trailing, 6)
     }
-    .padding(.vertical, 18)
+    .padding(.vertical, 10)
+    .padding(.horizontal, 6)
   }
 }
-
-// 다른 뷰로 옮겨갈 예정
+  // 다른 뷰로 옮겨갈 예정
 private struct FixedExpenseInputTextfield: View {
   var title: String
   @Binding var text: String
@@ -87,6 +93,7 @@ private struct FixedExpenseInputTextfield: View {
   }
 }
 
-#Preview {
-  FixedExpenseList()
-}
+  #Preview {
+    FixedExpenseList()
+  }
+
