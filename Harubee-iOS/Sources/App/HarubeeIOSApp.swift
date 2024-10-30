@@ -7,9 +7,15 @@
 //
 
 import SwiftUI
+import DesignSystem
 
 @main
 struct HarubeeIOSApp: App {
+    
+    init() {
+        Font.registerFont()
+    }
+    
     var body: some Scene {
         WindowGroup {
             ContentView()
