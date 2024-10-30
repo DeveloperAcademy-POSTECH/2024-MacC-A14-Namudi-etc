@@ -45,51 +45,12 @@ private struct BodyView: View {
   @Binding var fixedExpenseName: String
   @Binding var fixedExpenseAmount: String
   
-  @State private var showDayPicker: Bool = false
-  @State private var selectedDay: Date = Date()
-  
   var body: some View {
     VStack(spacing: 20) {
-      HStack(spacing: 0) {
-        Text("날짜")
-        Spacer()
-        DayPickerButton(showDayPicker: $showDayPicker, selectedDay: $selectedDay)
-      }
-      .padding(.horizontal, 16)
-      
-      if showDayPicker {
-        Picker("날짜 선택", selection: $selectedDay) {
-          ForEach(1..<32) { day in
-            Text("\(day)일").tag(day)
-          }
-        }
-        .pickerStyle(.wheel)
-        .frame(maxWidth: .infinity, maxHeight: 150)
-        .padding(.horizontal, 10)
-      }
+      DayPickerView()
       
       FloatingTitleTextField(title: "이름", text: $fixedExpenseName)
       FloatingTitleTextField(title: "금액", text: $fixedExpenseAmount)
-    }
-  }
-}
-
-private struct DayPickerButton: View {
-  @Binding var showDayPicker: Bool
-  @Binding var selectedDay: Date
-  var body: some View {
-    Button {
-      showDayPicker.toggle()
-    } label: {
-      Text("매달 1일")
-        .font(.system(size: 16))
-        .foregroundStyle(.black)
-        .padding(.vertical, 6)
-        .padding(.horizontal, 11)
-        .background(
-          RoundedRectangle(cornerRadius: 6)
-            .foregroundStyle(Color.gray)
-        )
     }
   }
 }
