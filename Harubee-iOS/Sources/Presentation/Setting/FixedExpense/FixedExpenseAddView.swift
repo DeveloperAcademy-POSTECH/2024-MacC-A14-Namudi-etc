@@ -43,14 +43,28 @@ private struct BodyView: View {
   @Binding var fixedExpenseName: String
   @Binding var fixedExpenseAmount: String
   
+  @State private var showDatePicker: Bool = false
+  @State private var selectedDate: Date = Date()
+  
   var body: some View {
     VStack(spacing: 20) {
       HStack(spacing: 0) {
         Text("날짜")
         Spacer()
-        DatePickerButton()
+        DatePickerButton(showDatePicker: $showDatePicker, selectedDate: $selectedDate)
       }
       .padding(.horizontal, 16)
+      
+      if showDatePicker {
+        Picker("날짜 선택", selection: $selectedDate) {
+          ForEach(1..<32) { day in
+            Text("\(day)일").tag(day)
+          }
+        }
+        .pickerStyle(.wheel)
+        .frame(maxWidth: .infinity)
+        .padding(.horizontal, 10)
+      }
       
       CustomTextfield(title: "이름", text: $fixedExpenseName)
       CustomTextfield(title: "금액", text: $fixedExpenseAmount)
@@ -59,11 +73,13 @@ private struct BodyView: View {
 }
 
 private struct DatePickerButton: View {
+  @Binding var showDatePicker: Bool
+  @Binding var selectedDate: Date
   var body: some View {
     Button {
-      
+      showDatePicker.toggle()
     } label: {
-      Text("매달 12일")
+      Text("매달 1일")
         .font(.system(size: 16))
         .foregroundStyle(.black)
         .padding(.vertical, 6)
