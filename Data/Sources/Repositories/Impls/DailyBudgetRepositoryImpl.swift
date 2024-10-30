@@ -10,6 +10,11 @@ import Foundation
 import Domain
 import SwiftData
 
+public enum UpdateValue<T> {
+  case set(T)
+  case keep
+}
+
 public final class DailyBudgetRepositoryImpl: DailyBudgetRepository {
   
   private let modelContext: ModelContext
@@ -31,6 +36,7 @@ public final class DailyBudgetRepositoryImpl: DailyBudgetRepository {
     }
   }
   
+  // MARK: - 1안 (각 프로퍼티 별 업데이트 함수 구현)
   public func updateHarubee(_ id: String, harubee: Int) throws {
     print("Impl:", #function)
     
@@ -55,6 +61,41 @@ public final class DailyBudgetRepositoryImpl: DailyBudgetRepository {
     print("Impl:", #function)
     guard let model = try readById(id) else { return }
     model.memo = memo
+  }
+  
+  // MARK: - 2안 (한번에 업데이트)
+  public func updateDailyBudget(
+    _ id: String,
+    harubee: Int?,
+    expense: Int?,
+    income: Int?,
+    memo: [String]? = nil
+  ) throws {
+    print("Impl:", #function)
+    
+    guard let model = try readById(id) else { return }
+    model.harubee = harubee
+    model.expense = expense
+    model.income = income
+    if let memo = memo { model.memo = memo }
+  }
+  
+  // MARK: - 3안 (enum 타입을 파라미터로 받음)
+  public func updateDailyBudget2(
+    _ id: String,
+    harubee: UpdateValue<Int?> = .keep,
+    expence: UpdateValue<Int?> = .keep,
+    income: UpdateValue<Int?> = .keep,
+    memo: UpdateValue<[String]> = .keep
+  ) throws {
+    print("Impl:", #function)
+    
+    guard let model = try readById(id) else { return }
+    
+    if case .set(let harubee) = harubee { model.harubee = harubee }
+    if case .set(let expense) = expence { model.expense = expense }
+    if case .set(let income) = income { model.income = income }
+    if case .set(let memo) = memo { model.memo = memo }
   }
   
   private func readById(_ id: String) throws -> DailyBudgetDTO? {

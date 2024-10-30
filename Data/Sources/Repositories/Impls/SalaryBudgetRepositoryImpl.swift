@@ -53,22 +53,37 @@ public final class SalaryBudgetRepositoryImpl: SalaryBudgetRepository {
     }
   }
   
+  public func updateSalaryBudget(
+    _ id: String,
+    fixedIncome: Int? = nil,
+    fixedExpenses: [TransactionItem]? = nil,
+    balance: Int? = nil,
+    defaultHarubee: Double? = nil
+  ) throws {
+    guard let model = try readById(id) else { return }
+    
+    if let fixedIncome = fixedIncome { model.fixedIncome = fixedIncome }
+    if let fixedExpenses = fixedExpenses {
+      model.fixedExpenses.forEach { modelContext.delete($0) }
+      model.fixedExpenses = fixedExpenses.map { TransactionItemDTO($0) }
+    }
+    if let balance = balance { model.balance = balance }
+    if let defaultHarubee = defaultHarubee { model.defaultHarubee = defaultHarubee }
+  }
+  
   public func updateFixedIncome(_ id: String, fixedIncome: Int) throws {
     print("Impl:", #function)
     
     guard let model = try readById(id) else { return }
     model.fixedIncome = fixedIncome
-    
-    return
   }
   
   public func updateFixedExpenses(_ id: String, fixedExpenses: [TransactionItem]) throws {
     print("Impl:", #function)
     
     guard let model = try readById(id) else { return }
+    model.fixedExpenses.forEach { modelContext.delete($0) }
     model.fixedExpenses = fixedExpenses.map { TransactionItemDTO($0) }
-    
-    return
   }
   
   public func updateBalance(_ id: String, balance: Int) throws {
@@ -76,8 +91,6 @@ public final class SalaryBudgetRepositoryImpl: SalaryBudgetRepository {
     
     guard let model = try readById(id) else { return }
     model.balance = balance
-    
-    return
   }
   
   public func updateDefaultHarubee(_ id: String, defaultHarubee: Double) throws {
@@ -85,8 +98,6 @@ public final class SalaryBudgetRepositoryImpl: SalaryBudgetRepository {
     
     guard let model = try readById(id) else { return }
     model.defaultHarubee = defaultHarubee
-    
-    return
   }
   
   public func deleteById(_ id: String) throws {
