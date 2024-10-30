@@ -12,7 +12,7 @@ public protocol SalaryBudgetRepository {
   
   /// SalaryBudget을 DB에 저장합니다.
   /// - Parameter salaryBudget: 저장할 SalaryBudget
-  func create(_ salaryBudget: SalaryBudget) async throws
+  func create(_ salaryBudget: SalaryBudget) async
   
   
   /// DB에 저장된 모든 SalaryBudget을 불러옵니다.
@@ -29,7 +29,7 @@ public protocol SalaryBudgetRepository {
   /// - Parameters:
   ///   - id: 변경할 SalaryBudget의 ID
   ///   - totalFixedIncome: 변경할 고정 수입 금액
-  func updateTotalFixedIncome(_ id: String, totalFixedIncome: Int) async throws
+  func updateFixedIncome(_ id: String, fixedIncome: Int) async throws
   
   /// 고정 지출 내역을 변경합니다.
   /// - Parameters:
