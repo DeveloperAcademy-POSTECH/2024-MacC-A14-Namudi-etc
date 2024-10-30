@@ -11,8 +11,8 @@ import Domain
 
 @Observable
 final class TodayViewModel {
-  // MARK: - ViewState
-  struct ViewState {
+  // MARK: - State
+  struct State {
     var todayDate = Date()
     var todayHarubee = 36000
     var averageHarubee = 57400
@@ -26,12 +26,12 @@ final class TodayViewModel {
     
   }
   
-  private(set) var viewState: ViewState = .init()
+  private(set) var state: State = .init()
   
   init() {}
   
-  // MARK: - Effect
-  func effect(_ action: Action) {
+  // MARK: - Send
+  func send(_ action: Action) {
     switch action {
       // code
     }
