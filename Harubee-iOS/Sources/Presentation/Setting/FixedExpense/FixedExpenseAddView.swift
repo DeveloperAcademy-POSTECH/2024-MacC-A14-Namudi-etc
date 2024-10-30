@@ -68,8 +68,8 @@ private struct BodyView: View {
         .padding(.horizontal, 10)
       }
       
-      CustomTextfield(title: "이름", text: $fixedExpenseName)
-      CustomTextfield(title: "금액", text: $fixedExpenseAmount)
+      FloatingTitleTextField(title: "이름", text: $fixedExpenseName)
+      FloatingTitleTextField(title: "금액", text: $fixedExpenseAmount)
     }
   }
 }
@@ -91,31 +91,6 @@ private struct DayPickerButton: View {
             .foregroundStyle(Color.gray)
         )
     }
-  }
-}
-
-private struct CustomTextfield: View {
-  var title: String
-  @Binding var text: String
-  @State private var isFocused: Bool = false
-  
-  var body: some View {
-    VStack(spacing: 0) {
-      Text(title)
-        .font(.system(size: 12))
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .foregroundStyle(isFocused || !text.isEmpty ? .black : .clear)
-        .offset(y: isFocused || !text.isEmpty ? -4 : 0)
-        .animation(.easeOut(duration: 0.2), value: isFocused || !text.isEmpty)
-      TextField(title, text: $text)
-        .frame(maxWidth: .infinity)
-        .font(.system(size: 16))
-      Rectangle()
-        .frame(height: 1)
-        .foregroundStyle(Color.gray)
-        .padding(.top, 8)
-    }
-    .padding(.horizontal, 16)
   }
 }
 
