@@ -53,28 +53,32 @@ private struct ListItemView: View {
   @State var fixedExpenseAmount: String
   
   var body: some View {
-    HStack(spacing: 0) {
-      Text("매달 12일")
-        .font(.system(size: 16))
-        .foregroundStyle(.black)
-        .padding(.vertical, 6)
-        .padding(.horizontal, 11)
-        .background(
-          RoundedRectangle(cornerRadius: 6)
-            .foregroundStyle(Color.gray)
-        )
-      
-      Spacer()
-      
-      Text("청약")
-        .font(.system(size: 20))
-        .padding(.trailing, 10)
-      Text("100,000원")
-        .font(.system(size: 18, weight: .semibold))
-        .padding(.trailing, 6)
-    }
-    .padding(.vertical, 10)
-    .padding(.horizontal, 6)
+    Button(action: /*@START_MENU_TOKEN@*/{}/*@END_MENU_TOKEN@*/, label: {
+      HStack(spacing: 0) {
+        Text("매달 12일")
+          .font(.system(size: 16))
+          .foregroundStyle(.black)
+          .padding(.vertical, 6)
+          .padding(.horizontal, 11)
+          .background(
+            RoundedRectangle(cornerRadius: 6)
+              .foregroundStyle(Color.gray)
+          )
+        
+        Spacer()
+        
+        Text("청약")
+          .font(.system(size: 20))
+          .foregroundStyle(.black)
+          .padding(.trailing, 10)
+        Text("100,000원")
+          .font(.system(size: 18, weight: .semibold))
+          .foregroundStyle(.black)
+          .padding(.trailing, 6)
+      }
+      .padding(.vertical, 10)
+      .padding(.horizontal, 6)
+    })
   }
 }
   // 다른 뷰로 옮겨갈 예정
