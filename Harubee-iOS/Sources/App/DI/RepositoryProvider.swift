@@ -30,4 +30,7 @@ final class RepositoryProvider {
   }()
   
   // TODO: - UserDefalts 관련 Repository 혹은 Manager 추가 필요
+  lazy var userDefaltsRepository: UserDefaultsRepository = {
+    UserDefaultsRepositoryImpl()
+  }()
 }
