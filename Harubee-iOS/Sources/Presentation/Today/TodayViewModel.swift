@@ -10,9 +10,9 @@ import Foundation
 
 @Observable
 final class TodayViewModel {
-  // MARK: - State
-  struct State{
-    
+  // MARK: - ViewState
+  struct ViewState {
+    var todayDate = Date()
   }
   
   // MARK: - Action
@@ -20,7 +20,7 @@ final class TodayViewModel {
     
   }
   
-  private(set) var state: State = .init()
+  private(set) var viewState: ViewState = .init()
   
   init() {}
   
