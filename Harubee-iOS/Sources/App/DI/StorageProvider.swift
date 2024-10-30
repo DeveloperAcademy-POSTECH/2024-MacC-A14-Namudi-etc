@@ -37,9 +37,4 @@ final class StorageProvider {
   lazy var modelContext: ModelContext = {
     ModelContext(self.modelContainer)
   }()
-  
-  // UserDefaults 설정
-  lazy var userDefaults: UserDefaults = {
-    return UserDefaults.standard
-  }()
 }
