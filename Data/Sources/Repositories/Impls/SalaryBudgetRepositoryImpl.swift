@@ -91,16 +91,9 @@ public final class SalaryBudgetRepositoryImpl: SalaryBudgetRepository {
   
   public func deleteById(_ id: String) throws {
     print("Impl:", #function)
-    
-//    guard let model = try readById(id) else { return }
-    let predicate = #Predicate<SalaryBudgetDTO> { $0.identifier == id }
-    do {
-      try modelContext.delete(model: SalaryBudgetDTO.self, where: predicate)
-    } catch {
-      throw SwiftDataError.deleteError
-    }
-    
-    return
+
+    guard let model = try readById(id) else { return }
+    modelContext.delete(model)    
   }
   
   private func readById(_ id: String) throws -> SalaryBudgetDTO? {
