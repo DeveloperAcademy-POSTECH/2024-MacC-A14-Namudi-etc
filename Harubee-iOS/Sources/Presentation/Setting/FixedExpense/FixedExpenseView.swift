@@ -22,7 +22,7 @@ struct FixedExpenseView: View {
 
 private struct HeaderView: View {
   var body: some View {
-    VStack(spacing: 0) {
+    VStack(spacing: 12) {
       VStack(alignment: .leading, spacing: 10) {
         Text("총 0건")
         Text("총 0원")
@@ -36,7 +36,6 @@ private struct HeaderView: View {
         .frame(height: 1)
         .foregroundStyle(Color.textBrighter30)
         .padding(.horizontal, 18)
-        .padding(.top, 12)
     }
   }
 }
