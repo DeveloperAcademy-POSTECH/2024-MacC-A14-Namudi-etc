@@ -15,6 +15,22 @@ public protocol DailyBudgetRepository {
   /// - Returns: Optional(해당 날짜와 일치하느
   func readByDate(_ date: Date) throws -> DailyBudget?
   
+  
+  /// 변경하고 싶은 DailyBudget의 프로퍼티를 변경합니다.
+  /// - Parameters:
+  ///   - id: 변경할 DailyBudget의 ID
+  ///   - harubee: 변경할 하루비 금액
+  ///   - expence: 변경할 지출 금액
+  ///   - income: 변경할 수입 금액
+  ///   - memo: 변경할 메모 내역
+  func updateDailyBudget(
+    _ id: String,
+    harubee: UpdateValue<Int?>,
+    expence: UpdateValue<Int?>,
+    income: UpdateValue<Int?>,
+    memo: UpdateValue<[String]>
+  ) throws
+  
   /// 하루비를 변경합니다.
   /// - Parameters:
   ///   - id: 변경할 DailyBudget의 ID
