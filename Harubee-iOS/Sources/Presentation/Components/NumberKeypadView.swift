@@ -101,7 +101,7 @@ public enum KeypadButtonType: Int {
 }
 
 // MARK: - NumberKeypadView
-public struct NumberKeypadView: View {
+struct NumberKeypadView: View {
   
   @Binding var text: String
   
