@@ -42,9 +42,9 @@ struct TodayView: View {
 // MARK: - TodayPrimaryLayerView
 private struct TodayPrimaryLayerView: View {
   
-  let todayViewModel: TodayViewModel
-  let screenWidth: CGFloat
-  let screenHeight: CGFloat
+  private let todayViewModel: TodayViewModel
+  private let screenWidth: CGFloat
+  private let screenHeight: CGFloat
   
   
   init(todayViewModel: TodayViewModel) {
@@ -75,14 +75,20 @@ private struct TodayPrimaryLayerView: View {
 // MARK: - Honeycomb(Primary Layer)
 private struct Honeycomb: View {
   
-  let todayViewModel: TodayViewModel
+  private let todayViewModel: TodayViewModel
   
-  let screenWidth: CGFloat
-  let screenHeight: CGFloat
+  private let screenWidth: CGFloat
+  private let screenHeight: CGFloat
   
-  let hexgonSize: CGFloat
-  let honeycombSpace: CGFloat
+  private let hexgonSize: CGFloat
+  private let honeycombSpace: CGFloat
   
+  private let hexGrid: [[Bool]] = [
+    [true, false],
+    [false, true, true],
+    [false, true]
+  ]
+    
   init(todayViewModel: TodayViewModel, screenWidth: CGFloat, screenHeight: CGFloat) {
     self.todayViewModel = todayViewModel
     self.screenWidth = screenWidth
@@ -91,11 +97,7 @@ private struct Honeycomb: View {
     self.honeycombSpace = -10.0
   }
   
-  let hexGrid: [[Bool]] = [
-    [true, false],
-    [false, true, true],
-    [false, true]
-  ]
+  
   
   var body: some View {
     VStack(spacing: honeycombSpace - (hexgonSize/(4 * sqrt(3)))) {
@@ -125,9 +127,9 @@ private struct HarubeeHexagon: View {
   @State private var firstWaveOffset: CGFloat
   @State private var secondWaveOffset: CGFloat
   
-  let todayViewModel: TodayViewModel
-  let hexgonSize: CGFloat
-  let fillPercentage: Double
+  private let todayViewModel: TodayViewModel
+  private let hexgonSize: CGFloat
+  private let fillPercentage: Double
   
   init(todayViewModel: TodayViewModel, hexgonSize: CGFloat) {
     self.firstWaveOffset = 0.0
@@ -178,7 +180,7 @@ private struct HarubeeHexagon: View {
           RoundedRectangle(cornerRadius: 8)
             .foregroundStyle(Color.mainBrighter60)
             .frame(width: 148, height: 39)
-          Text(todayViewModel.viewState.todayHarubee.decimalWithWon)
+          Text(todayViewModel.state.todayHarubee.decimalWithWon)
             .foregroundStyle(Color.main)
             .font(.pretendardSemibold_24)
         }
@@ -194,9 +196,9 @@ private struct AverageHarubeeHexagon: View {
   @State private var firstWaveOffset: CGFloat
   @State private var secondWaveOffset: CGFloat
   
-  let todayViewModel: TodayViewModel
-  let hexgonSize: CGFloat
-  let fillPercentage: Double
+  private let todayViewModel: TodayViewModel
+  private let hexgonSize: CGFloat
+  private let fillPercentage: Double
   
   init(todayViewModel: TodayViewModel, hexgonSize: CGFloat) {
     self.firstWaveOffset = hexgonSize / 2
@@ -238,7 +240,7 @@ private struct AverageHarubeeHexagon: View {
         Text("평균 하루비")
           .font(.pretendardSemibold_16)
           .foregroundStyle(Color.whiteDeep50)
-        Text(todayViewModel.viewState.averageHarubee.decimalWithWon)
+        Text(todayViewModel.state.averageHarubee.decimalWithWon)
           .font(.pretendardSemibold_20)
           .foregroundStyle(Color.whiteDefault)
       }
@@ -250,7 +252,7 @@ private struct AverageHarubeeHexagon: View {
 // MARK: - TodaySecondaryLayerView
 private struct TodaySecondaryLayerView: View {
   
-  let todayViewModel: TodayViewModel
+  private let todayViewModel: TodayViewModel
   
   init(todayViewModel: TodayViewModel) {
     self.todayViewModel = todayViewModel
@@ -280,7 +282,7 @@ private struct TodayHeaderView: View {
   
   var body: some View {
     HStack {
-      Text(todayViewModel.viewState.todayDate.toKoreanFullDateString)
+      Text(todayViewModel.state.todayDate.toKoreanFullDateString)
         .font(.pretendardSemibold_14)
         .foregroundStyle(Color.whiteDefault)
     }.frame(maxWidth: .infinity, alignment: .trailing)
@@ -291,7 +293,7 @@ private struct TodayHeaderView: View {
 // MARK: - TodayFooterView(Secondary Layer)
 private struct TodayFooterView: View {
   
-  let todayViewModel: TodayViewModel
+  private let todayViewModel: TodayViewModel
   
   init(todayViewModel: TodayViewModel) {
     self.todayViewModel = todayViewModel
@@ -307,7 +309,7 @@ private struct TodayFooterView: View {
       }, label: {
         Text("실제 지출 및 수입 입력하기")
           .font(.pretendardSemibold_18)
-          .foregroundColor(Color.white)
+          .foregroundColor(Color.whiteDefault)
           .frame(maxWidth: .infinity, maxHeight: 56)
           .background(Color.main)
           .cornerRadius(10)
@@ -323,14 +325,14 @@ private struct TodayFooterView: View {
 // MARK: - CalendarStreakView(Secondary Layer)
 private struct CalendarStreakView: View {
   
-  let todayViewModel: TodayViewModel
-  let firstStreakGroup: [String]
-  let secondStreakGroup: [String]
+  private let todayViewModel: TodayViewModel
+  private let firstStreakGroup: [String]
+  private let secondStreakGroup: [String]
   
   init(todayViewModel: TodayViewModel) {
     self.todayViewModel = todayViewModel
-    self.firstStreakGroup = Array(todayViewModel.viewState.tempWeeklyStreaks.prefix(3))
-    self.secondStreakGroup = Array(todayViewModel.viewState.tempWeeklyStreaks.suffix(3))
+    self.firstStreakGroup = Array(todayViewModel.state.tempWeeklyStreaks.prefix(3))
+    self.secondStreakGroup = Array(todayViewModel.state.tempWeeklyStreaks.suffix(3))
   }
   
   var body: some View {
@@ -381,7 +383,7 @@ private struct CalendarStreakView: View {
 // MARK: - StreakGroupView
 private struct StreakGroupView: View {
   
-  let streaks: [String]
+  private let streaks: [String]
   
   init(streaks: [String]) {
     self.streaks = streaks
@@ -407,7 +409,7 @@ private struct StreakGroupView: View {
 // MARK: - StreakCell(Secondary Layer)
 private struct StreakCell: View {
   
-  let date: String
+  private let date: String
   
   init(date: String) {
     self.date = date
