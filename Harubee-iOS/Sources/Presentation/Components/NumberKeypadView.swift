@@ -103,6 +103,8 @@ public enum KeypadButtonType: Int {
 // MARK: - NumberKeypadView
 public struct NumberKeypadView: View {
   
+  @Binding var text: String
+  
   private let keypads: [[KeypadButtonType]] = [
     [.one, .two, .three, .delete],
     [.four, .five, .six, .plus],
@@ -110,12 +112,14 @@ public struct NumberKeypadView: View {
     [.zero, .doubleZero, .tripleZero, .done]
   ]
   
-  public init() { }
+  public init(text: Binding<String>) {
+    self._text = text
+  }
   
   public var body: some View {
-    VStack(spacing: 10) {
+    VStack(spacing: 2) {
       ForEach(keypads, id: \.self) { rowKeypads in
-        NumberKeypadRowView(keypads: rowKeypads)
+        NumberKeypadRowView(text: $text, keypads: rowKeypads)
       }
     }
     .frame(maxWidth: .infinity)
@@ -126,16 +130,19 @@ public struct NumberKeypadView: View {
 // MARK: - NumberKeypadRowView
 private struct NumberKeypadRowView: View {
   
+  @Binding var text: String
+  
   private let keypads: [KeypadButtonType]
   
-  init(keypads: [KeypadButtonType]) {
+  init(text: Binding<String>, keypads: [KeypadButtonType]) {
+    self._text = text
     self.keypads = keypads
   }
   
   var body: some View {
-    HStack(spacing: 10) {
+    HStack(spacing: 2) {
       ForEach(keypads, id: \.self) { columnKeypads in
-        NumberKeypadColumnView(keypad: columnKeypads)
+        NumberKeypadColumnView(text: $text, keypad: columnKeypads)
       }
     }
   }
@@ -144,10 +151,12 @@ private struct NumberKeypadRowView: View {
 // MARK: - NumberKeypadColumnView
 private struct NumberKeypadColumnView: View {
   @State private var isPressed = false
+  @Binding var text: String
   
   private let keypad: KeypadButtonType
   
-  init(keypad: KeypadButtonType) {
+  init(text: Binding<String>, keypad: KeypadButtonType) {
+    self._text = text
     self.keypad = keypad
   }
   
@@ -167,6 +176,7 @@ private struct NumberKeypadColumnView: View {
     }
     .frame(maxWidth: .infinity, maxHeight: 50)
     .clipShape(RoundedRectangle(cornerRadius: 5))
+    .contentShape(Rectangle())
     .scaleEffect(isPressed ? 0.9 : 1.0)
     .onLongPressGesture(
       minimumDuration: 0.1,
@@ -174,11 +184,13 @@ private struct NumberKeypadColumnView: View {
       } onPressingChanged: { isPressed in
         self.isPressed = isPressed
         
-        if !isPressed {  }
+        if !isPressed { text += keypad.title }
+        else { UIImpactFeedbackGenerator(style: .soft).impactOccurred() }
       }
   }
 }
 
 #Preview {
-  NumberKeypadView()
+  @Previewable @State var text = "123"
+  NumberKeypadView(text: $text)
 }
