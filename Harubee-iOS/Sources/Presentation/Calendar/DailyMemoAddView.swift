@@ -18,6 +18,7 @@ struct DailyMemoAddView: View {
   var body: some View {
     VStack(spacing: 0) {
       ZStack {
+        //TODO: 시트 header 공통 컴포넌트로 변경
         HStack(spacing: 0) {
           Button {
             
@@ -46,7 +47,7 @@ struct DailyMemoAddView: View {
       .padding(.top, 38)
       
       Spacer()
-      
+      // TODO: 저장하기 공통 컴포넌트로 변경
       Button {
 
       } label: {
