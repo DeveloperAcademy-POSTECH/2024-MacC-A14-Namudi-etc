@@ -29,7 +29,7 @@ private struct HeaderView: View {
       }
       .foregroundStyle(Color.textBlack)
       .frame(maxWidth: .infinity, alignment: .leading)
-      .padding(.horizontal, 6)
+      .padding(.horizontal, 4)
       
       Rectangle()
         .frame(height: 1)
@@ -48,7 +48,6 @@ private struct BodyView: View {
   var body: some View {
     VStack(spacing: 30) {
       DayPickerView(title: "주요 고정수입 날짜", selectedDay: $selectedDay)
-        .padding(.leading, 6)
       
       HStack(spacing: 0) {
         Text("금액")
@@ -73,8 +72,7 @@ private struct BodyView: View {
             .presentationCornerRadius(20)
         }
       }
-      .padding(.leading, 22)
-      .padding(.trailing, 16)
+      .padding(.horizontal, 20)
     }
   }
 }
@@ -103,9 +101,13 @@ private struct FixedIncomeModifyView: View {
           .background(Color.main)
       }
       .padding(.top, 24)
+      
       NumberKeypadView(text: $fixedIncomeAmount)
-        .padding(.top, 27)
+        .padding(.top, 26)
+        .padding(.horizontal, 16)
+        .padding(.bottom, 31)
     }
+    .ignoresSafeArea()
   }
 }
 

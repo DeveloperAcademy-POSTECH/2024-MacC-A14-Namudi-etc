@@ -32,7 +32,6 @@ struct NumberKeypadView: View {
       }
     }
     .frame(maxWidth: .infinity)
-    .padding(.horizontal, 15)
   }
 }
 
