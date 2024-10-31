@@ -14,6 +14,11 @@ struct DayPickerView: View {
   @State private var showDayPicker: Bool = false
   @Binding var selectedDay: Int
   
+  init(title: String, selectedDay: Binding<Int>) {
+    self.title = title
+    self._selectedDay = selectedDay
+  }
+  
   var body: some View {
     VStack(spacing: 0) {
       HStack(spacing: 0) {
