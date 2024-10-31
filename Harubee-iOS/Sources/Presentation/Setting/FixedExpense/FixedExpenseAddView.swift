@@ -53,22 +53,15 @@ struct FixedExpenseAddView: View {
       
       Spacer()
       
-      Button {
-        print(fixedExpenseName)
-        print(fixedExpenseAmount)
-        print(selectedDay)
-      } label: {
-        Text("저장하기")
-          .font(.pretendardSemibold_18)
-          .foregroundStyle(Color.whiteDeep)
-          .padding(.horizontal, 149)
-          .padding(.vertical, 20)
-          .background(
-            RoundedRectangle(cornerRadius: 10)
-              .fill(Color.main)
-            // textfield 다 안 채워지면 Main_30
-          )
+      MainColorButton(
+        title: "저장하기",
+        // TODO: Binding 연결 필요
+        isEnabled: .constant(true)
+      ) {
+        print("저장하기 버튼 Tapped")
       }
+      .clipShape(RoundedRectangle(cornerRadius: 10))
+      .padding(.horizontal, 16)
       .padding(.bottom, 9)
     }
   }
