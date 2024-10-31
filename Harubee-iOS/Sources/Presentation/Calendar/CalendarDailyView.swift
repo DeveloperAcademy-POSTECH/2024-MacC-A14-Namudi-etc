@@ -21,6 +21,7 @@ struct CalendarDailyView: View {
 }
 
 private struct BodyView: View {
+  @State private var showingSheet: Bool = false
   var body: some View {
     VStack(spacing: 0) {
       // MARK: 오늘의 하루비
@@ -94,12 +95,17 @@ private struct BodyView: View {
           Spacer()
           
           Button {
-            
+            showingSheet.toggle()
           } label: {
             Image(systemName: "plus")
               .frame(width: 19, height: 21)
           }
           .foregroundStyle(Color.textBlack)
+          .sheet(isPresented: $showingSheet) {
+            DailyMemoAddView()
+              .presentationDetents([.fraction(0.63)])
+              .presentationCornerRadius(20)
+          }
         }
         .padding(.leading, 6)
         .padding(.trailing, 2)
