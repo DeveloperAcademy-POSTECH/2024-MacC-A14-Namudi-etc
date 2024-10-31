@@ -6,4 +6,22 @@
 //  Copyright © 2024 namudiEtc. All rights reserved.
 //
 
-import Foundation
+import SwiftUI
+import DesignSystem
+
+struct SettingView: View {
+  var body: some View {
+    ZStack {
+      Color.textBlack5.ignoresSafeArea()
+      
+      
+    }
+    .navigationBarTitle("설정")
+    .font(.pretendardMedium_18)
+    .foregroundStyle(Color.textBlack)
+  }
+}
+
+#Preview {
+  SettingView()
+}
