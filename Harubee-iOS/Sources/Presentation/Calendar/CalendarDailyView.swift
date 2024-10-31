@@ -11,120 +11,128 @@ import DesignSystem
 
 struct CalendarDailyView: View {
   var body: some View {
-    VStack(spacing: 30) {
-      BodyView()
-      FooterView()
+    VStack(spacing: 0) {
+      TodayHarubeeView()
+      TransactionButtonView()
+      MemoView()
+      ExpectedFixedExpenseView()
+        .padding(.top, 30)
     }
     .padding(.top, 26)
   }
-  
 }
 
-private struct BodyView: View {
-  @State private var showingSheet: Bool = false
+private struct TodayHarubeeView: View {
   var body: some View {
-    VStack(spacing: 0) {
-      // MARK: 오늘의 하루비
-      ZStack {
-        RoundedRectangle(cornerRadius: 5)
-          .stroke(lineWidth: 1)
-          .frame(height: 53)
-          .foregroundStyle(Color.mainBright)
-        
-        HStack(spacing: 0) {
-          Text("오늘의 하루비")
-            .font(.pretendardSemibold_16)
-            .padding(.leading, 14)
-            .frame(maxWidth: .infinity, alignment: .leading)
-          Text("52,000원")
-            .font(.pretendardSemibold_18)
-            .foregroundStyle(Color.main)
-            .padding(.trailing, 14)
-        }
-      }
-      .padding(.horizontal, 16)
+    ZStack {
+      RoundedRectangle(cornerRadius: 5)
+        .stroke(lineWidth: 1)
+        .frame(height: 53)
+        .foregroundStyle(Color.mainBright)
       
-      HStack(spacing: 9) {
-        // TODO: 공통 컴포넌트로 변경
-        ZStack {
-          RoundedRectangle(cornerRadius: 5)
-            .fill(Color.textBrighter30)
-          VStack(spacing: 16) {
-            Text("수입")
-              .font(.pretendardSemibold_16)
-              .foregroundStyle(Color.textBlack)
-              .frame(maxWidth: .infinity, alignment: .leading)
-              .padding(.horizontal, 14)
-            Text("- 원")
-              .font(.pretendardSemibold_18)
-              .foregroundStyle(Color.textBlack)
-              .frame(maxWidth: .infinity, alignment: .trailing)
-              .padding(.horizontal, 14)
-          }
-        }
-        // TODO: 공통 컴포넌트로 변경
-        ZStack {
-          RoundedRectangle(cornerRadius: 5)
-            .fill(Color.textBrighter30)
-          VStack(spacing: 16) {
-            Text("지출")
-              .font(.pretendardSemibold_16)
-              .foregroundStyle(Color.textBlack)
-              .frame(maxWidth: .infinity, alignment: .leading)
-              .padding(.horizontal, 14)
-            Text("- 원")
-              .font(.pretendardSemibold_18)
-              .foregroundStyle(Color.textBlack)
-              .frame(maxWidth: .infinity, alignment: .trailing)
-              .padding(.horizontal, 14)
-          }
-        }
+      HStack(spacing: 0) {
+        Text("오늘의 하루비")
+          .font(.pretendardSemibold_16)
+          .padding(.leading, 14)
+          .frame(maxWidth: .infinity, alignment: .leading)
+        Text("52,000원")
+          .font(.pretendardSemibold_18)
+          .foregroundStyle(Color.main)
+          .padding(.trailing, 14)
       }
-      .frame(height: 84)
-      .padding(.horizontal, 16)
-      .padding(.top, 16)
-      
-      VStack(spacing: 8) {
-        HStack(spacing: 0) {
-          Text("메모")
-            .font(.pretendardSemibold_16)
-            .foregroundStyle(Color.textBlack)
-          
-          Spacer()
-          
-          Button {
-            showingSheet.toggle()
-          } label: {
-            Image(systemName: "plus")
-              .frame(width: 19, height: 21)
-          }
-          .foregroundStyle(Color.textBlack)
-          .sheet(isPresented: $showingSheet) {
-            DailyMemoAddView()
-              .presentationDetents([.fraction(0.25)])
-              .presentationCornerRadius(20)
-          }
-        }
-        .padding(.leading, 6)
-        .padding(.trailing, 2)
-        
-        ZStack {
-          RoundedRectangle(cornerRadius: 5) // TODO: 메모 개수 늘어나면 리스트 형식, 수정 필요
-            .stroke(lineWidth: 1)
-            .frame(height: 52)
-            .foregroundStyle(Color.textBrighter)
-          Text("") // TODO: 메모 내용으로 넣어줘야 함
-            .font(.pretendardMedium_16)
-            .foregroundStyle(Color.textBlack)
-        }
-      }
-      .padding(.horizontal, 16)
-      .padding(.top, 49)
     }
+    .padding(.horizontal, 16)
   }
 }
 
-private struct FooterView: View {
+private struct TransactionButtonView: View {
+  var body: some View {
+    HStack(spacing: 9) {
+      // TODO: 공통 컴포넌트로 변경
+      ZStack {
+        RoundedRectangle(cornerRadius: 5)
+          .fill(Color.textBrighter30)
+        VStack(spacing: 16) {
+          Text("수입")
+            .font(.pretendardSemibold_16)
+            .foregroundStyle(Color.textBlack)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.horizontal, 14)
+          Text("- 원")
+            .font(.pretendardSemibold_18)
+            .foregroundStyle(Color.textBlack)
+            .frame(maxWidth: .infinity, alignment: .trailing)
+            .padding(.horizontal, 14)
+        }
+      }
+      // TODO: 공통 컴포넌트로 변경
+      ZStack {
+        RoundedRectangle(cornerRadius: 5)
+          .fill(Color.textBrighter30)
+        VStack(spacing: 16) {
+          Text("지출")
+            .font(.pretendardSemibold_16)
+            .foregroundStyle(Color.textBlack)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.horizontal, 14)
+          Text("- 원")
+            .font(.pretendardSemibold_18)
+            .foregroundStyle(Color.textBlack)
+            .frame(maxWidth: .infinity, alignment: .trailing)
+            .padding(.horizontal, 14)
+        }
+      }
+    }
+    .frame(height: 84)
+    .padding(.horizontal, 16)
+    .padding(.top, 16)
+  }
+}
+
+private struct MemoView: View {
+  @State private var showingSheet: Bool = false
+
+  var body: some View {
+    VStack(spacing: 8) {
+      HStack(spacing: 0) {
+        Text("메모")
+          .font(.pretendardSemibold_16)
+          .foregroundStyle(Color.textBlack)
+        
+        Spacer()
+        
+        Button {
+          showingSheet.toggle()
+        } label: {
+          Image(systemName: "plus")
+            .frame(width: 19, height: 21)
+        }
+        .foregroundStyle(Color.textBlack)
+        .sheet(isPresented: $showingSheet) {
+          DailyMemoAddView()
+            .presentationDetents([.fraction(0.25)])
+            .presentationCornerRadius(20)
+        }
+      }
+      .padding(.leading, 6)
+      .padding(.trailing, 2)
+      
+      ZStack {
+        RoundedRectangle(cornerRadius: 5) // TODO: 메모 개수 늘어나면 리스트 형식, 수정 필요
+          .stroke(lineWidth: 1)
+          .frame(height: 52)
+          .foregroundStyle(Color.textBrighter)
+        Text("") // TODO: 메모 내용으로 넣어줘야 함
+          .font(.pretendardMedium_16)
+          .foregroundStyle(Color.textBlack)
+      }
+    }
+    .padding(.horizontal, 16)
+    .padding(.top, 49)
+  }
+}
+
+private struct ExpectedFixedExpenseView: View {
   var body: some View {
     VStack(spacing: 0) {
       Rectangle()
