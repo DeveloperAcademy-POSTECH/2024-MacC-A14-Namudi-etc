@@ -41,6 +41,7 @@ struct DayPickerView: View {
         .frame(maxWidth: .infinity, maxHeight: 150)
         .padding(.horizontal, 10)
         .padding(.top, 21)
+        .transition(.opacity.combined(with: .scale(scale: 0.9, anchor: .top)))
       }
     }
   }
@@ -51,7 +52,9 @@ private struct DayPickerButton: View {
   @Binding var selectedDay: Int
   var body: some View {
     Button {
-      showDayPicker.toggle()
+      withAnimation(.bouncy) {
+        showDayPicker.toggle()
+      }
     } label: {
       Text("매달 \(selectedDay)일")
         .font(.pretendardMedium_16)
