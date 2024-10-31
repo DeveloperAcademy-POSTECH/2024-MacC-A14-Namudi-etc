@@ -12,7 +12,7 @@ import DesignSystem
 // MARK: - NumberKeypadView
 struct NumberKeypadView: View {
   
-  @Binding var text: String
+  @Binding private var text: String
   
   private let keypads: [[KeypadButtonType]] = [
     [.one, .two, .three, .delete],
@@ -38,7 +38,7 @@ struct NumberKeypadView: View {
 // MARK: - NumberKeypadRowView
 private struct NumberKeypadRowView: View {
   
-  @Binding var text: String
+  @Binding private var text: String
   
   private let keypads: [KeypadButtonType]
   
@@ -59,7 +59,7 @@ private struct NumberKeypadRowView: View {
 // MARK: - NumberKeypadColumnView
 private struct NumberKeypadColumnView: View {
   @State private var isPressed = false
-  @Binding var text: String
+  @Binding private var text: String
   
   private let keypad: KeypadButtonType
   
@@ -69,21 +69,18 @@ private struct NumberKeypadColumnView: View {
   }
   
   var body: some View {
-    ZStack {
-      keypad.highlightBackgroundColor.opacity(isPressed ? 1 : 0.0)
-      
-      Group {
-        if keypad.style == .text {
-          Text(keypad.title)
-        } else {
-          keypad.image
-        }
+    Group {
+      if keypad.style == .text {
+        Text(keypad.title)
+      } else {
+        keypad.image
       }
-      .foregroundStyle(keypad.foregroundColor)
-      .font(keypad.font)
     }
-    .frame(maxWidth: .infinity, maxHeight: 50)
-    .clipShape(RoundedRectangle(cornerRadius: 5))
+    .frame(maxWidth: .infinity, maxHeight: 60)
+    .background(keypad.highlightBackgroundColor.opacity(isPressed ? 1 : 0))
+    .foregroundStyle(keypad.foregroundColor)
+    .font(keypad.font)
+    .clipShape(RoundedRectangle(cornerRadius: 10))
     .contentShape(Rectangle())
     .scaleEffect(isPressed ? 0.9 : 1.0)
     .onTapGesture {
