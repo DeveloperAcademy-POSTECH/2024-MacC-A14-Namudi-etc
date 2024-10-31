@@ -12,7 +12,9 @@ import DesignSystem
 struct FloatingTitleTextField: View {
   var title: String
   @Binding var text: String
+  @State var shouldShowKeyboard: Bool
   @State private var isFocused: Bool = false
+  @FocusState private var isTextfieldFocused: Bool
   
   var body: some View {
     VStack(spacing: 0) {
@@ -25,6 +27,22 @@ struct FloatingTitleTextField: View {
       TextField(title, text: $text)
         .frame(maxWidth: .infinity)
         .font(.pretendardMedium_18)
+        .focused($isTextfieldFocused)
+        .onAppear {
+          if shouldShowKeyboard {
+            isTextfieldFocused = true
+          }
+        }
+        .onChange(of: shouldShowKeyboard) { _, newValue in
+          isTextfieldFocused = newValue
+        }
+        .onChange(of: isTextfieldFocused) { _, isFocused in
+          if shouldShowKeyboard && !isFocused {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+              isTextfieldFocused = true
+            }
+          }
+        }
       Rectangle()
         .frame(height: 1)
         .foregroundStyle(Color.textBrighter)

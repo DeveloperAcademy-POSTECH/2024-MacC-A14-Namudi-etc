@@ -12,7 +12,8 @@ import DesignSystem
 struct DailyMemoAddView: View {
   @State private var memo: String = ""
   @State private var memoStringCount: Int = 0
-  @FocusState private var isTextFieldFocused: Bool
+  
+  
   
   var body: some View {
     VStack(spacing: 0) {
@@ -40,9 +41,11 @@ struct DailyMemoAddView: View {
           .foregroundStyle(Color.textBlack)
           .frame(maxWidth: .infinity, alignment: .trailing)
           .padding(.horizontal, 16)
-        FloatingTitleTextField(title: "메모", text: $memo)
+        FloatingTitleTextField(title: "메모", text: $memo, shouldShowKeyboard: true)
       }
       .padding(.top, 38)
+      
+      Spacer()
       
       Button {
 
@@ -54,7 +57,6 @@ struct DailyMemoAddView: View {
           .foregroundStyle(Color.whiteDefault)
           .background(Color.main)
       }
-      .padding(.top, 24)
     }
     .frame(maxHeight: .infinity, alignment: .top)
     .padding(.top, 20)
