@@ -32,49 +32,64 @@ public final class DailyBudgetRepositoryImpl: DailyBudgetRepository {
     }
   }
   
+  @discardableResult
   public func updateDailyBudget(
     _ id: String,
     harubee: UpdateValue<Int?> = .keep,
     expence: UpdateValue<Int?> = .keep,
     income: UpdateValue<Int?> = .keep,
     memo: UpdateValue<[String]> = .keep
-  ) throws {
+  ) throws -> DailyBudget {
     print("Impl:", #function)
     
-    guard let model = try readById(id) else { return }
+    guard let model = try readById(id) else { throw SwiftDataError.modelNotFound }
     
     if case .set(let harubee) = harubee { model.harubee = harubee }
     if case .set(let expense) = expence { model.expense = expense }
     if case .set(let income) = income { model.income = income }
     if case .set(let memo) = memo { model.memo = memo }
+    
+    return model.toEntity()
   }
   
-  public func updateHarubee(_ id: String, harubee: Int) throws {
+  @discardableResult
+  public func updateHarubee(_ id: String, harubee: Int?) throws -> DailyBudget {
     print("Impl:", #function)
     
-    guard let model = try readById(id) else { return }
+    guard let model = try readById(id) else { throw SwiftDataError.modelNotFound }
     model.harubee = harubee
+    
+    return model.toEntity()
   }
   
-  public func updateExpense(_ id: String, expense: Int) throws {
+  @discardableResult
+  public func updateExpense(_ id: String, expense: Int?) throws -> DailyBudget {
     print("Impl:", #function)
     
-    guard let model = try readById(id) else { return }
+    guard let model = try readById(id) else { throw SwiftDataError.modelNotFound }
     model.expense = expense
+    
+    return model.toEntity()
   }
   
-  public func updateIncome(_ id: String, income: Int) throws {
+  @discardableResult
+  public func updateIncome(_ id: String, income: Int?) throws -> DailyBudget {
     print("Impl:", #function)
     
-    guard let model = try readById(id) else { return }
+    guard let model = try readById(id) else { throw SwiftDataError.modelNotFound }
     model.income = income
+    
+    return model.toEntity()
   }
   
-  public func updateMemo(_ id: String, memo: [String]) throws {
+  @discardableResult
+  public func updateMemo(_ id: String, memo: [String]) throws -> DailyBudget {
     print("Impl:", #function)
     
-    guard let model = try readById(id) else { return }
+    guard let model = try readById(id) else { throw SwiftDataError.modelNotFound }
     model.memo = memo
+    
+    return model.toEntity()
   }
 }
 
