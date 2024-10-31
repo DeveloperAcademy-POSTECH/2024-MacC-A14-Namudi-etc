@@ -13,7 +13,9 @@ import DesignSystem
 struct CalendarView: View {
   @State private var viewModel: CalendarViewModel
   
-  init(viewModel: CalendarViewModel) {
+  init(
+    viewModel: CalendarViewModel
+  ) {
     self.viewModel = viewModel
   }
   
@@ -110,11 +112,25 @@ struct CalendarView: View {
 
 // MARK: - Calendar Header View
 private struct CalendarHeaderView: View {
-  let periodYearTitle: String
-  let periodTitle: String
-  let canMovePeriod: (previous: Bool, next: Bool)
-  let movePreviousPeriod: () -> Void
-  let moveNextPeriod: () -> Void
+  private let periodYearTitle: String
+  private let periodTitle: String
+  private let canMovePeriod: (previous: Bool, next: Bool)
+  private let movePreviousPeriod: () -> Void
+  private let moveNextPeriod: () -> Void
+  
+  init(
+    periodYearTitle: String,
+    periodTitle: String,
+    canMovePeriod: (previous: Bool, next: Bool),
+    movePreviousPeriod: @escaping () -> Void,
+    moveNextPeriod: @escaping () -> Void
+  ) {
+    self.periodYearTitle = periodYearTitle
+    self.periodTitle = periodTitle
+    self.canMovePeriod = canMovePeriod
+    self.movePreviousPeriod = movePreviousPeriod
+    self.moveNextPeriod = moveNextPeriod
+  }
   
   var body: some View {
     VStack(spacing: 3) {
@@ -177,8 +193,6 @@ private struct CalendarGridView: View {
   private let dayInfos: [DayInfo]
   private let onDateSelected: (Date) -> Void
   
-  private let weekDaySymbols = ["일", "월", "화", "수", "목", "금", "토"]
-  
   init(
     daysInPeriod: [Date?],
     selectedDate: Date,
@@ -193,7 +207,7 @@ private struct CalendarGridView: View {
   
   var body: some View {
     VStack(spacing: 0) {
-      WeekdayHeaderView(weekDays: weekDaySymbols)
+      WeekdayHeaderView()
         .padding(.bottom, 8)
       
       LazyVGrid(
@@ -227,7 +241,9 @@ private struct CalendarGridView: View {
 
 // Weekday Header View
 private struct WeekdayHeaderView: View {
-  let weekDays: [String]
+  private let weekDays: [String] = [
+    "일", "월", "화", "수", "목", "금", "토"
+  ]
   
   var body: some View {
     VStack {
@@ -250,10 +266,22 @@ private struct WeekdayHeaderView: View {
 
 // MARK: - Calendar Cell
 private struct CalendarCell: View {
-  let date: Date
-  let isSelected: Bool
-  let isToday: Bool
-  let dayInfo: DayInfo?
+  private let date: Date
+  private let isSelected: Bool
+  private let isToday: Bool
+  private let dayInfo: DayInfo?
+  
+  init(
+    date: Date,
+    isSelected: Bool,
+    isToday: Bool,
+    dayInfo: DayInfo?
+  ) {
+    self.date = date
+    self.isSelected = isSelected
+    self.isToday = isToday
+    self.dayInfo = dayInfo
+  }
   
   private var dayText: String {
     let calendar = Calendar.current
