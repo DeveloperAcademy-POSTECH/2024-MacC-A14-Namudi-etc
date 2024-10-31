@@ -16,7 +16,8 @@ struct HarubeeAdjustView: View {
   @State private var hightlightLabelAmount: Int = 62000
   
   @State private var isUpdated: Bool = false
-  @State private var isEnabled: Bool = false
+  
+  // TODO: SalaryBudget, InitialHarubee 저장
   
   var body: some View {
     VStack {
@@ -26,14 +27,20 @@ struct HarubeeAdjustView: View {
         isUpdated: $isUpdated,
         defaultHarubee: $hightlightLabelAmount
       )
+      .padding(.horizontal, 22)
+      .padding(.top, 36)
       
-      AmountTextView(numberText: .constant("test"), isUpdated: .constant(false))
-        .padding(.top, 69)
+      Spacer()
+      
+      AmountTextView(
+        numberText: .constant("test"),
+        isUpdated: $isUpdated
+      )
         .padding(.horizontal, 37)
       
       MainColorButton(
         title: "저장하기",
-        isEnabled: $isEnabled
+        isEnabled: $isUpdated
       ) {
           print("저장하기 Tap")
         }
@@ -57,23 +64,32 @@ private struct HarubeeAdjustBodyView: View {
   
   var body: some View {
     VStack(alignment: .leading, spacing: 0) {
+      
+      if isUpdated {
+        Text("하루비 조정 후 계산된")
+          .font(.pretendardMedium_18)
+          .foregroundStyle(Color.textBlack)
+          .padding(.top, 3)
+      }
+      
       HighlightDefaultHarubeeLabel(
         title: isUpdated ? "기본 하루비는" : "현재 기본 하루비는",
         amount: defaultHarubee
       )
+      .padding(.top, isUpdated ? 6 : 0)
       
-      VStack(alignment: .leading, spacing: 2) {
-        Text("기본 하루비는 하루비 조정을 하지 않은 날짜에")
-        Text("자동으로 분배되는 하루비를 의미해요.")
+      if !isUpdated {
+        VStack(alignment: .leading, spacing: 2) {
+          Text("기본 하루비는 하루비 조정을 하지 않은 날짜에")
+          Text("자동으로 분배되는 하루비를 의미해요.")
+        }
+        .padding(.top, 14)
+        .font(.pretendardMedium_14)
+        .foregroundStyle(Color.textBlack30)
       }
-      .padding(.top, 14)
-      .font(.pretendardMedium_14)
-      .foregroundStyle(Color.textBlack30)
-    
     }
     .frame(maxWidth: .infinity, alignment: .leading)
-    .padding(.horizontal, 22)
-    .padding(.top, 36)
+    
   }
 }
 
