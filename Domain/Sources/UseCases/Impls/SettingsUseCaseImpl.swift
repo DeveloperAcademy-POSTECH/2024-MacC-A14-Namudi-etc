@@ -121,9 +121,6 @@ public final class SettingsUseCaseImpl: SettingsUseCase {
     
     // 8. 기본 하루비 다시 계산하기
     let defaultHarubee = try calculateUseCase.calculateDefaultHarubee(
-      balance: newBalance,
-      startDate: now,
-      endDate: currentSalaryBudget.endDate,
       salaryBudget: currentSalaryBudget
     )
     
@@ -171,9 +168,6 @@ public final class SettingsUseCaseImpl: SettingsUseCase {
     
     // 8. 기본 하루비 다시 계산하기
     let defaultHarubee = try calculateUseCase.calculateDefaultHarubee(
-      balance: newBalance,
-      startDate: now,
-      endDate: currentSalaryBudget.endDate,
       salaryBudget: currentSalaryBudget
     )
     

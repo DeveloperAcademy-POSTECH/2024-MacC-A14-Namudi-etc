@@ -51,9 +51,6 @@ public final class DailyBudgetUseCaseImpl: DailyBudgetUseCase {
     
     // 3. 새로운 defaultHarubee 계산
     let newDefaultHarubee = try calculateUseCase.calculateDefaultHarubee(
-      balance: salaryBudget.balance,
-      startDate: date,
-      endDate: salaryBudget.endDate,
       salaryBudget: salaryBudget
     )
     
@@ -87,9 +84,6 @@ public final class DailyBudgetUseCaseImpl: DailyBudgetUseCase {
     
     // 3. 새로운 defaultHarubee 계산
     let newDefaultHarubee = try calculateUseCase.calculateDefaultHarubee(
-      balance: salaryBudget.balance,
-      startDate: date,
-      endDate: salaryBudget.endDate,
       salaryBudget: salaryBudget
     )
     
