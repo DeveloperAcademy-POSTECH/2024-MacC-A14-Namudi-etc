@@ -8,12 +8,12 @@
 
 import Foundation
 
-public enum SwiftDataError: LocalizedError {
+enum SwiftDataError: LocalizedError {
   case fetchError
   case deleteError
   case modelNotFound
   
-  public var errorDescription: String {
+  var errorDescription: String {
     switch self {
     case .fetchError:
       "Fetch error"

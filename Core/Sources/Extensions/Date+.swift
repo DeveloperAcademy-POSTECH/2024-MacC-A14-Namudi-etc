@@ -8,12 +8,12 @@
 
 import Foundation
 
-extension Date {
+public extension Date {
   /// 년도 월 일 (요일) 표기
   var koreanFullDateString: String {
-      let formatter = DateFormatter()
-      formatter.dateFormat = "yyyy년 MM월 dd일 (E)"
-      formatter.locale = Locale(identifier: "ko_KR")
-      return formatter.string(from: self)
+    let formatter = DateFormatter()
+    formatter.dateFormat = "yyyy년 MM월 dd일 (E)"
+    formatter.locale = Locale(identifier: "ko_KR")
+    return formatter.string(from: self)
   }
 }

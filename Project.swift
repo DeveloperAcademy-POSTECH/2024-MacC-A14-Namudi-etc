@@ -33,9 +33,20 @@ let project = Project(
       dependencies: [
         .target(name: "Domain"),
         .target(name: "DesignSystem"),
-        .target(name: "Data")
+        .target(name: "Data"),
+        .target(name: "Core")
       ]
     ),
+    
+      .target(
+        name: "Core",
+        destinations: .iOS,
+        product: .framework,
+        bundleId: "etc.namudi.harubee-core",
+        infoPlist: .default,
+        sources: ["Core/Sources/**"],
+        dependencies: []
+      ),
     
       .target(
         name: "DesignSystem",
@@ -55,7 +66,9 @@ let project = Project(
         bundleId: "etc.namudi.harubee-domain",
         infoPlist: .default,
         sources: ["Domain/Sources/**"],
-        dependencies: []
+        dependencies: [
+          .target(name: "Core")
+        ]
       ),
     
       .target(
@@ -66,7 +79,8 @@ let project = Project(
         infoPlist: .default,
         sources: ["Data/Sources/**"],
         dependencies: [
-          .target(name: "Domain")
+          .target(name: "Domain"),
+          .target(name: "Core")
         ]
       )
   ]
