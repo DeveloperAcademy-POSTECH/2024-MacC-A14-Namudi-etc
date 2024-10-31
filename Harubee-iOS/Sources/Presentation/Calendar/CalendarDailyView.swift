@@ -11,10 +11,9 @@ import DesignSystem
 
 struct CalendarDailyView: View {
   var body: some View {
-    VStack(spacing: 0) {
+    VStack(spacing: 30) {
       BodyView()
       FooterView()
-        .padding(.top, 30)
     }
     .padding(.top, 26)
   }
@@ -36,7 +35,7 @@ private struct BodyView: View {
           Text("오늘의 하루비")
             .font(.pretendardSemibold_16)
             .padding(.leading, 14)
-          Spacer()
+            .frame(maxWidth: .infinity, alignment: .leading)
           Text("52,000원")
             .font(.pretendardSemibold_18)
             .foregroundStyle(Color.main)
@@ -63,7 +62,7 @@ private struct BodyView: View {
               .padding(.horizontal, 14)
           }
         }
-        
+        // TODO: 공통 컴포넌트로 변경
         ZStack {
           RoundedRectangle(cornerRadius: 5)
             .fill(Color.textBrighter30)

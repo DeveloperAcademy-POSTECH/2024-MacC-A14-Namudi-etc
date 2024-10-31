@@ -13,8 +13,6 @@ struct DailyMemoAddView: View {
   @State private var memo: String = ""
   @State private var memoStringCount: Int = 0
   
-  
-  
   var body: some View {
     VStack(spacing: 0) {
       ZStack {
@@ -42,11 +40,13 @@ struct DailyMemoAddView: View {
           .foregroundStyle(Color.textBlack)
           .frame(maxWidth: .infinity, alignment: .trailing)
           .padding(.horizontal, 16)
+        
         FloatingTitleTextField(title: "메모", text: $memo, shouldShowKeyboard: true)
       }
       .padding(.top, 38)
       
       Spacer()
+      
       // TODO: 저장하기 공통 컴포넌트로 변경
       Button {
 
