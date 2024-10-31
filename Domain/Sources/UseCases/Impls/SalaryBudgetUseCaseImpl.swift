@@ -109,9 +109,6 @@ public final class SalaryBudgetUseCaseImpl: SalaryBudgetUseCase {
     
     // 2. 새로운 잔액으로 기본 하루비 다시 계산하기
     let newDefaultHarubee = try calculateUseCase.calculateDefaultHarubee(
-      balance: newBalance,
-      startDate: Date(),
-      endDate: salaryBudget.endDate,
       salaryBudget: salaryBudget
     )
     
