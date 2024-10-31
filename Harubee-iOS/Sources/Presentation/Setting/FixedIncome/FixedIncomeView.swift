@@ -10,8 +10,14 @@ import SwiftUI
 import DesignSystem
 
 struct FixedIncomeView: View {
+  @State private var selectedDay: Int = 1
   var body: some View {
-    HeaderView()
+    VStack(spacing: 0) {
+      HeaderView()
+      BodyView(selectedDay: $selectedDay)
+        .padding(.top, 48)
+    }
+    .frame(maxHeight: .infinity, alignment: .top)
   }
 }
 
@@ -32,6 +38,37 @@ private struct HeaderView: View {
     }
     .font(.pretendardSemibold_22)
     .padding(.horizontal, 16)
+    .padding(.top, 44)
+  }
+}
+
+private struct BodyView: View {
+  @Binding var selectedDay: Int
+  var body: some View {
+    VStack(spacing: 30) {
+      DayPickerView(title: "주요 고정수입 날짜", selectedDay: $selectedDay)
+        .padding(.leading, 6)
+      HStack(spacing: 0) {
+        Text("금액")
+          .font(.pretendardMedium_18)
+        
+        Spacer()
+        
+        Button {
+          
+        } label: {
+          HStack(spacing: 2) {
+            Text("100,000원")
+              .font(.pretendardMedium_20)
+            Image(systemName: "pencil")
+              .frame(width: 21, height: 24)
+          }
+          .foregroundStyle(Color.textBlack)
+        }
+      }
+      .padding(.leading, 22)
+      .padding(.trailing, 16)
+    }
   }
 }
 
