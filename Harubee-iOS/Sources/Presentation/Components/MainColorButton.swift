@@ -31,7 +31,7 @@ struct MainColorButton: View {
       action()
     } label: {
       HStack {
-        Text("저장하기")
+        Text(title)
           .font(.pretendardSemibold_18)
           .foregroundStyle(isEnabled ? Color.whiteDefault : Color.whiteDeep)
           .padding(.vertical, 20)

@@ -306,17 +306,10 @@ private struct TodayFooterView: View {
       
       CalendarStreakView(todayViewModel: todayViewModel)
       
-      Button(action: {
-        print("실제 지출 입력하기 버튼 Tapped")
-      }, label: {
-        Text("실제 지출 및 수입 입력하기")
-          .font(.pretendardSemibold_18)
-          .foregroundColor(Color.whiteDefault)
-          .frame(maxWidth: .infinity, maxHeight: 56)
-          .background(Color.main)
-          .cornerRadius(10)
-      })
-      .frame(maxWidth: .infinity, minHeight: 50)
+      MainColorButton(title: "실제 지출 및 수입 입력하기") {
+        print("실제 지출 및 수입 입력하기 버튼 Tapped")
+      }
+      .clipShape(RoundedRectangle(cornerRadius: 10))
     }
     .frame(maxWidth: .infinity, maxHeight: 196, alignment: .top)
     .padding(.horizontal, 18)
