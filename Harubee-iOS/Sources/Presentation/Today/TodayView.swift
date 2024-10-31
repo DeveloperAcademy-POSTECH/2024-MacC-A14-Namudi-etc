@@ -15,27 +15,29 @@ struct TodayView: View {
   @Environment(TodayViewModel.self) var todayViewModel
   
   var body: some View {
-    NavigationStack {
-      ZStack {
-        Color.main.ignoresSafeArea()
-        
-        TodayPrimaryLayerView(todayViewModel: todayViewModel)
-        
-        TodaySecondaryLayerView(todayViewModel: todayViewModel)
-        
-      }
-      .toolbar {
-        ToolbarItem(placement: .topBarTrailing) {
-          Button(action: {
-            print("setting Button Tapped")
-          }, label: {
-            Image(systemName: "gearshape")
-              .font(Font.system(size: 18, weight: .regular))
-              .foregroundStyle(Color.whiteDefault)
-          })
+    GeometryReader { proxy in
+      NavigationStack {
+        ZStack {
+          Color.main.ignoresSafeArea()
+          
+          TodayPrimaryLayerView(todayViewModel: todayViewModel, proxy: proxy)
+          
+          TodaySecondaryLayerView(todayViewModel: todayViewModel)
+          
+        }
+        .toolbar {
+          ToolbarItem(placement: .topBarTrailing) {
+            Button(action: {
+              print("setting Button Tapped")
+            }, label: {
+              Image(systemName: "gearshape")
+                .font(Font.system(size: 18, weight: .regular))
+                .foregroundStyle(Color.whiteDefault)
+            })
+          }
         }
       }
-    }
+    }.ignoresSafeArea()
   }
 }
 
@@ -46,11 +48,10 @@ private struct TodayPrimaryLayerView: View {
   private let screenWidth: CGFloat
   private let screenHeight: CGFloat
   
-  
-  init(todayViewModel: TodayViewModel) {
+  init(todayViewModel: TodayViewModel, proxy: GeometryProxy) {
     self.todayViewModel = todayViewModel
-    self.screenWidth = UIScreen.main.bounds.width
-    self.screenHeight = UIScreen.main.bounds.height
+    self.screenWidth = proxy.size.width
+    self.screenHeight = proxy.size.height
   }
   
   var body: some View {
