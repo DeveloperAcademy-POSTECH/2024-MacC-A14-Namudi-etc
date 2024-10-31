@@ -193,6 +193,12 @@ private struct CalendarGridView: View {
   private let dayInfos: [DayInfo]
   private let onDateSelected: (Date) -> Void
   
+  private var weeks: [[Date?]] {
+    stride(from: 0, to: daysInPeriod.count, by: 7).map {
+      Array(daysInPeriod[$0..<min($0 + 7, daysInPeriod.count)])
+    }
+  }
+  
   init(
     daysInPeriod: [Date?],
     selectedDate: Date,
@@ -210,28 +216,41 @@ private struct CalendarGridView: View {
       WeekdayHeaderView()
         .padding(.bottom, 8)
       
-      LazyVGrid(
-        columns: Array(repeating: .init(.flexible(), spacing: 0), count: 7),
-        spacing: 8
-      ) {
-        ForEach(0..<daysInPeriod.count, id: \.self) { index in
-          if let date = daysInPeriod[index] {
-            CalendarCell(
-              date: date,
-              isSelected: Calendar.current.isDate(
-                date,
-                inSameDayAs: selectedDate
-              ),
-              isToday: Calendar.current.isDateInToday(date),
-              dayInfo: dayInfos.first {
-                Calendar.current.isDate($0.date, inSameDayAs: date)
+      VStack(spacing: 8) {
+        ForEach(Array(weeks.enumerated()), id: \.offset) { index, week in
+          VStack(spacing: 0) {
+            LazyVGrid(
+              columns: Array(repeating: .init(.flexible(), spacing: 0), count: 7),
+              spacing: 0
+            ) {
+              ForEach(Array(week.enumerated()), id: \.offset) { _, date in
+                if let validDate = date {
+                  CalendarCell(
+                    date: validDate,
+                    isSelected: Calendar.current.isDate(
+                      validDate,
+                      inSameDayAs: selectedDate
+                    ),
+                    isToday: Calendar.current.isDateInToday(validDate),
+                    dayInfo: dayInfos.first {
+                      Calendar.current.isDate($0.date, inSameDayAs: validDate)
+                    }
+                  )
+                  .onTapGesture {
+                    onDateSelected(validDate)
+                  }
+                } else {
+                  Color.clear.frame(height: 90)
+                }
               }
-            )
-            .onTapGesture {
-              onDateSelected(date)
             }
-          } else {
-            Color.clear.frame(height: 90)
+            
+            if index < weeks.count - 1 {
+              Divider()
+                .background(Color.textBlack10)
+                .padding(.horizontal, -14)
+                .frame(height: 1/UIWindow().screen.scale)
+            }
           }
         }
       }
