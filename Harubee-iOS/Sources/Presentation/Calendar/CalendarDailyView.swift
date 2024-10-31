@@ -143,7 +143,7 @@ private struct FooterView: View {
             .frame(maxWidth: .infinity, alignment: .leading)
           Text("500,000원")
             .font(.pretendardSemibold_14)
-//            .foregroundStyle(Color.redDefault)
+            .foregroundStyle(Color.redDefault)
         }
         .padding(.horizontal, 22)
         
@@ -154,7 +154,7 @@ private struct FooterView: View {
             .frame(maxWidth: .infinity, alignment: .leading)
           Text("50,000원")
             .font(.pretendardSemibold_14)
-//            .foregroundStyle(Color.redDefault)
+            .foregroundStyle(Color.redDefault)
         }
         .padding(.horizontal, 22)
       }
