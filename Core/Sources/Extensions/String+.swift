@@ -19,4 +19,11 @@ public extension String {
   var isSingleNumber: Bool {
     ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"].contains(self)
   }
+  
+  var numberFormat: Int? {
+    let string = self
+      .replacingOccurrences(of: ",", with: "")
+      .replacingOccurrences(of: "원", with: "")
+    return Int(string)
+  }
 }
