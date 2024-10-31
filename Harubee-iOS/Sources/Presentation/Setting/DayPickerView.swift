@@ -23,7 +23,7 @@ struct DayPickerView: View {
         Spacer()
         DayPickerButton(showDayPicker: $showDayPicker, selectedDay: $selectedDay)
       }
-      .padding(.horizontal, 16)
+      .padding(.horizontal, 20)
       
       if showDayPicker {
         Rectangle()
