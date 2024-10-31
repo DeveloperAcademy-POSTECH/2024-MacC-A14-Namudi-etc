@@ -30,5 +30,5 @@ public extension Color {
   static let textBrighter = Color(.textBrighter)
   static let textBrighter30 = Color(.textBrighter30)
   
-  static let red = Color(.redDefault)
+  static let redDefault = Color(.redDefault)
 }

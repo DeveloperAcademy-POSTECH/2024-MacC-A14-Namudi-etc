@@ -11,14 +11,14 @@ import DesignSystem
 
 @main
 struct HarubeeIOSApp: App {
-    
-    init() {
-        Font.registerFont()
+  
+  init() {
+    Font.registerFont()
+  }
+  
+  var body: some Scene {
+    WindowGroup {
+      ContentView()
     }
-    
-    var body: some Scene {
-        WindowGroup {
-            FixedIncomeView()
-        }
-    }
+  }
 }
