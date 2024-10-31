@@ -36,17 +36,15 @@ final class DIContainer {
       dailyBudgetUseCase: useCaseProvider.dailyBudgetUseCase
     )
   }
-   */
-  
-  /*
-   TODO: 추후 구현 필요
-  func makeCalendarViewModel() -> CalendarViewModel {
-    CalendarViewModel(
-      salaryBudgetUseCase: useCaseProvider.salaryBudgetUseCase
-    )
-  }
    
    ...
-   
    */
+  
+  
+  // TODO: 추후 구현 수정 필요
+  func makeCalendarViewModel() -> CalendarViewModel {
+    CalendarViewModel(
+      salaryBudgetUseCase: useCaseProvider.budgetPeriodUseCase
+    )
+  }
 }

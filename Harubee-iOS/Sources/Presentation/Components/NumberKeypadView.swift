@@ -195,6 +195,6 @@ private enum KeypadButtonType: Int {
 
 // MARK: - Preview
 #Preview {
-  @State var text = "123"
+  @Previewable @State var text = "123"
   return NumberKeypadView(text: $text)
 }

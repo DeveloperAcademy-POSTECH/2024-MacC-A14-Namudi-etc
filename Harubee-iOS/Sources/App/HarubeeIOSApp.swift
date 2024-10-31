@@ -30,7 +30,7 @@ struct HarubeeIOSApp: App {
   var body: some Scene {
     WindowGroup {
       NavigationStack {
-        CalendarView()
+        CalendarView(viewModel: DIContainer.shared.makeCalendarViewModel())
       }
     }
   }
