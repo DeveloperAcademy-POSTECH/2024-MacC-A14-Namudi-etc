@@ -7,12 +7,14 @@
 //
 
 import SwiftUI
+import DesignSystem
 
 public struct ContentView: View {
   public init() {}
   
   public var body: some View {
     Text("Hello, World!")
+      .foregroundStyle(Color.redDefault)
       .padding()
     
     Button {
