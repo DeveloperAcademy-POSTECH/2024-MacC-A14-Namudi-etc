@@ -32,37 +32,50 @@ public protocol SalaryBudgetRepository {
   ///   - fixedExpenses: 변경할 고정 지출 내역
   ///   - balance: 변경할 잔액
   ///   - defaultHarubee: 변경할 기본 하루비 금액
+  /// - Returns: 변경된 SalaryBudget
+  @discardableResult
   func updateSalaryBudget(
     _ id: String,
     fixedIncome: UpdateValue<Int>,
     fixedExpenses: UpdateValue<[TransactionItem]>,
     balance: UpdateValue<Int>,
     defaultHarubee: UpdateValue<Double>
-  ) throws
+  ) throws -> SalaryBudget
   
   /// 총 고정 수입 금액을 변경합니다.
   /// - Parameters:
   ///   - id: 변경할 SalaryBudget의 ID
   ///   - totalFixedIncome: 변경할 고정 수입 금액
-  func updateFixedIncome(_ id: String, fixedIncome: Int) throws
+  /// - Returns: 변경된 SalaryBudget
+  @discardableResult
+  func updateFixedIncome(_ id: String, fixedIncome: Int) throws -> SalaryBudget
   
   /// 고정 지출 내역을 변경합니다.
   /// - Parameters:
   ///   - id: 변경할 SalaryBudget의 ID
   ///   - fixedExpenses: 변경할 고정 지출 내역
-  func updateFixedExpenses(_ id: String, fixedExpenses: [TransactionItem]) throws
+  /// - Returns: 변경된 SalaryBudget
+  @discardableResult
+  func updateFixedExpenses(
+    _ id: String,
+    fixedExpenses: [TransactionItem]
+  ) throws -> SalaryBudget
   
   /// 잔액을 변경합니다.
   /// - Parameters:
   ///   - id: 변경할 SalaryBudget의 ID
   ///   - balance: 변경할 잔액
-  func updateBalance(_ id: String, balance: Int) throws
+  /// - Returns: 변경된 SalaryBudget
+  @discardableResult
+  func updateBalance(_ id: String, balance: Int) throws -> SalaryBudget
   
   /// 기본 하루비를 변경합니다.
   /// - Parameters:
   ///   - id: 변경할 SalaryBudget의 ID
   ///   - defaultHarubee: 변경할 기본 하루비 금액
-  func updateDefaultHarubee(_ id: String, defaultHarubee: Double) throws
+  /// - Returns: 변경된 SalaryBudget
+  @discardableResult
+  func updateDefaultHarubee(_ id: String, defaultHarubee: Double) throws -> SalaryBudget
   
   
   /// DB에서 SalaryBudget을 삭제합니다.

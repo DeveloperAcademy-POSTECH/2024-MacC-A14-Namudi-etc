@@ -53,52 +53,79 @@ public final class SalaryBudgetRepositoryImpl: SalaryBudgetRepository {
     }
   }
   
+  @discardableResult
   public func updateSalaryBudget(
     _ id: String,
     fixedIncome: UpdateValue<Int> = .keep,
     fixedExpenses: UpdateValue<[TransactionItem]> = .keep,
     balance: UpdateValue<Int> = .keep,
     defaultHarubee: UpdateValue<Double> = .keep
-  ) throws {
+  ) throws -> SalaryBudget {
     print("Impl:", #function)
     
-    guard let model = try readById(id) else { return }
+    guard let model = try readById(id) else { throw SwiftDataError.modelNotFound }
     
     if case .set(let fixedIncome) = fixedIncome { model.fixedIncome = fixedIncome }
     if case .set(let fixedExpenses) = fixedExpenses {
+      model.fixedExpenses.forEach { modelContext.delete($0) }
       model.fixedExpenses = fixedExpenses.map { TransactionItemDTO($0) }
     }
     if case .set(let balance) = balance { model.balance = balance }
-    if case .set(let defaultHarubee) = defaultHarubee { model.defaultHarubee = defaultHarubee }
+    if case .set(let defaultHarubee) = defaultHarubee {
+      model.defaultHarubee = defaultHarubee
+    }
+    
+    return model.toEntity()
   }
   
-  public func updateFixedIncome(_ id: String, fixedIncome: Int) throws {
+  @discardableResult
+  public func updateFixedIncome(
+    _ id: String,
+    fixedIncome: Int
+  ) throws -> SalaryBudget{
     print("Impl:", #function)
     
-    guard let model = try readById(id) else { return }
+    guard let model = try readById(id) else { throw SwiftDataError.modelNotFound }
     model.fixedIncome = fixedIncome
+    
+    return model.toEntity()
   }
   
-  public func updateFixedExpenses(_ id: String, fixedExpenses: [TransactionItem]) throws {
+  @discardableResult
+  public func updateFixedExpenses(
+    _ id: String,
+    fixedExpenses: [TransactionItem]
+  ) throws -> SalaryBudget{
     print("Impl:", #function)
     
-    guard let model = try readById(id) else { return }
+    guard let model = try readById(id) else { throw SwiftDataError.modelNotFound }
     model.fixedExpenses.forEach { modelContext.delete($0) }
     model.fixedExpenses = fixedExpenses.map { TransactionItemDTO($0) }
+    
+    return model.toEntity()
   }
   
-  public func updateBalance(_ id: String, balance: Int) throws {
+  @discardableResult
+  public func updateBalance(_ id: String, balance: Int) throws -> SalaryBudget{
     print("Impl:", #function)
     
-    guard let model = try readById(id) else { return }
+    guard let model = try readById(id) else { throw SwiftDataError.modelNotFound }
     model.balance = balance
+    
+    return model.toEntity()
   }
   
-  public func updateDefaultHarubee(_ id: String, defaultHarubee: Double) throws {
+  @discardableResult
+  public func updateDefaultHarubee(
+    _ id: String,
+    defaultHarubee: Double
+  ) throws -> SalaryBudget{
     print("Impl:", #function)
     
-    guard let model = try readById(id) else { return }
+    guard let model = try readById(id) else { throw SwiftDataError.modelNotFound }
     model.defaultHarubee = defaultHarubee
+    
+    return model.toEntity()
   }
   
   public func deleteById(_ id: String) throws {
