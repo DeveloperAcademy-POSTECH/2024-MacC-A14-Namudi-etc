@@ -19,7 +19,7 @@ extension Date {
     components.minute = 0
     components.second = 0
     
-    return Calendar.current.date(from: components) ?? Date()
+    return Calendar.current.date(from: components) ?? Date().formattedDate
   }
 }
 
