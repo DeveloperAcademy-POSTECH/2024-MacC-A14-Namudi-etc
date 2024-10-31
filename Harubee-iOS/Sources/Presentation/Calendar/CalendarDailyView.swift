@@ -13,11 +13,12 @@ struct CalendarDailyView: View {
   var body: some View {
     VStack(spacing: 0) {
       BodyView()
-      Spacer()
       FooterView()
+        .padding(.top, 40)
     }
     .padding(.top, 26)
   }
+  
 }
 
 private struct BodyView: View {
@@ -103,7 +104,7 @@ private struct BodyView: View {
           .foregroundStyle(Color.textBlack)
           .sheet(isPresented: $showingSheet) {
             DailyMemoAddView()
-              .presentationDetents([.fraction(0.63)])
+              .presentationDetents([.fraction(0.25)])
               .presentationCornerRadius(20)
           }
         }
@@ -132,6 +133,7 @@ private struct FooterView: View {
       Rectangle()
         .frame(height: 1)
         .foregroundStyle(Color.textBlack10)
+        .padding(.horizontal, 16)
       
       Text("예정된 고정 지출")
         .font(.pretendardSemibold_16)
