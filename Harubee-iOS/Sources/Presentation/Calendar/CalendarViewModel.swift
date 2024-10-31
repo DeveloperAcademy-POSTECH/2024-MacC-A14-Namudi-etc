@@ -71,7 +71,7 @@ final class CalendarViewModel {
     case .loadData:
       Task {
         await fetchCurrentPeriodData()
-        await fetchDayDetailInfo(Date())
+        await fetchDayDetailInfo(Date().formattedDate)
       }
       print(#function, "loadData")
       
@@ -94,7 +94,6 @@ final class CalendarViewModel {
   }
   
   // MARK: - Private Methods - Data Fetching
-  
   // TODO: - 유즈케이스 구현 이후 비동기 함수인지 확인 필요
   private func fetchCurrentPeriodData() async {
     do {
@@ -193,15 +192,14 @@ final class CalendarViewModel {
   }
   
   // MARK: - Private Methods - Helpers
-  
   private func checkCanMoveToNextPeriod(from date: Date) -> Bool {
     // 6개월 이내의 미래 날짜인지 확인하기
     // 지금은 미래 6개월까지만 이동할 수 있습니다.
     let sixMonthsLater = Calendar.current.date(
       byAdding: .month,
       value: 6,
-      to: Date()
-    ) ?? Date()
+      to: Date().formattedDate
+    ) ?? Date().formattedDate
     return date < sixMonthsLater
   }
   
