@@ -45,9 +45,8 @@ private struct BodyView: View {
       }
       .padding(.horizontal, 16)
       
-      // MARK: 수입 지출
       HStack(spacing: 9) {
-        // TODO: 구조체로 빼기
+        // TODO: 공통 컴포넌트로 변경
         ZStack {
           RoundedRectangle(cornerRadius: 5)
             .fill(Color.textBrighter30)
@@ -86,7 +85,6 @@ private struct BodyView: View {
       .padding(.horizontal, 16)
       .padding(.top, 16)
       
-      // MARK: 메모
       VStack(spacing: 8) {
         HStack(spacing: 0) {
           Text("메모")
@@ -143,32 +141,26 @@ private struct FooterView: View {
         .padding(.top, 16)
       
       VStack(spacing: 14) {
-        // TODO: 구조체로 빼기
-        HStack(spacing: 0) {
-          Text("월세")
-            .font(.pretendardMedium_14)
-            .foregroundStyle(Color.textBlack)
-            .frame(maxWidth: .infinity, alignment: .leading)
-          Text("500,000원")
-            .font(.pretendardSemibold_14)
-            .foregroundStyle(Color.redDefault)
-        }
-        .padding(.horizontal, 22)
-        
-        HStack(spacing: 0) {
-          Text("공과금")
-            .font(.pretendardMedium_14)
-            .foregroundStyle(Color.textBlack)
-            .frame(maxWidth: .infinity, alignment: .leading)
-          Text("50,000원")
-            .font(.pretendardSemibold_14)
-            .foregroundStyle(Color.redDefault)
-        }
-        .padding(.horizontal, 22)
+        FixedExpenseListItem()
       }
       .padding(.top, 22)
     }
     .padding(.bottom, 44)
+  }
+}
+
+private struct FixedExpenseListItem: View {
+  var body: some View {
+    HStack(spacing: 0) {
+      Text("월세")
+        .font(.pretendardMedium_14)
+        .foregroundStyle(Color.textBlack)
+        .frame(maxWidth: .infinity, alignment: .leading)
+      Text("500,000원")
+        .font(.pretendardSemibold_14)
+        .foregroundStyle(Color.redDefault)
+    }
+    .padding(.horizontal, 22)
   }
 }
 
