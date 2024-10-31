@@ -18,7 +18,8 @@ struct HarubeeIOSApp: App {
   
   var body: some Scene {
     WindowGroup {
-      ContentView()
+      TodayView()
+        .environment(TodayViewModel())
     }
   }
 }
