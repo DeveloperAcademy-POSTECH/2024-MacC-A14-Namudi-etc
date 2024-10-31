@@ -14,12 +14,24 @@ struct HarubeeIOSApp: App {
   
   init() {
     Font.registerFont()
+    
+    let appearance = UINavigationBarAppearance()
+    appearance.configureWithOpaqueBackground()
+    
+    appearance.titleTextAttributes = [.foregroundColor: UIColor(Color.whiteDefault)]
+    appearance.largeTitleTextAttributes = [.foregroundColor: UIColor(Color.whiteDefault)]
+    appearance.backgroundColor = UIColor(Color.main)
+    appearance.shadowColor = .clear
+    
+    UINavigationBar.appearance().standardAppearance = appearance
+    UINavigationBar.appearance().scrollEdgeAppearance = appearance
   }
   
   var body: some Scene {
     WindowGroup {
-      TodayView()
-        .environment(TodayViewModel())
+      NavigationStack {
+        CalendarView()
+      }
     }
   }
 }
