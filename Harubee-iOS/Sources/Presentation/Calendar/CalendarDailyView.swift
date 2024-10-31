@@ -14,7 +14,9 @@ struct CalendarDailyView: View {
     VStack(spacing: 0) {
       TodayHarubeeView()
       TransactionButtonView()
+        .padding(.top, 16)
       MemoView()
+        .padding(.top, 30)
       ExpectedFixedExpenseView()
         .padding(.top, 30)
     }
@@ -85,7 +87,6 @@ private struct TransactionButtonView: View {
     }
     .frame(height: 84)
     .padding(.horizontal, 16)
-    .padding(.top, 16)
   }
 }
 
@@ -128,7 +129,6 @@ private struct MemoView: View {
       }
     }
     .padding(.horizontal, 16)
-    .padding(.top, 49)
   }
 }
 
@@ -152,7 +152,6 @@ private struct ExpectedFixedExpenseView: View {
       }
       .padding(.top, 22)
     }
-    .padding(.bottom, 44)
   }
 }
 
