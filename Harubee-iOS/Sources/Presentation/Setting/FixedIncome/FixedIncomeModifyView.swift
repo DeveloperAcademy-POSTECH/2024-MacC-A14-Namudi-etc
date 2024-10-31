@@ -7,6 +7,7 @@
 //
 
 import SwiftUI
+import DesignSystem
 
 struct FixedIncomeModifyView: View {
   @State private var fixedIncomeAmount: String = ""
@@ -21,15 +22,11 @@ struct FixedIncomeModifyView: View {
       FloatingTitleTextField(title: "금액", text: $fixedIncomeAmount)
         .padding(.top, 38)
       
-      Button {
-        print(fixedIncomeAmount)
-      } label: {
-        Text("저장하기")
-          .font(.pretendardMedium_18)
-          .padding(.vertical, 20)
-          .frame(maxWidth: .infinity)
-          .foregroundStyle(Color.whiteDefault)
-          .background(Color.main)
+      MainColorButton(
+        title: "저장하기",
+        isEnabled: .constant(true)
+      ) {
+        print("저장하기 버튼 Tapped")
       }
       .padding(.top, 24)
       
