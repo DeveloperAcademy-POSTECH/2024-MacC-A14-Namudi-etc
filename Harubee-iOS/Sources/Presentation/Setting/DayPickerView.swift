@@ -10,7 +10,7 @@ import SwiftUI
 import DesignSystem
 
 struct DayPickerView: View {
-  let title: String = ""
+  let title: String
   @State private var showDayPicker: Bool = false
   @Binding var selectedDay: Int
   
