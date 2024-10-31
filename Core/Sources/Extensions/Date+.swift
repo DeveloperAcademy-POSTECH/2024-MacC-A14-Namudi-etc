@@ -19,7 +19,7 @@ public extension Date {
     return calendar
   }
   
-  /// 년도 월 일 (요일) 표기
+  /// 년도 월 일 (요일) 표기 - [Ex. 2024년 10월 31일 (목)]
   var koreanFullDateString: String {
     let formatter = DateFormatter()
     formatter.dateFormat = "yyyy년 MM월 dd일 (E)"
@@ -27,7 +27,7 @@ public extension Date {
     return formatter.string(from: self)
   }
   
-  /// Date 값이 어떤 날짜인지를 표현
+  /// 년, 월, 일 값만 사용하기 위한 Date 형식 - [Ex. 2024-10-31 15:00:00 +0000]
   var formattedDate: Self {
     let calendar = configuredCalendar
     let dateComponent = calendar.dateComponents([.year, .month, .day], from: self)
