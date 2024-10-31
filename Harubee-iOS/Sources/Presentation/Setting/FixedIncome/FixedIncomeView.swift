@@ -43,10 +43,13 @@ private struct HeaderView: View {
 
 private struct BodyView: View {
   @Binding var selectedDay: Int
+  @State private var showingSheet: Bool = false
+  
   var body: some View {
     VStack(spacing: 30) {
       DayPickerView(title: "주요 고정수입 날짜", selectedDay: $selectedDay)
         .padding(.leading, 6)
+      
       HStack(spacing: 0) {
         Text("금액")
           .font(.pretendardMedium_18)
@@ -54,7 +57,7 @@ private struct BodyView: View {
         Spacer()
         
         Button {
-          
+          showingSheet.toggle()
         } label: {
           HStack(spacing: 2) {
             Text("100,000원")
@@ -64,9 +67,44 @@ private struct BodyView: View {
           }
           .foregroundStyle(Color.textBlack)
         }
+        .sheet(isPresented: $showingSheet) {
+          FixedIncomeModifyView()
+            .presentationDetents([.fraction(0.6)])
+            .presentationCornerRadius(20)
+        }
       }
       .padding(.leading, 22)
       .padding(.trailing, 16)
+    }
+  }
+}
+
+private struct FixedIncomeModifyView: View {
+  @State private var fixedIncomeAmount: String = ""
+
+  var body: some View {
+    VStack(spacing: 0) {
+      Text("금액")
+        .font(.pretendardMedium_18)
+        .foregroundStyle(Color.textBlack)
+        .padding(.top, 20)
+      
+      FloatingTitleTextField(title: "금액", text: $fixedIncomeAmount)
+        .padding(.top, 38)
+      
+      Button {
+        print(fixedIncomeAmount)
+      } label: {
+        Text("저장하기")
+          .font(.pretendardMedium_18)
+          .padding(.vertical, 20)
+          .frame(maxWidth: .infinity)
+          .foregroundStyle(Color.whiteDefault)
+          .background(Color.main)
+      }
+      .padding(.top, 24)
+      NumberKeypadView(text: $fixedIncomeAmount)
+        .padding(.top, 27)
     }
   }
 }
