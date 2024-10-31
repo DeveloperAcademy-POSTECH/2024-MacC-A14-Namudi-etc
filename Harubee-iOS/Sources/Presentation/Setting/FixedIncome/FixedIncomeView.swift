@@ -12,10 +12,9 @@ import DesignSystem
 struct FixedIncomeView: View {
   @State private var selectedDay: Int = 1
   var body: some View {
-    VStack(spacing: 0) {
+    VStack(spacing: 48) {
       HeaderView()
       BodyView(selectedDay: $selectedDay)
-        .padding(.top, 48)
     }
     .frame(maxHeight: .infinity, alignment: .top)
   }
