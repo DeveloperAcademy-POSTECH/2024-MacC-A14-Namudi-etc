@@ -10,14 +10,14 @@ import SwiftUI
 import DesignSystem
 
 struct DayPickerView: View {
-  
+  let title: String = ""
   @State private var showDayPicker: Bool = false
   @Binding var selectedDay: Int
   
   var body: some View {
     VStack(spacing: 0) {
       HStack(spacing: 0) {
-        Text("날짜")
+        Text(title)
           .font(.pretendardMedium_18)
           .foregroundStyle(Color.textBlack)
         Spacer()
@@ -70,5 +70,5 @@ private struct DayPickerButton: View {
 }
 
 #Preview {
-  DayPickerView(selectedDay: .constant(1))
+  DayPickerView(title: "", selectedDay: .constant(1))
 }
