@@ -14,7 +14,7 @@ struct CalendarDailyView: View {
     VStack(spacing: 0) {
       BodyView()
       FooterView()
-        .padding(.top, 40)
+        .padding(.top, 30)
     }
     .padding(.top, 26)
   }
@@ -138,7 +138,7 @@ private struct FooterView: View {
         .foregroundStyle(Color.textBlack)
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.horizontal, 22)
-        .padding(.top, 16)
+        .padding(.top, 14)
       
       VStack(spacing: 14) {
         FixedExpenseListItem()
@@ -152,6 +152,7 @@ private struct FooterView: View {
 private struct FixedExpenseListItem: View {
   var body: some View {
     HStack(spacing: 0) {
+      // TODO: 데이터 받아와서 띄워줘야 함
       Text("월세")
         .font(.pretendardMedium_14)
         .foregroundStyle(Color.textBlack)
