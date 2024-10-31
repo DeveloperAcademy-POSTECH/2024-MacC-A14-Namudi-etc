@@ -7,142 +7,96 @@
 //
 
 import SwiftUI
+import DesignSystem
 
+// MARK: - Calendar View
 struct CalendarView: View {
-  
-  @State private var selectedDate: Date = Date()
-  
+  @State private var selectedDate = Date()
   @State private var currentPeriod: (start: Date, end: Date) = {
-    let today = Date()
     let calendar = Calendar.current
+    let today = Date()
     let components = calendar.dateComponents([.year, .month], from: today)
     let startDate = calendar.date(from: DateComponents(year: components.year, month: components.month, day: 20))!
-    let endDate = calendar.date(byAdding: DateComponents(month: 1, day: -1), to: startDate)!
-    return (startDate, endDate)
+    
+    return (
+      startDate,
+      calendar.date(byAdding: .month, value: 1, to: startDate)!.addingTimeInterval(-86400)
+    )
   }()
   
   var body: some View {
-    ScrollView(showsIndicators: false) {
+    ZStack {
+      Color.whiteDefault
       VStack(spacing: 0) {
         CalendarHeaderView(
+          periodYearTitle: periodYearTitle,
           periodTitle: periodTitle,
           selectedDate: $selectedDate
         )
         
-        WeekdayHeaderView()
-        
-        CalendarGridView(
-          daysInPeriod: daysInPeriod,
-          selectedDate: selectedDate,
-          onDateSelected: { date in
-            selectedDate = date
+        ScrollView(showsIndicators: false) {
+          VStack(spacing: 0) {
+            CalendarGridView(
+              daysInPeriod: daysInPeriod,
+              selectedDate: selectedDate,
+              onDateSelected: {
+                selectedDate = $0
+              }
+            )
+            .padding(.top, 18)
+            .padding(.horizontal, 14)
           }
-        )
-        
-        // TODO: 일별 상세 뷰 구현 예정
+        }
       }
-      .navigationTitle("캘린더")
-      .navigationBarTitleDisplayMode(.inline)
     }
-  }
-}
-
-// MARK: - Helper Properties
-private extension CalendarView {
-  var periodTitle: String {
-    let dateFormatter = DateFormatter()
-    dateFormatter.dateFormat = "M.d"
-    return "\(dateFormatter.string(from: currentPeriod.start)) - \(dateFormatter.string(from: currentPeriod.end))"
-  }
-  
-  var daysInPeriod: [Date?] {
-    var dates: [Date?] = []
-    let calendar = Calendar.current
-    
-    var startOfFirstWeek = calendar.date(
-      from: calendar.dateComponents(
-        [.yearForWeekOfYear, .weekOfYear],
-        from: currentPeriod.start
-      )
-    )!
-    
-    while startOfFirstWeek < currentPeriod.start {
-      dates.append(nil)
-      startOfFirstWeek = calendar.date(
-        byAdding: .day,
-        value: 1,
-        to: startOfFirstWeek
-      )!
-    }
-    
-    var currentDate = currentPeriod.start
-    while currentDate <= currentPeriod.end {
-      dates.append(currentDate)
-      currentDate = calendar.date(
-        byAdding: .day,
-        value: 1,
-        to: currentDate
-      )!
-    }
-    
-    while dates.count % 7 != 0 {
-      dates.append(nil)
-    }
-    
-    return dates
+    .navigationTitle("캘린더")
+    .navigationBarTitleDisplayMode(.inline)
   }
 }
 
 // MARK: - Calendar Header View
 private struct CalendarHeaderView: View {
+  let periodYearTitle: String
   let periodTitle: String
   @Binding var selectedDate: Date
   
-  var body: some View {
-    HStack {
-      HStack {
-        Button {
-          // TODO: 이전 SalaryBudget으로 이동
-        } label: {
-          Image(systemName: "chevron.left")
-        }
-        
-        Text(periodTitle)
-          .font(.headline)
-        
-        Button {
-          // TODO: 다음 SalaryBudget으로 이동
-        } label: {
-          Image(systemName: "chevron.right")
-        }
+  private enum NavigationDirection {
+    case forward, backward
+    
+    var imageName: String {
+      switch self {
+      case .forward: return "chevron.right"
+      case .backward: return "chevron.left"
       }
-      
-      Spacer()
-      
-      Button("오늘") {
-        selectedDate = Date()
-      }
-      .buttonStyle(.borderedProminent)
     }
-    .padding()
   }
-}
-
-// MARK: - Weekday Header View
-private struct WeekdayHeaderView: View {
-  private let weekDaySymbols = ["일", "월", "화", "수", "목", "금", "토"]
   
   var body: some View {
-    HStack(spacing: 0) {
-      ForEach(weekDaySymbols, id: \.self) { symbol in
-        Text(symbol)
-          .font(.caption)
-          .foregroundStyle(.gray)
-          .frame(maxWidth: .infinity)
+    VStack(spacing: 3) {
+      Text(periodYearTitle)
+        .font(.pretendardMedium_12)
+      
+      HStack(spacing: 38) {
+        navigationButton(direction: .backward)
+        Text(periodTitle)
+          .font(.pretendardSemibold_24)
+        navigationButton(direction: .forward)
       }
     }
-    .padding(.vertical, 8)
-    .background(Color(uiColor: .systemGray6))
+    .frame(maxWidth: .infinity)
+    .padding(.top, 22)
+    .padding(.bottom, 15)
+    .background(Color.main)
+    .foregroundStyle(Color.whiteDefault)
+  }
+  
+  private func navigationButton(direction: NavigationDirection) -> some View {
+    Button {
+      // TODO: Navigate to previous/next period
+    } label: {
+      Image(systemName: direction.imageName)
+        .font(.custom("SF Pro", size: 16))
+    }
   }
 }
 
@@ -152,105 +106,172 @@ private struct CalendarGridView: View {
   let selectedDate: Date
   let onDateSelected: (Date) -> Void
   
+  private let weekDaySymbols = ["일", "월", "화", "수", "목", "금", "토"]
+  
+  private var weeks: [[Date?]] {
+    stride(from: 0, to: daysInPeriod.count, by: 7).map {
+      Array(daysInPeriod[$0..<min($0 + 7, daysInPeriod.count)])
+    }
+  }
+  
   var body: some View {
-    LazyVGrid(
-      columns: Array(
-        repeating: GridItem(.flexible(), spacing: 0),
-        count: 7
-      ),
-      spacing: 0
-    ) {
-      ForEach(
-        Array(daysInPeriod.enumerated()),
-        id: \.offset
-      ) { _, date in
-        if let validDate = date {
-          let isSelected = Calendar.current.isDate(
-            validDate,
-            inSameDayAs: selectedDate
-          )
-          
-          CalendarCell(
-            date: validDate,
-            isSelected: isSelected,
-            harubee: 50000
-          )
-          .onTapGesture {
-            onDateSelected(validDate)
+    VStack(spacing: 0) {
+      // Weekday Header
+      VStack {
+        HStack(spacing: 0) {
+          ForEach(weekDaySymbols, id: \.self) { symbol in
+            Text(symbol)
+              .font(.pretendardMedium_16)
+              .foregroundStyle(Color.textBlack)
+              .frame(maxWidth: .infinity)
           }
-          
-        } else {
-          Color.clear
-            .frame(height: 90)
+        }
+        
+        Divider()
+          .background(Color.textBlack10)
+          .padding(.horizontal, -14)
+          .frame(height: 1/UIWindow().screen.scale)
+      }
+      .padding(.bottom, 8)
+      
+      // Calendar Grid
+      VStack(spacing: 8) {
+        ForEach(Array(weeks.enumerated()), id: \.offset) { index, week in
+          VStack(spacing: 0) {
+            LazyVGrid(columns: Array(repeating: .init(.flexible(), spacing: 0), count: 7), spacing: 0) {
+              ForEach(Array(week.enumerated()), id: \.offset) { _, date in
+                if let validDate = date {
+                  CalendarCell(
+                    date: validDate,
+                    isSelected: Calendar.current.isDate(validDate, inSameDayAs: selectedDate),
+                    harubee: 50000
+                  )
+                  .onTapGesture {
+                    withAnimation(.smooth) {
+                      onDateSelected(validDate)
+                    }
+                  }
+                } else {
+                  Color.clear.frame(height: 90)
+                }
+              }
+            }
+            
+            if index < weeks.count - 1 {
+              Divider()
+                .background(Color.textBlack10)
+                .padding(.horizontal, -14)
+                .frame(height: 1/UIWindow().screen.scale)
+            }
+          }
         }
       }
     }
-    .padding()
+  }
+}
+// MARK: - Calendar Helper Properties
+private extension CalendarView {
+  var periodYearTitle: String {
+    currentPeriod.start.formatted(.dateTime.year().locale(Locale(identifier: "ko_KR")))
+      .replacingOccurrences(of: "년", with: "년")
+  }
+  
+  var periodTitle: String {
+    let formatter = DateFormatter()
+    formatter.dateFormat = "M.d"
+    return "\(formatter.string(from: currentPeriod.start)) - \(formatter.string(from: currentPeriod.end))"
+  }
+  
+  var daysInPeriod: [Date?] {
+    let calendar = Calendar.current
+    var dates: [Date?] = []
+    
+    let startWeekday = calendar.component(.weekday, from: currentPeriod.start) - 1
+    dates += Array(repeating: nil, count: startWeekday)
+    
+    var currentDate = currentPeriod.start
+    while currentDate <= currentPeriod.end {
+      dates.append(currentDate)
+      currentDate = calendar.date(byAdding: .day, value: 1, to: currentDate)!
+    }
+    
+    let remainingDays = (7 - (dates.count % 7)) % 7
+    dates += Array(repeating: nil, count: remainingDays)
+    
+    return dates
   }
 }
 
-// MARK: - Calendar Cell
+// MARK: - Calendar Cell View
 private struct CalendarCell: View {
   let date: Date
   let isSelected: Bool
   let harubee: Int
   
   private var isToday: Bool {
-    Calendar.current.isDateInToday(date)
+    date == Calendar.current.startOfDay(for: Date())
+  }
+  
+  private var isPast: Bool {
+    date < Calendar.current.startOfDay(for: Date())
+  }
+  
+  private var backgroundColor: Color {
+    if isSelected {
+      return .main
+    } else if isToday {
+      return .mainBright
+    }
+    return .whiteDefault
+  }
+  
+  private var textColor: Color {
+    if isSelected || isToday {
+      return .whiteDefault
+    }
+    return .textBlack
   }
   
   var body: some View {
     VStack(spacing: 0) {
       Text(dayText)
-        .font(.subheadline)
+        .font(.pretendardMedium_14)
         .foregroundStyle(textColor)
         .padding(.top, 5)
       
       Spacer()
       
       Text(amountText)
-        .font(.caption2)
-        .foregroundStyle(.primary)
+        .font(.pretendardMedium_12)
+        .foregroundStyle(textColor)
         .padding(.bottom, 5)
     }
     .frame(height: 90)
     .frame(maxWidth: .infinity)
-    .background {
-      RoundedRectangle(cornerRadius: 8)
+    .background(
+      RoundedRectangle(cornerRadius: 5)
         .fill(backgroundColor)
         .padding(1)
-    }
+    )
     .padding(.vertical, 10)
+    .contentShape(Rectangle())
   }
 }
 
 // MARK: - Calendar Cell Helper Properties
 private extension CalendarCell {
   var dayText: String {
-    let day = Calendar.current.component(.day, from: date)
-    let month = Calendar.current.component(.month, from: date)
+    let calendar = Calendar.current
+    let day = calendar.component(.day, from: date)
+    let month = calendar.component(.month, from: date)
     return day == 1 ? "\(month)/\(day)" : "\(day)"
   }
   
   var amountText: String {
-    let numberFormatter = NumberFormatter()
-    numberFormatter.numberStyle = .decimal
-    numberFormatter.locale = Locale(identifier: "ko_KR")
-    let formattedAmount = numberFormatter.string(from: NSNumber(value: harubee)) ?? "0"
-    return "\(formattedAmount)"
-  }
-  
-  var textColor: Color {
-    isToday ? .white : .primary
-  }
-  
-  var backgroundColor: Color {
-    if isToday {
-      return .blue
-    } else if isSelected {
-      return Color(uiColor: .systemGray5)
-    }
-    return .clear
+    let formatter = NumberFormatter()
+    formatter.numberStyle = .decimal
+    formatter.locale = Locale(identifier: "ko_KR")
+    return formatter.string(from: NSNumber(value: harubee)) ?? "0"
   }
 }
 
