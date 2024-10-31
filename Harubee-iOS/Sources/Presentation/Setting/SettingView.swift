@@ -19,6 +19,8 @@ struct SettingView: View {
           SettingItem(title: "고정지출 관리", previewText: "총 8건 / 120,000원")
           SettingItem(title: "고정수입 관리", previewText: "매달 12일 / 1,300,000원")
         }
+        
+        SettingFooterView()
       }
     }
     .navigationBarTitle("설정")
@@ -27,6 +29,26 @@ struct SettingView: View {
   }
 }
 
+// MARK: - SettingFooterView
+private struct SettingFooterView: View {
+  var body: some View {
+    SectionContainer {
+      VStack(alignment: .leading, spacing: 6) {
+        Text("앱 버전")
+          .font(.pretendardSemibold_18)
+          .foregroundStyle(Color.textBlack)
+        
+        Text("현재 1.0.1")
+          .font(.pretendardMedium_14)
+          .foregroundStyle(Color.textBlack30)
+      }.frame(maxWidth: .infinity, alignment: .leading)
+      
+      SettingItem(title: "개발자 정보", previewText: "")
+    }
+  }
+}
+
+// MARK: - SettingItem
 private struct SettingItem: View {
   
   private let title: String
@@ -76,7 +98,7 @@ private struct SectionContainer<Content: View>: View {
                         trailing: 18))
     .frame(maxWidth: .infinity)
     .background(Color.whiteDefault)
-    .shadow(color: Color.black.opacity(0.1), radius: 5, x: 0, y: 1)
+    .shadow(color: Color.textBlack5, radius: 3, x: 0, y: 1)
   }
 }
 

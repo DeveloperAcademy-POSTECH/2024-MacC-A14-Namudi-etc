@@ -28,16 +28,16 @@ struct TodayView: View {
         }
         .toolbar {
           ToolbarItem(placement: .topBarTrailing) {
-            Button(action: {
-              print("setting Button Tapped")
-            }, label: {
+            NavigationLink {
+              SettingView()
+            } label: {
               Image(systemName: "gearshape")
                 .font(Font.system(size: 18, weight: .regular))
                 .foregroundStyle(Color.whiteDefault)
-            })
+            }
           }
         }
-      }
+      }.tint(.main)
     }.ignoresSafeArea()
   }
 }
