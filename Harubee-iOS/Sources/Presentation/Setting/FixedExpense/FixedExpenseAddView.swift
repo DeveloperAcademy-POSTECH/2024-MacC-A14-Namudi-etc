@@ -54,7 +54,9 @@ struct FixedExpenseAddView: View {
       Spacer()
       
       Button {
-        
+        print(fixedExpenseName)
+        print(fixedExpenseAmount)
+        print(selectedDay)
       } label: {
         Text("저장하기")
           .font(.pretendardSemibold_18)
