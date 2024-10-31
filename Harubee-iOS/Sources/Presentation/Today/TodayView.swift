@@ -275,7 +275,7 @@ private struct TodaySecondaryLayerView: View {
 // MARK: - TodayHeaderView(Secondary Layer)
 private struct TodayHeaderView: View {
   
-  let todayViewModel: TodayViewModel
+  private let todayViewModel: TodayViewModel
   
   init(todayViewModel: TodayViewModel) {
     self.todayViewModel = todayViewModel
@@ -283,7 +283,7 @@ private struct TodayHeaderView: View {
   
   var body: some View {
     HStack {
-      Text(todayViewModel.state.todayDate.toKoreanFullDateString)
+      Text(todayViewModel.state.todayDate.koreanFullDateString)
         .font(.pretendardSemibold_14)
         .foregroundStyle(Color.whiteDefault)
     }.frame(maxWidth: .infinity, alignment: .trailing)
