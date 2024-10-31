@@ -11,17 +11,21 @@ import DesignSystem
 import Lottie
 
 public struct ContentView: View {
+  @State private var isPresented: Bool = false
+  
   public init() {}
   
   public var body: some View {
-    Text("Hello, World!")
-      .foregroundStyle(Color.redDefault)
-      .padding()
-    
-    Button {
-      print("Hello, World")
-    } label: {
-      Text("Hello, World")
+    VStack {
+      Button {
+        isPresented = true
+      } label: {
+        Text("Hello, World")
+      }
+    }
+    .sheet(isPresented: $isPresented) {
+      HarubeeAdjustView()
+        .presentationDetents([.fraction(0.8)])
     }
   }
 }
