@@ -87,15 +87,18 @@ private struct NumberKeypadColumnView: View {
     .clipShape(RoundedRectangle(cornerRadius: 5))
     .contentShape(Rectangle())
     .scaleEffect(isPressed ? 0.9 : 1.0)
-    .onLongPressGesture(
-      minimumDuration: 0.1,
-      maximumDistance: 10) {
-      } onPressingChanged: { isPressed in
-        self.isPressed = isPressed
-        
-        if !isPressed { text += keypad.title }
-        else { UIImpactFeedbackGenerator(style: .soft).impactOccurred() }
+    .onTapGesture {
+      self.isPressed = true
+      
+      DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+        withAnimation {
+          self.isPressed = false
+        }
+        text += keypad.title
       }
+      UIImpactFeedbackGenerator(style: .soft).impactOccurred()
+      
+    }
   }
 }
 
