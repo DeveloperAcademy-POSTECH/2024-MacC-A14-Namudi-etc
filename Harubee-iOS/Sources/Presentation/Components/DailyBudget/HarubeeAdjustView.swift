@@ -32,7 +32,7 @@ struct HarubeeAdjustView: View {
       
       Spacer()
       
-      AmountTextView(
+      AmountResultText(
         numberText: .constant("test"),
         isUpdated: $isUpdated
       )
@@ -93,39 +93,6 @@ private struct HarubeeAdjustBodyView: View {
   }
 }
 
-// MARK: -
-private struct AmountTextView: View {
-  
-  @Binding private var numberText: String
-  @Binding private var isUpdated: Bool
-  
-  init(numberText: Binding<String>, isUpdated: Binding<Bool>) {
-    self._numberText = numberText
-    self._isUpdated = isUpdated
-  }
-  
-  var body: some View {
-    
-    HStack(spacing: 10) {
-      HStack(spacing: 0) {
-        Text(numberText)
-        Text("원")
-      }
-      .font(.pretendardSemibold_40)
-      
-      Button {
-        
-      } label: {
-        Image(systemName: "arrow.trianglehead.counterclockwise")
-          .font(.system(size: 32, weight: .bold))
-      }
-
-    }
-    .frame(maxWidth: .infinity, alignment: .trailing)
-    .foregroundStyle(Color.main)
-    
-  }
-}
 
 // MARK: - HighlightDefaultHarubeeLabel
 private struct HighlightDefaultHarubeeLabel: View {
