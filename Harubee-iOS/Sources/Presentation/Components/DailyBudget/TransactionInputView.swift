@@ -10,7 +10,7 @@ import SwiftUI
 import Core
 import DesignSystem
 
-struct TransactionInputSheet: View {
+struct TransactionInputView: View {
   
   @State private var hightlightLabelAmount: Int = 62000
   
@@ -92,5 +92,5 @@ private struct TransactionBodyItemView: View {
 }
 
 #Preview {
-  TransactionInputSheet(isFocusedExpense: true)
+  TransactionInputView(isFocusedExpense: true)
 }
