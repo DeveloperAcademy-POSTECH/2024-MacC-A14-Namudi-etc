@@ -75,7 +75,7 @@ private struct BodyView: View {
   
   var body: some View {
     VStack(spacing: 20) {
-      DayPickerView(title: "날짜", selectedDay: $selectedDay)
+      DayPickerView(title: "날짜", titleFont: .view, selectedDay: $selectedDay)
       
       FloatingTitleTextField(title: "이름", text: $fixedExpenseName)
         .padding(.horizontal, 16)
