@@ -9,13 +9,29 @@
 import SwiftUI
 import Shared
 
+enum TitleFont {
+  case onboarding
+  case view
+  
+  var font: Font {
+    switch self {
+    case .onboarding:
+      return .pretendardMedium_20
+    case .view:
+      return .pretendardMedium_18
+    }
+  }
+}
+
 struct DayPickerView: View {
   private let title: String
+  private let titleFont: TitleFont
   @State private var showDayPicker: Bool = false
   @Binding var selectedDay: Int
   
-  init(title: String, selectedDay: Binding<Int>) {
+  init(title: String, titleFont: TitleFont, selectedDay: Binding<Int>) {
     self.title = title
+    self.titleFont = titleFont
     self._selectedDay = selectedDay
   }
   
@@ -23,7 +39,7 @@ struct DayPickerView: View {
     VStack(spacing: 0) {
       HStack(spacing: 0) {
         Text(title)
-          .font(.pretendardMedium_18)
+          .font(titleFont.font)
           .foregroundStyle(Color.textBlack)
         Spacer()
         DayPickerButton(showDayPicker: $showDayPicker, selectedDay: $selectedDay)

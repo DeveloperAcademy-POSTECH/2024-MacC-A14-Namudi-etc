@@ -47,7 +47,7 @@ private struct BodyView: View {
   
   var body: some View {
     VStack(spacing: 30) {
-      DayPickerView(title: "주요 고정수입 날짜", selectedDay: $selectedDay)
+      DayPickerView(title: "주요 고정수입 날짜", titleFont: .view, selectedDay: $selectedDay)
       
       HStack(spacing: 0) {
         Text("금액")
