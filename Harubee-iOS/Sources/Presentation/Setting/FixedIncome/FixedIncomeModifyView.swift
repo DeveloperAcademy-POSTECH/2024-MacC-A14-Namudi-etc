@@ -18,7 +18,7 @@ struct FixedIncomeModifyView: View {
         .foregroundStyle(Color.textBlack)
         .padding(.top, 20)
       
-      FloatingTitleTextField(title: "금액", text: $fixedIncomeAmount, shouldShowKeyboard: false)
+      FloatingTitleTextField(title: "금액", text: $fixedIncomeAmount)
         .padding(.top, 38)
       
       Button {
