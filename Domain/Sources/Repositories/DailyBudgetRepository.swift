@@ -41,21 +41,18 @@ public protocol DailyBudgetRepository {
   @discardableResult
   func updateHarubee(_ id: String, harubee: Int?) throws -> DailyBudget
   
-  /// 지출 금액을 변경합니다
+  /// 지출, 수입 금액을 변경합니다
   /// - Parameters:
   ///   - id: 변경할 DailyBudget의 ID
   ///   - expense: 변경할 지출 금액
-  /// - Returns: 변경된 DailyBudget
-  @discardableResult
-  func updateExpense(_ id: String, expense: Int?) throws -> DailyBudget
-  
-  /// 수입 금액을 변경합니다.
-  /// - Parameters:
-  ///   - id: 변경할 DailyBudget의 ID
   ///   - income: 변경할 수입 금액
   /// - Returns: 변경된 DailyBudget
   @discardableResult
-  func updateIncome(_ id: String, income: Int?) throws -> DailyBudget
+  func updateTransaction(
+    _ id: String,
+    expense: Int?,
+    income: Int?
+  ) throws -> DailyBudget
   
   /// 메모 내역을 변경합니다.
   /// - Parameters:

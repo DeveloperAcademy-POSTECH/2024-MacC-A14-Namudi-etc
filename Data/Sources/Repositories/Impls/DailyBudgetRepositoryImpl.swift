@@ -63,20 +63,15 @@ public final class DailyBudgetRepositoryImpl: DailyBudgetRepository {
   }
   
   @discardableResult
-  public func updateExpense(_ id: String, expense: Int?) throws -> DailyBudget {
+  public func updateTransaction(
+    _ id: String,
+    expense: Int?,
+    income: Int?
+  ) throws -> DailyBudget {
     print("Impl:", #function)
     
     guard let model = try readById(id) else { throw SwiftDataError.modelNotFound }
     model.expense = expense
-    
-    return model.toEntity()
-  }
-  
-  @discardableResult
-  public func updateIncome(_ id: String, income: Int?) throws -> DailyBudget {
-    print("Impl:", #function)
-    
-    guard let model = try readById(id) else { throw SwiftDataError.modelNotFound }
     model.income = income
     
     return model.toEntity()
