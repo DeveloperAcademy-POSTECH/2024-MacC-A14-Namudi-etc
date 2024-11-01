@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Core
 
 public final class SalaryBudgetUseCaseImpl: SalaryBudgetUseCase {
   
@@ -44,11 +45,15 @@ public final class SalaryBudgetUseCaseImpl: SalaryBudgetUseCase {
     let days = calendar.dateComponents([.day], from: startDate, to: endDate).day ?? 0
     
     // 4. 잔액을 예산 기간의 일자 개수로 나누어 기본 하루비 설정하기
-    let defaultHarubee = Double(initialBalance / days)
+    let defaultHarubee = Double(initialBalance) / Double(days)
     
     // 5. 각 날짜별로 DailyBudget 생성하기
     let dailyBudgets = (0...days).compactMap { day -> DailyBudget? in
-      guard let date = calendar.date(byAdding: .day, value: day, to: startDate) else { return nil }
+      guard let date = calendar.date(
+        byAdding: .day,
+        value: day,
+        to: startDate
+      ) else { return nil }
       
       return DailyBudget(
         id: UUID().uuidString,
@@ -68,7 +73,7 @@ public final class SalaryBudgetUseCaseImpl: SalaryBudgetUseCase {
       fixedIncome: fixedIncome,
       fixedExpenses: fixedExpenses,
       balance: initialBalance,
-      defaultHarubee: Double(defaultHarubee),
+      defaultHarubee: defaultHarubee,
       dailyBudgets: dailyBudgets
     )
     
@@ -86,11 +91,15 @@ public final class SalaryBudgetUseCaseImpl: SalaryBudgetUseCase {
     return salaryBudget
   }
   
+  public func getAllSalaryBudget() throws -> [SalaryBudget] {
+    return try salaryBudgetRepository.readAll()
+  }
+  
   public func getSalaryBudget(
-    date: Date?
+    date: Date = .now
   ) throws -> SalaryBudget {
-    // 1. date가 nil이면 오늘로 설정하기
-    let targetDate = date ?? Date()
+    // 1. date 포멧 변경
+    let targetDate = date.formattedDate
     
     // 2. 모든 SalaryBudget 가져오기
     let salaryBudgets = try salaryBudgetRepository.readAll()
@@ -108,20 +117,24 @@ public final class SalaryBudgetUseCaseImpl: SalaryBudgetUseCase {
   }
   
   public func updateBalance(
-    salaryBudget: SalaryBudget, newBalance: Int
-  ) throws {
+    salaryBudget: SalaryBudget,
+    newBalance: Int
+  ) throws -> SalaryBudget {
     // 1. 새로운 잔액으로 업데이트하기
-    try salaryBudgetRepository.updateBalance(salaryBudget.id, balance: newBalance)
+    var newSalaryBudget = try salaryBudgetRepository.updateBalance(
+      salaryBudget.id,
+      balance: newBalance
+    )
     
-    // 2. 새로운 잔액으로 기본 하루비 다시 계산하기
+    // 2. 새로 업데이트된 SalaryBudget의 잔액으로 기본 하루비 다시 계산하기
     let newDefaultHarubee = try calculateUseCase.calculateDefaultHarubee(
-      salaryBudget: salaryBudget
+      salaryBudget: newSalaryBudget
     )
     
     // 3. SalaryBudget에 기본 하루비 업데이트하기
-    try salaryBudgetRepository.updateDefaultHarubee(
+    return try salaryBudgetRepository.updateDefaultHarubee(
       salaryBudget.id,
-      defaultHarubee: Double(newDefaultHarubee)
+      defaultHarubee: newDefaultHarubee
     )
   }
 }
