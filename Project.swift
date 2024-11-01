@@ -40,7 +40,8 @@ let project = Project(
         .target(name: "Domain"),
         .target(name: "DesignSystem"),
         .target(name: "Data"),
-        .target(name: "Core")
+        .target(name: "Core"),
+        .external(name: "Lottie")
       ]
     ),
     

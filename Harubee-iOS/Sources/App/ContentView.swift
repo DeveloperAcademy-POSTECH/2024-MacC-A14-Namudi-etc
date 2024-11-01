@@ -8,6 +8,7 @@
 
 import SwiftUI
 import DesignSystem
+import Lottie
 
 public struct ContentView: View {
   public init() {}
