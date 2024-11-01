@@ -83,7 +83,7 @@ public final class DailyBudgetUseCaseImpl: DailyBudgetUseCase {
       throw DomainError.dateOutOfRange
     }
     
-    var salaryBudget = salaryBudget
+    let salaryBudget = salaryBudget
     
     // 2. SalaryBudget 내에서 dailyBudget의 index 찾기
     guard let index = salaryBudget.dailyBudgets.firstIndex(where: {
