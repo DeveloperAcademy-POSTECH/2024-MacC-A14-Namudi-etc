@@ -18,7 +18,12 @@ public final class CalculateUseCaseImpl: CalculateUseCase {
   
   public func calculateDefaultHarubee(salaryBudget: SalaryBudget) throws -> Double {
     
-    let currentDate = calendar.date(from:calendar.dateComponents([.year, .month, .day], from: Date()))!
+    let currentDate = calendar.date(
+      from:calendar.dateComponents(
+        [.year, .month, .day],
+        from: Date()
+      )
+    )!
     var nilCount = 0.0
     var newBalance = Double(salaryBudget.balance)
     
@@ -33,7 +38,12 @@ public final class CalculateUseCaseImpl: CalculateUseCase {
   }
   
   public func calculateAverageHarubee(endDate: Date, balance: Int) throws -> Double {
-    let currentDate = calendar.date(from:calendar.dateComponents([.year, .month, .day], from: Date()))!
+    let currentDate = calendar.date(
+      from:calendar.dateComponents(
+        [.year, .month, .day],
+        from: Date()
+      )
+    )!
     let secondsInDay = 86400.0
     let remain = endDate.timeIntervalSince(currentDate) / secondsInDay + 1
     
