@@ -1,6 +1,6 @@
 //
-//  Onboarding1View.swift
-//  Core
+//  Onboarding2View.swift
+//  Harubee-iOS
 //
 //  Created by Seo-Jooyoung on 11/1/24.
 //  Copyright © 2024 namudiEtc. All rights reserved.
