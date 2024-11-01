@@ -16,6 +16,7 @@ public protocol SalaryBudgetUseCase {
   /// - Parameters:
   ///   - startDate: SalaryBudget 시작일
   ///   - endDate: SalaryBudget 종료일
+  ///   - previousExpense: 온보딩 시 이전 지출 금액
   ///   - fixedIncome: 고정 수입 금액
   ///   - fixedExpenses: 고정 지출 항목 배열
   /// - Returns: 생성된 SalaryBudget 객체
@@ -24,6 +25,7 @@ public protocol SalaryBudgetUseCase {
   func createSalaryBudget(
     startDate: Date,
     endDate: Date,
+    previousExpense: Int?,
     fixedIncome: Int,
     fixedExpenses: [TransactionItem]
   ) throws -> SalaryBudget
