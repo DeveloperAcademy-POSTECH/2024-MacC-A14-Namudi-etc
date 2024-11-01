@@ -55,6 +55,5 @@ struct FloatingTitleTextField: View {
       // textfield 작성중일 때 Main
         .padding(.top, 8)
     }
-    .padding(.horizontal, 16)
   }
 }

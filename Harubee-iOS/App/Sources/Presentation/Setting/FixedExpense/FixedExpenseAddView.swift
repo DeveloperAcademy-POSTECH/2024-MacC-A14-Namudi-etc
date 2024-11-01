@@ -78,7 +78,9 @@ private struct BodyView: View {
       DayPickerView(title: "날짜", selectedDay: $selectedDay)
       
       FloatingTitleTextField(title: "이름", text: $fixedExpenseName)
+        .padding(.horizontal, 16)
       FloatingTitleTextField(title: "금액", text: $fixedExpenseAmount)
+        .padding(.horizontal, 16)
     }
   }
 }
