@@ -41,7 +41,7 @@ public protocol SalaryBudgetUseCase {
   /// - Throws:
   ///   - `DomainError.dataNotFound`: SalaryBudget을 찾을 수 없는 경우
   func getSalaryBudget(
-    date: Date
+    date: Date?
   ) throws -> SalaryBudget
   
   /// SalaryBudget의 잔액을 업데이트합니다.
@@ -56,4 +56,11 @@ public protocol SalaryBudgetUseCase {
   ) throws -> SalaryBudget
   
   
+  
+  /// 기본 하루비를 계산하여 SalaryBudget에 반영합니다
+  /// - Parameter salaryBudget: 기본 하루비를 다시 계산할 SalaryBudget
+  /// - Returns: 변경된 SalaryBudget
+  func updateDefaultHarubee(
+    salaryBudget: SalaryBudget
+  ) throws -> SalaryBudget
 }

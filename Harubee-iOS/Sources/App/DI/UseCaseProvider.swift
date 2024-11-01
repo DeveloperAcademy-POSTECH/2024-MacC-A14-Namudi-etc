@@ -17,8 +17,7 @@ final class UseCaseProvider {
   }
   
   lazy var calculateUseCase: CalculateUseCase = {
-    CalculateUseCaseImpl(
-    )
+    CalculateUseCaseImpl()
   }()
   
   lazy var salaryBudgetUseCase: SalaryBudgetUseCase = {
@@ -30,10 +29,8 @@ final class UseCaseProvider {
   
   lazy var dailyBudgetUseCase: DailyBudgetUseCase = {
     DailyBudgetUseCaseImpl(
-      salaryBudgetRepository: repositoryProvider.salaryBudgetRepository,
       dailyBudgetRepository: repositoryProvider.dailyBudgetRepository,
-      calculateUseCase: calculateUseCase
-      
+      salaryBudgetUseCase: salaryBudgetUseCase
     )
   }()
   

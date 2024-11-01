@@ -96,10 +96,10 @@ public final class SalaryBudgetUseCaseImpl: SalaryBudgetUseCase {
   }
   
   public func getSalaryBudget(
-    date: Date = .now
+    date: Date?
   ) throws -> SalaryBudget {
     // 1. date 포멧 변경
-    let targetDate = date.formattedDate
+    let targetDate = (date ?? Date()).formattedDate
     
     // 2. 모든 SalaryBudget 가져오기
     let salaryBudgets = try salaryBudgetRepository.readAll()
@@ -121,7 +121,7 @@ public final class SalaryBudgetUseCaseImpl: SalaryBudgetUseCase {
     newBalance: Int
   ) throws -> SalaryBudget {
     // 1. 새로운 잔액으로 업데이트하기
-    var newSalaryBudget = try salaryBudgetRepository.updateBalance(
+    let newSalaryBudget = try salaryBudgetRepository.updateBalance(
       salaryBudget.id,
       balance: newBalance
     )
@@ -132,6 +132,19 @@ public final class SalaryBudgetUseCaseImpl: SalaryBudgetUseCase {
     )
     
     // 3. SalaryBudget에 기본 하루비 업데이트하기
+    return try salaryBudgetRepository.updateDefaultHarubee(
+      salaryBudget.id,
+      defaultHarubee: newDefaultHarubee
+    )
+  }
+  
+  public func updateDefaultHarubee(
+    salaryBudget: SalaryBudget
+  ) throws -> SalaryBudget {
+    let newDefaultHarubee = try calculateUseCase.calculateDefaultHarubee(
+      salaryBudget: salaryBudget
+    )
+    
     return try salaryBudgetRepository.updateDefaultHarubee(
       salaryBudget.id,
       defaultHarubee: newDefaultHarubee
