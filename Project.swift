@@ -40,8 +40,7 @@ let project = Project(
         .target(name: "Domain"),
         .target(name: "DesignSystem"),
         .target(name: "Data"),
-        .target(name: "Core"),
-        .external(name: "Lottie")
+        .target(name: "Core")
       ]
     ),
     
@@ -65,7 +64,9 @@ let project = Project(
         infoPlist: .default,
         sources: ["DesignSystem/Sources/**"],
         resources: ["DesignSystem/Resources/**"],
-        dependencies: []
+        dependencies: [
+          .external(name: "Lottie")
+        ]
       ),
     
       .target(
