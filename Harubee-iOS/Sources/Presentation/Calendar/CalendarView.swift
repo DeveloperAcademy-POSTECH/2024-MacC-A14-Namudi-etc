@@ -249,7 +249,7 @@ private struct CalendarGridView: View {
               Divider()
                 .background(Color.textBlack10)
                 .padding(.horizontal, -14)
-                .frame(height: 1/UIWindow().screen.scale)
+                .frame(height: 1)
             }
           }
         }
@@ -290,18 +290,6 @@ private struct CalendarCell: View {
   private let isToday: Bool
   private let dayInfo: DayInfo?
   
-  init(
-    date: Date,
-    isSelected: Bool,
-    isToday: Bool,
-    dayInfo: DayInfo?
-  ) {
-    self.date = date
-    self.isSelected = isSelected
-    self.isToday = isToday
-    self.dayInfo = dayInfo
-  }
-  
   private var dayText: String {
     let calendar = Calendar.current
     let day = calendar.component(.day, from: date)
@@ -328,6 +316,18 @@ private struct CalendarCell: View {
       return .mainBright
     }
     return .whiteDefault
+  }
+  
+  init(
+    date: Date,
+    isSelected: Bool,
+    isToday: Bool,
+    dayInfo: DayInfo?
+  ) {
+    self.date = date
+    self.isSelected = isSelected
+    self.isToday = isToday
+    self.dayInfo = dayInfo
   }
   
   var body: some View {
