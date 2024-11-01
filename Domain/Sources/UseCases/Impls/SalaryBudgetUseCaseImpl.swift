@@ -24,6 +24,7 @@ public final class SalaryBudgetUseCaseImpl: SalaryBudgetUseCase {
   public func createSalaryBudget(
     startDate: Date,
     endDate: Date,
+    previousExpense: Int?,
     fixedIncome: Int,
     fixedExpenses: [TransactionItem]
   ) throws -> SalaryBudget {
@@ -31,7 +32,12 @@ public final class SalaryBudgetUseCaseImpl: SalaryBudgetUseCase {
     let totalFixedExpenses = fixedExpenses.reduce(0) { $0 + $1.price }
     
     // 2. 고정 수입에서 고정 지출을 뺀 금액 잔액으로 설정하기
-    let initialBalance = fixedIncome - totalFixedExpenses
+    var initialBalance = fixedIncome - totalFixedExpenses
+    
+    // 2-1. 만약 온보딩에서 이전 지출 금액을 받은 경우 잔액 다시 계산하기
+    if let previousExpense {
+      initialBalance -= previousExpense
+    }
     
     // 3. 예산 기간의 일자 개수 구하기
     let calendar = Calendar.current

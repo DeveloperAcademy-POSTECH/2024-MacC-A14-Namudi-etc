@@ -107,8 +107,11 @@ public final class SettingsUseCaseImpl: SettingsUseCase {
       throw DomainError.duplicateData
     }
     
-    // 5. 기존 잔액에서 추가된 고정 지출 금액을 빼서 새로운 잔액 계산하기
-    let newBalance = currentSalaryBudget.balance - expense.price
+    // 5. 현재 날짜보다 이후인 경우 잔액에서 금액만큼 빼주기
+    var newBalance = currentSalaryBudget.balance
+    if now < expense.date {
+      newBalance -= expense.price
+    }
     
     // 6. 잔액이 음수가 되는지 체크하기
     guard newBalance >= 0 else {
@@ -154,8 +157,11 @@ public final class SettingsUseCaseImpl: SettingsUseCase {
     let oldExpense = currentSalaryBudget.fixedExpenses[index].price
     let expenseDifference = expense.price - oldExpense
     
-    // 5. 차이만큼 SalaryBudget의 잔액 업데이트하기
-    let newBalance = currentSalaryBudget.balance - expenseDifference
+    // 5. 현재 날짜보다 이후인 경우 잔액에서 차이만큼 빼주기
+    var newBalance = currentSalaryBudget.balance
+    if now < expense.date {
+      newBalance -= expenseDifference
+    }
     
     // 6. 잔액이 음수가 되는지 체크하기
     guard newBalance >= 0 else {
@@ -194,6 +200,8 @@ public final class SettingsUseCaseImpl: SettingsUseCase {
     if updatedExpenses.count == currentSalaryBudget.fixedExpenses.count {
       throw DomainError.dataNotFound
     }
+    
+    // TODO: 여기서도 잔액의 변화가 나와야 하는 것 아님 ? 아니면 사용자한테 alert로 물어본다던가 ...
     
     // 3. Repository 통해 저장하기
     try salaryBudgetRepository.updateFixedExpenses(currentSalaryBudget.id, fixedExpenses: updatedExpenses)
