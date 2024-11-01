@@ -146,10 +146,10 @@ private struct HarubeeHexagon: View {
       RoundedHexagon()
         .fill(Color.main)
         .frame(width: hexgonSize, height: hexgonSize)
-        .shadow(color: Color.black.opacity(0.2), radius: 5, x: 0, y: 10)
+        .shadow(color: Color.textBlack.opacity(0.3), radius: 7, x: 1, y: 4)
       
       Wave(xOffset: firstWaveOffset, fillPercentage: fillPercentage)
-        .fill(Color.textBrighter30)
+        .fill(Color.textBrighter)
         .frame(width: hexgonSize, height: hexgonSize)
         .clipShape(RoundedHexagon())
         .onAppear {
@@ -214,7 +214,7 @@ private struct AverageHarubeeHexagon: View {
     ZStack {
 
       Wave(xOffset: firstWaveOffset, fillPercentage: fillPercentage)
-        .fill(Color.textBlack10)
+        .fill(Color.textBlack30)
         .frame(width: hexgonSize, height: hexgonSize)
         .clipShape(RoundedHexagon())
         .onAppear {
