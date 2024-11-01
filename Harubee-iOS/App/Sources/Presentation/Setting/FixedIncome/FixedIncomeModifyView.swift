@@ -21,6 +21,7 @@ struct FixedIncomeModifyView: View {
       
       FloatingTitleTextField(title: "금액", text: $fixedIncomeAmount)
         .padding(.top, 38)
+        .padding(.horizontal, 16)
       
       MainColorButton(
         title: "저장하기",
