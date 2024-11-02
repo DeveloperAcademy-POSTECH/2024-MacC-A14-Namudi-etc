@@ -15,9 +15,12 @@ let packageSettings = PackageSettings(
 let package = Package(
   name: "Haruby-iOS",
   dependencies: [
+    // Add your own dependencies here:
+    // .package(url: "https://github.com/Alamofire/Alamofire", from: "5.0.0"),
+    // You can read more about dependencies here: https://docs.tuist.io/documentation/tuist/dependencies
     .package(
-      url: "https://github.com/airbnb/lottie-ios.git",
-      from: "4.5.0"
+        url: "https://github.com/airbnb/lottie-ios.git",
+        from: "4.5.0"
     )
   ]
 )
