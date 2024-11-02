@@ -29,18 +29,8 @@ struct Onboarding1View: View {
           
           Spacer()
           
-          Button {
-            
-          } label: {
-            Text("시작하기")
-              .font(.pretendardSemibold_18)
-              .foregroundStyle(Color.whiteDeep)
-              .padding(.horizontal, 149)
-              .padding(.vertical, 20)
-              .background(
-                RoundedRectangle(cornerRadius: 10)
-                  .fill(Color.main)
-              )
+          MainColorButton(title: "시작하기") {
+            print("onboarding start")
           }
           .padding(.bottom, 9)
         }
