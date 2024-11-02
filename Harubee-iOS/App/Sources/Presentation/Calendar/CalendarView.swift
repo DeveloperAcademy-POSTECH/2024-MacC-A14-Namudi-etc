@@ -12,11 +12,9 @@ import Shared
 // MARK: - Calendar View
 struct CalendarView: View {
   @State private var viewModel: CalendarViewModel
-  @State private var currentPage: Int = 1
+  @State private var currentPageIndex: Int = 0
   
-  init(
-    viewModel: CalendarViewModel
-  ) {
+  init(viewModel: CalendarViewModel) {
     self.viewModel = viewModel
   }
   
@@ -39,47 +37,37 @@ struct CalendarView: View {
             next: viewModel.state.canMoveNextPeriod
           ),
           movePreviousPeriod: {
-            
             viewModel.send(.movePreviousPeriod)
-            
           },
           moveNextPeriod: {
-            
             viewModel.send(.moveNextPeriod)
-            
           }
         )
         
-        TabView(selection: $currentPage) {
-          // 이전 기간 페이지
-          if viewModel.state.canMovePreviousPeriod {
-            PeriodView(
-              isPreviousPeriod: true,
-              viewModel: viewModel
-            )
-            .tag(0)
+        TabView(selection: Binding(
+          get: { viewModel.state.currentBudgetIndex },
+          set: { newIndex in
+            let oldIndex = viewModel.state.currentBudgetIndex
+            if newIndex > oldIndex {
+              if viewModel.state.canMoveNextPeriod {
+                viewModel.send(.moveNextPeriod)
+              }
+            } else if newIndex < oldIndex {
+              if viewModel.state.canMovePreviousPeriod {
+                viewModel.send(.movePreviousPeriod)
+              }
+            }
           }
-          
-          // 현재 기간 페이지
-          PeriodView(
-            isPreviousPeriod: false,
-            viewModel: viewModel
-          )
-          .tag(1)
-          
-          // 다음 기간 페이지
-          if viewModel.state.canMoveNextPeriod {
+        )) {
+          ForEach(0..<viewModel.state.periodsCount, id: \.self) { index in
             PeriodView(
               isPreviousPeriod: false,
               viewModel: viewModel
             )
-            .tag(2)
+            .tag(index)
           }
         }
         .tabViewStyle(.page(indexDisplayMode: .never))
-        .onChange(of: currentPage) { oldValue, newValue in
-          handlePageChange(from: oldValue, to: newValue)
-        }
       }
     }
     .navigationTitle("캘린더")
@@ -128,12 +116,6 @@ struct CalendarView: View {
     } else if newValue < oldValue {
       if viewModel.state.canMovePreviousPeriod {
         viewModel.send(.movePreviousPeriod)
-      }
-    }
-    
-    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-      withAnimation(.none) {
-        currentPage = 1
       }
     }
   }
