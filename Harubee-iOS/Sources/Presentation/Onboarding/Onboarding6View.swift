@@ -123,19 +123,8 @@ private struct OnboardingFooterView: View {
         .font(.pretendardMedium_12)
         .foregroundStyle(Color.whiteDeep50)
       
-      Button {
-        
-      } label: {
-        Text("하루비 시작하기")
-          .font(.pretendardSemibold_18)
-          .foregroundStyle(Color.whiteDeep)
-          .padding(.horizontal, 100)
-          .padding(.vertical, 20)
-          .background(
-            RoundedRectangle(cornerRadius: 10)
-              .fill(Color.main)
-            // textfield 다 안 채워지면 Main_30
-          )
+      MainColorButton(title: "하루비 시작하기") {
+        print("harubee start")
       }
     }
   }

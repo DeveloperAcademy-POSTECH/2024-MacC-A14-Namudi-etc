@@ -71,20 +71,13 @@ private struct OnboardingBodyView: View {
       
       Spacer()
       
-      Button {
-        
-      } label: {
-        Text("다음으로")
-          .font(.pretendardSemibold_18)
-          .foregroundStyle(Color.whiteDeep)
-          .padding(.horizontal, 149)
-          .padding(.vertical, 20)
-          .background(
-            RoundedRectangle(cornerRadius: 10)
-              .fill(Color.main)
-            // textfield 다 안 채워지면 Main_30
-          )
+      MainColorButton(title: "다음으로") {
+        print("onboarding 5 to 6")
       }
+      .clipShape(
+        RoundedRectangle(cornerRadius: 10)
+      )
+      .padding(.horizontal, 16)
       .padding(.bottom, 43)
     }
     .padding(.top, 30)
