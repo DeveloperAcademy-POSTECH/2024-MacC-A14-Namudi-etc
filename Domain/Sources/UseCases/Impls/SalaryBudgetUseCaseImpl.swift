@@ -29,25 +29,30 @@ public final class SalaryBudgetUseCaseImpl: SalaryBudgetUseCase {
     fixedIncome: Int,
     fixedExpenses: [TransactionItem]
   ) throws -> SalaryBudget {
-    // 1. 총 고정 지출 금액 계산하기
+    
+    // 1. date 포멧 변경
+    let startDate = startDate.formattedDate
+    let endDate = endDate.formattedDate
+    
+    // 2. 총 고정 지출 금액 계산하기
     let totalFixedExpenses = fixedExpenses.reduce(0) { $0 + $1.price }
     
-    // 2. 고정 수입에서 고정 지출을 뺀 금액 잔액으로 설정하기
+    // 3. 고정 수입에서 고정 지출을 뺀 금액 잔액으로 설정하기
     var initialBalance = fixedIncome - totalFixedExpenses
     
-    // 2-1. 만약 온보딩에서 이전 지출 금액을 받은 경우 잔액 다시 계산하기
+    // 3-1. 만약 온보딩에서 이전 지출 금액을 받은 경우 잔액 다시 계산하기
     if let previousExpense {
       initialBalance -= previousExpense
     }
     
-    // 3. 예산 기간의 일자 개수 구하기
+    // 4. 예산 기간의 일자 개수 구하기
     let calendar = Calendar.current
     let days = calendar.dateComponents([.day], from: startDate, to: endDate).day ?? 0
     
-    // 4. 잔액을 예산 기간의 일자 개수로 나누어 기본 하루비 설정하기
+    // 5. 잔액을 예산 기간의 일자 개수로 나누어 기본 하루비 설정하기
     let defaultHarubee = Double(initialBalance) / Double(days)
     
-    // 5. 각 날짜별로 DailyBudget 생성하기
+    // 6. 각 날짜별로 DailyBudget 생성하기
     let dailyBudgets = (0...days).compactMap { day -> DailyBudget? in
       guard let date = calendar.date(
         byAdding: .day,
@@ -65,7 +70,7 @@ public final class SalaryBudgetUseCaseImpl: SalaryBudgetUseCase {
       )
     }
     
-    // 6. SalaryBudget 생성하기
+    // 7. SalaryBudget 생성하기
     let salaryBudget = SalaryBudget(
       id: UUID().uuidString,
       startDate: startDate,
@@ -77,7 +82,7 @@ public final class SalaryBudgetUseCaseImpl: SalaryBudgetUseCase {
       dailyBudgets: dailyBudgets
     )
     
-    // 7. 중복되는 SalaryBudget이 있는지 찾기
+    // 8. 중복되는 SalaryBudget이 있는지 찾기
     let salaryBudgets = try salaryBudgetRepository.readAll()
     if salaryBudgets.contains(
       where: { $0.startDate == salaryBudget.startDate }
@@ -85,7 +90,7 @@ public final class SalaryBudgetUseCaseImpl: SalaryBudgetUseCase {
       throw DomainError.duplicateData
     }
     
-    // 8. Repository에 저장하기
+    // 9. Repository에 저장하기
     salaryBudgetRepository.create(salaryBudget)
     
     return salaryBudget
