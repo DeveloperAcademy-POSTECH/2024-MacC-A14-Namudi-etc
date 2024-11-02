@@ -32,19 +32,7 @@ struct Onboarding3View: View {
 private struct OnboardingHeaderView: View {
   var body: some View {
     VStack(spacing: 26) {
-      HStack(spacing: 0) {
-        Button {
-          print("뒤로가기")
-        } label: {
-          Image(systemName: "chevron.left")
-            .font(Font.system(size: 18, weight: .medium))
-            .foregroundStyle(Color.whiteDefault)
-        }
-        Text("1/3")
-          .font(.pretendardSemibold_22)
-          .foregroundStyle(Color.whiteDeep50)
-          .frame(maxWidth: .infinity, alignment: .trailing)
-      }
+      NavigationHeaderView(pageNumber: .first)
       
       VStack(alignment: .leading, spacing: 6) {
         Text("먼저, 하루비를 계산하기 위한")
