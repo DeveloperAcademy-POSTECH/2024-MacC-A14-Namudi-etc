@@ -189,7 +189,7 @@ private struct CalendarHeaderView: View {
 // MARK: - Calendar Grid View
 private struct CalendarGridView: View {
   private let daysInPeriod: [Date?]
-  private let selectedDate: Date
+  private let selectedDate: Date?
   private let dayInfos: [DayInfo]
   private let onDateSelected: (Date) -> Void
   
@@ -201,7 +201,7 @@ private struct CalendarGridView: View {
   
   init(
     daysInPeriod: [Date?],
-    selectedDate: Date,
+    selectedDate: Date?,
     dayInfos: [DayInfo],
     onDateSelected: @escaping (Date) -> Void
   ) {
@@ -229,7 +229,7 @@ private struct CalendarGridView: View {
                     date: validDate,
                     isSelected: Calendar.current.isDate(
                       validDate,
-                      inSameDayAs: selectedDate
+                      inSameDayAs: selectedDate ?? Date()
                     ),
                     isToday: Calendar.current.isDateInToday(validDate),
                     dayInfo: dayInfos.first {
@@ -301,9 +301,20 @@ private struct CalendarCell: View {
     (dayInfo?.harubee ?? 0).formatted(.number)
   }
   
-  private var textColor: Color {
+  private var dayTextColor: Color {
     if isSelected || isToday {
       return .whiteDefault
+    }
+    return .textBlack
+  }
+  
+  private var amountTextColor: Color {
+    if isSelected || isToday {
+      return .whiteDefault
+    } else if !isToday && date <= Date() {
+      return .textBright
+    } else if let info = dayInfo, info.isAdjusted {
+      return .mainBright
     }
     return .textBlack
   }
@@ -311,11 +322,25 @@ private struct CalendarCell: View {
   private var backgroundColor: Color {
     if isSelected {
       return .main
-    }
-    if isToday {
+    } else if isToday {
       return .mainBright
+    } else {
+      return .whiteDefault
     }
-    return .whiteDefault
+  }
+  
+  private var hexagonImage: ImageResource? {
+    guard let info = dayInfo else { return nil }
+    
+    if info.isOverHarubee && info.hasExpense {
+      return .hexagonBad
+    } else if !info.isOverHarubee && info.hasExpense {
+      return .hexagonGood
+    } else if isToday {
+      return .hexagonNone
+    } else {
+      return nil
+    }
   }
   
   init(
@@ -334,14 +359,23 @@ private struct CalendarCell: View {
     VStack(spacing: 0) {
       Text(dayText)
         .font(.pretendardMedium_14)
-        .foregroundStyle(textColor)
+        .foregroundStyle(dayTextColor)
         .padding(.top, 5)
       
-      Spacer()
+      Group {
+        if let image = hexagonImage {
+          Image(image)
+            .resizable()
+        } else {
+          Spacer()
+        }
+      }
+      .frame(width: 23, height: 23)
+      .frame(maxHeight: .infinity)
       
       Text(amountText)
         .font(.pretendardMedium_12)
-        .foregroundStyle(textColor)
+        .foregroundStyle(amountTextColor)
         .padding(.bottom, 5)
     }
     .frame(height: 90)
@@ -359,6 +393,7 @@ private struct CalendarCell: View {
 // MARK: - Preview
 #Preview {
   NavigationView {
-    CalendarView(viewModel: DIContainer.shared.makeCalendarViewModel())
+    CalendarView(viewModel: DIContainer.shared.makeCalendarViewModel()
+    )
   }
 }

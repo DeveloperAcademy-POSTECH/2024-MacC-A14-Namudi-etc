@@ -15,6 +15,23 @@ struct DayInfo {
   let harubee: Int
   let isAdjusted: Bool
   let expense: Int?
+  let memos: [String]
+  let todayFixedExpense: [TransactionItem]
+  
+  var isOverHarubee: Bool {
+    guard let expense else { return false }
+    return expense >= harubee
+  }
+  
+  var hasExpense: Bool {
+    guard let expense else { return false }
+    return expense > 0
+  }
+  
+  var expenseDiff: Int {
+    guard let expense else { return 0 }
+    return harubee - expense
+  }
 }
 
 struct Period {
@@ -30,7 +47,7 @@ final class CalendarViewModel {
     // Domain Data State
     var currentPeriod: Period
     var dayInfos: [DayInfo]
-    var selectedDate: Date
+    var selectedDate: Date?
     
     // UI State
     var canMovePreviousPeriod: Bool
@@ -40,7 +57,7 @@ final class CalendarViewModel {
     static let initial = State(
       currentPeriod: Period(start: .now, end: .now),
       dayInfos: [],
-      selectedDate: .now,
+      selectedDate: nil,
       canMovePreviousPeriod: false,
       canMoveNextPeriod: false
     )
@@ -52,12 +69,12 @@ final class CalendarViewModel {
     case moveNextPeriod
     case movePreviousPeriod
     case onDateSelected(Date)
-    case updateDayDetailInfo(Date)
   }
   
   // MARK: - Properties
   private(set) var state: State
   private let salaryBudgetUseCase: SalaryBudgetUseCase
+  private var allSalaryBudgets: [SalaryBudget] = []
   
   // MARK: - Initialization
   init(salaryBudgetUseCase: SalaryBudgetUseCase) {
@@ -69,51 +86,30 @@ final class CalendarViewModel {
   func send(_ action: Action) {
     switch action {
     case .loadData:
-      Task {
-        await fetchCurrentPeriodData()
-        await fetchDayDetailInfo(Date().formattedDate)
-      }
+      fetchAllPeriodData()
       print(#function, "loadData")
       
     case .moveNextPeriod:
-      Task { await moveToNextPeriod() }
+      moveToNextPeriod()
       print(#function, "moveNextPeriod")
       
     case .movePreviousPeriod:
-      Task { await moveToPreviousPeriod() }
+      moveToPreviousPeriod()
       print(#function, "movePreviousPeriod")
       
     case .onDateSelected(let date):
       updateSelectedDate(date)
       print(#function, "onDateSelected(\(date.koreanFullDateString))")
-      
-    case .updateDayDetailInfo(let date):
-      Task { await fetchDayDetailInfo(date) }
-      print(#function, "updateDayDetailInfo(\(date.koreanFullDateString))")
     }
   }
   
   // MARK: - Private Methods - Data Fetching
-  // TODO: - 유즈케이스 구현 이후 비동기 함수인지 확인 필요
-  private func fetchCurrentPeriodData() async {
+  private func fetchAllPeriodData() {
     do {
-      // 1. 현재 기간의 SalaryBudget 가져오기
-      let budget = try SampleDataGenerator.createSampleSalaryBudget(withError: false)
-
-      // 2. 캘린더 기간을 설정하고, DailyBudget을 각 셀에 들어갈 상태로 변환하기
-      let period = Period(start: budget.startDate, end: budget.endDate)
-      let dayInfos = budget.dailyBudgets.map { dailyBudget in
-        DayInfo(
-          date: dailyBudget.date,
-          harubee: dailyBudget.harubee ?? Int(budget.defaultHarubee),
-          isAdjusted: dailyBudget.harubee != nil,
-          expense: dailyBudget.expense
-        )
-      }
-      
-      // 3. 이전 기간과 다음 기간으로 이동할 수 있는지 확인하기
-      let canMoveNext = checkCanMoveToNextPeriod(from: budget.endDate)
-      let canMovePrevious = await checkCanMoveToPreviousPeriod(from: budget.startDate)
+      // 1. 모든 기간의 SalaryBudget 가져오기
+      /* self.allSalaryBudgets = try salaryBudgetUseCase.getAllSalaryBudget() */
+      self.allSalaryBudgets = try SampleDataGenerator.createMultipleSampleBudgets()
+      let today = Date().formattedDate
       
       // 4. 상태 업데이트하기 (메인스레드에서 이루어져야 함)
       await MainActor.run {
@@ -123,39 +119,142 @@ final class CalendarViewModel {
         state.canMoveNextPeriod = canMoveNext
         state.canMovePreviousPeriod = canMovePrevious
         state.error = nil
+      // 2. 오늘이 포함된 SalaryBudget 찾기
+      guard let budget = allSalaryBudgets.first(where: { budget in
+        budget.startDate <= today && today <= budget.endDate
+      }) else {
+        state.error = DomainError.dataNotFound
+        return
       }
       
+      updateStateWithBudget(budget)
+      
     } catch {
-      await MainActor.run {
-        state.error = error
+      state.error = error
+    }
+  }
+  
+  private func updateStateWithBudget(_ budget: SalaryBudget) {
+    // 캘린더 기간 설정
+    let period = Period(start: budget.startDate, end: budget.endDate)
+    
+    // 일별 정보 변환
+    let dayInfos = budget.dailyBudgets.map { dailyBudget in
+      DayInfo(
+        date: dailyBudget.date,
+        harubee: dailyBudget.harubee ?? Int(budget.defaultHarubee),
+        isAdjusted: dailyBudget.harubee != nil,
+        expense: dailyBudget.expense,
+        memos: dailyBudget.memo,
+        todayFixedExpense: []
+      )
+    }
+    
+    // 이전/다음 기간 이동 가능 여부 확인
+    let canMoveNext = checkCanMoveToNextPeriod(from: budget.endDate)
+    let canMovePrevious = checkCanMoveToPreviousPeriod(from: budget.startDate)
+    
+    // 상태 업데이트
+    state.selectedDate = nil
+    state.currentPeriod = period
+    state.dayInfos = dayInfos
+    state.canMoveNextPeriod = canMoveNext
+    state.canMovePreviousPeriod = canMovePrevious
+    state.error = nil
+  }
+  
+  private func moveToNextPeriod() {
+    guard state.canMoveNextPeriod else { return }
+    
+    // 1. 다음 기간 시작일 계산
+    let nextDate = Calendar.current.date(
+      byAdding: .day,
+      value: 1,
+      to: state.currentPeriod.end
+    ) ?? state.currentPeriod.end
+    
+    // 2. 캐시된 데이터에서 다음 기간 SalaryBudget 찾기
+    if let nextBudget = allSalaryBudgets.first(where: { budget in
+      budget.startDate <= nextDate && nextDate <= budget.endDate
+    }) {
+      // 3. 상태 업데이트
+      updateStateWithBudget(nextBudget)
+      
+      // 4. 새 기간의 첫 날짜 선택
+      if nextBudget.startDate <= Date() && Date() >= nextBudget.endDate {
+        updateSelectedDate(Date().formattedDate)
+      } else {
+        updateSelectedDate(nil)
+      }
+      
+    }
+  }
+  
+  private func moveToPreviousPeriod() {
+    guard state.canMovePreviousPeriod else { return }
+    
+    // 1. 이전 기간 날짜 계산
+    let previousDate = Calendar.current.date(
+      byAdding: .day,
+      value: -1,
+      to: state.currentPeriod.start
+    ) ?? state.currentPeriod.start
+    
+    // 2. 캐시된 데이터에서 이전 기간 SalaryBudget 찾기
+    if let previousBudget = allSalaryBudgets.first(where: { budget in
+      budget.startDate <= previousDate && previousDate <= budget.endDate
+    }) {
+      // 3. 상태 업데이트
+      updateStateWithBudget(previousBudget)
+      
+      // 4. 새 기간의 첫 날짜 선택
+      if previousBudget.startDate <= Date() && Date() >= previousBudget.endDate {
+        updateSelectedDate(Date().formattedDate)
+      } else {
+        updateSelectedDate(nil)
       }
     }
   }
   
-  // TODO: - 유즈케이스 구현 이후 비동기 함수인지 확인 필요
-  private func moveToNextPeriod() async {
-
-  }
-  
-  // TODO: - 유즈케이스 구현 이후 비동기 함수인지 확인 필요
-  private func moveToPreviousPeriod() async {
-  }
-  
-  private func updateSelectedDate(_ date: Date) {
+  private func updateSelectedDate(_ date: Date?) {
     state.selectedDate = date
-  }
-  
-  // TODO: - 유즈케이스 구현 이후 비동기 함수인지 확인 필요
-  private func fetchDayDetailInfo(_ date: Date) async {
   }
   
   // MARK: - Private Methods - Helpers
   private func checkCanMoveToNextPeriod(from date: Date) -> Bool {
-    return true
+    // 1. 6개월 제한 체크
+    let sixMonthsLater = Calendar.current.date(
+      byAdding: .month,
+      value: 6,
+      to: Date().formattedDate
+    ) ?? Date().formattedDate
+    
+    guard date < sixMonthsLater else { return false }
+    
+    // 2. 다음 날짜 계산
+    let nextDate = Calendar.current.date(
+      byAdding: .day,
+      value: 1,
+      to: date
+    ) ?? date
+    
+    // 3. 해당 날짜를 포함하는 SalaryBudget이 있는지 확인
+    return allSalaryBudgets.contains { budget in
+      budget.startDate <= nextDate && nextDate <= budget.endDate
+    }
   }
   
-  // TODO: - 유즈케이스 구현 이후 비동기 함수인지 확인 필요
-  private func checkCanMoveToPreviousPeriod(from date: Date) async -> Bool {
-    return true
+  private func checkCanMoveToPreviousPeriod(from date: Date) -> Bool {
+    // 1. 이전 날짜 계산
+    let previousDate = Calendar.current.date(
+      byAdding: .day,
+      value: -1,
+      to: date
+    ) ?? date
+    
+    // 2. 해당 날짜를 포함하는 SalaryBudget이 있는지 확인
+    return allSalaryBudgets.contains { budget in
+      budget.startDate <= previousDate && previousDate <= budget.endDate
+    }
   }
 }
