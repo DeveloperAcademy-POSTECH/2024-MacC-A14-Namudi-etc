@@ -14,7 +14,6 @@ struct FloatingTitleTextField: View {
   private var shouldShowKeyboard: Bool
   
   @Binding var text: String
-  @State private var isFocused: Bool = false
   @FocusState private var isTextfieldFocused: Bool
   
   init(title: String, text: Binding<String>, shouldShowKeyboard: Bool = false) {
@@ -28,9 +27,9 @@ struct FloatingTitleTextField: View {
       Text(title)
         .font(.pretendardMedium_12)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .foregroundStyle(isFocused || !text.isEmpty ? Color.main : .clear)
-        .offset(y: isFocused || !text.isEmpty ? -4 : 0)
-        .animation(.easeOut(duration: 0.2), value: isFocused || !text.isEmpty)
+        .foregroundStyle(!text.isEmpty ? Color.main : .clear)
+        .offset(y: !text.isEmpty ? -4 : 0)
+        .animation(.easeOut(duration: 0.2), value: !text.isEmpty)
       TextField(title, text: $text)
         .frame(maxWidth: .infinity)
         .font(.pretendardMedium_18)
