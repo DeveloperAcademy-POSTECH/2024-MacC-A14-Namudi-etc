@@ -134,6 +134,7 @@ final class CalendarViewModel {
   
   // TODO: - 유즈케이스 구현 이후 비동기 함수인지 확인 필요
   private func moveToNextPeriod() async {
+
   }
   
   // TODO: - 유즈케이스 구현 이후 비동기 함수인지 확인 필요

@@ -13,18 +13,21 @@ struct Onboarding4View: View {
   @State private var expenseAmount: String = ""
   
   var body: some View {
-    VStack(spacing: 0) {
-      OnboardingHeaderView()
-        .padding(.top, 83)
-        .padding(.bottom, 26)
-        .background(
-          Rectangle()
-            .fill(Color.main)
-        )
-      OnboardingBodyView(expenseAmount: $expenseAmount)
-      
+    ZStack {
+      VStack(spacing: 0) {
+        OnboardingHeaderView()
+          .padding(.top, 83)
+          .padding(.bottom, 26)
+          .background(
+            Rectangle()
+              .fill(Color.main)
+          )
+        
+        OnboardingBodyView(expenseAmount: $expenseAmount)
+      }
+      .ignoresSafeArea()
+      ButtonKeyboardView(expenseAmount: $expenseAmount)
     }
-    .ignoresSafeArea()
   }
 }
 
@@ -64,31 +67,28 @@ private struct OnboardingBodyView: View {
       .foregroundStyle(Color.textBlack)
       .padding(.horizontal, 20)
       
-      FloatingTitleTextField(title: "지출 금액",
-                             text: $expenseAmount
-      )
+      FloatingTitleTextField(title: "지출 금액", text: $expenseAmount)
       .padding(.horizontal, 16)
       
-      Spacer()
-      
-      Button {
-        
-      } label: {
-        Text("다음으로")
-          .font(.pretendardSemibold_18)
-          .foregroundStyle(Color.whiteDeep)
-          .padding(.horizontal, 149)
-          .padding(.vertical, 20)
-          .background(
-            RoundedRectangle(cornerRadius: 10)
-              .fill(Color.main)
-            // textfield 다 안 채워지면 Main_30
-          )
-      }
-      .padding(.bottom, 43)
     }
     .padding(.top, 30)
     .frame(maxHeight: .infinity, alignment: .top)
+  }
+}
+
+private struct ButtonKeyboardView: View {
+  @Binding var expenseAmount: String
+  
+  var body: some View {
+    // TODO: NumberKeypadView와 MainColorButton의 padding이 .. 불확실함 ㅠ
+    VStack(spacing: 30) {
+      MainColorButton(title: "다음으로") {
+        print("다음으로")
+      }
+      
+      NumberKeypadView(text: $expenseAmount)
+    }
+    .frame(maxHeight: .infinity, alignment: .bottom)
   }
 }
 
