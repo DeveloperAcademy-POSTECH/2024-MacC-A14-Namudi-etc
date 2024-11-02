@@ -12,14 +12,11 @@ import Core
 public final class SalaryBudgetUseCaseImpl: SalaryBudgetUseCase {
   
   private let salaryBudgetRepository: SalaryBudgetRepository
-  private let calculateUseCase: CalculateUseCase
   
-  public init(
-    salaryBudgetRepository: SalaryBudgetRepository,
-    calculateUseCase: CalculateUseCase
-  ) {
+  private let calendar: Calendar = .current
+  
+  public init(salaryBudgetRepository: SalaryBudgetRepository) {
     self.salaryBudgetRepository = salaryBudgetRepository
-    self.calculateUseCase = calculateUseCase
   }
   
   public func createSalaryBudget(
@@ -125,7 +122,7 @@ public final class SalaryBudgetUseCaseImpl: SalaryBudgetUseCase {
     )
     
     // 2. 새로 업데이트된 SalaryBudget의 잔액으로 기본 하루비 다시 계산하기
-    let newDefaultHarubee = try calculateUseCase.calculateDefaultHarubee(
+    let newDefaultHarubee = try self.calculateDefaultHarubee(
       salaryBudget: newSalaryBudget
     )
     
@@ -139,7 +136,7 @@ public final class SalaryBudgetUseCaseImpl: SalaryBudgetUseCase {
   public func updateDefaultHarubee(
     salaryBudget: SalaryBudget
   ) throws -> SalaryBudget {
-    let newDefaultHarubee = try calculateUseCase.calculateDefaultHarubee(
+    let newDefaultHarubee = try self.calculateDefaultHarubee(
       salaryBudget: salaryBudget
     )
     
@@ -147,5 +144,39 @@ public final class SalaryBudgetUseCaseImpl: SalaryBudgetUseCase {
       salaryBudget.id,
       defaultHarubee: newDefaultHarubee
     )
+  }
+  
+  public func calculateDefaultHarubee(salaryBudget: SalaryBudget) throws -> Double {
+    
+    let currentDate = calendar.date(
+      from:calendar.dateComponents(
+        [.year, .month, .day],
+        from: Date()
+      )
+    )!
+    var nilCount = 0.0
+    var newBalance = Double(salaryBudget.balance)
+    
+    for dailyBudget in salaryBudget.dailyBudgets {
+      if dailyBudget.date < currentDate { continue }
+      
+      if let harubee = dailyBudget.harubee { newBalance -= Double(harubee) }
+      else { nilCount += 1 }
+    }
+    
+    return nilCount == 0.0 ? newBalance : newBalance / nilCount
+  }
+  
+  public func calculateAverageHarubee(endDate: Date, balance: Int) throws -> Double {
+    let currentDate = calendar.date(
+      from:calendar.dateComponents(
+        [.year, .month, .day],
+        from: Date()
+      )
+    )!
+    let secondsInDay = 86400.0
+    let remain = endDate.timeIntervalSince(currentDate) / secondsInDay + 1
+    
+    return Double(balance) / remain
   }
 }

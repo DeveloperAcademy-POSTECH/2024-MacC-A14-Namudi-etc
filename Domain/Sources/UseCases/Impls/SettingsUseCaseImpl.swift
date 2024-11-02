@@ -7,24 +7,22 @@
 //
 
 import Foundation
+import Core
 
 public final class SettingsUseCaseImpl: SettingsUseCase {
   
   private let userDefaultsRepository: UserDefaultsRepository
   private let salaryBudgetRepository: SalaryBudgetRepository
   private let salaryBudgetUseCase: SalaryBudgetUseCase
-  private let calculateUseCase: CalculateUseCase
   
   public init(
     userDefaultsRepository: UserDefaultsRepository,
     salaryBudgetRepository: SalaryBudgetRepository,
-    salaryBudgetUseCase: SalaryBudgetUseCase,
-    calculateUseCase: CalculateUseCase
+    salaryBudgetUseCase: SalaryBudgetUseCase
   ) {
     self.userDefaultsRepository = userDefaultsRepository
     self.salaryBudgetRepository = salaryBudgetRepository
     self.salaryBudgetUseCase = salaryBudgetUseCase
-    self.calculateUseCase = calculateUseCase
   }
   
   public func setIncomeDay(
@@ -86,7 +84,7 @@ public final class SettingsUseCaseImpl: SettingsUseCase {
   
   public func addFixedExpense(expense: TransactionItem) throws {
     // Date() 값의 일관성을 위해 변수에 저장하기
-    let now = Date()
+    let now = Date().formattedDate
     
     // 1. 오늘을 포함하는 SalayBudget 가져오기
     let currentSalaryBudget = try salaryBudgetUseCase.getSalaryBudget(date: now)
@@ -123,7 +121,7 @@ public final class SettingsUseCaseImpl: SettingsUseCase {
     updatedExpenses.append(expense)
     
     // 8. 기본 하루비 다시 계산하기
-    let defaultHarubee = try calculateUseCase.calculateDefaultHarubee(
+    let defaultHarubee = try salaryBudgetUseCase.calculateDefaultHarubee(
       salaryBudget: currentSalaryBudget
     )
     
@@ -138,7 +136,7 @@ public final class SettingsUseCaseImpl: SettingsUseCase {
   }
   
   public func updateFixedExpense(expense: TransactionItem) throws {
-    let now = Date()
+    let now = Date().formattedDate
     
     // 1. 오늘을 포함하는 SalayBudget 가져오기
     let currentSalaryBudget = try salaryBudgetUseCase.getSalaryBudget(date: now)
@@ -173,7 +171,7 @@ public final class SettingsUseCaseImpl: SettingsUseCase {
     updatedExpenses[index] = expense
     
     // 8. 기본 하루비 다시 계산하기
-    let defaultHarubee = try calculateUseCase.calculateDefaultHarubee(
+    let defaultHarubee = try salaryBudgetUseCase.calculateDefaultHarubee(
       salaryBudget: currentSalaryBudget
     )
     
@@ -190,7 +188,8 @@ public final class SettingsUseCaseImpl: SettingsUseCase {
   public func deleteFixedExpense(
     expense: TransactionItem
   ) throws {
-    guard let currentSalaryBudget = try salaryBudgetRepository.readByStartDate(Date()) else {
+    let now = Date().formattedDate
+    guard let currentSalaryBudget = try salaryBudgetRepository.readByStartDate(now) else {
       throw DomainError.dataNotFound
     }
     // 1. 삭제하려는 지출 항목을 제외한 나머지 지출 항목들만 선택하기
