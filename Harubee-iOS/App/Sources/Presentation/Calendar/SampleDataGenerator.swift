@@ -96,8 +96,7 @@ class SampleDataGenerator {
       dailyBudgets: dailyBudgets
     )
   }
-  
-  // 여러 개의 샘플 데이터가 필요한 경우를 위한 헬퍼 메서드
+
   static func createMultipleSampleBudgets() throws -> [SalaryBudget] {
     let calendar = Calendar.current
     var allBudgets: [SalaryBudget] = []

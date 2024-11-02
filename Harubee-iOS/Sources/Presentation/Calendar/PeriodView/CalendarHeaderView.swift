@@ -45,6 +45,7 @@ struct CalendarHeaderView: View {
         
         Text(periodTitle)
           .font(.pretendardSemibold_24)
+          .frame(maxWidth: .infinity)
         
         periodNavigationButton(
           direction: .forward,
@@ -56,6 +57,7 @@ struct CalendarHeaderView: View {
     .frame(maxWidth: .infinity)
     .padding(.top, 22)
     .padding(.bottom, 15)
+    .padding(.horizontal, 50)
     .background(Color.main)
     .foregroundStyle(Color.whiteDefault)
   }
@@ -83,4 +85,13 @@ struct CalendarHeaderView: View {
       }
     }
   }
+}
+
+#Preview {
+  CalendarHeaderView(
+    periodYearTitle: "2024년",
+    periodTitle: "10.20 - 11.19",
+    canMovePeriod: (true, true),
+    movePreviousPeriod: {},
+    moveNextPeriod: {})
 }
