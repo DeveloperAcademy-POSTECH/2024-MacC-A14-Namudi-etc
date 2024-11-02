@@ -106,15 +106,8 @@ public final class SalaryBudgetUseCaseImpl: SalaryBudgetUseCase {
     // 1. date 포멧 변경
     let targetDate = (date ?? Date()).formattedDate
     
-    // 2. 모든 SalaryBudget 가져오기
-    let salaryBudgets = try salaryBudgetRepository.readAll()
-    
-    // 3. date가 포함된 SalaryBudget 찾기
-    guard let salaryBudget = salaryBudgets.first(
-      where: { budget in
-        let budgetRange = budget.startDate...budget.endDate
-        return budgetRange.contains(targetDate)
-      }) else {
+    // 2. 특정 날짜에 해당하는 SalaryBudget 가져오기
+    guard let salaryBudget = try salaryBudgetRepository.readByStartDate(targetDate) else {
       throw DomainError.dataNotFound
     }
     
