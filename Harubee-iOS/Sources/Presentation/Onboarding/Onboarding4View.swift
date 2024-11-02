@@ -67,9 +67,28 @@ private struct OnboardingBodyView: View {
       .foregroundStyle(Color.textBlack)
       .padding(.horizontal, 20)
       
-      FloatingTitleTextField(title: "지출 금액", text: $expenseAmount)
+      VStack(spacing: 0) {
+        
+        Text("지출 금액")
+          .font(.pretendardMedium_12)
+          .foregroundStyle(expenseAmount.isEmpty ? .clear : Color.main)
+          .frame(maxWidth: .infinity, alignment: .leading)
+          .padding(.leading, 4)
+          .offset(y: !expenseAmount.isEmpty ? -4 : 0)
+          .animation(.easeOut(duration: 0.2), value: !expenseAmount.isEmpty)
+        
+        Text(expenseAmount.isEmpty ? "지출 금액" : expenseAmount)
+          .font(.pretendardMedium_18)
+          .foregroundStyle(expenseAmount.isEmpty ? Color.textBrighter : Color.textBlack)
+          .frame(maxWidth: .infinity, alignment: .leading)
+          .padding(.leading, 4)
+        
+        Rectangle()
+          .frame(height: 1)
+          .foregroundStyle(expenseAmount.isEmpty ? Color.textBrighter : Color.main)
+          .padding(.top, 8)
+      }
       .padding(.horizontal, 16)
-      
     }
     .padding(.top, 30)
     .frame(maxHeight: .infinity, alignment: .top)
