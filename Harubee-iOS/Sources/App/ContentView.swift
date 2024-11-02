@@ -8,6 +8,7 @@
 
 import SwiftUI
 import DesignSystem
+import Lottie
 
 struct ContentView: View {
   var body: some View {
@@ -15,7 +16,11 @@ struct ContentView: View {
       Color.main
         .ignoresSafeArea()
       
-      HarubeeLottie()
+      LottieView(animation: .named(
+        LottieConstants.onboarding,
+        bundle: LottieConstants.bundle
+      ))
+      .playing()
     }
   }
 }
