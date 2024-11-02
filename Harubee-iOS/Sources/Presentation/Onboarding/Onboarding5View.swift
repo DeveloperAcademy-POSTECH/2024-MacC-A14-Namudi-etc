@@ -14,7 +14,7 @@ struct Onboarding5View: View {
     VStack(spacing: 0) {
       OnboardingHeaderView()
         .padding(.top, 83)
-        .padding(.bottom, 33)
+        .padding(.bottom, 26)
         .background(
           Rectangle()
             .fill(Color.main)
@@ -27,7 +27,7 @@ struct Onboarding5View: View {
 
 private struct OnboardingHeaderView: View {
   var body: some View {
-    VStack(spacing: 26) {
+    VStack(spacing: 28) {
       NavigationHeaderView(pageNumber: .third)
       
       VStack(alignment: .leading, spacing: 6) {
