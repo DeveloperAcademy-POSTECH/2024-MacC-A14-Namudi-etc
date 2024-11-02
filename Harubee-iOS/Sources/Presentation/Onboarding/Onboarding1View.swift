@@ -17,7 +17,7 @@ struct Onboarding1View: View {
         VStack(spacing: 0) {
           ZStack(alignment: .bottom) {
             LottieView(animation: .named("OnboardingAppName"))
-              .playing()
+              .playing(loopMode: .loop)
               .frame(height: 146)
             Text("쉽고 빠른 지출 계획의 시작")
               .font(.pretendardSemibold_20)
