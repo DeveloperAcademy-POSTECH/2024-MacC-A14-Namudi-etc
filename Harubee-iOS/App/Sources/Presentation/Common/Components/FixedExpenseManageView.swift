@@ -23,7 +23,7 @@ enum Mode {
   }
 }
 
-struct FixedExpenseAddView: View {
+struct FixedExpenseManageView: View {
   
   private let mode: Mode
   @State private var fixedExpenseName: String
@@ -86,5 +86,5 @@ private struct BodyView: View {
 }
 
 #Preview {
-  FixedExpenseAddView(mode: .add)
+  FixedExpenseManageView(mode: .add)
 }

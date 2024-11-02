@@ -1,18 +1,15 @@
 //
-//  Onboarding3View.swift
+//  Onboarding5View.swift
 //  Harubee-iOS
 //
-//  Created by Seo-Jooyoung on 11/1/24.
+//  Created by Seo-Jooyoung on 11/2/24.
 //  Copyright © 2024 namudiEtc. All rights reserved.
 //
 
 import SwiftUI
 import DesignSystem
 
-struct Onboarding3View: View {
-  @State private var selectedDay: Int = 1
-  @State private var fixedIncomeAmount: String = ""
-  
+struct Onboarding5View: View {
   var body: some View {
     VStack(spacing: 0) {
       OnboardingHeaderView()
@@ -22,8 +19,7 @@ struct Onboarding3View: View {
           Rectangle()
             .fill(Color.main)
         )
-      OnboardingBodyView(selectedDay: $selectedDay, fixedIncomeAmount: $fixedIncomeAmount)
-      
+      OnboardingBodyView()
     }
     .ignoresSafeArea()
   }
@@ -32,11 +28,23 @@ struct Onboarding3View: View {
 private struct OnboardingHeaderView: View {
   var body: some View {
     VStack(spacing: 26) {
-      NavigationHeaderView(pageNumber: .first)
+      NavigationHeaderView(pageNumber: .third)
       
       VStack(alignment: .leading, spacing: 6) {
-        Text("먼저, 하루비를 계산하기 위한")
-        Text("기본 정보를 입력해주세요")
+        Text("현재 계산된 하루비는")
+        HStack(spacing: 0) {
+          Image(systemName: "exclamationmark.triangle.fill")
+            .resizable()
+            .frame(width: 20, height: 20)
+          HStack(alignment: .bottom, spacing: 0) {
+            Text("100,000원")
+              .padding(.leading, 6)
+            // TODO: 28로 바꿔서 적용
+              .font(.pretendardSemibold_30)
+            Text("입니다")
+              .padding(.bottom, 1)
+          }
+        }
       }
       .frame(maxWidth: .infinity, alignment: .leading)
       .font(.pretendardSemibold_24)
@@ -47,31 +55,19 @@ private struct OnboardingHeaderView: View {
 }
 
 private struct OnboardingBodyView: View {
-  @Binding var selectedDay: Int
-  @Binding var fixedIncomeAmount: String
   
   var body: some View {
     VStack(spacing: 30) {
-      DayPickerView(title: "주요 수입일은 언제인가요?",
-                    titleFont: .onboarding,
-                    selectedDay: $selectedDay
-      )
-      .padding(.top, 34)
-      
-      VStack(alignment: .leading, spacing: 0) {
-        Text("한 달의 수입금은 얼마인가요?")
-          .font(.pretendardMedium_20)
-          .foregroundStyle(Color.textBlack)
-        
-        Text("*입력하신 정보는 수입 기간동안의 하루비를 계산할 때만 사용됩니다")
-          .font(.pretendardMedium_12)
-          .foregroundStyle(Color.textBlack30)
-          .padding(.top, 6)
-        
-        FloatingTitleTextField(title: "금액", text: $fixedIncomeAmount)
-          .padding(.top, 24)
+      VStack(alignment: .leading, spacing: 6) {
+        Text("매달 고정으로 나가는 지출 내역을")
+        Text("입력해주세요 (예: 월세, 구독비, 저축)")
       }
+      .frame(maxWidth: .infinity, alignment: .leading)
+      .font(.pretendardMedium_20)
+      .foregroundStyle(Color.textBlack)
       .padding(.horizontal, 20)
+      
+      FixedExpenseListView()
       
       Spacer()
       
@@ -91,10 +87,11 @@ private struct OnboardingBodyView: View {
       }
       .padding(.bottom, 43)
     }
+    .padding(.top, 30)
     .frame(maxHeight: .infinity, alignment: .top)
   }
 }
 
 #Preview {
-  Onboarding3View()
+  Onboarding5View()
 }
