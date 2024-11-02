@@ -12,6 +12,7 @@ import Shared
 // MARK: - Calendar View
 struct CalendarView: View {
   @State private var viewModel: CalendarViewModel
+  @State private var currentPage: Int = 1
   
   init(
     viewModel: CalendarViewModel
@@ -22,6 +23,8 @@ struct CalendarView: View {
   var body: some View {
     ZStack {
       Color.whiteDefault
+        .ignoresSafeArea()
+      
       VStack(spacing: 0) {
         CalendarHeaderView(
           periodYearTitle: createYearTitle(
@@ -47,22 +50,35 @@ struct CalendarView: View {
           }
         )
         
-        ScrollView(showsIndicators: false) {
-          CalendarGridView(
-            daysInPeriod: createDaysInPeriod(
-              start: viewModel.state.currentPeriod.start,
-              end: viewModel.state.currentPeriod.end
-            ),
-            selectedDate: viewModel.state.selectedDate,
-            dayInfos: viewModel.state.dayInfos,
-            onDateSelected: { date in
-              withAnimation {
-                viewModel.send(.onDateSelected(date))
-              }
-            }
+        TabView(selection: $currentPage) {
+          // 이전 기간 페이지
+          if viewModel.state.canMovePreviousPeriod {
+            PeriodView(
+              isPreviousPeriod: true,
+              viewModel: viewModel
+            )
+            .tag(0)
+          }
+          
+          // 현재 기간 페이지
+          PeriodView(
+            isPreviousPeriod: false,
+            viewModel: viewModel
           )
-          .padding(.top, 18)
-          .padding(.horizontal, 14)
+          .tag(1)
+          
+          // 다음 기간 페이지
+          if viewModel.state.canMoveNextPeriod {
+            PeriodView(
+              isPreviousPeriod: false,
+              viewModel: viewModel
+            )
+            .tag(2)
+          }
+        }
+        .tabViewStyle(.page(indexDisplayMode: .never))
+        .onChange(of: currentPage) { oldValue, newValue in
+          handlePageChange(from: oldValue, to: newValue)
         }
       }
     }
@@ -71,10 +87,24 @@ struct CalendarView: View {
     .onAppear {
       viewModel.send(.loadData)
     }
-    .alert("오류", isPresented: .constant(viewModel.state.error != nil)) {
+    .alert(
+      "오류", isPresented: .constant(viewModel.state.error != nil)
+    ) {
       Button("확인", role: .cancel) {}
     } message: {
       Text(viewModel.state.error?.localizedDescription ?? "")
+    }
+  }
+  
+  private func handlePageChange(from oldValue: Int, to newValue: Int) {
+    if newValue > oldValue {
+      if viewModel.state.canMoveNextPeriod {
+        viewModel.send(.moveNextPeriod)
+      }
+    } else if newValue < oldValue {
+      if viewModel.state.canMovePreviousPeriod {
+        viewModel.send(.movePreviousPeriod)
+      }
     }
   }
   
@@ -88,6 +118,50 @@ struct CalendarView: View {
     let formatter = DateFormatter()
     formatter.dateFormat = "M.d"
     return "\(formatter.string(from: start)) - \(formatter.string(from: end))"
+  }
+  
+  private func handlePageChange(oldValue: Int, newValue: Int) {
+    if newValue > oldValue {
+      if viewModel.state.canMoveNextPeriod {
+        viewModel.send(.moveNextPeriod)
+      }
+    } else if newValue < oldValue {
+      if viewModel.state.canMovePreviousPeriod {
+        viewModel.send(.movePreviousPeriod)
+      }
+    }
+    
+    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+      withAnimation(.none) {
+        currentPage = 1
+      }
+    }
+  }
+}
+
+// MARK: - Period View
+private struct PeriodView: View {
+  let isPreviousPeriod: Bool
+  let viewModel: CalendarViewModel
+  
+  var body: some View {
+    ScrollView(showsIndicators: false) {
+      CalendarGridView(
+        daysInPeriod: createDaysInPeriod(
+          start: viewModel.state.currentPeriod.start,
+          end: viewModel.state.currentPeriod.end
+        ),
+        selectedDate: viewModel.state.selectedDate,
+        dayInfos: viewModel.state.dayInfos,
+        onDateSelected: { date in
+          withAnimation {
+            viewModel.send(.onDateSelected(date))
+          }
+        }
+      )
+      .padding(.top, 18)
+      .padding(.horizontal, 14)
+    }
   }
   
   private func createDaysInPeriod(start: Date, end: Date) -> [Date?] {
