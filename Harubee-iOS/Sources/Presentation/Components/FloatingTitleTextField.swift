@@ -11,8 +11,9 @@ import DesignSystem
 
 struct FloatingTitleTextField: View {
   private var title: String
+  private var shouldShowKeyboard: Bool
+  
   @Binding var text: String
-  @State private var shouldShowKeyboard: Bool
   @State private var isFocused: Bool = false
   @FocusState private var isTextfieldFocused: Bool
   
