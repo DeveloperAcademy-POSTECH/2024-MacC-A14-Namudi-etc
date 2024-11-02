@@ -7,7 +7,7 @@
 //
 
 import Domain
-import Foundation
+import SwiftUI
 
 // MARK: - Data Models
 struct DayInfo {
@@ -44,7 +44,7 @@ struct Period {
 final class CalendarViewModel {
   // MARK: - State
   struct State {
-    // Domain Data State
+    // Data State
     var currentPeriod: Period
     var dayInfos: [DayInfo]
     var selectedDate: Date?
@@ -106,7 +106,7 @@ final class CalendarViewModel {
   // MARK: - Private Methods - Data Fetching
   private func fetchAllPeriodData() {
     do {
-      // 1. 모든 기간의 SalaryBudget 가져오기
+      // 1. 모든 기간의 SalaryBudget 가져와 캐싱하기
       /* self.allSalaryBudgets = try salaryBudgetUseCase.getAllSalaryBudget() */
       self.allSalaryBudgets = try SampleDataGenerator.createMultipleSampleBudgets()
       let today = Date().formattedDate
@@ -127,6 +127,7 @@ final class CalendarViewModel {
         return
       }
       
+      // 3. 상태 업데이트하기
       updateStateWithBudget(budget)
       
     } catch {
@@ -135,10 +136,10 @@ final class CalendarViewModel {
   }
   
   private func updateStateWithBudget(_ budget: SalaryBudget) {
-    // 캘린더 기간 설정
+    // 1. 캘린더 기간 설정
     let period = Period(start: budget.startDate, end: budget.endDate)
     
-    // 일별 정보 변환
+    // 2. 뷰 데이터 모델로 변환
     let dayInfos = budget.dailyBudgets.map { dailyBudget in
       DayInfo(
         date: dailyBudget.date,
@@ -150,11 +151,11 @@ final class CalendarViewModel {
       )
     }
     
-    // 이전/다음 기간 이동 가능 여부 확인
+    // 3. 이전/다음 기간 이동 가능 여부 확인
     let canMoveNext = checkCanMoveToNextPeriod(from: budget.endDate)
     let canMovePrevious = checkCanMoveToPreviousPeriod(from: budget.startDate)
     
-    // 상태 업데이트
+    // 4. 상태 업데이트
     state.selectedDate = nil
     state.currentPeriod = period
     state.dayInfos = dayInfos
@@ -180,7 +181,7 @@ final class CalendarViewModel {
       // 3. 상태 업데이트
       updateStateWithBudget(nextBudget)
       
-      // 4. 새 기간의 첫 날짜 선택
+      // 4. 새 기간에 오늘이 포함되면 오늘 선택, 아니라면 미선택
       if nextBudget.startDate <= Date() && Date() >= nextBudget.endDate {
         updateSelectedDate(Date().formattedDate)
       } else {
@@ -207,7 +208,7 @@ final class CalendarViewModel {
       // 3. 상태 업데이트
       updateStateWithBudget(previousBudget)
       
-      // 4. 새 기간의 첫 날짜 선택
+      // 4. 새 기간에 오늘이 포함되면 오늘 선택, 아니라면 미선택
       if previousBudget.startDate <= Date() && Date() >= previousBudget.endDate {
         updateSelectedDate(Date().formattedDate)
       } else {
@@ -222,16 +223,7 @@ final class CalendarViewModel {
   
   // MARK: - Private Methods - Helpers
   private func checkCanMoveToNextPeriod(from date: Date) -> Bool {
-    // 1. 6개월 제한 체크
-    let sixMonthsLater = Calendar.current.date(
-      byAdding: .month,
-      value: 6,
-      to: Date().formattedDate
-    ) ?? Date().formattedDate
-    
-    guard date < sixMonthsLater else { return false }
-    
-    // 2. 다음 날짜 계산
+    // 1. 다음 날짜 계산
     let nextDate = Calendar.current.date(
       byAdding: .day,
       value: 1,
@@ -245,7 +237,7 @@ final class CalendarViewModel {
   }
   
   private func checkCanMoveToPreviousPeriod(from date: Date) -> Bool {
-    // 1. 이전 날짜 계산
+    // 2. 이전 날짜 계산
     let previousDate = Calendar.current.date(
       byAdding: .day,
       value: -1,
