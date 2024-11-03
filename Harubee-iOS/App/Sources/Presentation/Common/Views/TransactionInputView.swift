@@ -43,7 +43,9 @@ struct TransactionInputView: View {
         print("저장하기 Tap")
       }
       
-      NumberKeypadView(text: $expression)
+      NumberKeypadView(text: $expression) {
+        print("Done")
+      }
     }
     .frame(maxWidth: .infinity)
     .onAppear {
