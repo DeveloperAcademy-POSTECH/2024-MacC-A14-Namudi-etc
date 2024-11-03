@@ -19,6 +19,8 @@ struct InfoBubble<Label: View>: ViewModifier {
   private var isOnBottom: Bool
   private var label: () -> Label
   
+  private let spacing = 30.0
+  
   init(isVisible: Bool,
        alignment: Alignment,
        isOnBottom: Bool,
@@ -68,7 +70,7 @@ struct InfoBubble<Label: View>: ViewModifier {
             .frame(width: 20, height: 14)
             .rotationEffect(.degrees(isOnBottom ? 0 : 180))
             .foregroundStyle(Color.whiteDefault)
-            .offset(y: isOnBottom ? (contentSize.height + 20) / 2 : -(contentSize.height + 20) / 2)
+            .offset(y: isOnBottom ? (contentSize.height + spacing) / 2 : -(contentSize.height + spacing) / 2)
         )
     } else { content }
   }
@@ -86,7 +88,7 @@ struct InfoBubble<Label: View>: ViewModifier {
       xOffset = 0
     }
     
-    yOffset = isOnBottom ? (contentSize.height + labelSize.height + 20) / 2 : -(labelSize.height + contentSize.height + 20) / 2
+    yOffset = isOnBottom ? (contentSize.height + labelSize.height + spacing) / 2 : -(labelSize.height + contentSize.height + spacing) / 2
     
     return CGSize(width: xOffset, height: yOffset)
   }
