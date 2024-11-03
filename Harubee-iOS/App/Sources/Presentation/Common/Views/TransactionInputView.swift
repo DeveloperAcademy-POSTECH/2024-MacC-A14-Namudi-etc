@@ -24,7 +24,9 @@ struct TransactionInputView: View {
     VStack {
       BottomSheetHeaderView(title: "실제 지출 및 수입 입력")
       
-      TransactionBodyItemView(isFocusedExpense: $isFocusedExpense)
+      TransactionBodyItemView(
+        isFocusedExpense: $isFocusedExpense
+      )
       
       Spacer()
       
