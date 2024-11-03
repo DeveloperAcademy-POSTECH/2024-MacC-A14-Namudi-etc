@@ -21,11 +21,23 @@ struct AmountResultText: View {
   var body: some View {
     
     HStack(spacing: 10) {
-      HStack(spacing: 0) {
-        Text(numberText.isEmpty ? "-" : numberText)
+      
+      HStack(alignment: .firstTextBaseline, spacing: 0) {
+        ViewThatFits {
+          Text(numberText.isEmpty ? "-" : numberText)
+            .font(.pretendardSemibold_40)
+          
+          Text(numberText.isEmpty ? "-" : numberText)
+            .font(.pretendardSemibold_30)
+          
+          Text(numberText.isEmpty ? "-" : numberText)
+            .font(.pretendardSemibold_20)
+            .lineLimit(3)
+        }
+        
         Text("원")
+          .font(.pretendardSemibold_40)
       }
-      .font(.pretendardSemibold_40)
       
       Button {
         
@@ -33,11 +45,9 @@ struct AmountResultText: View {
         Image(systemName: "arrow.trianglehead.counterclockwise")
           .font(.system(size: 32, weight: .bold))
       }
-
     }
     .frame(maxWidth: .infinity, alignment: .trailing)
     .foregroundStyle(Color.main)
-    
   }
 }
 

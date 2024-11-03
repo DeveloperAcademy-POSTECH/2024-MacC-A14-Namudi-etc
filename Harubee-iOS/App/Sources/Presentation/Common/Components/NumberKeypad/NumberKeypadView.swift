@@ -9,10 +9,22 @@
 import SwiftUI
 import Shared
 
+struct ButtonActionKey: EnvironmentKey {
+  static let defaultValue: () -> Void = {}
+}
+
+extension EnvironmentValues {
+  var buttonAction: () -> Void {
+    get { self[ButtonActionKey.self] }
+    set { self[ButtonActionKey.self] = newValue }
+  }
+}
+
 // MARK: - NumberKeypadView
 struct NumberKeypadView: View {
   
   @Binding private var text: String
+  private let doneAction: () -> Void
   
   private let keypads: [[KeypadButtonType]] = [
     [.one, .two, .three, .delete],
@@ -21,14 +33,24 @@ struct NumberKeypadView: View {
     [.zero, .doubleZero, .tripleZero, .done]
   ]
   
-  public init(text: Binding<String>) {
+  public init(
+    text: Binding<String>,
+    doneAction: @escaping () -> Void
+  ) {
     self._text = text
+    self.doneAction = doneAction
   }
   
   public var body: some View {
     VStack(spacing: 2) {
       ForEach(keypads, id: \.self) { rowKeypads in
-        NumberKeypadRowView(text: $text, keypads: rowKeypads)
+        NumberKeypadRowView(
+          text: $text,
+          keypads: rowKeypads
+        )
+        .environment(\.buttonAction) {
+          doneAction()
+        }
       }
     }
     .frame(maxWidth: .infinity)
@@ -56,7 +78,10 @@ private struct NumberKeypadRowView: View {
   var body: some View {
     HStack(spacing: 2) {
       ForEach(keypads, id: \.self) { columnKeypads in
-        NumberKeypadColumnView(text: $text, keypad: columnKeypads)
+        NumberKeypadColumnView(
+          text: $text,
+          keypad: columnKeypads
+        )
       }
     }
   }
@@ -64,6 +89,7 @@ private struct NumberKeypadRowView: View {
 
 // MARK: - NumberKeypadColumnView
 private struct NumberKeypadColumnView: View {
+  @Environment(\.buttonAction) private var buttonAction
   @State private var isPressed = false
   @Binding private var text: String
   
@@ -132,6 +158,7 @@ private struct NumberKeypadColumnView: View {
         keypadType,
         text: text
       )
+      buttonAction()
     default:
       newText = processNumberType(
         keypadType,
@@ -413,5 +440,7 @@ private enum KeypadButtonType: Int {
 // MARK: - Preview
 #Preview {
   @Previewable @State var text: String = ""
-  return NumberKeypadView(text: $text)
+  return NumberKeypadView(text: $text) {
+    print("Done")
+  }
 }

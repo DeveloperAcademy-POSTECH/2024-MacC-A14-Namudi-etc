@@ -12,7 +12,8 @@ import Shared
 // MARK: - HarubeeAdjustView
 struct HarubeeAdjustView: View {
   
-  @State private var hightlightLabelAmount: Int = 62000
+  @State private var harubee: Int = 0
+  @State private var expression: String = ""
   
   @State private var isUpdated: Bool = false
   
@@ -24,7 +25,7 @@ struct HarubeeAdjustView: View {
       
       HarubeeAdjustBodyView(
         isUpdated: $isUpdated,
-        defaultHarubee: $hightlightLabelAmount
+        defaultHarubee: $harubee
       )
       .padding(.horizontal, 22)
       .padding(.top, 36)
@@ -32,7 +33,7 @@ struct HarubeeAdjustView: View {
       Spacer()
       
       AmountResultText(
-        numberText: .constant("test"),
+        numberText: $expression,
         isUpdated: $isUpdated
       )
         .padding(.horizontal, 37)
@@ -44,7 +45,9 @@ struct HarubeeAdjustView: View {
           print("저장하기 Tap")
         }
       
-      NumberKeypadView(text: .constant("test"))
+      NumberKeypadView(text: $expression) {
+        print("Done")
+      }
     }
     .frame(maxWidth: .infinity)
   }
