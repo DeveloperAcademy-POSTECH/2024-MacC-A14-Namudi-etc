@@ -12,13 +12,13 @@ import Shared
 struct TransactionItemButton: View {
   
   private let title: String
-  private let amount: Int
+  private let amount: Int?
   private let textColor: Color
   private let backgroundColor: Color
   
   init(
     title: String,
-    amount: Int,
+    amount: Int?,
     textColor: Color = Color.textBlack,
     backgroundColor: Color = Color.textBrighter30
   ) {
@@ -35,7 +35,7 @@ struct TransactionItemButton: View {
         .foregroundStyle(textColor)
         .frame(maxWidth: .infinity, alignment: .leading)
       
-      Text(amount.decimalWithWon)
+      Text(amount?.decimalWithWon ?? "- 원")
         .font(.pretendardSemibold_18)
         .foregroundStyle(textColor)
         .frame(maxWidth: .infinity, alignment: .trailing)
