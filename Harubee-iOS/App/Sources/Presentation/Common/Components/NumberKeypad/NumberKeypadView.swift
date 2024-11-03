@@ -208,6 +208,8 @@ private struct NumberKeypadColumnView: View {
     
     var newText = text
     let _ = newText.popLast()
+    
+    if newText.isEmpty { newText = "0" }
     return newText
   }
   
@@ -222,13 +224,22 @@ private struct NumberKeypadColumnView: View {
     
     var index = 0
     
+    if text[index] == "-" {
+      op = "-"
+      index += 1
+    }
+    
     while index < text.count {
       let curCharacter = text[index]
       
       if curCharacter.isSingleNumber {
         current.append(curCharacter)
       } else if ["+", "-"].contains(curCharacter) {
-        before = processExpression(before: before, current: Int(current)!, op: op)
+        before = processExpression(
+          before: before,
+          current: Int(current)!,
+          op: op
+        )
         current = ""
         op = curCharacter
       }
