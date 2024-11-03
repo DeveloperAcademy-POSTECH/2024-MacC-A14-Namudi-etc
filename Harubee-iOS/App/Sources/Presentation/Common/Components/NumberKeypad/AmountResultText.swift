@@ -22,7 +22,7 @@ struct AmountResultText: View {
     
     HStack(spacing: 10) {
       HStack(spacing: 0) {
-        Text(numberText)
+        Text(numberText.isEmpty ? "-" : numberText)
         Text("원")
       }
       .font(.pretendardSemibold_40)
