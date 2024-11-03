@@ -14,27 +14,50 @@ struct PeriodPageView: View {
   let viewModel: CalendarViewModel
   
   var body: some View {
-    ScrollView(showsIndicators: false) {
-      CalendarGridView(
-        daysInPeriod: createDaysInPeriod(
-          start: viewModel.state.currentPeriod.start,
-          end: viewModel.state.currentPeriod.end
-        ),
-        selectedDate: viewModel.state.selectedDate,
-        dayInfos: viewModel.state.dayInfos,
-        onDateSelected: { date in
-          withAnimation {
+    ScrollViewReader { proxy in
+      ScrollView(showsIndicators: false) {
+        CalendarGridView(
+          daysInPeriod: createDaysInPeriod(
+            start: viewModel.state.currentPeriod.start,
+            end: viewModel.state.currentPeriod.end
+          ),
+          selectedDate: viewModel.state.selectedDate,
+          dayInfos: viewModel.state.dayInfos,
+          onDateSelected: { date in
             viewModel.send(.onDateSelected(date))
+            handleDateSelection(date: date, proxy: proxy)
           }
-        }
-      )
-      .padding(.top, 18)
-      .padding(.horizontal, 14)
+        )
+        .padding(.top, 18)
+        .padding(.horizontal, 14)
+        
+        Rectangle()
+          .fill(Color.gray.opacity(0))
+          .frame(height: 25)
+          .frame(maxWidth: .infinity)
+        
+        CalendarDailyView(dayInfo: viewModel.state.selectedDayInfo)
+          .id("dailyView")
+      }
+    }
+  }
+  
+  private func handleDateSelection(
+    date: Date,
+    proxy: ScrollViewProxy
+  ) {
+    viewModel.send(.onDateSelected(date))
+    
+    withAnimation(.easeInOut(duration: 0.3).delay(0.2)) {
+      proxy.scrollTo("dailyView", anchor: .bottom)
     }
   }
   
   /// startDate와 endDate를 받아 캘린더에 표시할 기간을 생성합니다.
-  private func createDaysInPeriod(start: Date, end: Date) -> [Date?] {
+  private func createDaysInPeriod(
+    start: Date,
+    end: Date
+  ) -> [Date?] {
     let calendar = Calendar.current
     var dates: [Date?] = []
     
@@ -52,4 +75,8 @@ struct PeriodPageView: View {
     
     return dates
   }
+}
+
+#Preview {
+  PeriodPageView(viewModel: DIContainer.shared.makeCalendarViewModel())
 }

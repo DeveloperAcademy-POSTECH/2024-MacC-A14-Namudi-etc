@@ -131,22 +131,27 @@ struct CalendarView: View {
           }
         )
         
-        TabView(selection: Binding(
-          get: { viewModel.state.currentBudgetIndex },
-          set: { newIndex in
-            let oldIndex = viewModel.state.currentBudgetIndex
-            if newIndex > oldIndex {
-              if viewModel.state.canMoveNextPeriod {
-                viewModel.send(.moveNextPeriod)
-              }
-            } else if newIndex < oldIndex {
-              if viewModel.state.canMovePreviousPeriod {
-                viewModel.send(.movePreviousPeriod)
+        TabView(
+          selection: Binding(
+            get: { viewModel.state.currentBudgetIndex },
+            set: { newIndex in
+              let oldIndex = viewModel.state.currentBudgetIndex
+              if newIndex > oldIndex {
+                if viewModel.state.canMoveNextPeriod {
+                  viewModel.send(.moveNextPeriod)
+                }
+              } else if newIndex < oldIndex {
+                if viewModel.state.canMovePreviousPeriod {
+                  viewModel.send(.movePreviousPeriod)
+                }
               }
             }
-          }
-        )) {
-          ForEach(0..<viewModel.state.periodsCount, id: \.self) { index in
+          )
+        ) {
+          ForEach(
+            0..<viewModel.state.periodsCount,
+            id: \.self
+          ) { index in
             PeriodPageView(
               viewModel: viewModel
             )
@@ -199,7 +204,7 @@ struct CalendarView: View {
 
 // MARK: - Preview
 #Preview {
-  NavigationView {
+  NavigationStack {
     CalendarView(viewModel: DIContainer.shared.makeCalendarViewModel()
     )
   }
