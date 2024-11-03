@@ -45,7 +45,7 @@ struct HarubeeAdjustView: View {
           print("저장하기 Tap")
         }
       
-      NumberKeypadView(text: $expression) {
+      NumberKeypadView(expression: $expression) {
         print("Done")
       }
     }

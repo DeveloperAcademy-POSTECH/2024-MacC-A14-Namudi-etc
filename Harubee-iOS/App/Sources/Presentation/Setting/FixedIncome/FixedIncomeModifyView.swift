@@ -31,7 +31,7 @@ struct FixedIncomeModifyView: View {
       }
       .padding(.top, 24)
       
-      NumberKeypadView(text: $fixedIncomeAmount) {
+      NumberKeypadView(expression: $fixedIncomeAmount) {
         print("Done")
       }
         .padding(.top, 26)
