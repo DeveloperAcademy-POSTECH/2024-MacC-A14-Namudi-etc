@@ -11,7 +11,7 @@ import Shared
 
 struct TransactionInputView: View {
   
-  @State private var hightlightLabelAmount: Int = 62000
+  @State private var expression: String = ""
   
   @State private var isUpdated: Bool = false
   @State private var isFocusedExpense: Bool = true
@@ -29,7 +29,7 @@ struct TransactionInputView: View {
       Spacer()
       
       AmountResultText(
-        numberText: .constant("test"),
+        numberText: $expression,
         isUpdated: $isUpdated
       )
       .padding(.horizontal, 37)
@@ -41,7 +41,7 @@ struct TransactionInputView: View {
         print("저장하기 Tap")
       }
       
-      NumberKeypadView(text: .constant("test"))
+      NumberKeypadView(text: $expression)
     }
     .frame(maxWidth: .infinity)
     .onAppear {

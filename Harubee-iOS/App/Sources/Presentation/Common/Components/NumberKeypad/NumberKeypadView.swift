@@ -32,6 +32,9 @@ struct NumberKeypadView: View {
       }
     }
     .frame(maxWidth: .infinity)
+    .onChange(of: text) { oldValue, newValue in
+      print(text)
+    }
   }
 }
 
@@ -42,7 +45,10 @@ private struct NumberKeypadRowView: View {
   
   private let keypads: [KeypadButtonType]
   
-  init(text: Binding<String>, keypads: [KeypadButtonType]) {
+  init(
+    text: Binding<String>,
+    keypads: [KeypadButtonType]
+  ) {
     self._text = text
     self.keypads = keypads
   }
@@ -63,7 +69,10 @@ private struct NumberKeypadColumnView: View {
   
   private let keypad: KeypadButtonType
   
-  init(text: Binding<String>, keypad: KeypadButtonType) {
+  init(
+    text: Binding<String>,
+    keypad: KeypadButtonType
+  ) {
     self._text = text
     self.keypad = keypad
   }
@@ -84,22 +93,179 @@ private struct NumberKeypadColumnView: View {
     .contentShape(Rectangle())
     .scaleEffect(isPressed ? 0.9 : 1.0)
     .onTapGesture {
+      
+      text = processKeypad(keypad, text: text)
+      
       self.isPressed = true
       
       DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
         withAnimation {
           self.isPressed = false
         }
-        text += keypad.title
+        
       }
       UIImpactFeedbackGenerator(style: .soft).impactOccurred()
       
     }
   }
+  
+  // MARK: - func processKeypad
+  private func processKeypad(
+    _ keypadType: KeypadButtonType,
+    text: String
+  ) -> String {
+    var newText = text
+    
+    switch keypadType {
+    case .delete:
+      newText = processDeleteType(
+        keypadType,
+        text: text
+      )
+    case .plus, .minus:
+      newText = processOperatorType(
+        keypadType,
+        text: text
+      )
+    case .done:
+      newText = processDoneType(
+        keypadType,
+        text: text
+      )
+    default:
+      newText = processNumberType(
+        keypadType,
+        text: text
+      )
+    }
+    
+    return newText
+  }
+  
+  // MARK: - func processNumberType
+  private func processNumberType(
+    _ keypadType: KeypadButtonType,
+    text: String
+  ) -> String {
+    
+    // 0이 눌렸을 때
+    if KeypadButtonType.zeros.contains(keypadType) {
+      // 0이 동작하지 않아야 하는 경우
+      
+      // - 텍스트가 비어있을 때
+      if text.isEmpty {
+        return KeypadButtonType.zero.title
+      }
+      
+      let lastText = String(text.last!)
+      
+      // - 길이가 1이고 마지막 텍스트가 0일 때
+      if text.count == 1
+          && lastText == KeypadButtonType.zero.title {
+        return KeypadButtonType.zero.title
+      }
+      
+      // - 마지막 텍스트가 연산자일 때
+      if lastText == KeypadButtonType.plus.title
+          || lastText == KeypadButtonType.minus.title {
+        return text
+      }
+    }
+    
+    if text.count == 1 && String(text.last!) == KeypadButtonType.zero.title {
+      return keypadType.title
+    }
+    
+    
+    return text + keypadType.title
+  }
+  
+  // MARK: - processOperatorType
+  private func processOperatorType(
+    _ keypadType: KeypadButtonType,
+    text: String
+  ) -> String {
+    
+    if text.isEmpty { return text }
+    
+    let lastText = String(text.last!)
+    
+    if lastText == KeypadButtonType.plus.title
+        || lastText == KeypadButtonType.minus.title {
+      return text
+    }
+    
+    return text + keypadType.title
+  }
+  
+  // MARK: - processDeleteType
+  private func processDeleteType(
+    _ keypadType: KeypadButtonType,
+    text: String
+  ) -> String {
+    
+    if text.isEmpty { return text }
+    
+    var newText = text
+    let _ = newText.popLast()
+    return newText
+  }
+  
+  // MARK: - processDoneType
+  private func processDoneType(
+    _ keypadType: KeypadButtonType,
+    text: String
+  ) -> String {
+    var before = 0
+    var current = ""
+    var op = "+"
+    
+    var index = 0
+    
+    while index < text.count {
+      let curCharacter = text[index]
+      
+      if curCharacter.isSingleNumber {
+        current.append(curCharacter)
+      } else if ["+", "-"].contains(curCharacter) {
+        before = processExpression(before: before, current: Int(current)!, op: op)
+        current = ""
+        op = curCharacter
+      }
+      
+      index += 1
+    }
+    
+    if !current.isEmpty {
+      before = processExpression(before: before, current: Int(current)!, op: op)
+    }
+    
+    return before.decimal
+  }
+  
+  // MARK: - processExpression
+  private func processExpression(
+    before: Int,
+    current: Int,
+    op: String
+  ) -> Int {
+    if op == "+" {
+      return before + current
+    } else {
+      return before - current
+    }
+  }
+  
 }
+
 
 // MARK: - KeypadButtonType
 private enum KeypadButtonType: Int {
+  
+  static let zeros: [KeypadButtonType] = [.zero, .doubleZero, .tripleZero]
+  static let numbers: [KeypadButtonType] = [.one, .two, .three, .four, .five, .six, .seven, .eight, .nine]
+  static let operators: [KeypadButtonType] = [.plus, .minus]
+  
   enum Style {
     case text
     case image
@@ -192,6 +358,6 @@ private enum KeypadButtonType: Int {
 
 // MARK: - Preview
 #Preview {
-  @Previewable @State var text = "123"
+  @Previewable @State var text: String = ""
   return NumberKeypadView(text: $text)
 }
