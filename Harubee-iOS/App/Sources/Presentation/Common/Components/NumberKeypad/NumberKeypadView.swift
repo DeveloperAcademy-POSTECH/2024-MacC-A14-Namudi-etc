@@ -139,6 +139,8 @@ private struct NumberKeypadColumnView: View {
       )
     }
     
+    newText = formatDecimalFromExpression(newText)
+    
     return newText
   }
   
@@ -218,6 +220,9 @@ private struct NumberKeypadColumnView: View {
     _ keypadType: KeypadButtonType,
     text: String
   ) -> String {
+    
+    if text.isEmpty { return "0" }
+    
     var before = 0
     var current = ""
     var op = "+"
@@ -248,7 +253,11 @@ private struct NumberKeypadColumnView: View {
     }
     
     if !current.isEmpty {
-      before = processExpression(before: before, current: Int(current)!, op: op)
+      before = processExpression(
+        before: before,
+        current: Int(current)!,
+        op: op
+      )
     }
     
     return before.decimal
@@ -267,6 +276,40 @@ private struct NumberKeypadColumnView: View {
     }
   }
   
+  private func formatDecimalFromExpression(
+    _ expression: String
+  ) -> String {
+    
+    var newExpression = expression
+    
+    // 표현식이 현재 비어있으면 기존값 리턴
+    if newExpression.isEmpty { return newExpression }
+    
+    // 표현식의 마지막 텍스트가 연산자면 기존값 리턴
+    let lastText = newExpression[newExpression.count - 1]
+    if ["+", "-"].contains(lastText) {
+      return newExpression
+    }
+    
+    var currentIndex = newExpression.count - 1
+    
+    // 현재 보고있는 문자가 연산자가 아니거나, 인덱스가 0이상인 동안
+    while (currentIndex > 0) {
+      if ["+", "-"].contains(newExpression[currentIndex]) {
+        break
+      }
+      currentIndex -= 1
+    }
+    
+    if ["+", "-"].contains(newExpression[currentIndex]) {
+      currentIndex += 1
+    }
+    
+    let text = newExpression[(currentIndex)...]
+    let number = text.numberFormat!
+    newExpression[(currentIndex)...] = number.decimal
+    return newExpression
+  }
 }
 
 
