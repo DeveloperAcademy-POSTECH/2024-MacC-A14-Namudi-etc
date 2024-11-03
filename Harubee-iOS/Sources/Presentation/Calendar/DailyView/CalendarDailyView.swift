@@ -10,22 +10,27 @@ import SwiftUI
 import Shared
 
 struct CalendarDailyView: View {
+  @State private var showingSheet: Bool = false
+  private let dayInfo: DayInfo
+  
+  init(dayInfo: DayInfo) {
+    self.dayInfo = dayInfo
+  }
+  
   var body: some View {
     VStack(spacing: 0) {
-      TodayHarubeeView()
-      TransactionButtonView()
+      todayHarubeeView
+      transactionButtonView
         .padding(.top, 16)
-      MemoView()
+      memoView
         .padding(.top, 30)
       ExpectedFixedExpenseView()
         .padding(.top, 30)
     }
-    .padding(.top, 26)
+    .padding(.top, 10)
   }
-}
-
-private struct TodayHarubeeView: View {
-  var body: some View {
+  
+  private var todayHarubeeView: some View = {
     ZStack {
       RoundedRectangle(cornerRadius: 5)
         .stroke(lineWidth: 1)
@@ -44,11 +49,9 @@ private struct TodayHarubeeView: View {
       }
     }
     .padding(.horizontal, 16)
-  }
-}
-
-private struct TransactionButtonView: View {
-  var body: some View {
+  }()
+  
+  private var transactionButtonView: some View = {
     HStack(spacing: 9) {
       // TODO: 공통 컴포넌트로 변경
       ZStack {
@@ -87,13 +90,9 @@ private struct TransactionButtonView: View {
     }
     .frame(height: 84)
     .padding(.horizontal, 16)
-  }
-}
-
-private struct MemoView: View {
-  @State private var showingSheet: Bool = false
-
-  var body: some View {
+  }()
+  
+  private var memoView: some View = {
     VStack(spacing: 8) {
       HStack(spacing: 0) {
         Text("메모")
@@ -103,17 +102,17 @@ private struct MemoView: View {
         Spacer()
         
         Button {
-          showingSheet.toggle()
+          
         } label: {
           Image(systemName: "plus")
             .frame(width: 19, height: 21)
         }
         .foregroundStyle(Color.textBlack)
-        .sheet(isPresented: $showingSheet) {
+        /* .sheet(isPresented: $showingSheet) {
           DailyMemoAddView()
             .presentationDetents([.fraction(0.25)])
             .presentationCornerRadius(20)
-        }
+        } */
       }
       .padding(.leading, 6)
       .padding(.trailing, 2)
@@ -129,48 +128,57 @@ private struct MemoView: View {
       }
     }
     .padding(.horizontal, 16)
-  }
-}
-
-private struct ExpectedFixedExpenseView: View {
-  var body: some View {
-    VStack(spacing: 0) {
-      Rectangle()
-        .frame(height: 1)
-        .foregroundStyle(Color.textBlack10)
-        .padding(.horizontal, 16)
-      
-      Text("예정된 고정 지출")
-        .font(.pretendardSemibold_16)
-        .foregroundStyle(Color.textBlack)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(.horizontal, 22)
-        .padding(.top, 14)
-      
-      VStack(spacing: 14) {
-        FixedExpenseListItem()
+  }()
+  
+  private struct ExpectedFixedExpenseView: View {
+    var body: some View {
+      VStack(spacing: 0) {
+        Rectangle()
+          .frame(height: 1)
+          .foregroundStyle(Color.textBlack10)
+          .padding(.horizontal, 16)
+        
+        Text("예정된 고정 지출")
+          .font(.pretendardSemibold_16)
+          .foregroundStyle(Color.textBlack)
+          .frame(maxWidth: .infinity, alignment: .leading)
+          .padding(.horizontal, 22)
+          .padding(.top, 14)
+        
+        VStack(spacing: 14) {
+          FixedExpenseListItem()
+        }
+        .padding(.top, 22)
       }
-      .padding(.top, 22)
     }
   }
-}
-
-private struct FixedExpenseListItem: View {
-  var body: some View {
-    HStack(spacing: 0) {
-      // TODO: 데이터 받아와서 띄워줘야 함
-      Text("월세")
-        .font(.pretendardMedium_14)
-        .foregroundStyle(Color.textBlack)
-        .frame(maxWidth: .infinity, alignment: .leading)
-      Text("500,000원")
-        .font(.pretendardSemibold_14)
-        .foregroundStyle(Color.redDefault)
+  
+  private struct FixedExpenseListItem: View {
+    var body: some View {
+      HStack(spacing: 0) {
+        // TODO: 데이터 받아와서 띄워줘야 함
+        Text("월세")
+          .font(.pretendardMedium_14)
+          .foregroundStyle(Color.textBlack)
+          .frame(maxWidth: .infinity, alignment: .leading)
+        Text("500,000원")
+          .font(.pretendardSemibold_14)
+          .foregroundStyle(Color.redDefault)
+      }
+      .padding(.horizontal, 22)
     }
-    .padding(.horizontal, 22)
   }
 }
 
 #Preview {
-  CalendarDailyView()
+  CalendarDailyView(
+    dayInfo: DayInfo(
+      date: Date(),
+      harubee: 0,
+      isAdjusted: false,
+      expense: nil,
+      memos: [],
+      todayFixedExpense: []
+    )
+  )
 }

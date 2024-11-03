@@ -39,11 +39,14 @@ struct CalendarGridView: View {
       WeekdayHeaderView()
         .padding(.bottom, 8)
       
-      VStack(spacing: 8) {
+      VStack(spacing: 0) {
         ForEach(Array(weeks.enumerated()), id: \.offset) { index, week in
-          VStack(spacing: 0) {
+          VStack(spacing: 8) {
             LazyVGrid(
-              columns: Array(repeating: .init(.flexible(), spacing: 0), count: 7),
+              columns: Array(
+                repeating: .init(.flexible(), spacing: 0),
+                count: 7
+              ),
               spacing: 0
             ) {
               ForEach(Array(week.enumerated()), id: \.offset) { _, date in
@@ -103,5 +106,12 @@ private struct WeekdayHeaderView: View {
         .padding(.horizontal, -14)
         .frame(height: 1/UIWindow().screen.scale)
     }
+  }
+}
+
+#Preview {
+  NavigationStack {
+    CalendarView(viewModel: DIContainer.shared.makeCalendarViewModel()
+    )
   }
 }
