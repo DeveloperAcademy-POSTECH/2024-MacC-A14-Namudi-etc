@@ -38,7 +38,7 @@ struct HarubeeAdjustView: View {
         defaultHarubee: viewModel.state.salaryBudget.defaultHarubee
       )
       .padding(.horizontal, 22)
-      .padding(.top, 36)
+      .padding(.top, 26)
       
       Spacer()
       

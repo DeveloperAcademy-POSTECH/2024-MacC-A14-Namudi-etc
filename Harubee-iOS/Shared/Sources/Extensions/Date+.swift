@@ -10,11 +10,25 @@ import Foundation
 public extension Date {
   private var configuredCalendar: Calendar {
     var calendar = Calendar.current
-    // 달력 표기 방법 설정
-    calendar.locale = .current
-    // 타임존 설정
+    calendar.locale = Locale(identifier: "ko_KR")
     calendar.timeZone = .current
     return calendar
+  }()
+}
+
+// MARK: - Date Formatting
+public extension Date {
+  /// 날짜의 연도를 "2024년" 형태로 반환
+  var yearString: String {
+    formatted(.dateTime.year().locale(Locale(identifier: "ko_KR")))
+      .replacingOccurrences(of: "년", with: "년")
+  }
+  
+  /// 날짜를 "M.d" 형태로 반환 (예: "10.15")
+  var monthDayString: String {
+    let formatter = DateFormatter()
+    formatter.dateFormat = "M.d"
+    return formatter.string(from: self)
   }
   
   /// 년도 월 일 (요일) 표기 - [Ex. 2024년 10월 31일 (목)]
@@ -36,8 +50,46 @@ public extension Date {
   /// 년, 월, 일 값만 사용하기 위한 Date 형식 - [Ex. 2024-10-31 15:00:00 +0000]
   var formattedDate: Self {
     let calendar = configuredCalendar
+  /// 캘린더 셀에 표시되는 날짜 텍스트
+  /// 1일인 경우 "M/d" 형태로, 나머지는 "d" 형태로 반환
+  var calendarDayText: String {
+    let calendar = Calendar.korean
+    let day = calendar.component(.day, from: self)
+    let month = calendar.component(.month, from: self)
+    return day == 1 ? "\(month)/\(day)" : "\(day)"
+  }
+}
+
+// MARK: - Date Operations
+public extension Date {
+  /// 시간 정보를 제외한 날짜만 포함하는 Date 반환
+  var formattedDate: Date {
+    let calendar = Calendar.korean
     let dateComponent = calendar.dateComponents([.year, .month, .day], from: self)
-    return calendar.date(from: dateComponent)!
+    return calendar.date(from: dateComponent) ?? self
+  }
+  
+  /// 오늘 날짜인지 확인
+  var isToday: Bool {
+    Calendar.korean.isDateInToday(self)
+  }
+  
+  /// 두 날짜가 같은 날인지 확인
+  func isSameDay(as date: Date) -> Bool {
+    Calendar.korean.isDate(self, inSameDayAs: date)
+  }
+  
+  /// 연, 월, 일을 지정하여 Date 생성
+  static func create(year: Int, month: Int, day: Int) -> Date {
+    var components = DateComponents()
+    components.year = year
+    components.month = month
+    components.day = day
+    components.hour = 0
+    components.minute = 0
+    components.second = 0
+    
+    return Calendar.korean.date(from: components) ?? Date().formattedDate
   }
   
   var day: Int {

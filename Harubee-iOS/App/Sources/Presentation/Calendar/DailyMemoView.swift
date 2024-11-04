@@ -1,5 +1,5 @@
 //
-//  DailyMemoMode.swift
+//  DailyMemoView.swift
 //  Harubee-iOS
 //
 //  Created by namdghyun on 11/4/24.
@@ -9,26 +9,27 @@
 import SwiftUI
 import Shared
 
-// MARK: - Mode Enum
-private enum DailyMemoMode {
-  case add
-  case edit(String)
-  
-  var title: String {
-    switch self {
-    case .add: return "메모 추가"
-    case .edit: return "메모 수정"
-    }
-  }
-}
-
 // MARK: - Daily Memo View
 struct DailyMemoView: View {
-  @Environment(\.dismiss) private var dismiss
-  @State private var memo: String = ""
-  @State private var memoStringCount: Int = 0
+  // MARK: - Mode
+  private enum Mode {
+    case add
+    case edit(String)
+    
+    var title: String {
+      switch self {
+      case .add: return "메모 추가"
+      case .edit: return "메모 수정"
+      }
+    }
+  }
   
-  private let mode: DailyMemoMode
+  // MARK: - Properties
+  @Environment(\.dismiss) private var dismiss
+  @State private var memo: String
+  @State private var memoStringCount: Int
+  
+  private let mode: Mode
   private let onComplete: (String) -> Void
   
   // MARK: - Initialization
@@ -36,29 +37,26 @@ struct DailyMemoView: View {
     existingMemo: String? = nil,
     onComplete: @escaping (String) -> Void
   ) {
-    self.mode = existingMemo.map(DailyMemoMode.edit) ?? .add
+    self.mode = existingMemo.map(Mode.edit) ?? .add
     self.onComplete = onComplete
     _memo = State(initialValue: existingMemo ?? "")
     _memoStringCount = State(initialValue: existingMemo?.count ?? 0)
   }
   
-  // MARK: - Body
+  // MARK: - View
   var body: some View {
     VStack(spacing: 0) {
       headerView
-      
       memoInputSection
         .padding(.top, 38)
-      
+        .padding(.horizontal, 16)
       Spacer()
-      
       saveButton
     }
     .frame(maxHeight: .infinity, alignment: .top)
     .padding(.top, 20)
   }
   
-  // MARK: - Header View
   private var headerView: some View {
     ZStack {
       HStack(spacing: 0) {
@@ -79,14 +77,12 @@ struct DailyMemoView: View {
     }
   }
   
-  // MARK: - Memo Input Section
   private var memoInputSection: some View {
     ZStack(alignment: .topTrailing) {
       Text("(\(memoStringCount)/20)")
         .font(.pretendardMedium_12)
         .foregroundStyle(Color.textBlack)
         .frame(maxWidth: .infinity, alignment: .trailing)
-        .padding(.horizontal, 16)
       
       FloatingTitleTextField(
         title: "메모",
@@ -99,12 +95,8 @@ struct DailyMemoView: View {
     }
   }
   
-  // MARK: - Save Button
   private var saveButton: some View {
-    Button {
-      onComplete(memo)
-      dismiss()
-    } label: {
+    Button(action: handleSave) {
       Text("저장하기")
         .font(.pretendardMedium_18)
         .padding(.vertical, 20)
@@ -116,9 +108,15 @@ struct DailyMemoView: View {
     }
     .disabled(memo.isEmpty)
   }
+  
+  // MARK: - Actions
+  private func handleSave() {
+    onComplete(memo)
+    dismiss()
+  }
 }
 
-// MARK: - Preview Provider
+// MARK: - Previews
 #Preview {
   Group {
     DailyMemoView { memo in
