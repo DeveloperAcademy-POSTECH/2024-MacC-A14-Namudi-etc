@@ -34,37 +34,25 @@ let project = Project(
           ],
         ]
       ),
-      sources: ["Harubee-iOS/Sources/**"],
-      resources: ["Harubee-iOS/Resources/**"],
+      sources: ["Harubee-iOS/App/Sources/**"],
+      resources: ["Harubee-iOS/App/Resources/**"],
       dependencies: [
         .target(name: "Domain"),
-        .target(name: "DesignSystem"),
         .target(name: "Data"),
-        .target(name: "Core"),
+        .target(name: "Shared"),
         .external(name: "Lottie")
       ]
     ),
     
       .target(
-        name: "Core",
+        name: "Shared",
         destinations: [.iPhone],
         product: .framework,
-        bundleId: "etc.namudi.harubee-core",
+        bundleId: "etc.namudi.harubee-shared",
         deploymentTargets: .iOS("17.0"),
         infoPlist: .default,
-        sources: ["Core/Sources/**"],
-        dependencies: []
-      ),
-    
-      .target(
-        name: "DesignSystem",
-        destinations: [.iPhone],
-        product: .framework,
-        bundleId: "etc.namudi.harubee-designsystem",
-        deploymentTargets: .iOS("17.0"),
-        infoPlist: .default,
-        sources: ["DesignSystem/Sources/**"],
-        resources: ["DesignSystem/Resources/**"],
+        sources: ["Harubee-iOS/Shared/Sources/**"],
+        resources: ["Harubee-iOS/Shared/Resources/**"],
         dependencies: []
       ),
     
@@ -75,9 +63,9 @@ let project = Project(
         bundleId: "etc.namudi.harubee-domain",
         deploymentTargets: .iOS("17.0"),
         infoPlist: .default,
-        sources: ["Domain/Sources/**"],
+        sources: ["Harubee-iOS/Domain/Sources/**"],
         dependencies: [
-          .target(name: "Core")
+          .target(name: "Shared")
         ]
       ),
     
@@ -88,10 +76,10 @@ let project = Project(
         bundleId: "etc.namudi.harubee-data",
         deploymentTargets: .iOS("17.0"),
         infoPlist: .default,
-        sources: ["Data/Sources/**"],
+        sources: ["Harubee-iOS/Data/Sources/**"],
         dependencies: [
           .target(name: "Domain"),
-          .target(name: "Core")
+          .target(name: "Shared")
         ]
       )
   ]
