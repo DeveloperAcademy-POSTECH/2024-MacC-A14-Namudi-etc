@@ -40,7 +40,7 @@ struct AmountResultText: View {
       }
       
       Button {
-        
+        self.isUpdated = false
       } label: {
         Image(systemName: "arrow.trianglehead.counterclockwise")
           .font(.system(size: 32, weight: .bold))

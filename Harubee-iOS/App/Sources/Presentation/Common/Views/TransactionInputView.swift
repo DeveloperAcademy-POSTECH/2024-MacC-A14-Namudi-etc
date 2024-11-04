@@ -44,13 +44,10 @@ struct TransactionInputView: View {
       }
       
       NumberKeypadView(expression: $expression) {
-        print("Done")
+        self.isUpdated = true
       }
     }
     .frame(maxWidth: .infinity)
-    .onAppear {
-      print(isFocusedExpense)
-    }
   }
 }
 
