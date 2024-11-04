@@ -41,7 +41,8 @@ final class DIContainer {
   
   func makeCalendarViewModel() -> CalendarViewModel {
     CalendarViewModel(
-      salaryBudgetUseCase: useCaseProvider.salaryBudgetUseCase
+      salaryBudgetUseCase: useCaseProvider.salaryBudgetUseCase,
+      dailyBudgetUseCase: useCaseProvider.dailyBudgetUseCase
     )
   }
   

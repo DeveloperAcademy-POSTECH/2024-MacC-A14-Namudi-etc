@@ -14,6 +14,7 @@ struct CalendarDayInfo {
   let date: Date
   let harubee: Int
   let isAdjusted: Bool
+  let income: Int?
   let expense: Int?
   let memos: [String]
   let todayFixedExpense: [TransactionItem]
@@ -74,6 +75,9 @@ final class CalendarViewModel {
     case moveNextPeriod
     case movePreviousPeriod
     case onDayCellSelected(Date)
+    case saveTransaction(Int?, Int?)
+    case saveMemo(CalendarDayInfo, String)
+    case deleteMemo(CalendarDayInfo, String)
   }
   
   // MARK: - Paging Direction
@@ -99,11 +103,13 @@ final class CalendarViewModel {
   // MARK: - Properties
   private(set) var state: State
   private let salaryBudgetUseCase: SalaryBudgetUseCase
+  private let dailyBudgetUseCase: DailyBudgetUseCase
   private var allSalaryBudgets: [SalaryBudget] = []
   
   // MARK: - Initialization
-  init(salaryBudgetUseCase: SalaryBudgetUseCase) {
+  init(salaryBudgetUseCase: SalaryBudgetUseCase, dailyBudgetUseCase: DailyBudgetUseCase) {
     self.salaryBudgetUseCase = salaryBudgetUseCase
+    self.dailyBudgetUseCase = dailyBudgetUseCase
     self.state = .initial
   }
   
@@ -124,7 +130,19 @@ final class CalendarViewModel {
       
     case .onDayCellSelected(let date):
       updateSelectedDate(date)
-      print(#function, "onDayCellSelected(\(date.koreanFullDateString))")
+      print(#function, "onDayCellSelected(\(date))")
+      
+    case .saveTransaction(let income, let expense):
+      saveTransaction(income: income, expense: expense)
+      print(#function, "saveTransaction(\(income!), \(expense!))")
+      
+    case .saveMemo(let dayInfo, let memo):
+      saveMemo(dayInfo, memo)
+      print(#function, "saveMemo(\(dayInfo), \(memo))")
+      
+    case .deleteMemo(let dayInfo, let memo):
+      deleteMemo(dayInfo, memo)
+      print(#function, "deleteMemo(\(dayInfo), \(memo))")
     }
   }
   
@@ -163,17 +181,21 @@ final class CalendarViewModel {
     let period = CalendarPeriod(start: budget.startDate, end: budget.endDate)
     
     let dayInfos = budget.dailyBudgets.map { dailyBudget in
-      CalendarDayInfo(
+      let todayFixedExpenses = budget.fixedExpenses.filter { expense in
+        Calendar.current.isDate(expense.date, equalTo: dailyBudget.date, toGranularity: .day)
+      }
+      
+      return CalendarDayInfo(
         date: dailyBudget.date,
         harubee: dailyBudget.harubee ?? Int(budget.defaultHarubee),
         isAdjusted: dailyBudget.harubee != nil,
+        income: dailyBudget.income,
         expense: dailyBudget.expense,
         memos: dailyBudget.memo,
-        todayFixedExpense: []
+        todayFixedExpense: todayFixedExpenses
       )
     }
     
-    // Update navigation state based on current index
     let canMovePrevious = state.currentBudgetIndex > 0
     let canMoveNext = state.currentBudgetIndex < allSalaryBudgets.count - 1
     
@@ -200,7 +222,6 @@ final class CalendarViewModel {
     let budget = allSalaryBudgets[newIndex]
     updateStateWithBudget(budget)
     
-    // Select today if it's in the new period
     if budget.startDate <= Date() && Date() <= budget.endDate {
       updateSelectedDate(Date().formattedDate)
     }
@@ -208,6 +229,108 @@ final class CalendarViewModel {
   
   private func updateSelectedDate(_ date: Date?) {
     state.selectedDate = date
+  }
+  
+  private func saveTransaction(income: Int?, expense: Int?) {
+    guard let selectedDate = state.selectedDate,
+          let dayInfo = state.dayInfos.first(where: { $0.date.isSameDay(as: selectedDate) }) else {
+      state.error = DomainError.dataNotFound
+      return
+    }
+    
+    do {
+      // 1. 현재 SalaryBudget 찾기
+      let currentBudget = allSalaryBudgets[state.currentBudgetIndex]
+      
+      // 2. 실제 지출 및 수입 업데이트
+      let (updatedDailyBudget, updatedSalaryBudget) = try dailyBudgetUseCase.recordTransaction(
+        expense: expense,
+        income: income,
+        date: selectedDate,
+        salaryBudget: currentBudget
+      )
+      
+      // 3. 전체 SalaryBudget 업데이트
+      allSalaryBudgets[state.currentBudgetIndex] = updatedSalaryBudget
+      
+      // 4. 상태 업데이트
+      if let index = state.dayInfos.firstIndex(where: { $0.date.isSameDay(as: selectedDate) }) {
+        state.dayInfos[index] = CalendarDayInfo(
+          date: updatedDailyBudget.date,
+          harubee: updatedDailyBudget.harubee ?? Int(updatedSalaryBudget.defaultHarubee),
+          isAdjusted: updatedDailyBudget.harubee != nil,
+          income: updatedDailyBudget.income,
+          expense: updatedDailyBudget.expense,
+          memos: updatedDailyBudget.memo,
+          todayFixedExpense: dayInfo.todayFixedExpense
+        )
+      }
+    } catch {
+      state.error = error
+    }
+  }
+  
+  private func saveMemo(_ dayInfo: CalendarDayInfo, _ memo: String) {
+    do {
+      // 1. 현재 날짜의 DailyBudget 가져오기
+      let budget = try dailyBudgetUseCase.getDailyBudget(date: dayInfo.date)
+      
+      // 2. 새로운 메모 리스트 생성
+      var memos = budget.memo
+      memos.append(memo)
+      
+      // 3. 메모 리스트 업데이트
+      let updatedBudget = try dailyBudgetUseCase.updateMemoList(
+        memoList: memos,
+        dailyBudget: budget
+      )
+      
+      // 4. 상태 업데이트
+      if let index = state.dayInfos.firstIndex(where: { $0.date.isSameDay(as: dayInfo.date) }) {
+        let updatedDayInfo = CalendarDayInfo(
+          date: dayInfo.date,
+          harubee: dayInfo.harubee,
+          isAdjusted: dayInfo.isAdjusted,
+          income: dayInfo.income,
+          expense: dayInfo.expense,
+          memos: updatedBudget.memo,
+          todayFixedExpense: dayInfo.todayFixedExpense
+        )
+        state.dayInfos[index] = updatedDayInfo
+      }
+      
+    } catch {
+      state.error = error
+    }
+  }
+  
+  private func deleteMemo(_ dayInfo: CalendarDayInfo, _ memo: String) {
+    do {
+      let budget = try dailyBudgetUseCase.getDailyBudget(date: dayInfo.date)
+      
+      var memos = budget.memo
+      memos.removeAll(where: { $0 == memo })
+      
+      let updatedBudget = try dailyBudgetUseCase.updateMemoList(
+        memoList: memos,
+        dailyBudget: budget
+      )
+      
+      if let index = state.dayInfos.firstIndex(where: { $0.date.isSameDay(as: dayInfo.date) }) {
+        let updatedDayInfo = CalendarDayInfo(
+          date: dayInfo.date,
+          harubee: dayInfo.harubee,
+          isAdjusted: dayInfo.isAdjusted,
+          income: dayInfo.income,
+          expense: dayInfo.expense,
+          memos: updatedBudget.memo,
+          todayFixedExpense: dayInfo.todayFixedExpense
+        )
+        state.dayInfos[index] = updatedDayInfo
+      }
+    } catch {
+      state.error = error
+    }
   }
   
   // MARK: - Private Methods - Helpers
