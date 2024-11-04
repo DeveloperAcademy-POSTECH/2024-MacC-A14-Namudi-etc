@@ -59,7 +59,7 @@ public final class SettingsUseCaseImpl: SettingsUseCase {
     
     do {
       // 1. 오늘을 포함하고 있는 SalaryBudget이 있는지 확인하기
-      let currentSalaryBudget = try salaryBudgetUseCase.getSalaryBudget(date: nil)
+      let currentSalaryBudget = try salaryBudgetUseCase.getSalaryBudget(startDate: nil)
       
       // 2-1. 있다면 고정 수입 업데이트하기
       try salaryBudgetRepository.updateFixedIncome(
@@ -77,7 +77,7 @@ public final class SettingsUseCaseImpl: SettingsUseCase {
   public func getFixedIncome(
   ) throws -> Int {
     // 1. 오늘을 포함하는 SalayBudget 가져오기
-    let currentSalaryBudget = try salaryBudgetUseCase.getSalaryBudget(date: nil)
+    let currentSalaryBudget = try salaryBudgetUseCase.getSalaryBudget(startDate: nil)
     
     return currentSalaryBudget.fixedIncome
   }
@@ -87,7 +87,7 @@ public final class SettingsUseCaseImpl: SettingsUseCase {
     let now = Date().formattedDate
     
     // 1. 오늘을 포함하는 SalayBudget 가져오기
-    let currentSalaryBudget = try salaryBudgetUseCase.getSalaryBudget(date: now)
+    let currentSalaryBudget = try salaryBudgetUseCase.getSalaryBudget(startDate: now)
     
     // 2. 고정 지출 금액이 0원 이상인지 확인하기
     guard expense.price > 0 else {
@@ -139,7 +139,7 @@ public final class SettingsUseCaseImpl: SettingsUseCase {
     let now = Date().formattedDate
     
     // 1. 오늘을 포함하는 SalayBudget 가져오기
-    let currentSalaryBudget = try salaryBudgetUseCase.getSalaryBudget(date: now)
+    let currentSalaryBudget = try salaryBudgetUseCase.getSalaryBudget(startDate: now)
     
     // 2. 수정하는 고정 지출 금액이 0원 이상인지 확인하기
     guard expense.price >= 0 else {
@@ -209,7 +209,7 @@ public final class SettingsUseCaseImpl: SettingsUseCase {
   public func getFixedExpenses(
   ) throws -> [TransactionItem] {
     // 1. 오늘을 포함하는 SalayBudget 가져오기
-    let currentSalaryBudget = try salaryBudgetUseCase.getSalaryBudget(date: nil)
+    let currentSalaryBudget = try salaryBudgetUseCase.getSalaryBudget(startDate: nil)
     
     // 2. 고정 지출 목록 반환하기
     return currentSalaryBudget.fixedExpenses

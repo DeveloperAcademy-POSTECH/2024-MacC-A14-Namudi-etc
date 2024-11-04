@@ -39,6 +39,20 @@ public final class SalaryBudgetRepositoryImpl: SalaryBudgetRepository {
     }
   }
   
+  public func readByTargetDateContaining(_ targetDate: Date) throws -> SalaryBudget? {
+    print("Impl:", #function)
+    
+    let predicate = #Predicate<SalaryBudgetDTO> { $0.startDate <= targetDate && $0.endDate >= targetDate }
+    let descriptor = FetchDescriptor(predicate: predicate)
+    
+    do {
+      let data = try modelContext.fetch(descriptor).first
+      return data?.toEntity()
+    } catch {
+      throw SwiftDataError.fetchError
+    }
+  }
+  
   public func readByStartDate(_ startDate: Date) throws -> SalaryBudget? {
     print("Impl:", #function)
     
