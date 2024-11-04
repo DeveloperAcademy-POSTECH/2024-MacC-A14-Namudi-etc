@@ -82,8 +82,7 @@ private struct CurrentHarubeeView: View {
         .padding(.vertical, 16)
         .background(
           RoundedRectangle(cornerRadius: 10)
-          // TODO: 추가된 색상으로 변경 필요
-            .fill(Color.black)
+            .fill(Color.mainBrighter10)
         )
         .padding(.top, 36)
     }
