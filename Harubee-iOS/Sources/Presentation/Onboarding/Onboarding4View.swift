@@ -16,16 +16,9 @@ struct Onboarding4View: View {
     ZStack {
       VStack(spacing: 0) {
         OnboardingHeaderView()
-          .padding(.top, 83)
-          .padding(.bottom, 26)
-          .background(
-            Rectangle()
-              .fill(Color.main)
-          )
         
         OnboardingBodyView(expenseAmount: $expenseAmount)
       }
-      .ignoresSafeArea()
       ButtonKeyboardView(expenseAmount: $expenseAmount)
     }
   }
@@ -50,6 +43,10 @@ private struct OnboardingHeaderView: View {
       .foregroundStyle(Color.whiteDefault)
     }
     .padding(.horizontal, 20)
+    .padding(.bottom, 26)
+    .background(
+      Rectangle().fill(Color.main).ignoresSafeArea()
+    )
   }
 }
 
@@ -100,7 +97,7 @@ private struct ButtonKeyboardView: View {
   
   var body: some View {
     // TODO: NumberKeypadView와 MainColorButton의 padding이 .. 불확실함 ㅠ
-    VStack(spacing: 30) {
+    VStack(spacing: 20) {
       MainColorButton(title: "다음으로") {
         print("다음으로")
       }

@@ -13,12 +13,7 @@ struct Onboarding5View: View {
   var body: some View {
     VStack(spacing: 0) {
       OnboardingHeaderView()
-        .padding(.top, 83)
-        .padding(.bottom, 26)
-        .background(
-          Rectangle()
-            .fill(Color.main)
-        )
+      
       OnboardingBodyView()
 
       MainColorButton(title: "다음으로") {
@@ -28,9 +23,8 @@ struct Onboarding5View: View {
         RoundedRectangle(cornerRadius: 10)
       )
       .padding(.horizontal, 16)
-      .padding(.bottom, 43)
+      .padding(.bottom, 9)
     }
-    .ignoresSafeArea()
   }
 }
 
@@ -60,6 +54,10 @@ private struct OnboardingHeaderView: View {
       .foregroundStyle(Color.whiteDefault)
     }
     .padding(.horizontal, 20)
+    .padding(.bottom, 26)
+    .background(
+      Rectangle().fill(Color.main).ignoresSafeArea()
+    )
   }
 }
 
