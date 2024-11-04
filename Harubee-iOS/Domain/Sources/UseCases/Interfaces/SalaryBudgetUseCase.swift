@@ -71,7 +71,7 @@ public protocol SalaryBudgetUseCase {
   /// - Returns: 계산된 기본 하루비
   func calculateDefaultHarubee(
     salaryBudget: SalaryBudget
-  ) throws -> Double
+  ) -> Double
   
   /// 평균 하루비를 계산합니다.
   /// - Parameters:
@@ -80,5 +80,5 @@ public protocol SalaryBudgetUseCase {
   /// - Returns: 계산된 평균 하루비
   func calculateAverageHarubee(
     endDate: Date, balance: Int
-  ) throws -> Double
+  ) -> Double
 }

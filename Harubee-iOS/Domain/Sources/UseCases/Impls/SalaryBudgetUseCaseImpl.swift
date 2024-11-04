@@ -122,7 +122,7 @@ public final class SalaryBudgetUseCaseImpl: SalaryBudgetUseCase {
     )
     
     // 2. 새로 업데이트된 SalaryBudget의 잔액으로 기본 하루비 다시 계산하기
-    let newDefaultHarubee = try self.calculateDefaultHarubee(
+    let newDefaultHarubee = self.calculateDefaultHarubee(
       salaryBudget: newSalaryBudget
     )
     
@@ -136,7 +136,7 @@ public final class SalaryBudgetUseCaseImpl: SalaryBudgetUseCase {
   public func updateDefaultHarubee(
     salaryBudget: SalaryBudget
   ) throws -> SalaryBudget {
-    let newDefaultHarubee = try self.calculateDefaultHarubee(
+    let newDefaultHarubee = self.calculateDefaultHarubee(
       salaryBudget: salaryBudget
     )
     
@@ -146,7 +146,7 @@ public final class SalaryBudgetUseCaseImpl: SalaryBudgetUseCase {
     )
   }
   
-  public func calculateDefaultHarubee(salaryBudget: SalaryBudget) throws -> Double {
+  public func calculateDefaultHarubee(salaryBudget: SalaryBudget) -> Double {
     
     let currentDate = calendar.date(
       from:calendar.dateComponents(
@@ -167,7 +167,7 @@ public final class SalaryBudgetUseCaseImpl: SalaryBudgetUseCase {
     return nilCount == 0.0 ? newBalance : newBalance / nilCount
   }
   
-  public func calculateAverageHarubee(endDate: Date, balance: Int) throws -> Double {
+  public func calculateAverageHarubee(endDate: Date, balance: Int) -> Double {
     let currentDate = calendar.date(
       from:calendar.dateComponents(
         [.year, .month, .day],
