@@ -11,7 +11,6 @@ import SwiftUI
 
 // MARK: - Data Models
 struct CalendarData {
-  // 캘린더 셀(그리드)와 오늘 상세 정보에 제공되는 캘린더용 데이터 모델
   struct DayInfo {
     let date: Date
     let harubee: Int
@@ -70,6 +69,24 @@ struct CalendarData {
     let start: Date
     let end: Date
   }
+  
+  enum PeriodDirection {
+    case next, previous
+    
+    var offset: Int {
+      switch self {
+      case .next: return 1
+      case .previous: return -1
+      }
+    }
+    
+    var imageName: String {
+      switch self {
+      case .next: return "chevron.right"
+      case .previous: return "chevron.left"
+      }
+    }
+  }
 }
 
 // MARK: - ViewModel
@@ -100,7 +117,7 @@ final class CalendarViewModel {
   // MARK: - Action
   enum Action {
     case initialData
-    case movePeriod(PeriodDirection)
+    case movePeriod(CalendarData.PeriodDirection)
     case dayCellSelected(Date)
     case saveTransaction(Int?, Int?)
     case saveMemo(CalendarData.DayInfo, String)
@@ -186,7 +203,7 @@ final class CalendarViewModel {
     state.error = nil
   }
   
-  private func movePeriod(_ direction: PeriodDirection) {
+  private func movePeriod(_ direction: CalendarData.PeriodDirection) {
     let canMove = direction == .next ? state.canMoveNextPeriod : state.canMovePreviousPeriod
     guard canMove else { return }
     
@@ -264,26 +281,7 @@ final class CalendarViewModel {
   }
 }
 
-// MARK: - Supporting Types
-enum PeriodDirection {
-  case next, previous
-  
-  var offset: Int {
-    switch self {
-    case .next: return 1
-    case .previous: return -1
-    }
-  }
-  
-  var imageName: String {
-    switch self {
-    case .next: return "chevron.right"
-    case .previous: return "chevron.left"
-    }
-  }
-}
-
-// MARK: - Private Extensions
+// MARK: - Domain Private Extensions
 private extension SalaryBudget {
   func containsDate(_ date: Date) -> Bool {
     startDate <= date && date <= endDate

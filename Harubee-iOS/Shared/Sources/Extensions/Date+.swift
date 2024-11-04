@@ -47,9 +47,6 @@ public extension Date {
       return dayFormatter.string(from: self)
   }
   
-  /// 년, 월, 일 값만 사용하기 위한 Date 형식 - [Ex. 2024-10-31 15:00:00 +0000]
-  var formattedDate: Self {
-    let calendar = configuredCalendar
   /// 캘린더 셀에 표시되는 날짜 텍스트
   /// 1일인 경우 "M/d" 형태로, 나머지는 "d" 형태로 반환
   var calendarDayText: String {
@@ -62,7 +59,7 @@ public extension Date {
 
 // MARK: - Date Operations
 public extension Date {
-  /// 시간 정보를 제외한 날짜만 포함하는 Date 반환
+  /// 년, 월, 일 값만 사용하기 위한 Date 형식 - [Ex. 2024-10-31 15:00:00 +0000]
   var formattedDate: Date {
     let calendar = Calendar.korean
     let dateComponent = calendar.dateComponents([.year, .month, .day], from: self)

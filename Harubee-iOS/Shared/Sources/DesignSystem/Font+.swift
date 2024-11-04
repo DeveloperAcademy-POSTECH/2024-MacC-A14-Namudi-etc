@@ -35,6 +35,7 @@ public extension Font {
   
   
   // MARK: - Pretendard Medium
+  static let pretendardMedium_11 = Font.custom(PretendardWeight.medium.rawValue, size: 11)
   static let pretendardMedium_12 = Font.custom(PretendardWeight.medium.rawValue, size: 12)
   static let pretendardMedium_14 = Font.custom(PretendardWeight.medium.rawValue, size: 14)
   static let pretendardMedium_16 = Font.custom(PretendardWeight.medium.rawValue, size: 16)
