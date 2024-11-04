@@ -19,6 +19,11 @@ public protocol SalaryBudgetRepository {
   /// - Returns: DB에 저장된 모든 SalaryBudget
   func readAll() throws -> [SalaryBudget]
   
+  /// DB에서 특정 날짜가 포함되어있는 SalaryBudget을 가져옵니다.
+  /// - Parameter targetDate: 타겟 날짜
+  /// - Returns: Optional(타겟 날짜를 포함하는 SalaryBudget)
+  func readByTargetDateContaining(_ targetDate: Date) throws -> SalaryBudget?
+  
   /// DB에서 특정 날짜에 해당하는 SalaryBudget을 가져옵니다.
   /// - Parameter startDate: 시작 날짜
   /// - Returns: Optional(시작 날짜에 해당하는 SalaryBudget)

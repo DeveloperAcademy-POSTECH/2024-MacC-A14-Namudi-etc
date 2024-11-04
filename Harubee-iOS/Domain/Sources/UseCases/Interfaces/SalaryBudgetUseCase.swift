@@ -40,8 +40,17 @@ public protocol SalaryBudgetUseCase {
   /// - Returns: 해당 날짜가 포함된 SalaryBudget 객체
   /// - Throws:
   ///   - `DomainError.dataNotFound`: SalaryBudget을 찾을 수 없는 경우
-  func getSalaryBudget(
+  func getCurrentSalaryBudget(
     date: Date?
+  ) throws -> SalaryBudget
+  
+  /// 시작날짜로 시작하는 SalaryBudget을 조회합니다.
+  /// - Parameter startDate: 조회할 시작 날짜(nil인 경우 현재 날짜)
+  /// - Returns: 해당 날짜로 시작되는 SalaryBudget 객체
+  /// - Throws:
+  ///   - `DomainError.dataNotFound`: SalaryBudget을 찾을 수 없는 경우
+  func getSalaryBudget(
+    startDate: Date?
   ) throws -> SalaryBudget
   
   /// SalaryBudget의 잔액을 업데이트합니다.

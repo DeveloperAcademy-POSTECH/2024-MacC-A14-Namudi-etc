@@ -97,11 +97,22 @@ public final class SalaryBudgetUseCaseImpl: SalaryBudgetUseCase {
     return try salaryBudgetRepository.readAll()
   }
   
-  public func getSalaryBudget(
+  public func getCurrentSalaryBudget(
     date: Date?
   ) throws -> SalaryBudget {
-    // 1. date 포멧 변경
     let targetDate = (date ?? Date()).formattedDate
+    
+    guard let salaryBudget = try salaryBudgetRepository.readByTargetDateContaining(targetDate) else {
+      throw DomainError.dataNotFound
+    }
+    return salaryBudget
+  }
+  
+  public func getSalaryBudget(
+    startDate: Date?
+  ) throws -> SalaryBudget {
+    // 1. date 포멧 변경
+    let targetDate = (startDate ?? Date()).formattedDate
     
     // 2. 특정 날짜에 해당하는 SalaryBudget 가져오기
     guard let salaryBudget = try salaryBudgetRepository.readByStartDate(targetDate) else {
