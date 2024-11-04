@@ -40,8 +40,7 @@ private struct TitleView: View {
   var body: some View {
     VStack(alignment: .leading, spacing: 6) {
       HStack(spacing: 4) {
-        // TODO: 앱 아이콘으로 변경 필요
-        Image(systemName: "exclamationmark.triangle.fill")
+        Image.harubeeWhite
           .resizable()
           .frame(width: 26, height: 26)
         Text("내가 하루에 얼마를")
@@ -74,8 +73,7 @@ private struct HarubeeExplainView: View {
               .foregroundStyle(Color.whiteDefault)
               .background(
                 Rectangle()
-                // TODO: 추가되는 색상으로 수정 필요
-                  .fill(Color.blue)
+                  .fill(Color.mainBrighter10)
                   .frame(height: 7)
                   .offset(y: 8)
               )

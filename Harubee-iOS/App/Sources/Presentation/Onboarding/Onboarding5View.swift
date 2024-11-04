@@ -42,8 +42,7 @@ private struct OnboardingHeaderView: View {
           HStack(alignment: .bottom, spacing: 0) {
             Text("100,000원")
               .padding(.leading, 6)
-            // TODO: 28로 바꿔서 적용
-              .font(.pretendardSemibold_30)
+              .font(.pretendardSemibold_28)
             Text("입니다")
               .padding(.bottom, 1)
           }
