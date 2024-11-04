@@ -20,7 +20,7 @@ public extension Font {
     case semiBold = "Pretendard-SemiBold"
     case thin = "Pretendard-Thin"
   }
-  
+
   // MARK: - Pretendard SemiBold
   static let pretendardSemibold_12 = Font.custom(PretendardWeight.semiBold.rawValue, size: 12)
   static let pretendardSemibold_14 = Font.custom(PretendardWeight.semiBold.rawValue, size: 14)
@@ -29,6 +29,7 @@ public extension Font {
   static let pretendardSemibold_20 = Font.custom(PretendardWeight.semiBold.rawValue, size: 20)
   static let pretendardSemibold_22 = Font.custom(PretendardWeight.semiBold.rawValue, size: 22)
   static let pretendardSemibold_24 = Font.custom(PretendardWeight.semiBold.rawValue, size: 24)
+  static let pretendardSemibold_28 = Font.custom(PretendardWeight.semiBold.rawValue, size: 28)
   static let pretendardSemibold_30 = Font.custom(PretendardWeight.semiBold.rawValue, size: 30)
   static let pretendardSemibold_40 = Font.custom(PretendardWeight.semiBold.rawValue, size: 40)
   
