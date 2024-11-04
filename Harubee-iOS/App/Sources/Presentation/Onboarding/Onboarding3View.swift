@@ -7,7 +7,7 @@
 //
 
 import SwiftUI
-import DesignSystem
+import Shared
 
 struct Onboarding3View: View {
   

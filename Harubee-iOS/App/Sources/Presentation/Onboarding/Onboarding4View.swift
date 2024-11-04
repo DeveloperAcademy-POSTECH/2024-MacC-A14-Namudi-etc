@@ -7,7 +7,7 @@
 //
 
 import SwiftUI
-import DesignSystem
+import Shared
 
 struct Onboarding4View: View {
   @State private var expenseAmount: String = ""

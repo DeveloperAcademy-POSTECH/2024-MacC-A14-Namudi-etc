@@ -7,7 +7,7 @@
 //
 
 import SwiftUI
-import DesignSystem
+import Shared
 import Lottie
 
 struct Onboarding1View: View {
