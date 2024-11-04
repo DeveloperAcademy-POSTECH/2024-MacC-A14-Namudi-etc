@@ -62,7 +62,7 @@ struct CalendarHeader: View {
   let period: String
   let canMovePrevious: Bool
   let canMoveNext: Bool
-  let onMove: (PeriodDirection) -> Void
+  let onMove: (CalendarData.PeriodDirection) -> Void
   
   var body: some View {
     VStack(spacing: 3) {
@@ -87,7 +87,7 @@ struct CalendarHeader: View {
     .foregroundStyle(Color.whiteDefault)
   }
   
-  private func navigationButton(direction: PeriodDirection) -> some View {
+  private func navigationButton(direction: CalendarData.PeriodDirection) -> some View {
     let isEnabled = direction == .next ? canMoveNext : canMovePrevious
     
     return Button {
@@ -104,48 +104,48 @@ struct CalendarHeader: View {
 // MARK: - Calendar Content
 struct CalendarContent: View {
   let viewModel: CalendarViewModel
+  @State private var navigateDailyView = false
+  
+  private var selectedDayInfo: CalendarData.DayInfo? {
+    guard let selectedDate = viewModel.state.selectedDate else { return nil }
+    return viewModel.state.dayInfos.first { $0.date.isSameDay(as: selectedDate) }
+  }
   
   var body: some View {
-    ScrollViewReader { proxy in
-      ScrollView(showsIndicators: false) {
-        VStack(spacing: 25) {
-          CalendarGrid(
-            startDate: viewModel.state.currentPeriod.start,
-            endDate: viewModel.state.currentPeriod.end,
-            selectedDate: viewModel.state.selectedDate,
-            onDateSelect: { date in
-              viewModel.send(.dayCellSelected(date))
-              withAnimation {
-                proxy.scrollTo("dailyView", anchor: .bottom)
-              }
+    ScrollView(showsIndicators: false) {
+      VStack(spacing: 25) {
+        CalendarGrid(
+          startDate: viewModel.state.currentPeriod.start,
+          endDate: viewModel.state.currentPeriod.end,
+          selectedDate: viewModel.state.selectedDate,
+          onCellSelect: { date in
+            viewModel.send(.dayCellSelected(date))
+            navigateDailyView = true
+          }
+        ) { date in
+          CalendarCell(
+            date: date,
+            dayInfo: viewModel.state.dayInfos.first {
+              $0.date.isSameDay(as: date)
             }
-          ) { date in
-            CalendarCell(
-              date: date,
-              dayInfo: viewModel.state.dayInfos.first {
-                $0.date.isSameDay(as: date)
-              },
-              isSelected: viewModel.state.selectedDate?.isSameDay(as: date) ?? false
-            )
-          }
-          .padding(.top, 18)
-          
-          if let selectedDate = viewModel.state.selectedDate,
-             let dayInfo = viewModel.state.dayInfos.first(where: {
-               $0.date.isSameDay(as: selectedDate)
-             }) {
-            CalendarDailyView(
-              viewModel: viewModel,
-              dayInfo: dayInfo
-            )
-            .id("dailyView")
-          }
+          )
         }
+        .padding(.top, 18)
+      }
+    }
+    .navigationDestination(isPresented: $navigateDailyView) {
+      if let dayInfo = selectedDayInfo {
+        CalendarDailyView(
+          viewModel: viewModel,
+          dayInfo: dayInfo
+        )
       }
     }
   }
 }
 
 #Preview {
-  CalendarView(viewModel: DIContainer.shared.makeCalendarViewModel())
+  NavigationStack {
+    CalendarView(viewModel: DIContainer.shared.makeCalendarViewModel())
+  }
 }

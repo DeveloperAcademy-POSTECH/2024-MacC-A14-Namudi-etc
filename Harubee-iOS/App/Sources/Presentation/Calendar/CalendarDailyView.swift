@@ -7,6 +7,7 @@
 //
 
 import SwiftUI
+import Domain
 
 // MARK: - Calendar Daily View
 struct CalendarDailyView: View {
@@ -33,62 +34,82 @@ struct CalendarDailyView: View {
   }
   
   var body: some View {
-    VStack(spacing: 0) {
-      HarubeeSectionView(
-        harubee: dayInfo.harubee,
-        onTap: { activeSheet = .harubeeAdjust }
-      )
-      .padding(.top, 16)
-      .padding(.horizontal, 16)
-      
-      TransactionSectionView(
-        income: dayInfo.income,
-        expense: dayInfo.expense,
-        onIncomeEdit: { activeSheet = .transactionIncome },
-        onExpenseEdit: { activeSheet = .transactionExpense }
-      )
-      .padding(.top, 16)
-      .padding(.horizontal, 16)
-      
-      MemoSectionView(
-        memos: dayInfo.memos,
-        onAdd: handleMemoAdd,
-        onEdit: handleMemoEdit,
-        onDelete: handleMemoDelete
-      )
-      .padding(.top, 30)
-      .padding(.horizontal, 16)
-      
-      FixedExpenseSectionView(expenses: dayInfo.fixedExpenses)
-    }
-    .frame(height: UIWindow().bounds.height)
-    .sheet(item: $activeSheet) { type in
-      switch type {
-      case .harubeeAdjust:
-        HarubeeAdjustView()
-          .presentationDetents([.fraction(0.75)])
+    ScrollView {
+      VStack(spacing: 0) {
+//        WeeklySectionView()
         
-      case .transactionIncome:
-        TransactionInputView(isFocusedExpense: true)
-          .presentationDetents([.fraction(0.75)])
+        HarubeeSectionView(
+          harubee: dayInfo.harubee,
+          onTap: { activeSheet = .harubeeAdjust }
+        )
+        .padding(.horizontal, 16)
         
-      case .transactionExpense:
-        TransactionInputView(isFocusedExpense: false)
-          .presentationDetents([.fraction(0.75)])
+        TransactionSectionView(
+          income: dayInfo.income,
+          expense: dayInfo.expense,
+          harubee: dayInfo.harubee,
+          onIncomeEdit: { activeSheet = .transactionIncome },
+          onExpenseEdit: { activeSheet = .transactionExpense }
+        )
+        .padding(.top, 16)
+        .padding(.horizontal, 16)
         
-      case .addMemo:
-        DailyMemoView { memo in
-          handleMemoAdd(memo)
+        divider
+          .padding(.top, 26)
+        
+        MemoSectionView(
+          memos: dayInfo.memos,
+          onAdd: handleMemoAdd,
+          onEdit: handleMemoEdit,
+          onDelete: handleMemoDelete
+        )
+        .padding(.top, 20)
+        .padding(.horizontal, 22)
+        
+        if !dayInfo.fixedExpenses.isEmpty {
+          divider
+            .padding(.top, 20)
+          
+          FixedExpenseSectionView(expenses: dayInfo.fixedExpenses)
+            .padding(.horizontal, 22)
         }
-        .presentationDetents([.fraction(0.25)])
-        
-      case .editMemo(let oldMemo):
-        DailyMemoView(existingMemo: oldMemo) { newMemo in
-          handleMemoEdit(oldMemo: oldMemo, newMemo: newMemo)
+      }
+      .padding(.top, 40)
+      .sheet(item: $activeSheet) { type in
+        switch type {
+        case .harubeeAdjust:
+          HarubeeAdjustView()
+            .presentationDetents([.fraction(0.75)])
+          
+        case .transactionIncome:
+          TransactionInputView(isFocusedExpense: true)
+            .presentationDetents([.fraction(0.75)])
+          
+        case .transactionExpense:
+          TransactionInputView(isFocusedExpense: false)
+            .presentationDetents([.fraction(0.75)])
+          
+        case .addMemo:
+          DailyMemoView { memo in
+            handleMemoAdd(memo)
+          }
+          .presentationDetents([.fraction(0.25)])
+          
+        case .editMemo(let oldMemo):
+          DailyMemoView(existingMemo: oldMemo) { newMemo in
+            handleMemoEdit(oldMemo: oldMemo, newMemo: newMemo)
+          }
+          .presentationDetents([.fraction(0.25)])
         }
-        .presentationDetents([.fraction(0.25)])
       }
     }
+  }
+  
+  private var divider: some View {
+    Rectangle()
+      .fill(Color.textBlack5)
+      .frame(height: 6)
+      .frame(maxWidth: .infinity)
   }
   
   private func handleMemoAdd(_ memo: String) {
@@ -101,6 +122,26 @@ struct CalendarDailyView: View {
   
   private func handleMemoDelete(_ memo: String) {
     viewModel.send(.deleteMemo(dayInfo, memo))
+  }
+}
+
+// MARK: - Weekly Section View
+struct WeeklySectionView: View {
+  let week = ["일", "월", "화", "수", "목", "금", "토"]
+  
+  var body: some View {
+    ZStack {
+      Color.main
+      
+      HStack {
+        ForEach(week, id: \.self) { day in
+          Text(day)
+            .font(.system(size: 12, weight: .semibold))
+            .foregroundStyle(Color.whiteDefault)
+            .padding(.horizontal, 14)
+        }
+      }
+    }
   }
 }
 
@@ -120,15 +161,14 @@ struct HarubeeSectionView: View {
           Text("하루비")
             .font(.pretendardSemibold_16)
             .foregroundStyle(Color.textBlack)
-            .padding(.leading, 14)
           
           Spacer()
           
           Text("\(harubee.formatted(.number))원")
             .font(.pretendardSemibold_18)
             .foregroundStyle(Color.main)
-            .padding(.trailing, 14)
         }
+        .padding(.horizontal, 14)
       }
     }
   }
@@ -138,49 +178,95 @@ struct HarubeeSectionView: View {
 struct TransactionSectionView: View {
   let income: Int?
   let expense: Int?
+  let harubee: Int
   let onIncomeEdit: () -> Void
   let onExpenseEdit: () -> Void
   
-  var body: some View {
-    HStack(spacing: 9) {
-      transactionCard(
-        title: "수입",
-        amount: income ?? 0,
-        action: onIncomeEdit
-      )
-      
-      transactionCard(
-        title: "지출",
-        amount: expense ?? 0,
-        action: onExpenseEdit
-      )
-    }
-    .frame(height: 84)
+  private var isOverHarubee: Bool {
+    guard let expense = expense else { return false }
+    return expense > harubee
   }
   
-  private func transactionCard(
-    title: String,
-    amount: Int,
-    action: @escaping () -> Void
-  ) -> some View {
+  var body: some View {
+    VStack(spacing: 6) {
+      HStack(spacing: 9) {
+        TransactionCard(
+          title: "수입",
+          amount: income ?? 0,
+          style: .constant,
+          action: onIncomeEdit
+        )
+        
+        TransactionCard(
+          title: "지출",
+          amount: expense ?? 0,
+          style: expense == nil ? .constant : (isOverHarubee ? .warning : .saving),
+          action: onExpenseEdit
+        )
+      }
+      .frame(height: 84)
+      
+      if let expense {
+        HStack(spacing: 0) {
+          Spacer()
+          Text("하루비보다")
+          Text(" ")
+          Image(systemName: isOverHarubee ? "arrowtriangle.up.fill" : "arrowtriangle.down.fill")
+            .font(.custom("SF Pro", size: 12))
+          Text(" \(abs(harubee - expense))원")
+            .font(.pretendardSemibold_14)
+          Text(isOverHarubee ? " 더 썼어요." : " 덜 썼어요.")
+        }
+        .font(.pretendardMedium_14)
+        .foregroundColor(isOverHarubee ? .red : .main)
+      }
+    }
+  }
+}
+
+private struct TransactionCard: View {
+  let title: String
+  let amount: Int
+  let style: Style
+  let action: () -> Void
+  
+  var body: some View {
     Button(action: action) {
       ZStack {
         RoundedRectangle(cornerRadius: 5)
-          .fill(Color.textBrighter30)
+          .fill(style.backgroundColor)
         
         VStack(spacing: 16) {
           Text(title)
             .font(.pretendardSemibold_16)
-            .foregroundStyle(Color.textBlack)
             .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.horizontal, 14)
           
           Text("\(amount.formatted(.number))원")
             .font(.pretendardSemibold_18)
-            .foregroundStyle(Color.textBlack)
             .frame(maxWidth: .infinity, alignment: .trailing)
-            .padding(.horizontal, 14)
         }
+        .foregroundStyle(style.textColor)
+        .padding(.horizontal, 14)
+      }
+    }
+  }
+  
+  enum Style {
+    case constant, warning, saving
+    
+    var backgroundColor: Color {
+      switch self {
+      case .constant: return .textBrighter30
+      case .warning: return .red10
+      case .saving: return .mainBrighter60
+      }
+    }
+    
+    var textColor: Color {
+      switch self {
+      case .constant: return .textBlack
+      case .warning: return .redDefault
+      case .saving: return .main
       }
     }
   }
@@ -194,7 +280,7 @@ struct MemoSectionView: View {
   let onDelete: (String) -> Void
   
   var body: some View {
-    VStack(spacing: 8) {
+    VStack(spacing: 11) {
       HStack {
         Text("메모")
           .font(.pretendardSemibold_16)
@@ -210,7 +296,6 @@ struct MemoSectionView: View {
             .foregroundStyle(Color.textBlack)
         }
       }
-      .padding(.horizontal, 6)
       
       if memos.isEmpty {
         emptyStateView
@@ -221,52 +306,45 @@ struct MemoSectionView: View {
   }
   
   private var emptyStateView: some View {
-    ZStack {
-      RoundedRectangle(cornerRadius: 5)
-        .stroke(Color.textBrighter, lineWidth: 1)
-        .frame(height: 52)
-      
-      Text("메모가 없습니다")
-        .font(.pretendardMedium_16)
-        .foregroundStyle(Color.textBright)
-    }
+    Text("입력된 메모가 없어요")
+      .font(.pretendardMedium_16)
+      .foregroundStyle(Color.textBright)
+      .padding(.horizontal, 14)
+      .padding(.vertical, 8)
   }
   
   private var memoList: some View {
-    ScrollView {
-      VStack(spacing: 8) {
-        ForEach(memos, id: \.self) { memo in
-          Menu {
-            Button {
-              onEdit(memo, memo)
-            } label: {
-              Label("메모 수정하기", systemImage: "pencil")
-            }
-            
-            Button(role: .destructive) {
-              onDelete(memo)
-            } label: {
-              Label("메모 삭제하기", systemImage: "trash")
-            }
+    VStack(spacing: 8) {
+      ForEach(memos, id: \.self) { memo in
+        Menu {
+          Button {
+            onEdit(memo, memo)
           } label: {
-            HStack {
-              Text(memo)
-                .font(.pretendardMedium_16)
-                .foregroundStyle(Color.textBlack)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.horizontal, 14)
-                .padding(.vertical, 8)
-            }
-            .background(
-              RoundedRectangle(cornerRadius: 5)
-                .stroke(Color.textBrighter, lineWidth: 1)
-            )
+            Label("메모 수정하기", systemImage: "pencil")
           }
-          .buttonStyle(.plain)
+          
+          Button(role: .destructive) {
+            onDelete(memo)
+          } label: {
+            Label("메모 삭제하기", systemImage: "trash")
+          }
+        } label: {
+          HStack {
+            Text(memo)
+              .font(.pretendardMedium_16)
+              .foregroundStyle(Color.textBlack)
+              .frame(maxWidth: .infinity, alignment: .leading)
+              .padding(.horizontal, 14)
+              .padding(.vertical, 18)
+          }
+          .background(
+            RoundedRectangle(cornerRadius: 5)
+              .stroke(Color.textBrighter, lineWidth: 1)
+          )
         }
+        .buttonStyle(.plain)
       }
     }
-    .frame(maxHeight: 150)
   }
 }
 
@@ -275,47 +353,47 @@ struct FixedExpenseSectionView: View {
   let expenses: [CalendarData.FixedExpenseItem]
   
   var body: some View {
-    VStack(spacing: 0) {
-      Divider()
-        .background(Color.textBlack10)
-        .padding(.horizontal, 16)
-      
+    VStack(spacing: 26) {
       Text("예정된 고정 지출")
         .font(.pretendardSemibold_16)
         .foregroundStyle(Color.textBlack)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(.horizontal, 22)
-        .padding(.top, 14)
+        .padding(.top, 20)
       
-      if expenses.isEmpty {
-        Text("예정된 고정 지출이 없습니다")
-          .font(.pretendardMedium_14)
-          .foregroundStyle(Color.textBright)
-          .padding(.top, 22)
-          .padding(.horizontal, 22)
-      } else {
-        VStack(spacing: 14) {
-          ForEach(expenses) { expense in
-            HStack {
-              Text(expense.name)
-                .font(.pretendardMedium_14)
-                .foregroundStyle(Color.textBlack)
-              
-              Spacer()
-              
-              Text("\(expense.amount.decimalWithWon)")
-                .font(.pretendardSemibold_14)
-                .foregroundStyle(Color.redDefault)
-            }
-            .padding(.horizontal, 22)
+      VStack(spacing: 14) {
+        ForEach(expenses) { expense in
+          HStack {
+            Text(expense.name)
+              .font(.pretendardMedium_16)
+              .foregroundStyle(Color.textBlack)
+            
+            Spacer()
+            
+            Text("\(expense.amount.decimalWithWon)")
+              .font(.pretendardSemibold_16)
+              .foregroundStyle(Color.redDefault)
           }
         }
-        .padding(.top, 22)
       }
     }
   }
 }
 
 #Preview {
-  CalendarView(viewModel: DIContainer.shared.makeCalendarViewModel())
+  CalendarDailyView(
+    viewModel: DIContainer.shared.makeCalendarViewModel(),
+    dayInfo: CalendarData.DayInfo(
+      date: Date(),
+      harubee: 50000,
+      isAdjusted: true,
+      income: 1000,
+      expense: 60000,
+      memos: ["아우아우아우아우"],
+      fixedExpenses: [
+        CalendarData.FixedExpenseItem.init(
+        from: TransactionItem(date: Date(), name: "월세", price: 500000)
+      )
+      ]
+    )
+  )
 }
