@@ -14,6 +14,8 @@ public extension Color {
   static let main10 = Color(.main10)
   static let main30 = Color(.main30)
   static let mainBright = Color(.mainBright)
+  static let mainBrighter10 = Color(.mainBrighter10)
+  static let mainBrighter15 = Color(.mainBrighter15)
   static let mainBrighter60 = Color(.mainBrighter60)
   
   static let whiteDefault = Color(.whiteDefault)
@@ -31,4 +33,5 @@ public extension Color {
   static let textBrighter30 = Color(.textBrighter30)
   
   static let redDefault = Color(.redDefault)
+  static let red10 = Color(.red10)
 }
