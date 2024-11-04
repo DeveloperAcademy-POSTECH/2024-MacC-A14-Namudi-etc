@@ -32,7 +32,7 @@ struct Onboarding3View: View {
 private struct OnboardingHeaderView: View {
   var body: some View {
     VStack(spacing: 28) {
-      NavigationHeaderView(pageNumber: .first)
+      NavigationHeaderView(onboardingPage: .first)
       
       VStack(alignment: .leading, spacing: 6) {
         Text("먼저, 하루비를 계산하기 위한")

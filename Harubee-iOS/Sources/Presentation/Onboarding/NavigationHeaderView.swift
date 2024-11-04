@@ -8,10 +8,10 @@
 
 import SwiftUI
 
-enum PageNumber {
+enum OnboardingPage {
   case first, second, third
   
-  var pageNumber: Int {
+  var number: Int {
     switch self {
     case .first:
       return 1
@@ -24,10 +24,10 @@ enum PageNumber {
 }
 
 struct NavigationHeaderView: View {
-  private var pageNumber: PageNumber
+  private var onboardingPage: OnboardingPage
   
-  init(pageNumber: PageNumber) {
-    self.pageNumber = pageNumber
+  init(onboardingPage: OnboardingPage) {
+    self.onboardingPage = onboardingPage
   }
   
   var body: some View {
@@ -39,7 +39,7 @@ struct NavigationHeaderView: View {
           .font(Font.system(size: 18, weight: .medium))
           .foregroundStyle(Color.whiteDefault)
       }
-      Text("\(pageNumber.pageNumber)/3")
+      Text("\(onboardingPage.number)/3")
         .font(.pretendardSemibold_22)
         .foregroundStyle(Color.whiteDeep50)
         .frame(maxWidth: .infinity, alignment: .trailing)
@@ -48,5 +48,5 @@ struct NavigationHeaderView: View {
 }
 
 #Preview {
-  NavigationHeaderView(pageNumber: .first)
+  NavigationHeaderView(onboardingPage: .first)
 }

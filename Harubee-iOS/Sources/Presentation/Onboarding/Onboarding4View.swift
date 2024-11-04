@@ -34,7 +34,7 @@ struct Onboarding4View: View {
 private struct OnboardingHeaderView: View {
   var body: some View {
     VStack(spacing: 28) {
-      NavigationHeaderView(pageNumber: .second)
+      NavigationHeaderView(onboardingPage: .second)
       
       VStack(alignment: .leading, spacing: 6) {
         Text("현재 하루비는")
