@@ -10,17 +10,13 @@ import SwiftUI
 import Shared
 import Lottie
 
-struct LottieName {
-  static let onboarding = "OnboardingAppName"
-}
-
 struct Onboarding1View: View {
     var body: some View {
       ZStack {
         Color.main.ignoresSafeArea()
         VStack(spacing: 0) {
           ZStack(alignment: .bottom) {
-            LottieView(animation: .named(LottieName.onboarding))
+            LottieView(animation: .onboarding)
               .playing(loopMode: .loop)
               .frame(height: 146)
             Text("쉽고 빠른 지출 계획의 시작")
