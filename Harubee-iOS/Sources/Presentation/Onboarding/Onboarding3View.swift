@@ -10,8 +10,6 @@ import SwiftUI
 import DesignSystem
 
 struct Onboarding3View: View {
-  @State private var selectedDay: Int = 1
-  @State private var fixedIncomeAmount: String = ""
   
   var body: some View {
     VStack(spacing: 0) {
@@ -22,7 +20,7 @@ struct Onboarding3View: View {
           Rectangle()
             .fill(Color.main)
         )
-      OnboardingBodyView(selectedDay: $selectedDay, fixedIncomeAmount: $fixedIncomeAmount)
+      OnboardingBodyView()
       
     }
     .ignoresSafeArea()
@@ -47,8 +45,8 @@ private struct OnboardingHeaderView: View {
 }
 
 private struct OnboardingBodyView: View {
-  @Binding var selectedDay: Int
-  @Binding var fixedIncomeAmount: String
+  @State private var selectedDay: Int = 1
+  @State private var fixedIncomeAmount: String = ""
   
   var body: some View {
     VStack(spacing: 30) {
