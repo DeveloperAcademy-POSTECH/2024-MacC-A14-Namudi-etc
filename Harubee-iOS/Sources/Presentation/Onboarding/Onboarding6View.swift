@@ -25,15 +25,14 @@ struct Onboarding6View: View {
         
         CurrentHarubeeView()
           .padding(.top, 36)
-          .padding(.horizontal, 4)
         
         Rectangle()
           .frame(height: 1)
           .foregroundStyle(Color.textBrighter30)
-          .padding(.top, 36)
+          .padding(.top, 28)
         
         UserInfoView()
-          .padding(.top, 16)
+          .padding(.top, 26)
           .padding(.horizontal, 4)
         
         Spacer()
@@ -64,6 +63,7 @@ private struct CurrentHarubeeView: View {
     VStack(alignment: .leading, spacing: 6) {
       Text("현재 계산된 하루비")
         .font(.pretendardSemibold_22)
+        .padding(.horizontal, 4)
       
       HStack(alignment: .bottom, spacing: 4) {
         Image(systemName: "exclamationmark.triangle.fill")
@@ -73,6 +73,19 @@ private struct CurrentHarubeeView: View {
         Text("6,000원")
           .font(.pretendardSemibold_30)
       }
+      .padding(.horizontal, 4)
+      
+      Text("(나의 수입 - 고정지출) ÷ 다음 주요 수입일까지 남은 일수")
+        .font(.pretendardSemibold_14)
+        .foregroundStyle(Color.whiteDefault)
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 16)
+        .background(
+          RoundedRectangle(cornerRadius: 10)
+          // TODO: 추가된 색상으로 변경 필요
+            .fill(Color.black)
+        )
+        .padding(.top, 36)
     }
     .frame(maxWidth: .infinity, alignment: .leading)
     .foregroundStyle(Color.whiteDefault)
@@ -82,23 +95,21 @@ private struct CurrentHarubeeView: View {
 private struct UserInfoView: View {
   var body: some View {
     VStack(spacing: 12) {
-      UserInfoItemView(title: "주요 수입일", content1: "매달 10일")
-      UserInfoItemView(title: "한 달 수입금", content1: "1,000,000원")
-      UserInfoItemView(title: "수입일(9월 15일) 이후 지출한 금액", content1: "1,000,000원")
-      UserInfoItemView(title: "고정 지출", content1: "총 7건,", content2: " 120,000원")
+      UserInfoItemView(title: "한 달 수입금", content: "1,000,000원")
+      UserInfoItemView(title: "수입일(9월 15일) 이후 지출한 금액", content: "- 300,000원")
+      UserInfoItemView(title: "고정 지출 (총 7건)", content: "- 120,000원")
+      UserInfoItemView(title: "다음 수입일까지 남은 기간", content: "÷ 15일")
     }
   }
 }
 
 private struct UserInfoItemView: View {
   private var title: String
-  private var content1: String
-  private var content2: String?
+  private var content: String
   
-  init(title: String, content1: String, content2: String? = nil) {
+  init(title: String, content: String) {
     self.title = title
-    self.content1 = content1
-    self.content2 = content2
+    self.content = content
   }
   
   var body: some View {
@@ -106,13 +117,11 @@ private struct UserInfoItemView: View {
       Text(title)
         .font(.pretendardMedium_14)
         .frame(maxWidth: .infinity, alignment: .leading)
-      Text(content1)
+        .foregroundStyle(Color.whiteDeep50)
+      Text(content)
         .font(.pretendardSemibold_14)
-        .padding(.trailing, content2 != nil ? -2 : 0)
-      Text(content2 ?? "")
-        .font(.pretendardSemibold_14)
+        .foregroundStyle(Color.whiteDefault)
     }
-    .foregroundStyle(Color.whiteDefault)
   }
 }
 
