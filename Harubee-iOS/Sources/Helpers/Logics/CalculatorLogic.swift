@@ -37,8 +37,6 @@ struct CalculatorLogic {
       )
     }
     
-    newExpression = formatDecimalFromExpression(newExpression)
-    
     return newExpression
   }
   
@@ -48,36 +46,46 @@ struct CalculatorLogic {
     expression: String
   ) -> String {
     
-    // 0이 눌렸을 때
-    if KeypadButtonType.zeros.contains(keypadType) {
-      // 0이 동작하지 않아야 하는 경우
-      
-      // - 텍스트가 비어있을 때
-      if expression.isEmpty {
-        return KeypadButtonType.zero.title
+    let operators = KeypadButtonType.operators.map { $0.title }
+    let zeros = KeypadButtonType.zeros.map { $0.title }
+    
+    var newExpression = expression
+    let lastText = String(newExpression.last ?? Character(" "))
+  
+    // Case 1. 연산자가 눌린 경우
+    if operators.contains(keypadType.title) {
+    
+      // 마지막 텍스트가 빈 문자열, 0, 연산자가 모두 아닐 경우에 추가
+      if !(newExpression.isEmpty
+           || zeros.contains(lastText)
+           || operators.contains(lastText)) {
+        newExpression += keypadType.title
       }
       
-      let lastText = String(expression.last!)
+    // Case 2. 0이 눌린 경우
+    } else if zeros.contains(keypadType.title) {
       
-      // - 길이가 1이고 마지막 텍스트가 0일 때
-      if expression.count == 1
-          && lastText == KeypadButtonType.zero.title {
-        return KeypadButtonType.zero.title
+      // 현재 표현식이 0이 아니고, 마지막 텍스트가 연산자가 아닐 경우에 0 추가
+      if !(newExpression == KeypadButtonType.zero.title
+           || operators.contains(lastText)) {
+        newExpression += keypadType.title
       }
       
-      // - 마지막 텍스트가 연산자일 때
-      if lastText == KeypadButtonType.plus.title
-          || lastText == KeypadButtonType.minus.title {
-        return expression
+    // Case 3. 숫자가 눌린 경우
+    } else {
+      
+      // 현재 표현식이 0인 경우 입력된 키패드 숫자로 표시
+      if newExpression == KeypadButtonType.zero.title {
+        newExpression = keypadType.title
       }
+      // 아닌 경우 기존 표현식에서 추가
+      else { newExpression += keypadType.title }
     }
     
-    if expression.count == 1 && String(expression.last!) == KeypadButtonType.zero.title {
-      return keypadType.title
-    }
+    // 현재 표현식에 decimal 적용
+    newExpression = formatDecimalFromExpression(newExpression)
     
-    
-    return expression + keypadType.title
+    return newExpression
   }
   
   // MARK: - processOperatorType
@@ -86,15 +94,19 @@ struct CalculatorLogic {
     expression: String
   ) -> String {
     
-    if expression.isEmpty { return expression }
+    // 기존 표현식이 빈 문자열이면 리턴
+    if expression.isEmpty { return "" }
     
-    let lastText = String(expression.last!)
+    // 표현식의 마지막 텍스트
+    let lastText = expression[expression.count - 1]
     
-    if lastText == KeypadButtonType.plus.title
-        || lastText == KeypadButtonType.minus.title {
+    // 표현식의 마지막 텍스트가 연산자인 경우 기존 표현식 리턴
+    let operators = KeypadButtonType.operators.map { $0.title }
+    if operators.contains(lastText) {
       return expression
     }
     
+    // 기존 표현식에 입력된 키패드 추가
     return expression + keypadType.title
   }
   
@@ -103,12 +115,21 @@ struct CalculatorLogic {
     expression: String
   ) -> String {
     
-    if expression.isEmpty { return expression }
+    // 기존 표현식이 빈 문자열인 경우 리턴
+    if expression.isEmpty { return "" }
     
+    // 표현식의 마지막 텍스트를 제거
     var newExpression = expression
     let _ = newExpression.popLast()
     
-    if newExpression.isEmpty { newExpression = "0" }
+    // 마지막 텍스트를 제거한 후에 표현식이 빈 문자열인 경우 "0"으로 리턴
+    if newExpression.isEmpty {
+      newExpression = KeypadButtonType.zero.title
+    }
+    
+    // 현재 표현식에 decimal 적용
+    newExpression = formatDecimalFromExpression(newExpression)
+    
     return newExpression
   }
   
@@ -117,33 +138,38 @@ struct CalculatorLogic {
     expression: String
   ) -> String {
     
-    if expression.isEmpty { return "0" }
+    // 표현식이 비어있으면 0으로 리턴
+    if expression.isEmpty { return KeypadButtonType.zero.title }
     
-    var before = 0
-    var current = ""
-    var op = "+"
+    var before = 0 // 피연산자 1
+    var current = "" // 피연산자 2
+    var op = KeypadButtonType.plus.title // 현재 연산자 (초기값 +)
+    var index = 0 // 표현식 순차 탐색을 위한 index
     
-    var index = 0
+    let operators = KeypadButtonType.operators.map { $0.title }
     
-    if expression[index] == "-" {
-      op = "-"
+    // 표현식의 첫 문자가 -연산자인 경우
+    if expression[index] == KeypadButtonType.minus.title {
+      op = KeypadButtonType.minus.title
       index += 1
     }
     
+    // 표현식을 앞에서부터 순차 탐색
     while index < expression.count {
-      let curCharacter = expression[index]
+      let char = expression[index]
       
-      if curCharacter.isSingleNumber {
-        current.append(curCharacter)
-      } else if ["+", "-"].contains(curCharacter) {
+      // 현재 문자가 연산자인 경우
+      if operators.contains(char) {
         before = processExpression(
           before: before,
-          current: Int(current)!,
+          current: current.numberFormat!,
           op: op
         )
         current = ""
-        op = curCharacter
-      }
+        op = char
+        
+      // 현재 문자가 숫자 또는 ,인 경우
+      } else { current.append(char) }
       
       index += 1
     }
@@ -151,7 +177,7 @@ struct CalculatorLogic {
     if !current.isEmpty {
       before = processExpression(
         before: before,
-        current: Int(current)!,
+        current: current.numberFormat!,
         op: op
       )
     }
@@ -165,10 +191,10 @@ struct CalculatorLogic {
     current: Int,
     op: String
   ) -> Int {
-    if op == "+" {
-      return before + current
-    } else {
-      return before - current
+    switch op {
+    case KeypadButtonType.plus.title: return before + current
+    case KeypadButtonType.minus.title: return before - current
+    default: return 0
     }
   }
   
@@ -176,34 +202,33 @@ struct CalculatorLogic {
     _ expression: String
   ) -> String {
     
+    let operators = KeypadButtonType.operators.map { $0.title }
+    
     var newExpression = expression
     
-    // 표현식이 현재 비어있으면 기존값 리턴
-    if newExpression.isEmpty { return newExpression }
+    // 표현식이 현재 비어있으면 빈 문자열 리턴
+    if newExpression.isEmpty { return "" }
     
     // 표현식의 마지막 텍스트가 연산자면 기존값 리턴
     let lastText = newExpression[newExpression.count - 1]
-    if ["+", "-"].contains(lastText) {
-      return newExpression
-    }
+    if operators.contains(lastText) { return newExpression }
     
     var currentIndex = newExpression.count - 1
     
-    // 현재 보고있는 문자가 연산자가 아니거나, 인덱스가 0이상인 동안
+    // 마지막 문자부터 거꾸로 탐색
     while (currentIndex > 0) {
-      if ["+", "-"].contains(newExpression[currentIndex]) {
+      
+      // 현재 문자가 연산자인 경우 index를 1 증가시키고 반복문 탈출
+      if operators.contains(newExpression[currentIndex]) {
+        currentIndex += 1
         break
       }
       currentIndex -= 1
     }
     
-    if ["+", "-"].contains(newExpression[currentIndex]) {
-      currentIndex += 1
-    }
-    
-    let text = newExpression[(currentIndex)...]
-    let number = text.numberFormat!
-    newExpression[(currentIndex)...] = number.decimal
+    let numberString = newExpression[(currentIndex)...] // 포멧할 숫자(decimal) 문자열
+    let number = numberString.numberFormat! // 숫자(decimal) 문자열을 정수 타입으로 포멧
+    newExpression[(currentIndex)...] = number.decimal // 기존 표현식에서 마지막 숫자 문자열 부분을 교체
     return newExpression
   }
 }
