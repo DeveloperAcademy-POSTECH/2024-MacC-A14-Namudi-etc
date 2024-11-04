@@ -20,6 +20,15 @@ struct Onboarding5View: View {
             .fill(Color.main)
         )
       OnboardingBodyView()
+
+      MainColorButton(title: "다음으로") {
+        print("onboarding 5 to 6")
+      }
+      .clipShape(
+        RoundedRectangle(cornerRadius: 10)
+      )
+      .padding(.horizontal, 16)
+      .padding(.bottom, 43)
     }
     .ignoresSafeArea()
   }
@@ -68,17 +77,6 @@ private struct OnboardingBodyView: View {
       .padding(.horizontal, 20)
       
       FixedExpenseListView()
-      
-      Spacer()
-      
-      MainColorButton(title: "다음으로") {
-        print("onboarding 5 to 6")
-      }
-      .clipShape(
-        RoundedRectangle(cornerRadius: 10)
-      )
-      .padding(.horizontal, 16)
-      .padding(.bottom, 43)
     }
     .padding(.top, 30)
     .frame(maxHeight: .infinity, alignment: .top)

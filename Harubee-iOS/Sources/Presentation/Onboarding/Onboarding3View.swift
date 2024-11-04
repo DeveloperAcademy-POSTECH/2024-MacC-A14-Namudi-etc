@@ -22,6 +22,14 @@ struct Onboarding3View: View {
         )
       OnboardingBodyView()
       
+      MainColorButton(title: "다음으로") {
+        print("onboarding 3 to 4")
+      }
+      .clipShape(
+        RoundedRectangle(cornerRadius: 10)
+      )
+      .padding(.horizontal, 16)
+      .padding(.bottom, 43)
     }
     .ignoresSafeArea()
   }
@@ -41,6 +49,7 @@ private struct OnboardingHeaderView: View {
       .foregroundStyle(Color.whiteDefault)
     }
     .padding(.horizontal, 20)
+    .background(Color.green)
   }
 }
 
@@ -73,14 +82,7 @@ private struct OnboardingBodyView: View {
       
       Spacer()
       
-      MainColorButton(title: "다음으로") {
-        print("onboarding 3 to 4")
-      }
-      .clipShape(
-        RoundedRectangle(cornerRadius: 10)
-      )
-      .padding(.horizontal, 16)
-      .padding(.bottom, 43)
+      
     }
     .frame(maxHeight: .infinity, alignment: .top)
   }
