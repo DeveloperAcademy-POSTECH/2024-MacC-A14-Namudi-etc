@@ -197,9 +197,14 @@ private struct HarubeeHexagon: View {
             RoundedRectangle(cornerRadius: 8)
               .foregroundStyle(Color.mainBrighter60)
               .frame(width: 148, height: 39)
-            Text((todayViewModel.state.todayHarubee.decimalWithWon))
-              .foregroundStyle(fillPercentage <= 0.33 ? Color.whiteDefault : Color.main)
-              .font(.pretendardSemibold_24)
+            HStack {
+              (fillPercentage <= 0.33 ? Image.harubeeWhite : Image.harubeeMain)
+                .resizable()
+                .frame(width: 20, height: 20)
+              Text((todayViewModel.state.todayHarubee.decimalWithWon))
+                .foregroundStyle(fillPercentage <= 0.33 ? Color.whiteDefault : Color.main)
+                .font(.pretendardSemibold_24)
+            }
           }
         } else {
           Text(todayViewModel.state.averageHarubee.decimalWithWon)
@@ -273,7 +278,7 @@ private struct TodayFooterView: View {
       .clipShape(RoundedRectangle(cornerRadius: 10))
     }
     .frame(maxWidth: .infinity, maxHeight: 196, alignment: .top)
-    .padding(.horizontal, 18)
+    .padding(.horizontal, 16)
     .background(Color.whiteDefault)
   }
 }
@@ -284,14 +289,17 @@ private struct CalendarStreakView: View {
   private let todayViewModel: TodayViewModel
   private let firstStreakGroup: [DailyBudget]
   private let secondStreakGroup: [DailyBudget]
-  private let defaultHarubee: Double?
+  private let todayDailyBudget: DailyBudget?
+  private let harubee: Int
   
   init(todayViewModel: TodayViewModel) {
     self.todayViewModel = todayViewModel
     let weeklyStreaks = todayViewModel.state.weeklyStreaks ?? []
     self.firstStreakGroup = Array(weeklyStreaks.prefix(3))
     self.secondStreakGroup = Array(weeklyStreaks.suffix(3))
-    self.defaultHarubee = todayViewModel.state.salaryBudget?.defaultHarubee
+    self.todayDailyBudget = weeklyStreaks.indices.contains(3) ? weeklyStreaks[3] : nil
+    let defaultHarubee = todayViewModel.state.salaryBudget?.defaultHarubee
+    self.harubee = todayDailyBudget?.harubee == nil ? Int(defaultHarubee ?? 0) : (todayDailyBudget?.harubee!)!
   }
   
   var body: some View {
@@ -307,33 +315,41 @@ private struct CalendarStreakView: View {
           .font(Font.system(size: 12, weight: .semibold))
           .foregroundStyle(Color.textBlack)
           .frame(width: 10, height: 14)
-      }
+      }.padding(.horizontal, 4)
       
       HStack(spacing: 7) {
         
-        StreakGroupView(streaks: firstStreakGroup, defaultHarubee: defaultHarubee)
+        StreakGroupView(streaks: firstStreakGroup, harubee: harubee)
         
         ZStack {
           RoundedRectangle(cornerRadius: 10)
             .fill(Color.whiteDeep50)
             .stroke(Color.mainBright, lineWidth: 2)
             .foregroundStyle(Color.whiteDeep50)
-            .frame(maxWidth: 44, maxHeight: 65)
+            .frame(maxWidth: 50, maxHeight: 72)
           
-          VStack(spacing: 13) {
+          VStack(spacing: 15) {
             Text("오늘")
               .font(.pretendardSemibold_12)
               .foregroundStyle(Color.main)
             
-            Image(systemName: "hexagon")
-              .resizable()
-              .aspectRatio(contentMode: .fit)
-              .frame(width: 22, height: 22)
-              .foregroundStyle(Color.main30)
+            if todayDailyBudget?.expense == nil {
+              Image.hexagonNone
+                .resizable()
+                .frame(width: 23, height: 23)
+            } else if (todayDailyBudget?.expense)! <= Int(harubee) {
+              Image.hexagoneGood
+                .resizable()
+                .frame(width: 23, height: 23)
+            } else if (todayDailyBudget?.expense)! <= Int(harubee) {
+              Image.hexagonNone
+                .resizable()
+                .frame(width: 23, height: 23)
+            }
           }
         }
        
-        StreakGroupView(streaks: secondStreakGroup, defaultHarubee: defaultHarubee)
+        StreakGroupView(streaks: secondStreakGroup, harubee: harubee)
         
       }
     }.padding(.top, 10)
@@ -344,21 +360,21 @@ private struct CalendarStreakView: View {
 private struct StreakGroupView: View {
   
   private let streaks: [DailyBudget]
-  private let defaultHarubee: Double?
+  private let harubee: Int
   
-  init(streaks: [DailyBudget], defaultHarubee: Double?) {
+  init(streaks: [DailyBudget], harubee: Int) {
     self.streaks = streaks
-    self.defaultHarubee = defaultHarubee
+    self.harubee = harubee
   }
   
   var body: some View {
     ZStack {
       RoundedRectangle(cornerRadius: 10)
         .foregroundStyle(Color.whiteDeep50)
-        .frame(maxWidth: .infinity, maxHeight: 65)
+        .frame(maxWidth: .infinity, maxHeight: 72)
       HStack {
         ForEach(streaks.indices, id: \.self) { index in
-          StreakCell(dailyBudget: streaks[index], defaultHarubee: defaultHarubee)
+          StreakCell(dailyBudget: streaks[index], harubee: harubee)
           if index < streaks.count - 1 {
             Spacer()
           }
@@ -375,28 +391,37 @@ private struct StreakCell: View {
   private let dailyBudget: DailyBudget
   private let harubee: Int
   
-  init(dailyBudget: DailyBudget, defaultHarubee: Double?) {
+  init(dailyBudget: DailyBudget, harubee: Int) {
     self.dailyBudget = dailyBudget
-    self.harubee = dailyBudget.harubee == nil ? Int(defaultHarubee!) : dailyBudget.harubee!
+    self.harubee = harubee
   }
   
   var body: some View {
-    VStack(spacing: 13) {
+    VStack(spacing: 15) {
       Text(dailyBudget.date.koreanShortDateString)
         .font(.pretendardSemibold_12)
         .foregroundStyle(Color.textBright)
+        .frame(width: 33, height: 14)
       
       if dailyBudget.date > Date() {
         Text(harubee.decimal)
           .font(.pretendardMedium_12)
           .foregroundStyle(Color.main)
-          .padding(.top, 6)
+          .padding(.vertical, 5)
       } else {
-        Image(systemName: "hexagon")
-          .resizable()
-          .aspectRatio(contentMode: .fit)
-          .frame(width:22, height: 22)
-          .foregroundStyle(Color.main30)
+        if dailyBudget.expense == nil {
+          Image.hexagonNone
+            .resizable()
+            .frame(width: 23, height: 23)
+        } else if dailyBudget.expense! <= harubee {
+          Image.hexagoneGood
+            .resizable()
+            .frame(width: 23, height: 23)
+        } else if dailyBudget.expense! <= harubee {
+          Image.hexagonNone
+            .resizable()
+            .frame(width: 23, height: 23)
+        }
       }
     }
   }
