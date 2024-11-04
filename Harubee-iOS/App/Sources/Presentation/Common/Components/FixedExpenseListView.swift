@@ -43,13 +43,12 @@ struct FixedExpenseListView: View {
 }
 
 private struct FixedExpenseList: View {
-  @State private var showingSheet = false
   @State private var items: [String] = ["지출 항목 1", "지출 항목 2"]
   
   var body: some View {
     VStack(spacing: 0) {
       ForEach(items.indices, id: \.self) { index in
-        ListItemView(showingSheet: $showingSheet)
+        ListItemView()
         
         if index < items.count - 1 {
           Rectangle()
@@ -72,7 +71,7 @@ private struct FixedExpenseList: View {
 }
 
 private struct ListItemView: View {
-  @Binding var showingSheet: Bool
+  @State private var showingSheet: Bool = false
   
   var body: some View {
     Button {
