@@ -10,7 +10,6 @@ import SwiftUI
 import Shared
 
 struct FixedExpenseListView: View {
-  @State var mode: Mode = .add
   @State private var showingSheet = false
   
   var body: some View {
@@ -22,14 +21,13 @@ struct FixedExpenseListView: View {
         Spacer()
         
         Button {
-          mode = .add
           showingSheet.toggle()
         } label: {
           Image(systemName: "plus")
             .frame(width: 19, height: 21)
         }
         .sheet(isPresented: $showingSheet) {
-          FixedExpenseManageView(mode: mode)
+          FixedExpenseManageView(mode: .add)
             .presentationDetents([.fraction(0.8)])
             .presentationCornerRadius(20)
         }
@@ -38,7 +36,7 @@ struct FixedExpenseListView: View {
       .padding(.leading, 22)
       .padding(.trailing, 18)
       
-      FixedExpenseList(mode: $mode)
+      FixedExpenseList()
         .padding(.top, 16)
     }
   }
@@ -47,12 +45,11 @@ struct FixedExpenseListView: View {
 private struct FixedExpenseList: View {
   @State private var showingSheet = false
   @State private var items: [String] = ["지출 항목 1", "지출 항목 2"]
-  @Binding var mode: Mode
   
   var body: some View {
     VStack(spacing: 0) {
       ForEach(items.indices, id: \.self) { index in
-        ListItemView(showingSheet: $showingSheet, mode: $mode)
+        ListItemView(showingSheet: $showingSheet)
         
         if index < items.count - 1 {
           Rectangle()
@@ -76,11 +73,9 @@ private struct FixedExpenseList: View {
 
 private struct ListItemView: View {
   @Binding var showingSheet: Bool
-  @Binding var mode: Mode
   
   var body: some View {
     Button {
-      mode = .modify
       showingSheet.toggle()
     } label: {
       HStack(spacing: 0) {
@@ -109,7 +104,7 @@ private struct ListItemView: View {
       .padding(.horizontal, 6)
     }
     .sheet(isPresented: $showingSheet) {
-      FixedExpenseManageView(mode: mode)
+      FixedExpenseManageView(mode: .modify)
         .presentationDetents([.fraction(0.8)])
         .presentationCornerRadius(20)
     }
