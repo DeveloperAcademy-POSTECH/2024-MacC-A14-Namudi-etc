@@ -8,11 +8,16 @@
 
 import SwiftUI
 import Shared
+import Domain
 
 // MARK: - TodayView
 struct TodayView: View {
   
-  @Environment(TodayViewModel.self) var todayViewModel
+  @State private var todayViewModel: TodayViewModel
+  
+  init(todayViewModel: TodayViewModel) {
+    self.todayViewModel = todayViewModel
+  }
   
   var body: some View {
     GeometryReader { proxy in
@@ -36,7 +41,9 @@ struct TodayView: View {
             }
           }
         }
-      }.tint(.main)
+      }.onAppear {
+        todayViewModel.send(.viewDidLoad)
+      }
     }.ignoresSafeArea()
   }
 }
@@ -106,9 +113,13 @@ private struct Honeycomb: View {
         HStack(spacing: honeycombSpace - 2) {
           ForEach(hexGrid[row].indices, id: \.self) { col in
             if row == 1 && col == 1 {
-              HarubeeHexagon(todayViewModel: todayViewModel, hexgonSize: hexgonSize)
+              HarubeeHexagon(todayViewModel: todayViewModel,
+                             isTodayHarubee: true,
+                             hexgonSize: hexgonSize)
             } else if row == 2 && col == 1 {
-              AverageHarubeeHexagon(todayViewModel: todayViewModel, hexgonSize: hexgonSize)
+              HarubeeHexagon(todayViewModel: todayViewModel,
+                             isTodayHarubee: false,
+                             hexgonSize: hexgonSize)
             } else {
               RoundedHexagon()
                 .stroke(hexGrid[row][col] ? Color.whiteDefault: .clear, lineWidth: 1.5)
@@ -129,107 +140,48 @@ private struct HarubeeHexagon: View {
   @State private var secondWaveOffset: CGFloat
   
   private let todayViewModel: TodayViewModel
+  private let isTodayHarubee: Bool
   private let hexgonSize: CGFloat
   private let fillPercentage: Double
   
-  init(todayViewModel: TodayViewModel, hexgonSize: CGFloat) {
-    self.firstWaveOffset = 0.0
-    self.secondWaveOffset = 0.0
+  init(todayViewModel: TodayViewModel, isTodayHarubee: Bool, hexgonSize: CGFloat) {
+    self.firstWaveOffset = isTodayHarubee ? 0 : hexgonSize / 2
+    self.secondWaveOffset = isTodayHarubee ? 0 : hexgonSize / 2
     
     self.todayViewModel = todayViewModel
+    
+    self.isTodayHarubee = isTodayHarubee
     self.hexgonSize = hexgonSize
-    self.fillPercentage = 0.7
+//    self.fillPercentage = todayViewModel.state.todayAverageHarubeePercentage
+    self.fillPercentage = 0.33
   }
   
   var body: some View {
     ZStack {
-      RoundedHexagon()
-        .fill(Color.main)
-        .frame(width: hexgonSize, height: hexgonSize)
-        .shadow(color: Color.textBlack.opacity(0.3), radius: 7, x: 1, y: 4)
-      
-      Wave(xOffset: firstWaveOffset, fillPercentage: fillPercentage)
-        .fill(Color.textBrighter)
-        .frame(width: hexgonSize, height: hexgonSize)
-        .clipShape(RoundedHexagon())
-        .onAppear {
-          withAnimation(Animation.linear(duration: 5).repeatForever(autoreverses: false)) {
-            firstWaveOffset = hexgonSize
-          }
-        }
-      
-      Wave(xOffset: secondWaveOffset, fillPercentage: fillPercentage)
-        .fill(Color.whiteDefault)
-        .frame(width: hexgonSize, height: hexgonSize)
-        .clipShape(RoundedHexagon())
-        .onAppear {
-          withAnimation(Animation.linear(duration: 6).repeatForever(autoreverses: false)) {
-            secondWaveOffset = hexgonSize
-          }
-        }
-      
-      RoundedHexagon()
-        .fill(.clear)
-        .stroke(Color.whiteDefault, lineWidth: 1.5)
-        .frame(width: hexgonSize, height: hexgonSize)
-      
-      VStack(spacing: 9) {
-        Text("오늘의 하루비")
-          .foregroundStyle(Color.textBlack)
-          .font(.pretendardSemibold_20)
-        ZStack {
-          RoundedRectangle(cornerRadius: 8)
-            .foregroundStyle(Color.mainBrighter60)
-            .frame(width: 148, height: 39)
-          Text(todayViewModel.state.todayHarubee.decimalWithWon)
-            .foregroundStyle(Color.main)
-            .font(.pretendardSemibold_24)
-        }
+      if isTodayHarubee {
+        RoundedHexagon()
+          .fill(Color.main)
+          .frame(width: hexgonSize, height: hexgonSize)
+          .shadow(color: Color.textBlack.opacity(0.3), radius: 7, x: 1, y: 4)
       }
-    }
-  }
-}
-
-
-// MARK: - AverageHarubeeHexagon(Primary Layer)
-private struct AverageHarubeeHexagon: View {
-  
-  @State private var firstWaveOffset: CGFloat
-  @State private var secondWaveOffset: CGFloat
-  
-  private let todayViewModel: TodayViewModel
-  private let hexgonSize: CGFloat
-  private let fillPercentage: Double
-  
-  init(todayViewModel: TodayViewModel, hexgonSize: CGFloat) {
-    self.firstWaveOffset = hexgonSize / 2
-    self.secondWaveOffset = hexgonSize / 2
-    
-    self.todayViewModel = todayViewModel
-    self.hexgonSize = hexgonSize
-    self.fillPercentage = 0.4
-  }
-  
-  var body: some View {
-    ZStack {
 
       Wave(xOffset: firstWaveOffset, fillPercentage: fillPercentage)
-        .fill(Color.textBlack30)
+        .fill(isTodayHarubee ? Color.textBrighter : Color.textBlack30)
         .frame(width: hexgonSize, height: hexgonSize)
         .clipShape(RoundedHexagon())
         .onAppear {
           withAnimation(Animation.linear(duration: 6).repeatForever(autoreverses: false)) {
-            firstWaveOffset = hexgonSize / 2 * 3
+            firstWaveOffset = isTodayHarubee ? hexgonSize : hexgonSize / 2 * 3
           }
         }
       
       Wave(xOffset: secondWaveOffset, fillPercentage: fillPercentage)
-        .fill(Color.mainBright)
+        .fill(isTodayHarubee ? Color.whiteDefault :  Color.mainBright)
         .frame(width: hexgonSize, height: hexgonSize)
         .clipShape(RoundedHexagon())
         .onAppear {
           withAnimation(Animation.linear(duration: 5).repeatForever(autoreverses: false)) {
-            secondWaveOffset = hexgonSize / 2 * 3
+            secondWaveOffset = isTodayHarubee ? hexgonSize : hexgonSize / 2 * 3
           }
         }
       
@@ -238,12 +190,23 @@ private struct AverageHarubeeHexagon: View {
         .frame(width: hexgonSize, height: hexgonSize)
       
       VStack(spacing: 4) {
-        Text("평균 하루비")
-          .font(.pretendardSemibold_16)
-          .foregroundStyle(Color.whiteDeep50)
-        Text(todayViewModel.state.averageHarubee.decimalWithWon)
-          .font(.pretendardSemibold_20)
-          .foregroundStyle(Color.whiteDefault)
+        Text(isTodayHarubee ? "오늘의 남은 하루비" : "평균 하루비")
+          .font(isTodayHarubee ? .pretendardSemibold_20 : .pretendardSemibold_16)
+          .foregroundStyle(isTodayHarubee ? (fillPercentage <= 0.5 ? Color.whiteDefault : Color.textBlack) :  Color.whiteDeep50)
+        if isTodayHarubee {
+          ZStack {
+            RoundedRectangle(cornerRadius: 8)
+              .foregroundStyle(Color.mainBrighter60)
+              .frame(width: 148, height: 39)
+            Text((todayViewModel.state.todayHarubee.decimalWithWon))
+              .foregroundStyle(fillPercentage <= 0.33 ? Color.whiteDefault : Color.main)
+              .font(.pretendardSemibold_24)
+          }
+        } else {
+          Text(todayViewModel.state.averageHarubee.decimalWithWon)
+            .font(.pretendardSemibold_20)
+            .foregroundStyle(Color.whiteDefault)
+        }
       }
     }
   }
@@ -320,13 +283,16 @@ private struct TodayFooterView: View {
 private struct CalendarStreakView: View {
   
   private let todayViewModel: TodayViewModel
-  private let firstStreakGroup: [String]
-  private let secondStreakGroup: [String]
+  private let firstStreakGroup: [DailyBudget]
+  private let secondStreakGroup: [DailyBudget]
+  private let defaultHarubee: Double?
   
   init(todayViewModel: TodayViewModel) {
     self.todayViewModel = todayViewModel
-    self.firstStreakGroup = Array(todayViewModel.state.tempWeeklyStreaks.prefix(3))
-    self.secondStreakGroup = Array(todayViewModel.state.tempWeeklyStreaks.suffix(3))
+    let weeklyStreaks = todayViewModel.state.weeklyStreaks ?? []
+    self.firstStreakGroup = Array(weeklyStreaks.prefix(3))
+    self.secondStreakGroup = Array(weeklyStreaks.suffix(3))
+    self.defaultHarubee = todayViewModel.state.salaryBudget?.defaultHarubee
   }
   
   var body: some View {
@@ -346,15 +312,16 @@ private struct CalendarStreakView: View {
       
       HStack(spacing: 7) {
         
-        StreakGroupView(streaks: firstStreakGroup)
+        StreakGroupView(streaks: firstStreakGroup, defaultHarubee: defaultHarubee)
         
         ZStack {
           RoundedRectangle(cornerRadius: 10)
+            .fill(Color.whiteDeep50)
             .stroke(Color.mainBright, lineWidth: 2)
             .foregroundStyle(Color.whiteDeep50)
             .frame(maxWidth: 44, maxHeight: 65)
           
-          VStack(spacing: 15) {
+          VStack(spacing: 13) {
             Text("오늘")
               .font(.pretendardSemibold_12)
               .foregroundStyle(Color.main)
@@ -362,12 +329,12 @@ private struct CalendarStreakView: View {
             Image(systemName: "hexagon")
               .resizable()
               .aspectRatio(contentMode: .fit)
-              .frame(width: 23, height: 23)
+              .frame(width: 22, height: 22)
               .foregroundStyle(Color.main30)
           }
         }
        
-        StreakGroupView(streaks: secondStreakGroup)
+        StreakGroupView(streaks: secondStreakGroup, defaultHarubee: defaultHarubee)
         
       }
     }.padding(.top, 10)
@@ -377,10 +344,12 @@ private struct CalendarStreakView: View {
 // MARK: - StreakGroupView
 private struct StreakGroupView: View {
   
-  private let streaks: [String]
+  private let streaks: [DailyBudget]
+  private let defaultHarubee: Double?
   
-  init(streaks: [String]) {
+  init(streaks: [DailyBudget], defaultHarubee: Double?) {
     self.streaks = streaks
+    self.defaultHarubee = defaultHarubee
   }
   
   var body: some View {
@@ -389,11 +358,12 @@ private struct StreakGroupView: View {
         .foregroundStyle(Color.whiteDeep50)
         .frame(maxWidth: .infinity, maxHeight: 65)
       HStack {
-        StreakCell(date: streaks[0])
-        Spacer()
-        StreakCell(date: streaks[1])
-        Spacer()
-        StreakCell(date: streaks[2])
+        ForEach(streaks.indices, id: \.self) { index in
+          StreakCell(dailyBudget: streaks[index], defaultHarubee: defaultHarubee)
+          if index < streaks.count - 1 {
+            Spacer()
+          }
+        }
       }.padding(.horizontal, 8)
     }
   }
@@ -403,30 +373,38 @@ private struct StreakGroupView: View {
 // MARK: - StreakCell(Secondary Layer)
 private struct StreakCell: View {
   
-  private let date: String
+  private let dailyBudget: DailyBudget
+  private let harubee: Int
   
-  init(date: String) {
-    self.date = date
+  init(dailyBudget: DailyBudget, defaultHarubee: Double?) {
+    self.dailyBudget = dailyBudget
+    self.harubee = dailyBudget.harubee == nil ? Int(defaultHarubee!) : dailyBudget.harubee!
   }
   
   var body: some View {
-    VStack(spacing: 15) {
-      Text(date)
+    VStack(spacing: 13) {
+      Text(dailyBudget.date.koreanShortDateString)
         .font(.pretendardSemibold_12)
         .foregroundStyle(Color.textBright)
       
-      Image(systemName: "hexagon")
-        .resizable()
-        .aspectRatio(contentMode: .fit)
-        .frame(width:23, height: 23)
-        .foregroundStyle(Color.main30)
+      if dailyBudget.date > Date() {
+        Text(harubee.decimal)
+          .font(.pretendardMedium_12)
+          .foregroundStyle(Color.main)
+          .padding(.top, 6)
+      } else {
+        Image(systemName: "hexagon")
+          .resizable()
+          .aspectRatio(contentMode: .fit)
+          .frame(width:22, height: 22)
+          .foregroundStyle(Color.main30)
+      }
     }
   }
 }
 
 
 #Preview {
-  TodayView()
-    .environment(TodayViewModel())
+  TodayView(todayViewModel: DIContainer.shared.makeTodayViewModel())
 }
 
