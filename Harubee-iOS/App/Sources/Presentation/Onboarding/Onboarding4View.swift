@@ -102,7 +102,9 @@ private struct ButtonKeyboardView: View {
         print("다음으로")
       }
       
-      NumberKeypadView(text: $expenseAmount)
+      NumberKeypadView(expression: $expenseAmount) {
+        print("Done Button Tapped")
+      }
     }
     .frame(maxHeight: .infinity, alignment: .bottom)
   }
