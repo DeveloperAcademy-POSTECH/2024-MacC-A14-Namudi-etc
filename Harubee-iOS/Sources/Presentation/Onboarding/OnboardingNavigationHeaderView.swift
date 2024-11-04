@@ -23,7 +23,7 @@ enum OnboardingPage {
   }
 }
 
-struct NavigationHeaderView: View {
+struct OnboardingNavigationHeaderView: View {
   private var onboardingPage: OnboardingPage
   
   init(onboardingPage: OnboardingPage) {
@@ -48,5 +48,5 @@ struct NavigationHeaderView: View {
 }
 
 #Preview {
-  NavigationHeaderView(onboardingPage: .first)
+  OnboardingNavigationHeaderView(onboardingPage: .first)
 }
