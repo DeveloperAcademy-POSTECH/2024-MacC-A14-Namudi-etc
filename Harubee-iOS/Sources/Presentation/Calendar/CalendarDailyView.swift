@@ -11,9 +11,9 @@ import Shared
 
 struct CalendarDailyView: View {
   @State private var showingSheet: Bool = false
-  private let dayInfo: DayInfo
+  private let dayInfo: CalendarDayInfo
   
-  init(dayInfo: DayInfo) {
+  init(dayInfo: CalendarDayInfo) {
     self.dayInfo = dayInfo
   }
   
@@ -172,7 +172,7 @@ struct CalendarDailyView: View {
 
 #Preview {
   CalendarDailyView(
-    dayInfo: DayInfo(
+    dayInfo: CalendarDayInfo(
       date: Date(),
       harubee: 0,
       isAdjusted: false,

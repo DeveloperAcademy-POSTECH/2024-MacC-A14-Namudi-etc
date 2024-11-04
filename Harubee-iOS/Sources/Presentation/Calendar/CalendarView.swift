@@ -2,210 +2,398 @@
 //  CalendarView.swift
 //  Harubee-iOS
 //
-//  Created by namdghyun on 10/30/24.
+//  Created by assistant on 11/4/24.
 //  Copyright © 2024 namudiEtc. All rights reserved.
 //
 
 import SwiftUI
 import DesignSystem
 
-// MARK: - Calendar View Description
-///
-/// `CalendarView`는 월급 기반 예산 관리 앱의 핵심 캘린더 인터페이스를 구현하는 View입니다.
-/// 이 뷰는 사용자의 월급일을 기준으로 설정된 예산 기간을 캘린더 형식으로 표시하며,
-/// 각 날짜별 하루비와 지출 현황을 시각적으로 보여줍니다.
-///
-/// ## View 계층 구조
-///
-/// ```
-/// CalendarView
-/// ├── ZStack (배경, 컬러)
-/// └── VStack
-///     ├── CalendarHeaderView (기간 네비게이션 관련)
-///     └── TabView (페이징 가능한 기간별 캘린더)
-///         └── PeriodPageView[] (SalaryBudget 개수만큼 있음)
-///             └── CalendarGridView (달력 그리드)
-///                 ├── WeekdayHeaderView (요일 헤더)
-///                 └── CalendarCell[] (DailyBudget 개수만큼 있음)
-/// ```
-///
-/// ## 주요 컴포넌트 설명
-///
-/// ### 1. CalendarHeaderView
-/// - 현재 표시 중인 예산 기간의 연도와 기간(e.g., "2024", "9.20 - 10.19")을 표시
-/// - 이전/다음 기간으로 이동할 수 있는 네비게이션 버튼 제공
-/// - 기간 이동 가능 여부에 따라 버튼 활성화/비활성화
-///
-/// ### 2. TabView with PeriodPageView
-/// - 여러 예산 기간을 페이징 방식으로 탐색 가능
-/// - 각 PeriodPageView는 한 SalaryBudget 캘린더 페이지를 의미
-/// - 스와이프 제스처로 기간 간 이동 지원
-///
-/// ### 3. CalendarGridView
-/// - 주간 단위로 날짜를 그리드 형태로 표시
-/// - WeekdayHeaderView로 요일 레이블 표시
-/// - 예산 기간의 시작일에 따라 동적으로 그리드 생성
-///
-/// ### 4. CalendarCell
-/// - 개별 날짜 정보를 표시하는 셀
-/// - 표시 정보:
-///   * 날짜 (월이 바뀌는 경우 "M/D" 형식으로 표시)
-///   * 실제 지출 상태 표시 (실제 지출과 하루비의 차이를 비교해 HexagonIcon으로 표시)
-///   * 하루비 금액 (기본 또는 조정된 금액인지 확인해 표시)
-///   * 선택 상태와 오늘 날짜 하이라이트
-///
-/// ## 상태 관리
-///
-/// ### ViewModel State
-/// ```swift
-/// struct State {
-///     var currentPeriod: Period        // 현재 표시 중인 예산 기간
-///     var periodsCount: Int            // 총 예산 기간 수
-///     var dayInfos: [DayInfo]          // 현재 기간의 일별 DailyBudget 정보
-///     var selectedDate: Date?          // 선택된 날짜
-///     var currentBudgetIndex: Int      // 현재 표시 중인 SalaryBudget 인덱스
-///     var canMovePreviousPeriod: Bool  // 이전 기간 이동 가능 여부
-///     var canMoveNextPeriod: Bool      // 다음 기간 이동 가능 여부
-///     var error: Error?                // 에러 상태
-/// }
-/// ```
-///
-/// ### 주요 Action
-/// - loadData: 초기 데이터 로드
-/// - moveNextPeriod: 다음 예산 기간으로 이동
-/// - movePreviousPeriod: 이전 예산 기간으로 이동
-/// - onDateSelected: 특정 날짜 선택
-///
-/// ## 날짜 처리 로직
-///
-/// ### 1. 예산 기간 계산
-/// - 사용자 설정 월급일 기준으로 예산 기간 결정
-/// - 현재 날짜가 속한 예산 기간 자동 로드
-///
-/// ### 2. 캘린더 그리드 생성
-/// - 예산 기간의 시작일 기준으로 첫 주 빈 셀 계산
-/// - 기간 내 모든 날짜에 대한 셀 생성
-/// - 마지막 주 빈 셀 추가로 그리드 완성
-///
-/// ## 특이사항
-///
-/// - 화면 진입 시 오늘 날짜 자동 선택
-/// - 날짜 선택 해제 불가 (항상 하나의 날짜 선택 상태 유지. 단, 기간 이동 시 선택 해제됨)
-/// - 과거/현재/미래 날짜에 따라 다른 정보 표시
-///   * 과거: 실제 지출 정보
-///   * 현재: 실시간 지출 현황
-///   * 미래: 예정된(혹은 조정된) 하루비
-///
 // MARK: - Calendar View
 struct CalendarView: View {
   @State private var viewModel: CalendarViewModel
-  @State private var currentPageIndex: Int = 0
   
   init(viewModel: CalendarViewModel) {
-    self.viewModel = viewModel
+    _viewModel = State(initialValue: viewModel)
   }
   
   var body: some View {
     ZStack {
-      Color.whiteDefault
-        .ignoresSafeArea()
+      Color.whiteDefault.ignoresSafeArea()
       
       VStack(spacing: 0) {
-        CalendarHeaderView(
-          periodYearTitle: createYearTitle(
-            from: viewModel.state.currentPeriod.start
-          ),
-          periodTitle: createPeriodTitle(
-            start: viewModel.state.currentPeriod.start,
-            end: viewModel.state.currentPeriod.end
-          ),
-          canMovePeriod: (
-            previous: viewModel.state.canMovePreviousPeriod,
-            next: viewModel.state.canMoveNextPeriod
-          ),
-          movePreviousPeriod: {
-            viewModel.send(.movePreviousPeriod)
-          },
-          moveNextPeriod: {
-            viewModel.send(.moveNextPeriod)
-          }
-        )
-        
-        TabView(
-          selection: Binding(
-            get: { viewModel.state.currentBudgetIndex },
-            set: { newIndex in
-              let oldIndex = viewModel.state.currentBudgetIndex
-              if newIndex > oldIndex {
-                if viewModel.state.canMoveNextPeriod {
-                  viewModel.send(.moveNextPeriod)
-                }
-              } else if newIndex < oldIndex {
-                if viewModel.state.canMovePreviousPeriod {
-                  viewModel.send(.movePreviousPeriod)
-                }
-              }
-            }
-          )
-        ) {
-          ForEach(
-            0..<viewModel.state.periodsCount,
-            id: \.self
-          ) { index in
-            PeriodPageView(
-              viewModel: viewModel
-            )
-            .tag(index)
-          }
-        }
-        .tabViewStyle(.page(indexDisplayMode: .never))
+        headerView
+        calendarContent
       }
     }
     .navigationTitle("캘린더")
     .navigationBarTitleDisplayMode(.inline)
-    .onAppear {
-      viewModel.send(.loadData)
-    }
-    .alert(
-      "오류", isPresented: .constant(viewModel.state.error != nil)
-    ) {
-      Button("확인", role: .cancel) {
-        fatalError()
-      }
+    .onAppear { viewModel.send(.initialData) }
+    .alert("오류", isPresented: .constant(viewModel.state.error != nil)) {
+      Button("확인", role: .cancel) { fatalError() }
     } message: {
       Text(viewModel.state.error?.localizedDescription ?? "")
     }
   }
   
-  // MARK: - Helper Methods
-  private func createYearTitle(from date: Date) -> String {
-    date.formatted(.dateTime.year().locale(Locale(identifier: "ko_KR")))
-      .replacingOccurrences(of: "년", with: "년")
-  }
-  
-  private func createPeriodTitle(start: Date, end: Date) -> String {
-    let formatter = DateFormatter()
-    formatter.dateFormat = "M.d"
-    return "\(formatter.string(from: start)) - \(formatter.string(from: end))"
-  }
-  
-  private func handlePageChange(oldValue: Int, newValue: Int) {
-    if newValue > oldValue {
-      if viewModel.state.canMoveNextPeriod {
-        viewModel.send(.moveNextPeriod)
+  // MARK: - Header View
+  private var headerView: some View {
+    VStack(spacing: 3) {
+      Text(viewModel.state.currentPeriod.start.yearString)
+        .font(.pretendardMedium_12)
+      
+      HStack(alignment: .center, spacing: 38) {
+        navigationButton(direction: .previous)
+        periodTitle
+        navigationButton(direction: .next)
       }
-    } else if newValue < oldValue {
-      if viewModel.state.canMovePreviousPeriod {
-        viewModel.send(.movePreviousPeriod)
+    }
+    .frame(maxWidth: .infinity)
+    .padding(.top, 22)
+    .padding(.bottom, 15)
+    .padding(.horizontal, 50)
+    .background(Color.main)
+    .foregroundStyle(Color.whiteDefault)
+  }
+  
+  private var periodTitle: some View {
+    Text(createPeriodTitle())
+      .font(.pretendardSemibold_24)
+      .frame(maxWidth: .infinity)
+  }
+  
+  private func navigationButton(
+    direction: CalendarPagingDirection
+  ) -> some View {
+    let isEnabled = direction == .next ?
+    viewModel.state.canMoveNextPeriod :
+    viewModel.state.canMovePreviousPeriod
+    
+    return Button {
+      viewModel.send(direction == .next ? .moveNextPeriod : .movePreviousPeriod)
+    } label: {
+      Image(systemName: direction.imageName)
+        .font(.custom("SF Pro", size: 16))
+        .opacity(isEnabled ? 1 : 0)
+    }
+    .disabled(!isEnabled)
+  }
+  
+  // MARK: - Calendar Content
+  private var calendarContent: some View {
+    TabView(selection: periodBinding) {
+      ForEach(0..<viewModel.state.periodsCount, id: \.self) { index in
+        CalendarBodyPageView(viewModel: viewModel)
+          .tag(index)
+      }
+    }
+    .tabViewStyle(.page(indexDisplayMode: .never))
+  }
+  
+  // MARK: - Helper Methods
+  private var periodBinding: Binding<Int> {
+    Binding(
+      get: { viewModel.state.currentBudgetIndex },
+      set: { newIndex in
+        let oldIndex = viewModel.state.currentBudgetIndex
+        if newIndex > oldIndex {
+          if viewModel.state.canMoveNextPeriod {
+            viewModel.send(.moveNextPeriod)
+          }
+        } else if newIndex < oldIndex {
+          if viewModel.state.canMovePreviousPeriod {
+            viewModel.send(.movePreviousPeriod)
+          }
+        }
+      }
+    )
+  }
+  
+  private func createPeriodTitle() -> String {
+    let period = viewModel.state.currentPeriod
+    return "\(period.start.monthDayString) - \(period.end.monthDayString)"
+  }
+}
+
+// MARK: - Calendar Body Page View
+private struct CalendarBodyPageView: View {
+  let viewModel: CalendarViewModel
+  
+  private var weeks: [[Date?]] {
+    let dates = createDaysInPeriod()
+    return stride(from: 0, to: dates.count, by: 7).map {
+      Array(dates[$0..<min($0 + 7, dates.count)])
+    }
+  }
+  
+  var body: some View {
+    ScrollViewReader { proxy in
+      ScrollView(showsIndicators: false) {
+        calendarGrid
+          .padding(.top, 18)
+          .padding(.horizontal, 14)
+        
+        Rectangle()
+          .fill(Color.gray.opacity(0))
+          .frame(height: 25)
+          .frame(maxWidth: .infinity)
+        
+        /* CalendarDailyView()
+         .id("dailyView") */
+      }
+    }
+  }
+  
+  private var calendarGrid: some View {
+    VStack(spacing: 0) {
+      WeekdayHeaderView()
+        .padding(.bottom, 8)
+      
+      VStack(spacing: 0) {
+        ForEach(Array(weeks.enumerated()), id: \.offset) { index, week in
+          WeekRowView(
+            viewModel: viewModel,
+            week: week,
+            isLastRow: index == weeks.count - 1
+          )
+        }
+      }
+    }
+  }
+  
+  private func createDaysInPeriod() -> [Date?] {
+    let calendar = Calendar.current
+    let start = viewModel.state.currentPeriod.start
+    let end = viewModel.state.currentPeriod.end
+    var dates: [Date?] = []
+    
+    let startWeekday = calendar.component(.weekday, from: start) - 1
+    dates += Array(repeating: nil as Date?, count: startWeekday)
+    
+    var currentDate = start
+    while currentDate <= end {
+      dates.append(currentDate)
+      currentDate = calendar.date(byAdding: .day, value: 1, to: currentDate)!
+    }
+    
+    let remainingDays = (7 - (dates.count % 7)) % 7
+    dates += Array(repeating: nil as Date?, count: remainingDays)
+    
+    return dates
+  }
+}
+
+// MARK: - Weekday Header View
+private struct WeekdayHeaderView: View {
+  private let weekDays = ["일", "월", "화", "수", "목", "금", "토"]
+  
+  var body: some View {
+    VStack {
+      HStack(spacing: 0) {
+        ForEach(weekDays, id: \.self) { day in
+          Text(day)
+            .font(.pretendardMedium_16)
+            .foregroundStyle(Color.textBlack)
+            .frame(maxWidth: .infinity)
+        }
+      }
+      
+      Divider()
+        .background(Color.textBlack10)
+        .padding(.horizontal, -14)
+        .frame(height: 1/UIWindow().screen.scale)
+    }
+  }
+}
+
+// MARK: - Week Row View
+private struct WeekRowView: View {
+  let viewModel: CalendarViewModel
+  let week: [Date?]
+  let isLastRow: Bool
+  
+  var body: some View {
+    VStack(spacing: 8) {
+      LazyVGrid(
+        columns: Array(repeating: .init(.flexible(), spacing: 0), count: 7),
+        spacing: 0
+      ) {
+        ForEach(Array(week.enumerated()), id: \.offset) { _, date in
+          if let validDate = date {
+            CalendarCell(
+              viewModel: viewModel,
+              date: validDate
+            )
+            .onTapGesture {
+              viewModel.send(.onDayCellSelected(validDate))
+            }
+          } else {
+            Color.clear.frame(height: 90)
+          }
+        }
+      }
+      
+      if !isLastRow {
+        Divider()
+          .background(Color.textBlack10)
+          .padding(.horizontal, -14)
+          .frame(height: 1)
       }
     }
   }
 }
 
-// MARK: - Preview
-#Preview {
-  NavigationStack {
-    CalendarView(viewModel: DIContainer.shared.makeCalendarViewModel()
-    )
+// MARK: - Calendar Cell
+private struct CalendarCell: View {
+  let viewModel: CalendarViewModel
+  let date: Date
+  
+  private var dayInfo: CalendarDayInfo? {
+    viewModel.state.dayInfos.first { $0.date.isSameDay(as: date) }
   }
+  
+  private var isSelected: Bool {
+    date.isSameDay(as: viewModel.state.selectedDate ?? Date())
+  }
+  
+  private var isToday: Bool {
+    date.isToday
+  }
+  
+  var body: some View {
+    VStack(spacing: 0) {
+      Text(dayText)
+        .font(.pretendardMedium_14)
+        .foregroundStyle(dayTextColor)
+        .padding(.top, 5)
+      
+      hexagonView
+      
+      Text(amountText)
+        .font(.pretendardMedium_12)
+        .foregroundStyle(amountTextColor)
+        .padding(.bottom, 5)
+    }
+    .frame(height: 90)
+    .frame(maxWidth: .infinity)
+    .background(
+      RoundedRectangle(cornerRadius: 5)
+        .fill(backgroundColor)
+        .padding(1)
+    )
+    .padding(.vertical, 10)
+    .contentShape(Rectangle())
+  }
+  
+  private var hexagonView: some View {
+    Group {
+      if let image = hexagonImage {
+        Image(image)
+          .resizable()
+      } else {
+        Spacer()
+      }
+    }
+    .frame(width: 23, height: 23)
+    .frame(maxHeight: .infinity)
+  }
+  
+  private var dayText: String {
+    date.calendarDayText
+  }
+  
+  private var amountText: String {
+    (dayInfo?.harubee ?? 0).formatted(.number)
+  }
+  
+  private var dayTextColor: Color {
+    isSelected || isToday ? .whiteDefault : .textBlack
+  }
+  
+  private var amountTextColor: Color {
+    if isSelected || isToday {
+      return .whiteDefault
+    } else if !isToday && date <= Date() {
+      return .textBright
+    } else if let info = dayInfo, info.isAdjusted {
+      return .mainBright
+    }
+    return .textBlack
+  }
+  
+  private var backgroundColor: Color {
+    if isSelected {
+      return .main
+    } else if isToday {
+      return .mainBright
+    }
+    return .whiteDefault
+  }
+  
+  private var hexagonImage: ImageResource? {
+    guard let info = dayInfo else { return nil }
+    
+    if info.isOverHarubee && info.hasExpense {
+      return .hexagonBad
+    } else if !info.isOverHarubee && info.hasExpense {
+      return .hexagonGood
+    } else if isToday {
+      return .hexagonNone
+    }
+    return nil
+  }
+}
+
+// MARK: - Calendar Paging Direction
+private enum CalendarPagingDirection {
+  case next, previous
+  
+  var imageName: String {
+    switch self {
+    case .next: return "chevron.right"
+    case .previous: return "chevron.left"
+    }
+  }
+}
+
+// MARK: - Private Extension
+private extension Calendar {
+    static let korean: Calendar = {
+        var calendar = Calendar.current
+        calendar.locale = Locale(identifier: "ko_KR")
+        return calendar
+    }()
+}
+
+private extension DateFormatter {
+    static let monthDay: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "M.d"
+        return formatter
+    }()
+}
+
+private extension Date {
+    var yearString: String {
+        formatted(.dateTime.year().locale(Locale(identifier: "ko_KR")))
+            .replacingOccurrences(of: "년", with: "년")
+    }
+    
+    var monthDayString: String {
+        DateFormatter.monthDay.string(from: self)
+    }
+    
+    var calendarDayText: String {
+        let day = Calendar.korean.component(.day, from: self)
+        let month = Calendar.korean.component(.month, from: self)
+        return day == 1 ? "\(month)/\(day)" : "\(day)"
+    }
+    
+    var isToday: Bool {
+        Calendar.korean.isDateInToday(self)
+    }
+    
+    func isSameDay(as date: Date) -> Bool {
+        Calendar.korean.isDate(self, inSameDayAs: date)
+    }
 }
