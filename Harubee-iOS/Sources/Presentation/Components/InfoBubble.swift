@@ -18,7 +18,7 @@ struct InfoBubble<Label: View>: ViewModifier {
   private var alignment: Alignment
   private var label: () -> Label
   
-  private let spacing:CGFloat = 15.0
+  private let spacing: CGFloat = 15.0
   
   init(isVisible: Binding<Bool>,
        alignment: Alignment,
