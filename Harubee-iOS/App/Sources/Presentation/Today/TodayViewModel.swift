@@ -14,30 +14,163 @@ final class TodayViewModel {
   // MARK: - State
   struct State {
     var todayDate = Date()
-    var todayHarubee = 36000
-    var averageHarubee = 57400
-    var weeklyStreaks = [DailyBudget]()
-    
-    var tempWeeklyStreaks = ["19(일)", "20(월)", "21(화)", "22(수)", "23(목)", "24(금)", "25(토)"]
+    var todayHarubee = 0
+    var averageHarubee = 0
+    var todayHarubeePercentage: Double = 0.0
+    var todayAverageHarubeePercentage: Double = 0.0
+    var weeklyStreaks: [DailyBudget]?
+    var salaryBudget: SalaryBudget?
   }
   
   // MARK: - Action
   enum Action {
-    
+    case viewDidLoad
   }
   
+  private let salaryBudgetUseCase: SalaryBudgetUseCase
+  private let dailyBudgetUseCase: DailyBudgetUseCase
   private(set) var state: State = .init()
   
-  init() {}
+  init(salaryBudgetUseCase: SalaryBudgetUseCase, dailyBudgetUseCase: DailyBudgetUseCase) {
+    self.salaryBudgetUseCase = salaryBudgetUseCase
+    self.dailyBudgetUseCase = dailyBudgetUseCase
+  }
+  
   
   // MARK: - Send
   func send(_ action: Action) {
     switch action {
-      // code
+    case .viewDidLoad:
+      print(#function)
+      fetchSalaryBudget()
     }
   }
 }
 
 extension TodayViewModel {
   // MARK: - Private Function
+  private func fetchSalaryBudget() {
+
+    do {
+      // 1. 오늘날짜가 포함되는 SalaryBudget을 가져오기
+      let salaryBudget = try salaryBudgetUseCase.getCurrentSalaryBudget(date: state.todayDate)
+      
+      initializeState(salaryBudget: salaryBudget)
+      
+    } catch DomainError.dataNotFound {
+      
+      // 2. 없다면 가장 최근 SalaryBudget을 기반으로 새 SalaryBudget 생성
+      let salaryBudgets = try? salaryBudgetUseCase.getAllSalaryBudget()
+
+      guard let recentSalaryBudget = salaryBudgets?.max(by: { $0.endDate < $1.endDate }) else { return }
+      
+      // 3. 새로운 시작일과 종료일 계산
+      let (newStartDate, newEndDate) = calculateNewSalaryBudgetDates(
+        referenceStartDay: Calendar.current.component(.day, from: recentSalaryBudget.startDate),
+        today: Calendar.current.component(.day, from: state.todayDate)
+      )
+      
+      // 4. 새로운 SalaryBudget 생성
+      if let newSalaryBudget = try? salaryBudgetUseCase.createSalaryBudget(
+        startDate: newStartDate,
+        endDate: newEndDate,
+        previousExpense: nil,
+        fixedIncome: recentSalaryBudget.fixedIncome,
+        fixedExpenses: recentSalaryBudget.fixedExpenses
+      ) {
+        initializeState(salaryBudget: newSalaryBudget)
+      }
+    } catch {
+      print("other error: \(error)")
+    }
+  }
+  
+  private func calculateNewSalaryBudgetDates(referenceStartDay: Int, today: Int) -> (Date, Date) {
+    let calendar = Calendar.current
+    
+    if today < referenceStartDay {
+      let previousMonthDate = calendar.date(byAdding: .month, value: -1, to: state.todayDate)!
+      let newStartDate = calendar.date(from: DateComponents(year: calendar.component(.year, from: previousMonthDate),
+                                                            month: calendar.component(.month, from: previousMonthDate),
+                                                            day: referenceStartDay))!
+      
+      let newEndDate = calendar.date(from: DateComponents(year: calendar.component(.year, from: state.todayDate),
+                                                          month: calendar.component(.month, from: state.todayDate),
+                                                          day: referenceStartDay - 1))!
+      
+      return (newStartDate, newEndDate)
+      
+    } else {
+      let nextMonthDate = calendar.date(byAdding: .month, value: 1, to: state.todayDate)!
+      let newStartDate = calendar.date(from: DateComponents(year: calendar.component(.year, from: state.todayDate),
+                                                            month: calendar.component(.month, from: state.todayDate),
+                                                            day: referenceStartDay))!
+      
+      let newEndDate = calendar.date(from: DateComponents(year: calendar.component(.year, from: nextMonthDate),
+                                                          month: calendar.component(.month, from: nextMonthDate),
+                                                          day: referenceStartDay - 1))!
+      
+      return (newStartDate, newEndDate)
+    }
+  }
+  
+  private func initializeState(salaryBudget: SalaryBudget) {
+    let currentEndDate = salaryBudget.endDate
+    let currentBalance = salaryBudget.balance
+    let todayDailyBudget = salaryBudget.dailyBudgets.first(where: { $0.date == state.todayDate.formattedDate })
+    
+    let todayHarubee = todayDailyBudget?.harubee ?? Int(salaryBudget.defaultHarubee)
+    let averageHarubee = Int(salaryBudgetUseCase.calculateAverageHarubee(endDate: currentEndDate, balance: currentBalance))
+    let weeklyStreaks = getWeeklyStreaks()
+    let todayHarubeePercentage = todayDailyBudget?.expense == nil ? 1.0 : Double((todayDailyBudget?.expense)! / todayHarubee)
+    let originalAverageHarubee = Double(salaryBudget.fixedIncome / 30)
+    let todayAverageHarubeePercentage = Double(averageHarubee) / originalAverageHarubee
+    
+    state.todayHarubee = todayHarubee
+    state.averageHarubee = averageHarubee
+    state.weeklyStreaks = weeklyStreaks
+    state.salaryBudget = salaryBudget
+    state.todayHarubeePercentage = todayHarubeePercentage
+    state.todayAverageHarubeePercentage = todayAverageHarubeePercentage / 2
+  }
+  
+  private func getWeeklyStreaks() -> [DailyBudget] {
+    let calendar = Calendar.current
+    let today = state.todayDate
+    
+    // 오늘 기준 7일 범위 설정 (앞 3일, 오늘, 뒤 3일)
+    guard let startDate = calendar.date(byAdding: .day, value: -3, to: today),
+          let endDate = calendar.date(byAdding: .day, value: 3, to: today)
+    else {
+      return []
+    }
+    
+    var weeklyStreaks = [DailyBudget]()
+    var currentDate = startDate
+    
+    // 각 날짜에 대해 DailyBudget을 가져오거나, 없으면 임의로 생성하여 추가
+    while currentDate <= endDate {
+      do {
+        
+        let dailyBudget = try dailyBudgetUseCase.getDailyBudget(date: currentDate)
+        weeklyStreaks.append(dailyBudget)
+        
+      } catch DomainError.dataNotFound {
+        
+        let nextHarubee = state.salaryBudget!.fixedIncome / 30
+        let defaultDailyBudget = DailyBudget(date: currentDate, harubee: nextHarubee, memo: [])
+        weeklyStreaks.append(defaultDailyBudget)
+        
+      } catch {
+        print("other error: \(error)")
+      }
+      
+      // 다음 날로 이동
+      currentDate = calendar.date(byAdding: .day, value: 1, to: currentDate)!
+    }
+    
+    // 최종적으로 정렬하여 반환
+    return weeklyStreaks.sorted { $0.date < $1.date }
+  }
+  
 }
