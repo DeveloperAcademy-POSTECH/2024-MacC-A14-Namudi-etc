@@ -7,7 +7,7 @@
 //
 
 import SwiftUI
-import DesignSystem
+import Shared
 
 // MARK: - KeypadButtonType
 enum KeypadButtonType: Int {
