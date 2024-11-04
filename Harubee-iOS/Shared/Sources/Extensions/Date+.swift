@@ -27,6 +27,14 @@ public extension Date {
     return formatter.string(from: self)
   }
   
+  /// 일(요일) 표기 - [Ex. 31일 (목)]
+  var koreanShortDateString: String {
+      let dayFormatter = DateFormatter()
+      dayFormatter.dateFormat = "d(EEE)"
+      dayFormatter.locale = Locale(identifier: "ko_KR")
+      return dayFormatter.string(from: self)
+  }
+  
   /// 년, 월, 일 값만 사용하기 위한 Date 형식 - [Ex. 2024-10-31 15:00:00 +0000]
   var formattedDate: Self {
     let calendar = configuredCalendar
