@@ -23,6 +23,12 @@ struct Onboarding2View: View {
         CalculateContentView()
           .padding(.top, 73)
           .padding(.horizontal, 16)
+        Spacer()
+        
+        MainColorButton(title: "다음으로") {
+          print("onboarding 3 to 4")
+        }
+        .padding(.bottom, 9)
       }
       .frame(maxHeight: .infinity, alignment: .top)
       .padding(.top, 76)
