@@ -7,7 +7,7 @@
 //
 
 import SwiftUI
-import DesignSystem
+import Shared
 
 struct Onboarding2View: View {
   var body: some View {
