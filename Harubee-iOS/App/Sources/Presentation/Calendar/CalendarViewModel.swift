@@ -10,7 +10,7 @@ import Domain
 import SwiftUI
 
 // MARK: - Data Models
-struct DayInfo {
+struct CalendarDayInfo {
   let date: Date
   let harubee: Int
   let isAdjusted: Bool
@@ -34,7 +34,7 @@ struct DayInfo {
   }
 }
 
-struct Period {
+struct CalendarPeriod {
   let start: Date
   let end: Date
 }
@@ -45,9 +45,9 @@ final class CalendarViewModel {
   // MARK: - State
   struct State {
     // Data State
-    var currentPeriod: Period
+    var currentPeriod: CalendarPeriod
     var periodsCount: Int
-    var dayInfos: [DayInfo]
+    var dayInfos: [CalendarDayInfo]
     var selectedDate: Date?
     var currentBudgetIndex: Int
     
@@ -56,8 +56,9 @@ final class CalendarViewModel {
     var canMoveNextPeriod: Bool
     var error: Error?
     
+    // Initial State
     static let initial = State(
-      currentPeriod: Period(start: .now, end: .now),
+      currentPeriod: CalendarPeriod(start: .now, end: .now),
       periodsCount: 0,
       dayInfos: [],
       selectedDate: nil,
@@ -69,10 +70,30 @@ final class CalendarViewModel {
   
   // MARK: - Action
   enum Action {
-    case loadData
+    case initialData
     case moveNextPeriod
     case movePreviousPeriod
-    case onDateSelected(Date)
+    case onDayCellSelected(Date)
+  }
+  
+  // MARK: - Paging Direction
+  enum Direction {
+    case next
+    case previous
+    
+    var indexOffset: Int {
+      switch self {
+      case .next: return 1
+      case .previous: return -1
+      }
+    }
+    
+    var canMove: (CalendarViewModel.State) -> Bool {
+      switch self {
+      case .next: return { $0.canMoveNextPeriod }
+      case .previous: return { $0.canMovePreviousPeriod }
+      }
+    }
   }
   
   // MARK: - Properties
@@ -89,32 +110,33 @@ final class CalendarViewModel {
   // MARK: - Public Methods
   func send(_ action: Action) {
     switch action {
-    case .loadData:
+    case .initialData:
       fetchAllPeriodData()
       print(#function, "loadData")
       
     case .moveNextPeriod:
-      moveToNextPeriod()
+      movePeriod(.next)
       print(#function, "moveNextPeriod")
       
     case .movePreviousPeriod:
-      moveToPreviousPeriod()
+      movePeriod(.previous)
       print(#function, "movePreviousPeriod")
       
-    case .onDateSelected(let date):
+    case .onDayCellSelected(let date):
       updateSelectedDate(date)
-      print(#function, "onDateSelected(\(date.koreanFullDateString))")
+      print(#function, "onDayCellSelected(\(date.koreanFullDateString))")
     }
   }
   
-  // MARK: - Private Methods - Data Fetching
+  // MARK: - Private Methods
   private func fetchAllPeriodData() {
     do {
       // 1. 모든 기간의 SalaryBudget 가져와 캐싱하기
       /* self.allSalaryBudgets = try salaryBudgetUseCase.getAllSalaryBudget() */
-      self.allSalaryBudgets = try SampleDataGenerator.createMultipleSampleBudgets()
+      self.allSalaryBudgets = try SampleDataGenerator.createMultipleSampleBudgets(withError: false)
       let today = Date().formattedDate
       
+      // 2. SalaryBudget의 Index를 구해 TabView에 바인딩
       if let (budget, index) = findBudgetAndIndex(for: today) {
         state.periodsCount = allSalaryBudgets.count
         state.currentBudgetIndex = index
@@ -138,10 +160,10 @@ final class CalendarViewModel {
   }
   
   private func updateStateWithBudget(_ budget: SalaryBudget) {
-    let period = Period(start: budget.startDate, end: budget.endDate)
+    let period = CalendarPeriod(start: budget.startDate, end: budget.endDate)
     
     let dayInfos = budget.dailyBudgets.map { dailyBudget in
-      DayInfo(
+      CalendarDayInfo(
         date: dailyBudget.date,
         harubee: dailyBudget.harubee ?? Int(budget.defaultHarubee),
         isAdjusted: dailyBudget.harubee != nil,
@@ -163,33 +185,24 @@ final class CalendarViewModel {
     state.error = nil
   }
   
-  private func moveToNextPeriod() {
-    guard state.canMoveNextPeriod else { return }
+  private func movePeriod(_ direction: Direction) {
+    guard direction.canMove(state) else { return }
     
-    state.currentBudgetIndex += 1
-    if state.currentBudgetIndex < allSalaryBudgets.count {
-      let nextBudget = allSalaryBudgets[state.currentBudgetIndex]
-      updateStateWithBudget(nextBudget)
-      
-      // Select today if it's in the new period
-      if nextBudget.startDate <= Date() && Date() <= nextBudget.endDate {
-        updateSelectedDate(Date().formattedDate)
-      }
+    let newIndex = state.currentBudgetIndex + direction.indexOffset
+    let isValidIndex = switch direction {
+    case .next: newIndex < allSalaryBudgets.count
+    case .previous: newIndex >= 0
     }
-  }
-  
-  private func moveToPreviousPeriod() {
-    guard state.canMovePreviousPeriod else { return }
     
-    state.currentBudgetIndex -= 1
-    if state.currentBudgetIndex >= 0 {
-      let previousBudget = allSalaryBudgets[state.currentBudgetIndex]
-      updateStateWithBudget(previousBudget)
-      
-      // Select today if it's in the new period
-      if previousBudget.startDate <= Date() && Date() <= previousBudget.endDate {
-        updateSelectedDate(Date().formattedDate)
-      }
+    guard isValidIndex else { return }
+    
+    state.currentBudgetIndex = newIndex
+    let budget = allSalaryBudgets[newIndex]
+    updateStateWithBudget(budget)
+    
+    // Select today if it's in the new period
+    if budget.startDate <= Date() && Date() <= budget.endDate {
+      updateSelectedDate(Date().formattedDate)
     }
   }
   

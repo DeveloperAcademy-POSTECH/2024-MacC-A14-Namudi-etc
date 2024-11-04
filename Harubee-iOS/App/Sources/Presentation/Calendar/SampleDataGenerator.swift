@@ -25,6 +25,13 @@ extension Date {
 
 enum SampleError: LocalizedError {
   case testError
+  
+  var errorDescription: String? {
+    switch self {
+    case .testError:
+      return "테스트 에러가 발생했습니다."
+    }
+  }
 }
 
 
@@ -97,7 +104,11 @@ class SampleDataGenerator {
     )
   }
 
-  static func createMultipleSampleBudgets() throws -> [SalaryBudget] {
+  static func createMultipleSampleBudgets(withError: Bool) throws -> [SalaryBudget] {
+    if withError {
+      throw SampleError.testError
+    }
+    
     let calendar = Calendar.current
     var allBudgets: [SalaryBudget] = []
     
