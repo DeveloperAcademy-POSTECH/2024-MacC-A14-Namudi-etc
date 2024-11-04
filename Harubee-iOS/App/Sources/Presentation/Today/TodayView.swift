@@ -152,8 +152,7 @@ private struct HarubeeHexagon: View {
     
     self.isTodayHarubee = isTodayHarubee
     self.hexgonSize = hexgonSize
-//    self.fillPercentage = todayViewModel.state.todayAverageHarubeePercentage
-    self.fillPercentage = 0.33
+    self.fillPercentage = todayViewModel.state.todayAverageHarubeePercentage
   }
   
   var body: some View {
