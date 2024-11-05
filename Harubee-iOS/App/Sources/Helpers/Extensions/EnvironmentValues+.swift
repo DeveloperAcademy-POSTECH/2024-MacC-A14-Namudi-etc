@@ -9,7 +9,7 @@
 import SwiftUI
 
 extension EnvironmentValues {
-  var buttonAction: () -> Void {
+  var buttonAction: (Bool) -> Void {
     get { self[ButtonActionKey.self] }
     set { self[ButtonActionKey.self] = newValue }
   }

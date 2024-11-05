@@ -14,7 +14,7 @@ import Shared
 struct NumberKeypadView: View {
   
   @Binding private var expression: String
-  private let doneAction: () -> Void
+  private let buttonAction: (Bool) -> Void
   
   private let keypads: [[KeypadButtonType]] = [
     [.one, .two, .three, .delete],
@@ -25,10 +25,10 @@ struct NumberKeypadView: View {
   
   public init(
     expression: Binding<String>,
-    doneAction: @escaping () -> Void
+    buttonAction: @escaping (Bool) -> Void
   ) {
     self._expression = expression
-    self.doneAction = doneAction
+    self.buttonAction = buttonAction
   }
   
   public var body: some View {
@@ -38,8 +38,8 @@ struct NumberKeypadView: View {
           expression: $expression,
           keypads: rowKeypads
         )
-        .environment(\.buttonAction) {
-          doneAction()
+        .environment(\.buttonAction) { bool in
+          buttonAction(bool)
         }
       }
     }
@@ -117,7 +117,8 @@ private struct NumberKeypadButton: View {
         expression: expression
       )
       
-      if keypad == .done { buttonAction() }
+      if keypad == .done { buttonAction(true) }
+      if keypad == .plus || keypad == .minus { buttonAction(false) }
       
       self.isPressed = true
       DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
@@ -133,7 +134,7 @@ private struct NumberKeypadButton: View {
 // MARK: - Preview
 #Preview {
   @Previewable @State var expression: String = ""
-  return NumberKeypadView(expression: $expression) {
-    print("Done")
+  return NumberKeypadView(expression: $expression) { bool in
+    print("\(bool)")
   }
 }

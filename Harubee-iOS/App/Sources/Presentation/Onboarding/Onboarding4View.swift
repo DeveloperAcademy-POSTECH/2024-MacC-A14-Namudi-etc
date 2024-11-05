@@ -11,16 +11,31 @@ import Shared
 
 struct Onboarding4View: View {
   @State private var expenseAmount: String = ""
+  @State private var isEnabled: Bool = false
+  @State private var isPresented: Bool = false
   
   var body: some View {
-    ZStack {
+    
       VStack(spacing: 0) {
         OnboardingHeaderView()
         
         OnboardingBodyView(expenseAmount: $expenseAmount)
+        
+        
+        MainColorButton(title: "다음으로", isEnabled: $isEnabled) {
+          self.isPresented = true
+        }
+        
+        NumberKeypadView(expression: $expenseAmount) { isEnabled in
+          self.isEnabled = isEnabled
+        }
+        .padding(.top, 26)
+        .padding(.horizontal, 16)
       }
-      ButtonKeyboardView(expenseAmount: $expenseAmount)
-    }
+      .navigationDestination(isPresented: $isPresented) {
+        Onboarding5View()
+          .navigationBarBackButtonHidden()
+      }
   }
 }
 
@@ -31,11 +46,11 @@ private struct OnboardingHeaderView: View {
       
       VStack(alignment: .leading, spacing: 6) {
         Text("현재 하루비는")
-        HStack(alignment: .bottom, spacing: 0) {
+        
+        HStack(alignment: .firstTextBaseline, spacing: 0) {
           Text("0원")
             .font(.pretendardSemibold_30)
           Text("입니다")
-            .padding(.bottom, 1)
         }
       }
       .frame(maxWidth: .infinity, alignment: .leading)
@@ -43,7 +58,7 @@ private struct OnboardingHeaderView: View {
       .foregroundStyle(Color.whiteDefault)
     }
     .padding(.horizontal, 20)
-    .padding(.bottom, 26)
+    .padding(.bottom, 23)
     .background(
       Rectangle().fill(Color.main).ignoresSafeArea()
     )
@@ -91,25 +106,6 @@ private struct OnboardingBodyView: View {
     .frame(maxHeight: .infinity, alignment: .top)
   }
 }
-
-private struct ButtonKeyboardView: View {
-  @Binding var expenseAmount: String
-  
-  var body: some View {
-    // TODO: NumberKeypadView와 MainColorButton의 padding이 .. 불확실함 ㅠ
-    VStack(spacing: 20) {
-      MainColorButton(title: "다음으로") {
-        print("다음으로")
-      }
-      
-      NumberKeypadView(expression: $expenseAmount) {
-        print("Done Button Tapped")
-      }
-    }
-    .frame(maxHeight: .infinity, alignment: .bottom)
-  }
-}
-
 
 #Preview {
   Onboarding4View()

@@ -14,8 +14,12 @@ struct Onboarding6View: View {
     ZStack {
       Color.main.ignoresSafeArea()
       VStack(spacing: 0) {
+        OnboardingNavigationHeaderView(onboardingPage: .last)
+          .padding(.horizontal, 4)
+        
+        
         TitleView()
-          .padding(.top, 76)
+          .padding(.top, 22)
           .padding(.horizontal, 4)
         
         Rectangle()
