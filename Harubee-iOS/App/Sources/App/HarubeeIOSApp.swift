@@ -29,10 +29,9 @@ struct HarubeeIOSApp: App {
   
   var body: some Scene {
     WindowGroup {
-      //      NavigationStack {
-      //        CalendarView(viewModel: DIContainer.shared.makeCalendarViewModel())
-      //      }
-      TodayView(todayViewModel: DIContainer.shared.makeTodayViewModel())
+      NavigationStack {
+        Onboarding1View()
+      }
     }
   }
 }

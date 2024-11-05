@@ -9,5 +9,5 @@
 import SwiftUI
 
 struct ButtonActionKey: EnvironmentKey {
-  static let defaultValue: () -> Void = {}
+  static let defaultValue: (Bool) -> Void = { _ in }
 }

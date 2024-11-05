@@ -34,7 +34,7 @@ struct TransactionInputView: View {
         numberText: $expression,
         isUpdated: $isUpdated
       )
-      .padding(.horizontal, 37)
+      .padding(.horizontal, 40)
       
       MainColorButton(
         title: "저장하기",
@@ -43,7 +43,7 @@ struct TransactionInputView: View {
         print("저장하기 Tap")
       }
       
-      NumberKeypadView(expression: $expression) {
+      NumberKeypadView(expression: $expression) { isEnabled in
         self.isUpdated = true
       }
     }

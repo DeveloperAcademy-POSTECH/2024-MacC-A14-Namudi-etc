@@ -10,21 +10,25 @@ import SwiftUI
 import Shared
 
 enum OnboardingPage {
-  case first, second, third
+  case first, second, third, last
   
-  var number: Int {
+  var title: String {
     switch self {
     case .first:
-      return 1
+      return "1/3"
     case .second:
-      return 2
+      return "2/3"
     case .third:
-      return 3
+      return "3/3"
+    case .last:
+      return " "
     }
   }
 }
 
 struct OnboardingNavigationHeaderView: View {
+  @Environment(\.dismiss) private var dismiss
+  
   private var onboardingPage: OnboardingPage
   
   init(onboardingPage: OnboardingPage) {
@@ -34,16 +38,17 @@ struct OnboardingNavigationHeaderView: View {
   var body: some View {
     HStack(spacing: 0) {
       Button {
-        print("뒤로가기")
+        self.dismiss()
       } label: {
         Image(systemName: "chevron.left")
           .font(Font.system(size: 18, weight: .medium))
           .foregroundStyle(Color.whiteDefault)
       }
-      Text("\(onboardingPage.number)/3")
+      Spacer()
+      Text(onboardingPage.title)
         .font(.pretendardSemibold_22)
         .foregroundStyle(Color.whiteDeep50)
-        .frame(maxWidth: .infinity, alignment: .trailing)
+//        .frame(maxWidth: .infinity, alignment: .trailing)
     }
   }
 }

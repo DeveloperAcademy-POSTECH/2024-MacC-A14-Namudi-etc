@@ -10,6 +10,8 @@ import SwiftUI
 import Shared
 
 struct Onboarding2View: View {
+  @State private var isPresented: Bool = false
+  
   var body: some View {
     ZStack {
       Color.main.ignoresSafeArea()
@@ -26,12 +28,16 @@ struct Onboarding2View: View {
         Spacer()
         
         MainColorButton(title: "다음으로") {
-          print("onboarding 3 to 4")
+          self.isPresented = true
         }
         .padding(.bottom, 9)
       }
       .frame(maxHeight: .infinity, alignment: .top)
       .padding(.top, 76)
+      .navigationDestination(isPresented: $isPresented) {
+        Onboarding3View()
+          .navigationBarBackButtonHidden()
+      }
     }
   }
 }
@@ -73,7 +79,7 @@ private struct HarubeeExplainView: View {
               .foregroundStyle(Color.whiteDefault)
               .background(
                 Rectangle()
-                  .fill(Color.mainBrighter10)
+                  .fill(Color.mainBrighter15)
                   .frame(height: 7)
                   .offset(y: 8)
               )
@@ -109,8 +115,7 @@ private struct CalculateContentView: View {
         .padding(.vertical, 16)
         .background(
           RoundedRectangle(cornerRadius: 10)
-          // TODO: 추가된 색상으로 변경 필요
-            .fill(Color.black)
+            .fill(Color.mainBrighter10)
         )
         .padding(.top, 12)
     }

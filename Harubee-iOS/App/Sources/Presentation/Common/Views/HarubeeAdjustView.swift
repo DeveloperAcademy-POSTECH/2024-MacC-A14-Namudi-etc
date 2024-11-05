@@ -36,7 +36,7 @@ struct HarubeeAdjustView: View {
         numberText: $expression,
         isUpdated: $isUpdated
       )
-        .padding(.horizontal, 37)
+        .padding(.horizontal, 40)
       
       MainColorButton(
         title: "저장하기",
@@ -45,7 +45,7 @@ struct HarubeeAdjustView: View {
           print("저장하기 Tap")
         }
       
-      NumberKeypadView(expression: $expression) {
+      NumberKeypadView(expression: $expression) { isEnabled in
         print("Done")
       }
     }

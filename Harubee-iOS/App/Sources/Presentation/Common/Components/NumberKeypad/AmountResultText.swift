@@ -20,7 +20,7 @@ struct AmountResultText: View {
   
   var body: some View {
     
-    HStack(spacing: 10) {
+    HStack(spacing: 6) {
       
       HStack(alignment: .firstTextBaseline, spacing: 0) {
         ViewThatFits {

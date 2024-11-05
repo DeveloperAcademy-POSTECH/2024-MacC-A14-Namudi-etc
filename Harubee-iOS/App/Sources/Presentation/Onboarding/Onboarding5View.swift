@@ -10,6 +10,8 @@ import SwiftUI
 import Shared
 
 struct Onboarding5View: View {
+  @State private var isPresented: Bool = false
+  
   var body: some View {
     VStack(spacing: 0) {
       OnboardingHeaderView()
@@ -17,13 +19,17 @@ struct Onboarding5View: View {
       OnboardingBodyView()
 
       MainColorButton(title: "다음으로") {
-        print("onboarding 5 to 6")
+        self.isPresented = true
       }
       .clipShape(
         RoundedRectangle(cornerRadius: 10)
       )
       .padding(.horizontal, 16)
       .padding(.bottom, 9)
+    }
+    .navigationDestination(isPresented: $isPresented) {
+      Onboarding6View()
+        .navigationBarBackButtonHidden()
     }
   }
 }
