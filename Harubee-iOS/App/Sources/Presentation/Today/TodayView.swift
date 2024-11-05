@@ -39,11 +39,12 @@ struct TodayView: View {
             Image(systemName: "gearshape")
               .font(Font.system(size: 22, weight: .regular))
               .foregroundStyle(Color.whiteDefault)
-              .padding(.trailing, 16)
           }
+          .padding(.trailing, 16)
+          .padding(.top, 11)
           
           if isInfoBubbleVisible {
-            Color.black.opacity(0.5)
+            Color.black.opacity(0.3)
               .ignoresSafeArea()
               .onTapGesture {
                 isInfoBubbleVisible.toggle()
@@ -56,8 +57,9 @@ struct TodayView: View {
             Image(systemName: "questionmark.circle")
               .font(Font.system(size: 22, weight: .regular))
               .foregroundStyle(Color.whiteDefault)
-              .padding(.trailing, 68)
           })
+          .padding(.trailing, 68)
+          .padding(.top, 11)
           
         }
       }.onAppear {
@@ -331,6 +333,14 @@ private struct CalendarStreakView: View {
     self.harubee = todayDailyBudget?.harubee == nil ? Int(defaultHarubee ?? 0) : (todayDailyBudget?.harubee!)!
   }
   
+  var hexagonImage: Image {
+    if let expense = todayDailyBudget?.expense {
+      return expense <= harubee ? Image.hexagoneGood : Image.hexagoneBad
+    } else {
+      return Image.hexagonNone
+    }
+  }
+  
   var body: some View {
     VStack {
       HStack {
@@ -362,19 +372,9 @@ private struct CalendarStreakView: View {
               .font(.pretendardSemibold_12)
               .foregroundStyle(Color.main)
             
-            if todayDailyBudget?.expense == nil {
-              Image.hexagonNone
-                .resizable()
-                .frame(width: 23, height: 23)
-            } else if (todayDailyBudget?.expense)! <= Int(harubee) {
-              Image.hexagoneGood
-                .resizable()
-                .frame(width: 23, height: 23)
-            } else if (todayDailyBudget?.expense)! > Int(harubee) {
-              Image.hexagoneBad
-                .resizable()
-                .frame(width: 23, height: 23)
-            }
+            hexagonImage
+              .resizable()
+              .frame(width: 23, height: 23)
           }
         }
        
@@ -425,6 +425,14 @@ private struct StreakCell: View {
     self.harubee = harubee
   }
   
+  var hexagonImage: Image {
+    if let expense = dailyBudget.expense {
+      return expense <= harubee ? Image.hexagoneGood : Image.hexagoneBad
+    } else {
+      return Image.hexagonNone
+    }
+  }
+  
   var body: some View {
     VStack(spacing: 15) {
       Text(dailyBudget.date.koreanShortDateString)
@@ -438,19 +446,9 @@ private struct StreakCell: View {
           .foregroundStyle(Color.main)
           .padding(.vertical, 5)
       } else {
-        if dailyBudget.expense == nil {
-          Image.hexagonNone
-            .resizable()
-            .frame(width: 23, height: 23)
-        } else if dailyBudget.expense! <= harubee {
-          Image.hexagoneGood
-            .resizable()
-            .frame(width: 23, height: 23)
-        } else if dailyBudget.expense! > harubee {
-          Image.hexagonNone
-            .resizable()
-            .frame(width: 23, height: 23)
-        }
+        hexagonImage
+          .resizable()
+          .frame(width: 23, height: 23)
       }
     }
   }
