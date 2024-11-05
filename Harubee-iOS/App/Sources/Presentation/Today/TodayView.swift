@@ -10,41 +10,70 @@ import SwiftUI
 import Shared
 import Domain
 
+
 // MARK: - TodayView
 struct TodayView: View {
   
   @State private var todayViewModel: TodayViewModel
+  @State private var isInfoBubbleVisible = false // 추가된 State 변수
   
   init(todayViewModel: TodayViewModel) {
     self.todayViewModel = todayViewModel
+    
+    setNavigationBar()
   }
   
   var body: some View {
     GeometryReader { proxy in
       NavigationStack {
-        ZStack {
+        ZStack(alignment: .topTrailing) {
           Color.main.ignoresSafeArea()
           
           TodayPrimaryLayerView(todayViewModel: todayViewModel, proxy: proxy)
           
           TodaySecondaryLayerView(todayViewModel: todayViewModel)
           
-        }
-        .toolbar {
-          ToolbarItem(placement: .topBarTrailing) {
-            NavigationLink {
-              SettingView()
-            } label: {
-              Image(systemName: "gearshape")
-                .font(Font.system(size: 18, weight: .regular))
-                .foregroundStyle(Color.whiteDefault)
-            }
+          NavigationLink {
+            SettingView()
+          } label: {
+            Image(systemName: "gearshape")
+              .font(Font.system(size: 22, weight: .regular))
+              .foregroundStyle(Color.whiteDefault)
+              .padding(.trailing, 16)
           }
+          
+          if isInfoBubbleVisible {
+            Color.black.opacity(0.5)
+              .ignoresSafeArea()
+              .onTapGesture {
+                isInfoBubbleVisible.toggle()
+              }
+          }
+          
+          Button(action: {
+            isInfoBubbleVisible.toggle()
+          }, label: {
+            Image(systemName: "questionmark.circle")
+              .font(Font.system(size: 22, weight: .regular))
+              .foregroundStyle(Color.whiteDefault)
+              .padding(.trailing, 68)
+          })
+          
         }
       }.onAppear {
         todayViewModel.send(.viewDidLoad)
       }
     }.ignoresSafeArea()
+  }
+  
+  private func setNavigationBar() {
+    let appearance = UINavigationBarAppearance()
+    appearance.configureWithOpaqueBackground()
+    appearance.backgroundColor = .clear
+    appearance.shadowColor = .clear
+    
+    UINavigationBar.appearance().standardAppearance = appearance
+    UINavigationBar.appearance().scrollEdgeAppearance = appearance
   }
 }
 
@@ -254,7 +283,7 @@ private struct TodayHeaderView: View {
         .font(.pretendardSemibold_14)
         .foregroundStyle(Color.whiteDefault)
     }.frame(maxWidth: .infinity, alignment: .trailing)
-      .padding(EdgeInsets(top: 6, leading: 0, bottom: 0, trailing: 16))
+      .padding(EdgeInsets(top: 50, leading: 0, bottom: 0, trailing: 16))
   }
 }
 
@@ -341,8 +370,8 @@ private struct CalendarStreakView: View {
               Image.hexagoneGood
                 .resizable()
                 .frame(width: 23, height: 23)
-            } else if (todayDailyBudget?.expense)! <= Int(harubee) {
-              Image.hexagonNone
+            } else if (todayDailyBudget?.expense)! > Int(harubee) {
+              Image.hexagoneBad
                 .resizable()
                 .frame(width: 23, height: 23)
             }
@@ -417,7 +446,7 @@ private struct StreakCell: View {
           Image.hexagoneGood
             .resizable()
             .frame(width: 23, height: 23)
-        } else if dailyBudget.expense! <= harubee {
+        } else if dailyBudget.expense! > harubee {
           Image.hexagonNone
             .resizable()
             .frame(width: 23, height: 23)
