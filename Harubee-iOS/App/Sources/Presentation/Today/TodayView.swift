@@ -15,7 +15,7 @@ import Domain
 struct TodayView: View {
   
   @State private var todayViewModel: TodayViewModel
-  @State private var isInfoBubbleVisible = false // 추가된 State 변수
+  @State private var isInfoBubbleVisible = false
   
   init(todayViewModel: TodayViewModel) {
     self.todayViewModel = todayViewModel
@@ -27,11 +27,15 @@ struct TodayView: View {
     GeometryReader { proxy in
       NavigationStack {
         ZStack(alignment: .topTrailing) {
+          
           Color.main.ignoresSafeArea()
           
-          TodayPrimaryLayerView(todayViewModel: todayViewModel, proxy: proxy)
+          TodayPrimaryLayerView(todayViewModel: todayViewModel,
+                                proxy: proxy,
+                                isInfoBubbleVisible: $isInfoBubbleVisible)
           
-          TodaySecondaryLayerView(todayViewModel: todayViewModel)
+          TodaySecondaryLayerView(todayViewModel: todayViewModel, isInfoBubbleVisible: $isInfoBubbleVisible)
+          
           
           NavigationLink {
             SettingView()
@@ -42,14 +46,6 @@ struct TodayView: View {
           }
           .padding(.trailing, 16)
           .padding(.top, 11)
-          
-          if isInfoBubbleVisible {
-            Color.black.opacity(0.3)
-              .ignoresSafeArea()
-              .onTapGesture {
-                isInfoBubbleVisible.toggle()
-              }
-          }
           
           Button(action: {
             isInfoBubbleVisible.toggle()
@@ -86,10 +82,14 @@ private struct TodayPrimaryLayerView: View {
   private let screenWidth: CGFloat
   private let screenHeight: CGFloat
   
-  init(todayViewModel: TodayViewModel, proxy: GeometryProxy) {
+  @Binding private var isInfoBubbleVisible: Bool
+  
+  init(todayViewModel: TodayViewModel, proxy: GeometryProxy, isInfoBubbleVisible: Binding<Bool>) {
     self.todayViewModel = todayViewModel
     self.screenWidth = proxy.size.width
     self.screenHeight = proxy.size.height
+    
+    self._isInfoBubbleVisible = isInfoBubbleVisible
   }
   
   var body: some View {
@@ -97,7 +97,8 @@ private struct TodayPrimaryLayerView: View {
       
       Honeycomb(todayViewModel: todayViewModel,
                 screenWidth: screenWidth,
-                screenHeight: screenHeight)
+                screenHeight: screenHeight,
+                isInfoBubbleVisible: $isInfoBubbleVisible)
       
       LinearGradient(
         gradient: Gradient(colors: [Color.main, Color.main, .clear]),
@@ -122,18 +123,22 @@ private struct Honeycomb: View {
   private let hexgonSize: CGFloat
   private let honeycombSpace: CGFloat
   
+  @Binding private var isInfoBubbleVisible: Bool
+  
   private let hexGrid: [[Bool]] = [
     [true, false],
     [false, true, true],
     [false, true]
   ]
     
-  init(todayViewModel: TodayViewModel, screenWidth: CGFloat, screenHeight: CGFloat) {
+  init(todayViewModel: TodayViewModel, screenWidth: CGFloat, screenHeight: CGFloat, isInfoBubbleVisible: Binding<Bool>) {
     self.todayViewModel = todayViewModel
     self.screenWidth = screenWidth
     self.screenHeight = screenHeight
     self.hexgonSize = (screenHeight - 100)/3
     self.honeycombSpace = -10.0
+    
+    self._isInfoBubbleVisible = isInfoBubbleVisible
   }
   
   
@@ -146,11 +151,14 @@ private struct Honeycomb: View {
             if row == 1 && col == 1 {
               HarubeeHexagon(todayViewModel: todayViewModel,
                              isTodayHarubee: true,
-                             hexgonSize: hexgonSize)
+                             hexgonSize: hexgonSize,
+                             isInfoBubbleVisible: $isInfoBubbleVisible
+              )
             } else if row == 2 && col == 1 {
               HarubeeHexagon(todayViewModel: todayViewModel,
                              isTodayHarubee: false,
-                             hexgonSize: hexgonSize)
+                             hexgonSize: hexgonSize,
+                             isInfoBubbleVisible: $isInfoBubbleVisible)
             } else {
               RoundedHexagon()
                 .stroke(hexGrid[row][col] ? Color.whiteDefault: .clear, lineWidth: 1.5)
@@ -169,13 +177,14 @@ private struct HarubeeHexagon: View {
   
   @State private var firstWaveOffset: CGFloat
   @State private var secondWaveOffset: CGFloat
+  @Binding private var isInfoBubbleVisible: Bool
   
   private let todayViewModel: TodayViewModel
   private let isTodayHarubee: Bool
   private let hexgonSize: CGFloat
   private let fillPercentage: Double
   
-  init(todayViewModel: TodayViewModel, isTodayHarubee: Bool, hexgonSize: CGFloat) {
+  init(todayViewModel: TodayViewModel, isTodayHarubee: Bool, hexgonSize: CGFloat, isInfoBubbleVisible: Binding<Bool>) {
     self.firstWaveOffset = isTodayHarubee ? 0 : hexgonSize / 2
     self.secondWaveOffset = isTodayHarubee ? 0 : hexgonSize / 2
     
@@ -184,10 +193,13 @@ private struct HarubeeHexagon: View {
     self.isTodayHarubee = isTodayHarubee
     self.hexgonSize = hexgonSize
     self.fillPercentage = todayViewModel.state.todayAverageHarubeePercentage
+    
+    self._isInfoBubbleVisible = isInfoBubbleVisible
   }
   
   var body: some View {
     ZStack {
+      
       if isTodayHarubee {
         RoundedHexagon()
           .fill(Color.main)
@@ -219,10 +231,18 @@ private struct HarubeeHexagon: View {
         .stroke(Color.whiteDefault, lineWidth: 1.5)
         .frame(width: hexgonSize, height: hexgonSize)
       
-      VStack(spacing: 4) {
+      VStack(spacing: 2) {
         Text(isTodayHarubee ? "오늘의 남은 하루비" : "평균 하루비")
           .font(isTodayHarubee ? .pretendardSemibold_20 : .pretendardSemibold_16)
           .foregroundStyle(isTodayHarubee ? (fillPercentage <= 0.5 ? Color.whiteDefault : Color.textBlack) :  Color.whiteDeep50)
+          .infoBubble(isVisible: $isInfoBubbleVisible) {
+            VStack(alignment: .leading, spacing: 2) {
+              Text(isTodayHarubee ? "오늘의 하루비를" : "평균 하루비는 하루비 조정과 상관없이 잔액을")
+              Text(isTodayHarubee ? "바로 조정할 수 있어요" : "다음 수입일까지 남은 일로 나눈 금액을 의미해요")
+            }
+            .font(.pretendardSemibold_12)
+            .foregroundStyle(Color.textBlack)
+          }
         if isTodayHarubee {
           ZStack {
             RoundedRectangle(cornerRadius: 8)
@@ -252,9 +272,11 @@ private struct HarubeeHexagon: View {
 private struct TodaySecondaryLayerView: View {
   
   private let todayViewModel: TodayViewModel
+  @Binding private var isInfoBubbleVisible: Bool
   
-  init(todayViewModel: TodayViewModel) {
+  init(todayViewModel: TodayViewModel, isInfoBubbleVisible: Binding<Bool>) {
     self.todayViewModel = todayViewModel
+    self._isInfoBubbleVisible = isInfoBubbleVisible
   }
   
   var body: some View {
@@ -264,7 +286,7 @@ private struct TodaySecondaryLayerView: View {
       
       Spacer()
       
-      TodayFooterView(todayViewModel: todayViewModel)
+      TodayFooterView(todayViewModel: todayViewModel, isInfoBubbleVisible: $isInfoBubbleVisible)
       
     }.frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
   }
@@ -293,20 +315,30 @@ private struct TodayHeaderView: View {
 private struct TodayFooterView: View {
   
   private let todayViewModel: TodayViewModel
+  @Binding private var isInfoBubbleVisible: Bool
   
-  init(todayViewModel: TodayViewModel) {
+  init(todayViewModel: TodayViewModel, isInfoBubbleVisible: Binding<Bool>) {
     self.todayViewModel = todayViewModel
+    self._isInfoBubbleVisible = isInfoBubbleVisible
   }
   
   var body: some View {
     VStack(spacing: 16) {
       
-      CalendarStreakView(todayViewModel: todayViewModel)
+      CalendarStreakView(todayViewModel: todayViewModel, isInfoBubbleVisible: $isInfoBubbleVisible)
       
       MainColorButton(title: "실제 지출 및 수입 입력하기") {
         print("실제 지출 및 수입 입력하기 버튼 Tapped")
       }
       .clipShape(RoundedRectangle(cornerRadius: 10))
+      .infoBubble(isVisible: $isInfoBubbleVisible) {
+        VStack(alignment: .leading, spacing: 2) {
+          Text("실제 지출 및 수입을 매일 입력해야")
+          Text("더 정확한 하루비를 확인할 수 있어요")
+        }
+        .font(.pretendardSemibold_12)
+        .foregroundStyle(Color.textBlack)
+      }
     }
     .frame(maxWidth: .infinity, maxHeight: 196, alignment: .top)
     .padding(.horizontal, 16)
@@ -323,7 +355,9 @@ private struct CalendarStreakView: View {
   private let todayDailyBudget: DailyBudget?
   private let harubee: Int
   
-  init(todayViewModel: TodayViewModel) {
+  @Binding private var isInfoBubbleVisible: Bool
+  
+  init(todayViewModel: TodayViewModel, isInfoBubbleVisible: Binding<Bool>) {
     self.todayViewModel = todayViewModel
     let weeklyStreaks = todayViewModel.state.weeklyStreaks ?? []
     self.firstStreakGroup = Array(weeklyStreaks.prefix(3))
@@ -331,6 +365,8 @@ private struct CalendarStreakView: View {
     self.todayDailyBudget = weeklyStreaks.indices.contains(3) ? weeklyStreaks[3] : nil
     let defaultHarubee = todayViewModel.state.salaryBudget?.defaultHarubee
     self.harubee = todayDailyBudget?.harubee == nil ? Int(defaultHarubee ?? 0) : (todayDailyBudget?.harubee!)!
+    
+    self._isInfoBubbleVisible = isInfoBubbleVisible
   }
   
   var hexagonImage: Image {
@@ -347,6 +383,14 @@ private struct CalendarStreakView: View {
         Text("캘린더")
           .font(.pretendardSemibold_14)
           .foregroundStyle(Color.textBlack)
+          .infoBubble(isVisible: $isInfoBubbleVisible, alignment: .topLeading) {
+            VStack(alignment: .leading, spacing: 2) {
+              Text("캘린더에서 다른 날짜들의")
+              Text("하루비를 확인하고 조정해요")
+            }
+            .font(.pretendardSemibold_12)
+            .foregroundStyle(Color.textBlack)
+          }
         
         Spacer()
         
