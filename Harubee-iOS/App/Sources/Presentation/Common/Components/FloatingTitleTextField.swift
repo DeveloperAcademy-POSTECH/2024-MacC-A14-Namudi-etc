@@ -30,30 +30,19 @@ struct FloatingTitleTextField: View {
         .foregroundStyle(!text.isEmpty ? Color.main : .clear)
         .offset(y: !text.isEmpty ? -4 : 0)
         .animation(.easeOut(duration: 0.2), value: !text.isEmpty)
+      
       TextField(title, text: $text)
         .frame(maxWidth: .infinity)
         .font(.pretendardMedium_18)
         .focused($isTextfieldFocused)
-        .onAppear {
-          if shouldShowKeyboard {
-            isTextfieldFocused = true
-          }
-        }
-        .onChange(of: shouldShowKeyboard) { _, newValue in
-          isTextfieldFocused = newValue
-        }
-        .onChange(of: isTextfieldFocused) { _, isFocused in
-          if shouldShowKeyboard && !isFocused {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-              isTextfieldFocused = true
-            }
-          }
-        }
+      
       Rectangle()
         .frame(height: 1)
-        .foregroundStyle(Color.textBrighter)
-      // textfield 작성중일 때 Main
+        .foregroundStyle(!text.isEmpty ? Color.main : Color.textBrighter)
         .padding(.top, 8)
+    }
+    .onAppear {
+        self.isTextfieldFocused = shouldShowKeyboard
     }
   }
 }
