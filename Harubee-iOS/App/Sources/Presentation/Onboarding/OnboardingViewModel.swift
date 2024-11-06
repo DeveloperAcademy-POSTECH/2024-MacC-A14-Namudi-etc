@@ -24,9 +24,10 @@ final class OnboardingViewModel {
       
       var components = calendar.dateComponents([.year, .month, .day], from: now)
       
-      if components.day! > incomeDay {
-        components.day! -= 1
+      if components.day! < incomeDay {
+        components.month! -= 1
       }
+      components.day! = incomeDay
       
       let startDate = calendar.date(from: components)!
       return startDate
@@ -44,7 +45,7 @@ final class OnboardingViewModel {
       
       // 다음 달에 동일한 일자가 있는지 확인하여 날짜를 생성
       if let calculatedEndDate = calendar.date(from: components) {
-        return calculatedEndDate
+        return calculatedEndDate.addingTimeInterval(-86400)
       } else {
         // 동일 일자가 없는 경우(예: 30일이나 31일이 없는 달) 해당 월의 마지막 날로 조정
         var fallbackComponents = components
@@ -61,6 +62,7 @@ final class OnboardingViewModel {
       previousExpense: Int? = nil,
       fixedExpenses: [TransactionItem] = []
     )
+    case onAppear
     case updateFixedExpenses([TransactionItem])
     case finishButtonTapped
   }
@@ -75,6 +77,9 @@ final class OnboardingViewModel {
   
   func send(_ action: Action) {
     switch action {
+    case .onAppear:
+      self.state.averageHarubee = self.calculateAverageHarubee()
+      
     case let .nextButtonTapped(
       incomeDay,
       incomeAmount,
@@ -87,16 +92,8 @@ final class OnboardingViewModel {
       self.state.fixedExpenses = fixedExpenses
       
     case let .updateFixedExpenses(fixedExpenses):
-      let balance = calclulateBalance(
-        incomeAmount: self.state.incomeAmount ?? 0,
-        previousExpense: self.state.previousExpense ?? 0,
-        fixedExpenses: fixedExpenses
-      )
-      
-      self.state.averageHarubee = (try? salaryBudgetUseCase.calculateAverageHarubee(
-        endDate: self.state.incomeEndDate,
-        balance: balance
-      )) ?? 0
+      self.state.fixedExpenses = fixedExpenses
+      self.state.averageHarubee = self.calculateAverageHarubee()
       
     case .finishButtonTapped:
       break
@@ -105,7 +102,22 @@ final class OnboardingViewModel {
 }
 
 extension OnboardingViewModel {
-  private func calclulateBalance(
+  private func calculateAverageHarubee() -> Int {
+    let balance = calculateBalance(
+      incomeAmount: self.state.incomeAmount ?? 0,
+      previousExpense: self.state.previousExpense ?? 0,
+      fixedExpenses: self.state.fixedExpenses
+    )
+    
+    let averageHarubee = (try? salaryBudgetUseCase.calculateAverageHarubee(
+      endDate: self.state.incomeEndDate,
+      balance: balance
+    )) ?? 0
+    
+    return averageHarubee
+  }
+  
+  private func calculateBalance(
     incomeAmount: Int,
     previousExpense: Int,
     fixedExpenses: [TransactionItem]

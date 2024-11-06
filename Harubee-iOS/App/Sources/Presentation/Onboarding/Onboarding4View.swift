@@ -20,7 +20,9 @@ struct Onboarding4View: View {
   var body: some View {
     
       VStack(spacing: 0) {
-        OnboardingHeaderView()
+        OnboardingHeaderView(
+          averageHarubee: viewModel.state.averageHarubee
+        )
         
         OnboardingBodyView(expenseAmount: $previousExpenseAmount)
         
@@ -39,6 +41,9 @@ struct Onboarding4View: View {
         .padding(.top, 26)
         .padding(.horizontal, 16)
       }
+      .onAppear {
+        viewModel.send(.onAppear)
+      }
       .navigationDestination(isPresented: $isPresented) {
         Onboarding5View()
           .navigationBarBackButtonHidden()
@@ -47,6 +52,12 @@ struct Onboarding4View: View {
 }
 
 private struct OnboardingHeaderView: View {
+  private let averageHarubee: Int
+  
+  init(averageHarubee: Int) {
+    self.averageHarubee = averageHarubee
+  }
+  
   var body: some View {
     VStack(spacing: 28) {
       OnboardingNavigationHeaderView(onboardingPage: .second)
@@ -55,7 +66,7 @@ private struct OnboardingHeaderView: View {
         Text("현재 하루비는")
         
         HStack(alignment: .firstTextBaseline, spacing: 0) {
-          Text("0원")
+          Text(averageHarubee.decimalWithWon)
             .font(.pretendardSemibold_30)
           Text("입니다")
         }
