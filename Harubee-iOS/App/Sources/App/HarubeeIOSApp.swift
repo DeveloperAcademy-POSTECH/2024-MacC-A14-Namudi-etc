@@ -31,6 +31,7 @@ struct HarubeeIOSApp: App {
     WindowGroup {
       NavigationStack {
         Onboarding1View()
+          .environment(DIContainer.shared.makeOnboardingViewModel())
       }
     }
   }

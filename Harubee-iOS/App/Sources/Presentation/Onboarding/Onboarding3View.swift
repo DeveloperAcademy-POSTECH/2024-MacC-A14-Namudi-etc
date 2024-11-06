@@ -10,15 +10,24 @@ import SwiftUI
 import Shared
 
 struct Onboarding3View: View {
+  @Environment(OnboardingViewModel.self) private var viewModel
+  
   @State private var isPresented: Bool = false
+  @State private var incomeDay: Int = 1
+  @State private var incomeAmount: String = ""
   
   var body: some View {
     VStack(spacing: 0) {
       OnboardingHeaderView()
       
-      OnboardingBodyView()
+      OnboardingBodyView(incomeDay: $incomeDay, incomeAmount: $incomeAmount)
       
       MainColorButton(title: "다음으로") {
+        viewModel.send(.nextButtonTapped(
+          incomeDay: incomeDay,
+          incomeAmount: incomeAmount.numberFormat)
+        
+        )
         self.isPresented = true
       }
       .clipShape(
@@ -56,14 +65,21 @@ private struct OnboardingHeaderView: View {
 }
 
 private struct OnboardingBodyView: View {
-  @State private var selectedDay: Int = 1
-  @State private var fixedIncomeAmount: String = ""
+  
+  @Binding private var incomeDay: Int
+  @Binding private var incomeAmount: String
+  
+  init(incomeDay: Binding<Int>, incomeAmount: Binding<String>) {
+    self._incomeDay = incomeDay
+    self._incomeAmount = incomeAmount
+  }
   
   var body: some View {
     VStack(spacing: 30) {
-      DayPickerView(title: "주요 수입일은 언제인가요?",
-                    titleFont: .onboarding,
-                    selectedDay: $selectedDay
+      DayPickerView(
+        title: "주요 수입일은 언제인가요?",
+        titleFont: .onboarding,
+        selectedDay: $incomeDay
       )
       .padding(.top, 34)
       
@@ -77,19 +93,24 @@ private struct OnboardingBodyView: View {
           .foregroundStyle(Color.textBlack30)
           .padding(.top, 6)
         
-        FloatingTitleTextField(title: "금액", text: $fixedIncomeAmount)
+        FloatingTitleTextField(
+          title: "금액",
+          text: $incomeAmount
+        )
           .padding(.top, 24)
+          .keyboardType(.numberPad)
       }
       .padding(.horizontal, 20)
       
-      Spacer()
-      
-      
     }
     .frame(maxHeight: .infinity, alignment: .top)
+    .onChange(of: incomeAmount) { oldValue, newValue in
+      incomeAmount = (incomeAmount.numberFormat ?? 0).decimal
+    }
   }
 }
 
 #Preview {
   Onboarding3View()
+    .environment(DIContainer.shared.makeOnboardingViewModel())
 }

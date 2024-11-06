@@ -8,44 +8,55 @@
 
 import SwiftUI
 import Shared
+import Domain
 
 struct Onboarding6View: View {
+  @Environment(OnboardingViewModel.self) private var viewModel
+  
   var body: some View {
     ZStack {
       Color.main.ignoresSafeArea()
       VStack(spacing: 0) {
         OnboardingNavigationHeaderView(onboardingPage: .last)
-          .padding(.horizontal, 4)
+          .padding(.horizontal, 20)
         
+        VStack(spacing: 0) {
+          TitleView()
+            .padding(.top, 22)
+            .padding(.horizontal, 4)
+          
+          Rectangle()
+            .frame(height: 1)
+            .foregroundStyle(Color.textBrighter30)
+            .padding(.top, 12)
+          
+          CurrentHarubeeView(harubee: viewModel.state.averageHarubee)
+            .padding(.top, 36)
+          
+          Rectangle()
+            .frame(height: 1)
+            .foregroundStyle(Color.textBrighter30)
+            .padding(.top, 28)
+          
+          UserInfoView(
+            incomeAmount: viewModel.state.incomeAmount ?? 0,
+            previousExpense: viewModel.state.previousExpense ?? 0,
+            fixedExpenses: viewModel.state.fixedExpenses,
+            endDate: viewModel.state.incomeEndDate
+          )
+            .padding(.top, 26)
+            .padding(.horizontal, 4)
+          
+          Spacer()
+          
+          OnboardingFooterView()
+            .padding(.bottom, 9)
+        }
+        .padding(.horizontal, 16)
         
-        TitleView()
-          .padding(.top, 22)
-          .padding(.horizontal, 4)
-        
-        Rectangle()
-          .frame(height: 1)
-          .foregroundStyle(Color.textBrighter30)
-          .padding(.top, 12)
-        
-        CurrentHarubeeView()
-          .padding(.top, 36)
-        
-        Rectangle()
-          .frame(height: 1)
-          .foregroundStyle(Color.textBrighter30)
-          .padding(.top, 28)
-        
-        UserInfoView()
-          .padding(.top, 26)
-          .padding(.horizontal, 4)
-        
-        Spacer()
-        
-        OnboardingFooterView()
-          .padding(.bottom, 9)
       }
       .frame(maxWidth: .infinity, alignment: .top)
-      .padding(.horizontal, 16)
+      
     }
   }
 }
@@ -63,6 +74,12 @@ private struct TitleView: View {
 }
 
 private struct CurrentHarubeeView: View {
+  private let harubee: Int
+  
+  init(harubee: Int) {
+    self.harubee = harubee
+  }
+  
   var body: some View {
     VStack(alignment: .leading, spacing: 6) {
       Text("현재 계산된 하루비")
@@ -74,7 +91,7 @@ private struct CurrentHarubeeView: View {
           .resizable()
           .frame(width: 24, height: 24)
           .padding(.bottom, 5)
-        Text("6,000원")
+        Text(harubee.decimalWithWon)
           .font(.pretendardSemibold_30)
       }
       .padding(.horizontal, 4)
@@ -96,12 +113,42 @@ private struct CurrentHarubeeView: View {
 }
 
 private struct UserInfoView: View {
+  
+  private let incomeAmount: Int
+  private let previousExpense: Int
+  private let fixedExpenses: [TransactionItem]
+  private let endDate: Date
+  
+  init(
+    incomeAmount: Int,
+    previousExpense: Int,
+    fixedExpenses: [TransactionItem],
+    endDate: Date
+  ) {
+    self.incomeAmount = incomeAmount
+    self.previousExpense = previousExpense
+    self.fixedExpenses = fixedExpenses
+    self.endDate = endDate
+  }
+  
   var body: some View {
     VStack(spacing: 12) {
-      UserInfoItemView(title: "한 달 수입금", content: "1,000,000원")
-      UserInfoItemView(title: "수입일(9월 15일) 이후 지출한 금액", content: "- 300,000원")
-      UserInfoItemView(title: "고정 지출 (총 7건)", content: "- 120,000원")
-      UserInfoItemView(title: "다음 수입일까지 남은 기간", content: "÷ 15일")
+      UserInfoItemView(
+        title: "한 달 수입금",
+        content: incomeAmount.decimalWithWon
+      )
+      UserInfoItemView(
+        title: "수입일(9월 15일) 이후 지출한 금액",
+        content: "- \(previousExpense.decimalWithWon)"
+      )
+      UserInfoItemView(
+        title: "고정 지출 (총 7건)",
+        content: "- 120,000원"
+      )
+      UserInfoItemView(
+        title: "다음 수입일까지 남은 기간",
+        content: "÷ 15일"
+      )
     }
   }
 }
@@ -144,4 +191,5 @@ private struct OnboardingFooterView: View {
 
 #Preview {
   Onboarding6View()
+    .environment(DIContainer.shared.makeOnboardingViewModel())
 }

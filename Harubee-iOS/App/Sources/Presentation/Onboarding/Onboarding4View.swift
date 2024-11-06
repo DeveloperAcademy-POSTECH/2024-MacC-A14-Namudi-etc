@@ -10,7 +10,10 @@ import SwiftUI
 import Shared
 
 struct Onboarding4View: View {
-  @State private var expenseAmount: String = ""
+  @Environment(OnboardingViewModel.self) private var viewModel
+  
+  @State private var previousExpenseAmount: String = ""
+  
   @State private var isEnabled: Bool = false
   @State private var isPresented: Bool = false
   
@@ -19,14 +22,16 @@ struct Onboarding4View: View {
       VStack(spacing: 0) {
         OnboardingHeaderView()
         
-        OnboardingBodyView(expenseAmount: $expenseAmount)
+        OnboardingBodyView(expenseAmount: $previousExpenseAmount)
         
         
         MainColorButton(title: "다음으로", isEnabled: $isEnabled) {
           self.isPresented = true
         }
         
-        NumberKeypadView(expression: $expenseAmount) { isEnabled in
+        NumberKeypadView(expression: $previousExpenseAmount) { isEnabled in
+          viewModel.send(.nextButtonTapped(previousExpense: previousExpenseAmount.numberFormat))
+          
           self.isEnabled = isEnabled
         }
         .padding(.top, 26)
@@ -109,4 +114,5 @@ private struct OnboardingBodyView: View {
 
 #Preview {
   Onboarding4View()
+    .environment(DIContainer.shared.makeOnboardingViewModel())
 }

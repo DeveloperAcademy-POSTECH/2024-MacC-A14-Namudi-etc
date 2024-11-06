@@ -32,7 +32,12 @@ final class DIContainer {
     )
   }
   
-  // TODO: 추후 구현 수정 필요
+  func makeOnboardingViewModel() -> OnboardingViewModel {
+    OnboardingViewModel(
+      salaryBudgetUseCase: useCaseProvider.salaryBudgetUseCase
+    )
+  }
+  
   func makeCalendarViewModel() -> CalendarViewModel {
     CalendarViewModel(
       salaryBudgetUseCase: useCaseProvider.salaryBudgetUseCase
