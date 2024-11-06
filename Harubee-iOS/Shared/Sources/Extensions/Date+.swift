@@ -41,4 +41,29 @@ public extension Date {
     let dateComponent = calendar.dateComponents([.year, .month, .day], from: self)
     return calendar.date(from: dateComponent)!
   }
+  
+  
+  /// DateFormat을 변환합니다
+  /// - Parameter format: Date에 사용할 DateComponent 타입들
+  /// - Returns: Date
+  func formattedDate(_ format: Set<Calendar.Component>) -> Self {
+    let calendar = configuredCalendar
+    let dateComponent = calendar.dateComponents(format, from: self)
+    return calendar.date(from: dateComponent)!
+  }
+  
+  /// Date를 String Format으로 변환합니다
+  /// - Parameter dateFormatType: 변환하고 싶은 dateFormat 타입
+  /// - Returns: 변환된 String 값
+  func formattedDateToString(_ dateFormatType: DateFormatType) -> String {
+    let formatter = DateFormatter()
+    formatter.dateFormat = dateFormatType.rawValue
+    formatter.locale = Locale(identifier: "ko_KR")
+    return formatter.string(from: self)
+  }
+}
+
+public enum DateFormatType: String {
+  case yyyyMMddE = "yyyy년 MM월 dd일 (E)"
+  case Md = "M월 d일"
 }
