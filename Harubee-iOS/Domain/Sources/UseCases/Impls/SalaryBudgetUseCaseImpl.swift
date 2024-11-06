@@ -178,17 +178,15 @@ public final class SalaryBudgetUseCaseImpl: SalaryBudgetUseCase {
     return nilCount == 0.0 ? newBalance : newBalance / nilCount
   }
   
-<<<<<<< HEAD
-  public func calculateAverageHarubee(endDate: Date, balance: Int) -> Double {
-=======
-  public func calculateAverageHarubee(endDate: Date, balance: Int) throws -> Int {
->>>>>>> d5fc6df (Feature/#107: OnboardingViewModel 구현)
+  public func calculateAverageHarubee(endDate: Date, balance: Int) -> Int {
+
     let currentDate = calendar.date(
       from:calendar.dateComponents(
         [.year, .month, .day],
         from: Date().formattedDate
       )
     )!
+    
     let secondsInDay = 86400.0
     let remain = endDate.timeIntervalSince(currentDate) / secondsInDay + 1
     
