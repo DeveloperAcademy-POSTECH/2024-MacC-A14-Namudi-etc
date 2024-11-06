@@ -26,23 +26,9 @@ final class DIContainer {
   }
   
   // MARK: - ViewModels
-  
-  /*
-   TODO: 추후 구현 필요
   func makeTodayViewModel() -> TodayViewModel {
     TodayViewModel(
-      calculationUseCase: useCaseProvider.budgetCalculationUseCase,
-      salaryBudgetUseCase: useCaseProvider.salaryBudgetUseCase,
-      dailyBudgetUseCase: useCaseProvider.dailyBudgetUseCase
-    )
-  }
-   
-   ...
-   */
-  func makeTodayViewModel() -> TodayViewModel {
-    TodayViewModel(
-      salaryBudgetUseCase: useCaseProvider.salaryBudgetUseCase,
-      dailyBudgetUseCase: useCaseProvider.dailyBudgetUseCase
+      budgetUseCase: useCaseProvider.BudgetUseCase
     )
   }
   

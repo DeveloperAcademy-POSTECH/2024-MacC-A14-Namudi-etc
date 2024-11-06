@@ -29,13 +29,11 @@ final class TodayViewModel {
     case viewDidLoad
   }
   
-  private let salaryBudgetUseCase: SalaryBudgetUseCase
-  private let dailyBudgetUseCase: DailyBudgetUseCase
+  private let budgetUseCase: BudgetUseCase
   private(set) var state: State = .init()
   
-  init(salaryBudgetUseCase: SalaryBudgetUseCase, dailyBudgetUseCase: DailyBudgetUseCase) {
-    self.salaryBudgetUseCase = salaryBudgetUseCase
-    self.dailyBudgetUseCase = dailyBudgetUseCase
+  init(budgetUseCase: BudgetUseCase) {
+    self.budgetUseCase = budgetUseCase
   }
   
   
@@ -55,14 +53,14 @@ extension TodayViewModel {
 
     do {
       // 1. 오늘날짜가 포함되는 SalaryBudget을 가져오기
-      let salaryBudget = try salaryBudgetUseCase.getCurrentSalaryBudget(date: state.todayDate)
+      let salaryBudget = try budgetUseCase.getCurrentSalaryBudget(date: state.todayDate)
       
       initializeState(salaryBudget: salaryBudget)
       
     } catch DomainError.dataNotFound {
       
       // 2. 없다면 가장 최근 SalaryBudget을 기반으로 새 SalaryBudget 생성
-      let salaryBudgets = try? salaryBudgetUseCase.getAllSalaryBudget()
+      let salaryBudgets = try? budgetUseCase.getAllSalaryBudget()
 
       guard let recentSalaryBudget = salaryBudgets?.max(by: { $0.endDate < $1.endDate }) else { return }
       
@@ -73,7 +71,7 @@ extension TodayViewModel {
       )
       
       // 4. 새로운 SalaryBudget 생성
-      if let newSalaryBudget = try? salaryBudgetUseCase.createSalaryBudget(
+      if let newSalaryBudget = try? budgetUseCase.createSalaryBudget(
         startDate: newStartDate,
         endDate: newEndDate,
         previousExpense: nil,
@@ -122,7 +120,7 @@ extension TodayViewModel {
     let todayDailyBudget = salaryBudget.dailyBudgets.first(where: { $0.date == state.todayDate.formattedDate })
     
     let todayHarubee = todayDailyBudget?.harubee ?? Int(salaryBudget.defaultHarubee)
-    let averageHarubee = Int(salaryBudgetUseCase.calculateAverageHarubee(endDate: currentEndDate,
+    let averageHarubee = Int(budgetUseCase.calculateAverageHarubee(endDate: currentEndDate,
                                                                          balance: currentBalance))
     let weeklyStreaks = getWeeklyStreaks()
     let todayHarubeePercentage = todayDailyBudget?.expense == nil ? 1.0 : Double((todayDailyBudget?.expense)! / todayHarubee)
@@ -156,7 +154,7 @@ extension TodayViewModel {
     while currentDate <= endDate {
       do {
         
-        let dailyBudget = try dailyBudgetUseCase.getDailyBudget(date: currentDate)
+        let dailyBudget = try budgetUseCase.getDailyBudget(date: currentDate)
         weeklyStreaks.append(dailyBudget)
         
       } catch DomainError.dataNotFound {
