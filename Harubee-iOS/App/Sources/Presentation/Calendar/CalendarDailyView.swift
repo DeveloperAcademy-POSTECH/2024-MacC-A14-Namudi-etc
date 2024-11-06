@@ -49,7 +49,7 @@ struct CalendarDailyView: View {
         WeeklyCalendarView(
           viewModel: viewModel,
           selectedDate: selectedDate,
-          onDateSelect: { date in
+          onCellSelect: { date in
             selectedDate = date
             if let newDailyBudget = viewModel.state.currentBudget?.dailyBudgets.first(where: {
               $0.date.isSameDay(as: date)
@@ -66,6 +66,7 @@ struct CalendarDailyView: View {
               onTap: { activeSheet = .harubeeAdjust }
             )
             .padding(.horizontal, 16)
+            .disabled(!dailyBudget.date.isSameDay(as: Date()))
             
             TransactionSectionView(
               income: dailyBudget.income,
@@ -105,9 +106,18 @@ struct CalendarDailyView: View {
           sheetContent(for: type)
         }
       }
-      if !selectedDate.isToday {
+      if !selectedDate.isToday && viewModel.isCurrentPeriodContainsToday {
         moveToTodayButton
       }
+    }
+    .navigationBarStyle(.main(title: "일별 보기", backTitle: "뒤로"))
+    // TODO: - 도움말 모디파이어 기능 구현
+    .toolbar {
+      Image(systemName: "questionmark.circle")
+        .foregroundStyle(Color.whiteDefault)
+        .tapFeedback {
+          
+        }
     }
   }
   
@@ -123,6 +133,7 @@ struct CalendarDailyView: View {
     VStack(spacing: 0) {
       Spacer()
       Button {
+        HapticManager.shared.trigger(.tap)
         withAnimation {
           let today = Date()
           selectedDate = today
@@ -205,7 +216,7 @@ struct CalendarDailyView: View {
 struct WeeklyCalendarView: View {
   let viewModel: CalendarViewModel
   let selectedDate: Date
-  let onDateSelect: (Date) -> Void
+  let onCellSelect: (Date) -> Void
   
   private let daysInWeek = 7
   
@@ -229,12 +240,12 @@ struct WeeklyCalendarView: View {
       
       ScrollView(.horizontal, showsIndicators: false) {
         ScrollViewReader { proxy in
-          HStack(spacing: 0) {
+          LazyHStack(spacing: 0) {
             ForEach(weeks.indices, id: \.self) { weekIndex in
               WeekView(
                 dates: weeks[weekIndex],
                 selectedDate: selectedDate,
-                onDateSelect: onDateSelect,
+                onDateSelect: onCellSelect,
                 isLastWeek: weekIndex == weeks.count - 1,
                 weekCount: weeks[weekIndex].count,
                 containerWidth: availableWidth,
@@ -262,9 +273,7 @@ struct WeeklyCalendarView: View {
     if let weekIndex = weeks.firstIndex(where: { week in
       week.contains { Calendar.current.isDate($0, equalTo: selectedDate, toGranularity: .day) }
     }) {
-      withAnimation(.smooth) {
-        proxy.scrollTo(weekIndex, anchor: .center)
-      }
+      proxy.scrollTo(weekIndex, anchor: .center)
     }
   }
   
@@ -299,15 +308,16 @@ private struct WeekView: View {
   
   var body: some View {
     GeometryReader { geometry in
-      HStack(spacing: 8) {
+      LazyHStack(spacing: 8) {
         ForEach(dates, id: \.timeIntervalSince1970) { date in
-          DayCell(
+          WeeklyDayCell(
             date: date,
             isSelected: Calendar.current.isDate(date, equalTo: selectedDate, toGranularity: .day),
             isToday: date.isToday,
             cellWidth: cellWidth
           )
           .onTapGesture {
+            HapticManager.shared.trigger(.tap)
             withAnimation(.spring(duration: 0.2)) {
               onDateSelect(date)
             }
@@ -326,8 +336,8 @@ private struct WeekView: View {
   }
 }
 
-// MARK: - Day Cell
-private struct DayCell: View {
+// MARK: - Weekly Day Cell
+private struct WeeklyDayCell: View {
   let date: Date
   let isSelected: Bool
   let isToday: Bool
@@ -381,25 +391,26 @@ struct HarubeeSectionView: View {
   let onTap: () -> Void
   
   var body: some View {
-    Button(action: onTap) {
-      ZStack {
-        RoundedRectangle(cornerRadius: 5)
-          .stroke(Color.mainBright, lineWidth: 1)
-          .frame(height: 53)
+    ZStack {
+      RoundedRectangle(cornerRadius: 5)
+        .stroke(Color.mainBright, lineWidth: 1)
+        .frame(height: 53)
+      
+      HStack {
+        Text("하루비")
+          .font(.pretendardSemibold_16)
+          .foregroundStyle(Color.textBlack)
         
-        HStack {
-          Text("하루비")
-            .font(.pretendardSemibold_16)
-            .foregroundStyle(Color.textBlack)
-          
-          Spacer()
-          
-          Text("\(harubee.formatted(.number))원")
-            .font(.pretendardSemibold_18)
-            .foregroundStyle(Color.main)
-        }
-        .padding(.horizontal, 14)
+        Spacer()
+        
+        Text("\(harubee.formatted(.number))원")
+          .font(.pretendardSemibold_18)
+          .foregroundStyle(Color.main)
       }
+      .padding(.horizontal, 14)
+    }
+    .tapFeedback(haptic: .none) {
+      onTap()
     }
   }
 }
@@ -474,23 +485,24 @@ private struct TransactionCard: View {
   let action: () -> Void
   
   var body: some View {
-    Button(action: action) {
-      ZStack {
-        RoundedRectangle(cornerRadius: 5)
-          .fill(style.backgroundColor)
+    ZStack {
+      RoundedRectangle(cornerRadius: 5)
+        .fill(style.backgroundColor)
+      
+      VStack(spacing: 16) {
+        Text(title)
+          .font(.pretendardSemibold_16)
+          .frame(maxWidth: .infinity, alignment: .leading)
         
-        VStack(spacing: 16) {
-          Text(title)
-            .font(.pretendardSemibold_16)
-            .frame(maxWidth: .infinity, alignment: .leading)
-          
-          Text("\(amount?.formatted(.number) ?? "- ")원")
-            .font(.pretendardSemibold_18)
-            .frame(maxWidth: .infinity, alignment: .trailing)
-        }
-        .foregroundStyle(style.textColor)
-        .padding(.horizontal, 14)
+        Text("\(amount?.formatted(.number) ?? "- ")원")
+          .font(.pretendardSemibold_18)
+          .frame(maxWidth: .infinity, alignment: .trailing)
       }
+      .foregroundStyle(style.textColor)
+      .padding(.horizontal, 14)
+    }
+    .tapFeedback(haptic: .none) {
+      action()
     }
   }
   
@@ -517,108 +529,68 @@ private struct TransactionCard: View {
 
 // MARK: - Memo Section View
 struct MemoSectionView: View {
-  // MARK: - Properties
   let memos: [String]
   let onAdd: (String) -> Void
   let onEdit: (String, String) -> Void
   let onDelete: (String) -> Void
   
-  // MARK: - Body
   var body: some View {
-    VStack(spacing: 11) {
-      header
+    VStack(alignment: .leading, spacing: 16) {
+      HStack(spacing: 0) {
+        Text("메모")
+          .font(.pretendardSemibold_16)
+        Spacer()
+        Image(systemName: "plus")
+          .frame(width: 44, height: 21)
+          .tapFeedback(haptic: .none) {
+            onAdd("")
+          }
+      }
+      .foregroundStyle(Color.textBlack)
       
       if memos.isEmpty {
-        emptyStateView
-      } else {
-        memoList
-      }
-    }
-  }
-  
-  // MARK: - Subviews
-  private var header: some View {
-    HStack {
-      Text("메모")
-        .font(.pretendardSemibold_16)
-        .foregroundStyle(Color.textBlack)
-      
-      Spacer()
-      
-      Button {
-        onAdd("")
-      } label: {
-        Image(systemName: "plus")
-          .font(.custom("SF Pro", size: 18))
-          .foregroundStyle(Color.textBlack)
-      }
-    }
-  }
-  
-  private var emptyStateView: some View {
-    Text("입력된 메모가 없어요")
-      .font(.pretendardMedium_16)
-      .foregroundStyle(Color.textBright)
-      .padding(.horizontal, 14)
-      .padding(.vertical, 8)
-  }
-  
-  private var memoList: some View {
-    VStack(spacing: 8) {
-      ForEach(memos, id: \.self) { memo in
-        MemoItemView(
-          memo: memo,
-          onEdit: { onEdit(memo, $0) },
-          onDelete: { onDelete(memo) }
-        )
-      }
-    }
-  }
-}
-
-// MARK: - Memo Item View
-private struct MemoItemView: View {
-  let memo: String
-  let onEdit: (String) -> Void
-  let onDelete: () -> Void
-  
-  var body: some View {
-    Menu {
-      Button {
-        onEdit(memo)
-      } label: {
-        Label("메모 수정하기", systemImage: "pencil")
-      }
-      
-      Button(role: .destructive) {
-        onDelete()
-      } label: {
-        Label("메모 삭제하기", systemImage: "trash")
-      }
-    } label: {
-      HStack {
-        Text(memo)
+        Text("입력된 메모가 없어요")
           .font(.pretendardMedium_16)
-          .foregroundStyle(Color.textBlack)
-          .frame(maxWidth: .infinity, alignment: .leading)
-          .padding(.horizontal, 14)
-          .padding(.vertical, 18)
+          .foregroundStyle(Color.textBright)
+          .padding(.vertical, 8)
+      } else {
+        List {
+          ForEach(memos, id: \.self) { memo in
+            Text(memo)
+              .font(.pretendardMedium_16)
+              .foregroundStyle(Color.textBlack)
+              .listRowInsets(EdgeInsets(top: 8, leading: 0, bottom: 8, trailing: 0))
+              .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                Button(role: .destructive) {
+                  onDelete(memo)
+                } label: {
+                  Text("삭제")
+                    .font(.pretendardMedium_14)
+                }
+                
+                Button {
+                  onEdit(memo, memo)
+                } label: {
+                  Text("수정")
+                    .font(.pretendardMedium_14)
+                }
+              }
+              .tapFeedback(haptic: .none) {
+                onEdit(memo, memo)
+              }
+          }
+        }
+        .listStyle(.plain)
+        .frame(height: min(CGFloat(memos.count) * 44, 200))
       }
-      .background(
-        RoundedRectangle(cornerRadius: 5)
-          .stroke(Color.textBrighter, lineWidth: 1)
-      )
     }
-    .buttonStyle(.plain)
   }
 }
 
 // MARK: - Fixed Expense Section View
 struct FixedExpenseSectionView: View {
-  // MARK: - Properties
   let expenses: [TransactionItem]
   
-  // MARK: - Body
   var body: some View {
     VStack(spacing: 26) {
       Text("예정된 고정 지출")
@@ -631,7 +603,6 @@ struct FixedExpenseSectionView: View {
     }
   }
   
-  // MARK: - Subviews
   private var expenseList: some View {
     VStack(spacing: 14) {
       ForEach(expenses) { expense in

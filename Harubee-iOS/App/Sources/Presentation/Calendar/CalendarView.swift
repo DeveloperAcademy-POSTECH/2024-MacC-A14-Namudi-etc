@@ -28,7 +28,7 @@ struct CalendarView: View {
           canMovePrevious: viewModel.canMovePrevious,
           canMoveNext: viewModel.canMoveNext,
           onMove: { direction in
-            withAnimation {
+            withAnimation(.easeInOut(duration: 0.05)) {
               viewModel.send(.movePeriod(direction))
             }
           }
@@ -38,7 +38,7 @@ struct CalendarView: View {
           CalendarContent(
             budget: budget,
             selectedDate: viewModel.state.selectedDate,
-            onDateSelect: { date in
+            onCellSelect: { date in
               viewModel.send(.selectDate(date))
               navigateToDailyView = true
             }
@@ -58,8 +58,15 @@ struct CalendarView: View {
         )
       }
     }
-    .navigationTitle("캘린더")
-    .navigationBarTitleDisplayMode(.inline)
+    .navigationBarStyle(.main(title: "캘린더", backTitle: ""))
+    // TODO: - 도움말 모디파이어 기능 구현
+    .toolbar {
+      Image(systemName: "questionmark.circle")
+        .foregroundStyle(Color.whiteDefault)
+        .tapFeedback {
+          
+        }
+    }
     .onAppear {
       viewModel.send(.initialData)
       viewModel.send(.selectDate(Date()))
@@ -71,10 +78,15 @@ struct CalendarView: View {
     }
   }
   
+  /*
+   TODO: CalendarDailyView와 버튼 합친 후,
+   TODO: 아직 지출 및 수입을 입력하지 않은 날이 있어요 기능 구현 필요
+   */
   private var moveToCurrentButton: some View {
     VStack(spacing: 0) {
       Spacer()
       Button {
+        HapticManager.shared.trigger(.tap)
         withAnimation {
           viewModel.send(.moveToCurrent)
         }
@@ -82,7 +94,7 @@ struct CalendarView: View {
         HStack(spacing: 4) {
           Image(systemName: "arrow.clockwise")
             .font(.system(size: 14))
-          Text("오늘로 돌아가기")
+          Text("이번 기간으로 돌아가기")
             .font(.pretendardMedium_14)
         }
         .foregroundColor(.whiteDefault)
@@ -108,9 +120,10 @@ struct CalendarHeader: View {
   let onMove: (PeriodDirection) -> Void
   
   var body: some View {
-    VStack(spacing: 3) {
+    VStack(spacing: 0) {
       Text(year)
         .font(.pretendardMedium_12)
+        .padding(.bottom, -10)
       
       HStack(alignment: .center, spacing: 38) {
         navigationButton(direction: .previous)
@@ -124,7 +137,7 @@ struct CalendarHeader: View {
     }
     .frame(maxWidth: .infinity)
     .frame(height: 82)
-    .padding(.horizontal, 50)
+    .padding(.horizontal, 30)
     .background(Color.main)
     .foregroundStyle(Color.whiteDefault)
   }
@@ -132,14 +145,15 @@ struct CalendarHeader: View {
   private func navigationButton(direction: PeriodDirection) -> some View {
     let isEnabled = direction == .next ? canMoveNext : canMovePrevious
     
-    return Button {
-      onMove(direction)
-    } label: {
-      Image(systemName: direction.imageName)
-        .font(.custom("SF Pro", size: 16))
-        .opacity(isEnabled ? 1 : 0)
-    }
-    .disabled(!isEnabled)
+    return Image(systemName: direction.imageName)
+      .font(.custom("SF Pro", size: 16))
+      .opacity(isEnabled ? 1 : 0)
+      .frame(width: 44, height: 44)
+      .contentShape(Rectangle())
+      .tapFeedback {
+        onMove(direction)
+      }
+      .disabled(!isEnabled)
   }
 }
 
@@ -147,7 +161,7 @@ struct CalendarHeader: View {
 struct CalendarContent: View {
   let budget: SalaryBudget
   let selectedDate: Date?
-  let onDateSelect: (Date) -> Void
+  let onCellSelect: (Date) -> Void
   
   var body: some View {
     ScrollView(showsIndicators: false) {
@@ -155,10 +169,12 @@ struct CalendarContent: View {
         CalendarGrid(
           startDate: budget.startDate,
           endDate: budget.endDate,
-          selectedDate: selectedDate,
-          onCellSelect: onDateSelect
+          selectedDate: selectedDate
         ) { date in
           CalendarCell(
+            onSelect: { date in
+              onCellSelect(date)
+            },
             date: date,
             defaultHarubee: Int(budget.defaultHarubee),
             dailyBudget: budget.dailyBudgets.first {
