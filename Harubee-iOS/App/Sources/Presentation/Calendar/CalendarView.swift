@@ -2,16 +2,16 @@
 //  CalendarView.swift
 //  Harubee-iOS
 //
-//  Created by assistant on 11/4/24.
+//  Created by namdghyun on 11/5/24.
 //  Copyright © 2024 namudiEtc. All rights reserved.
 //
 
 import SwiftUI
-import Shared
+import Domain
 
-// MARK: - Calendar View
 struct CalendarView: View {
   @State private var viewModel: CalendarViewModel
+  @State private var navigateToDailyView = false
   
   init(viewModel: CalendarViewModel) {
     _viewModel = State(initialValue: viewModel)
@@ -23,17 +23,32 @@ struct CalendarView: View {
       
       VStack(spacing: 0) {
         CalendarHeader(
-          year: viewModel.state.currentPeriod.start.yearString,
-          period: createPeriodTitle(),
-          canMovePrevious: viewModel.state.canMovePreviousPeriod,
-          canMoveNext: viewModel.state.canMoveNextPeriod,
+          year: viewModel.state.currentBudget?.startDate.yearString ?? "",
+          period: viewModel.periodTitle,
+          canMovePrevious: viewModel.canMovePrevious,
+          canMoveNext: viewModel.canMoveNext,
           onMove: { direction in
             viewModel.send(.movePeriod(direction))
           }
         )
         
-        CalendarContent(
-          viewModel: viewModel
+        if let budget = viewModel.state.currentBudget {
+          CalendarContent(
+            budget: budget,
+            selectedDate: viewModel.state.selectedDate,
+            onDateSelect: { date in
+              viewModel.send(.selectDate(date))
+              navigateToDailyView = true
+            }
+          )
+        }
+      }
+    }
+    .navigationDestination(isPresented: $navigateToDailyView) {
+      if let dailyBudget = viewModel.selectedDailyBudget {
+        CalendarDailyView(
+          viewModel: viewModel,
+          dailyBudget: dailyBudget
         )
       }
     }
@@ -41,18 +56,13 @@ struct CalendarView: View {
     .navigationBarTitleDisplayMode(.inline)
     .onAppear {
       viewModel.send(.initialData)
-      viewModel.send(.dayCellSelected(Date()))
+      viewModel.send(.selectDate(Date()))
     }
     .alert("오류", isPresented: .constant(viewModel.state.error != nil)) {
       Button("확인", role: .cancel) {}
     } message: {
       Text(viewModel.state.error?.localizedDescription ?? "")
     }
-  }
-  
-  private func createPeriodTitle() -> String {
-    let period = viewModel.state.currentPeriod
-    return "\(period.start.monthDayString) - \(period.end.monthDayString)"
   }
 }
 
@@ -62,7 +72,7 @@ struct CalendarHeader: View {
   let period: String
   let canMovePrevious: Bool
   let canMoveNext: Bool
-  let onMove: (CalendarData.PeriodDirection) -> Void
+  let onMove: (PeriodDirection) -> Void
   
   var body: some View {
     VStack(spacing: 3) {
@@ -87,7 +97,7 @@ struct CalendarHeader: View {
     .foregroundStyle(Color.whiteDefault)
   }
   
-  private func navigationButton(direction: CalendarData.PeriodDirection) -> some View {
+  private func navigationButton(direction: PeriodDirection) -> some View {
     let isEnabled = direction == .next ? canMoveNext : canMovePrevious
     
     return Button {
@@ -103,29 +113,23 @@ struct CalendarHeader: View {
 
 // MARK: - Calendar Content
 struct CalendarContent: View {
-  let viewModel: CalendarViewModel
-  @State private var navigateDailyView = false
-  
-  private var selectedDayInfo: CalendarData.DayInfo? {
-    guard let selectedDate = viewModel.state.selectedDate else { return nil }
-    return viewModel.state.dayInfos.first { $0.date.isSameDay(as: selectedDate) }
-  }
+  let budget: SalaryBudget
+  let selectedDate: Date?
+  let onDateSelect: (Date) -> Void
   
   var body: some View {
     ScrollView(showsIndicators: false) {
       VStack(spacing: 25) {
         CalendarGrid(
-          startDate: viewModel.state.currentPeriod.start,
-          endDate: viewModel.state.currentPeriod.end,
-          selectedDate: viewModel.state.selectedDate,
-          onCellSelect: { date in
-            viewModel.send(.dayCellSelected(date))
-            navigateDailyView = true
-          }
+          startDate: budget.startDate,
+          endDate: budget.endDate,
+          selectedDate: selectedDate,
+          onCellSelect: onDateSelect
         ) { date in
           CalendarCell(
             date: date,
-            dayInfo: viewModel.state.dayInfos.first {
+            defaultHarubee: Int(budget.defaultHarubee),
+            dailyBudget: budget.dailyBudgets.first {
               $0.date.isSameDay(as: date)
             }
           )
@@ -133,17 +137,10 @@ struct CalendarContent: View {
         .padding(.top, 18)
       }
     }
-    .navigationDestination(isPresented: $navigateDailyView) {
-      if let dayInfo = selectedDayInfo {
-        CalendarDailyView(
-          viewModel: viewModel,
-          dayInfo: dayInfo
-        )
-      }
-    }
   }
 }
 
+// MARK: - Preview
 #Preview {
   NavigationStack {
     CalendarView(viewModel: DIContainer.shared.makeCalendarViewModel())

@@ -9,12 +9,14 @@
 import SwiftUI
 import Domain
 
-// MARK: - Calendar Daily View
 struct CalendarDailyView: View {
+  // MARK: - Properties
   let viewModel: CalendarViewModel
-  let dayInfo: CalendarData.DayInfo
+  let dailyBudget: DailyBudget
   
   @State private var activeSheet: SheetType?
+  
+  // MARK: - Sheet Types
   private enum SheetType: Identifiable {
     case harubeeAdjust
     case transactionIncome
@@ -33,21 +35,20 @@ struct CalendarDailyView: View {
     }
   }
   
+  // MARK: - Body
   var body: some View {
     ScrollView {
       VStack(spacing: 0) {
-//        WeeklySectionView()
-        
         HarubeeSectionView(
-          harubee: dayInfo.harubee,
+          harubee: dailyBudget.harubee ?? 0,
           onTap: { activeSheet = .harubeeAdjust }
         )
         .padding(.horizontal, 16)
         
         TransactionSectionView(
-          income: dayInfo.income,
-          expense: dayInfo.expense,
-          harubee: dayInfo.harubee,
+          income: dailyBudget.income,
+          expense: dailyBudget.expense,
+          harubee: dailyBudget.harubee ?? 0,
           onIncomeEdit: { activeSheet = .transactionIncome },
           onExpenseEdit: { activeSheet = .transactionExpense }
         )
@@ -58,7 +59,7 @@ struct CalendarDailyView: View {
           .padding(.top, 26)
         
         MemoSectionView(
-          memos: dayInfo.memos,
+          memos: dailyBudget.memo,
           onAdd: handleMemoAdd,
           onEdit: handleMemoEdit,
           onDelete: handleMemoDelete
@@ -66,45 +67,24 @@ struct CalendarDailyView: View {
         .padding(.top, 20)
         .padding(.horizontal, 22)
         
-        if !dayInfo.fixedExpenses.isEmpty {
+        if let budget = viewModel.state.currentBudget,
+           let fixedExpenses = getFixedExpenses(for: dailyBudget.date, from: budget),
+           !fixedExpenses.isEmpty {
           divider
             .padding(.top, 20)
           
-          FixedExpenseSectionView(expenses: dayInfo.fixedExpenses)
+          FixedExpenseSectionView(expenses: fixedExpenses)
             .padding(.horizontal, 22)
         }
       }
       .padding(.top, 40)
-      .sheet(item: $activeSheet) { type in
-        switch type {
-        case .harubeeAdjust:
-          HarubeeAdjustView()
-            .presentationDetents([.fraction(0.75)])
-          
-        case .transactionIncome:
-          TransactionInputView(isFocusedExpense: true)
-            .presentationDetents([.fraction(0.75)])
-          
-        case .transactionExpense:
-          TransactionInputView(isFocusedExpense: false)
-            .presentationDetents([.fraction(0.75)])
-          
-        case .addMemo:
-          DailyMemoView { memo in
-            handleMemoAdd(memo)
-          }
-          .presentationDetents([.fraction(0.25)])
-          
-        case .editMemo(let oldMemo):
-          DailyMemoView(existingMemo: oldMemo) { newMemo in
-            handleMemoEdit(oldMemo: oldMemo, newMemo: newMemo)
-          }
-          .presentationDetents([.fraction(0.25)])
-        }
-      }
+    }
+    .sheet(item: $activeSheet) { type in
+      sheetContent(for: type)
     }
   }
   
+  // MARK: - Helper Views
   private var divider: some View {
     Rectangle()
       .fill(Color.textBlack5)
@@ -112,35 +92,51 @@ struct CalendarDailyView: View {
       .frame(maxWidth: .infinity)
   }
   
+  // MARK: - Helper Methods
+  private func getFixedExpenses(for date: Date, from budget: SalaryBudget) -> [TransactionItem]? {
+    budget.fixedExpenses.filter {
+      Calendar.current.isDate($0.date, equalTo: date, toGranularity: .day)
+    }
+  }
+  
   private func handleMemoAdd(_ memo: String) {
-    viewModel.send(.saveMemo(dayInfo, memo))
+    viewModel.send(.addMemo(dailyBudget, memo))
   }
   
   private func handleMemoEdit(oldMemo: String, newMemo: String) {
-    viewModel.send(.saveMemo(dayInfo, newMemo))
+    viewModel.send(.addMemo(dailyBudget, newMemo))
   }
   
   private func handleMemoDelete(_ memo: String) {
-    viewModel.send(.deleteMemo(dayInfo, memo))
+    viewModel.send(.deleteMemo(dailyBudget, memo))
   }
-}
-
-// MARK: - Weekly Section View
-struct WeeklySectionView: View {
-  let week = ["일", "월", "화", "수", "목", "금", "토"]
   
-  var body: some View {
-    ZStack {
-      Color.main
+  @ViewBuilder
+  private func sheetContent(for type: SheetType) -> some View {
+    switch type {
+    case .harubeeAdjust:
+      HarubeeAdjustView()
+        .presentationDetents([.fraction(0.75)])
       
-      HStack {
-        ForEach(week, id: \.self) { day in
-          Text(day)
-            .font(.system(size: 12, weight: .semibold))
-            .foregroundStyle(Color.whiteDefault)
-            .padding(.horizontal, 14)
-        }
+    case .transactionIncome:
+      TransactionInputView(isFocusedExpense: false)
+        .presentationDetents([.fraction(0.75)])
+      
+    case .transactionExpense:
+      TransactionInputView(isFocusedExpense: true)
+        .presentationDetents([.fraction(0.75)])
+      
+    case .addMemo:
+      DailyMemoView { memo in
+        handleMemoAdd(memo)
       }
+      .presentationDetents([.fraction(0.25)])
+      
+    case .editMemo(let oldMemo):
+      DailyMemoView(existingMemo: oldMemo) { newMemo in
+        handleMemoEdit(oldMemo: oldMemo, newMemo: newMemo)
+      }
+      .presentationDetents([.fraction(0.25)])
     }
   }
 }
@@ -206,21 +202,25 @@ struct TransactionSectionView: View {
       }
       .frame(height: 84)
       
-      if let expense {
-        HStack(spacing: 0) {
-          Spacer()
-          Text("하루비보다")
-          Text(" ")
-          Image(systemName: isOverHarubee ? "arrowtriangle.up.fill" : "arrowtriangle.down.fill")
-            .font(.custom("SF Pro", size: 12))
-          Text(" \(abs(harubee - expense))원")
-            .font(.pretendardSemibold_14)
-          Text(isOverHarubee ? " 더 썼어요." : " 덜 썼어요.")
-        }
-        .font(.pretendardMedium_14)
-        .foregroundColor(isOverHarubee ? .red : .main)
+      if let expense = expense {
+        comparisonLabel(expense: expense)
       }
     }
+  }
+  
+  private func comparisonLabel(expense: Int) -> some View {
+    HStack(spacing: 0) {
+      Spacer()
+      Text("하루비보다")
+      Text(" ")
+      Image(systemName: isOverHarubee ? "arrowtriangle.up.fill" : "arrowtriangle.down.fill")
+        .font(.custom("SF Pro", size: 12))
+      Text(" \(abs(harubee - expense))원")
+        .font(.pretendardSemibold_14)
+      Text(isOverHarubee ? " 더 썼어요." : " 덜 썼어요.")
+    }
+    .font(.pretendardMedium_14)
+    .foregroundColor(isOverHarubee ? .red : .main)
   }
 }
 
@@ -274,33 +274,40 @@ private struct TransactionCard: View {
 
 // MARK: - Memo Section View
 struct MemoSectionView: View {
+  // MARK: - Properties
   let memos: [String]
   let onAdd: (String) -> Void
   let onEdit: (String, String) -> Void
   let onDelete: (String) -> Void
   
+  // MARK: - Body
   var body: some View {
     VStack(spacing: 11) {
-      HStack {
-        Text("메모")
-          .font(.pretendardSemibold_16)
-          .foregroundStyle(Color.textBlack)
-        
-        Spacer()
-        
-        Button {
-          onAdd("")
-        } label: {
-          Image(systemName: "plus")
-            .frame(width: 19, height: 21)
-            .foregroundStyle(Color.textBlack)
-        }
-      }
+      header
       
       if memos.isEmpty {
         emptyStateView
       } else {
         memoList
+      }
+    }
+  }
+  
+  // MARK: - Subviews
+  private var header: some View {
+    HStack {
+      Text("메모")
+        .font(.pretendardSemibold_16)
+        .foregroundStyle(Color.textBlack)
+      
+      Spacer()
+      
+      Button {
+        onAdd("")
+      } label: {
+        Image(systemName: "plus")
+          .frame(width: 19, height: 21)
+          .foregroundStyle(Color.textBlack)
       }
     }
   }
@@ -316,42 +323,59 @@ struct MemoSectionView: View {
   private var memoList: some View {
     VStack(spacing: 8) {
       ForEach(memos, id: \.self) { memo in
-        Menu {
-          Button {
-            onEdit(memo, memo)
-          } label: {
-            Label("메모 수정하기", systemImage: "pencil")
-          }
-          
-          Button(role: .destructive) {
-            onDelete(memo)
-          } label: {
-            Label("메모 삭제하기", systemImage: "trash")
-          }
-        } label: {
-          HStack {
-            Text(memo)
-              .font(.pretendardMedium_16)
-              .foregroundStyle(Color.textBlack)
-              .frame(maxWidth: .infinity, alignment: .leading)
-              .padding(.horizontal, 14)
-              .padding(.vertical, 18)
-          }
-          .background(
-            RoundedRectangle(cornerRadius: 5)
-              .stroke(Color.textBrighter, lineWidth: 1)
-          )
-        }
-        .buttonStyle(.plain)
+        MemoItemView(
+          memo: memo,
+          onEdit: { onEdit(memo, $0) },
+          onDelete: { onDelete(memo) }
+        )
       }
     }
   }
 }
 
+// MARK: - Memo Item View
+private struct MemoItemView: View {
+  let memo: String
+  let onEdit: (String) -> Void
+  let onDelete: () -> Void
+  
+  var body: some View {
+    Menu {
+      Button {
+        onEdit(memo)
+      } label: {
+        Label("메모 수정하기", systemImage: "pencil")
+      }
+      
+      Button(role: .destructive) {
+        onDelete()
+      } label: {
+        Label("메모 삭제하기", systemImage: "trash")
+      }
+    } label: {
+      HStack {
+        Text(memo)
+          .font(.pretendardMedium_16)
+          .foregroundStyle(Color.textBlack)
+          .frame(maxWidth: .infinity, alignment: .leading)
+          .padding(.horizontal, 14)
+          .padding(.vertical, 18)
+      }
+      .background(
+        RoundedRectangle(cornerRadius: 5)
+          .stroke(Color.textBrighter, lineWidth: 1)
+      )
+    }
+    .buttonStyle(.plain)
+  }
+}
+
 // MARK: - Fixed Expense Section View
 struct FixedExpenseSectionView: View {
-  let expenses: [CalendarData.FixedExpenseItem]
+  // MARK: - Properties
+  let expenses: [TransactionItem]
   
+  // MARK: - Body
   var body: some View {
     VStack(spacing: 26) {
       Text("예정된 고정 지출")
@@ -360,40 +384,40 @@ struct FixedExpenseSectionView: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.top, 20)
       
-      VStack(spacing: 14) {
-        ForEach(expenses) { expense in
-          HStack {
-            Text(expense.name)
-              .font(.pretendardMedium_16)
-              .foregroundStyle(Color.textBlack)
-            
-            Spacer()
-            
-            Text("\(expense.amount.decimalWithWon)")
-              .font(.pretendardSemibold_16)
-              .foregroundStyle(Color.redDefault)
-          }
+      expenseList
+    }
+  }
+  
+  // MARK: - Subviews
+  private var expenseList: some View {
+    VStack(spacing: 14) {
+      ForEach(expenses) { expense in
+        HStack {
+          Text(expense.name)
+            .font(.pretendardMedium_16)
+            .foregroundStyle(Color.textBlack)
+          
+          Spacer()
+          
+          Text("\(expense.price.formatted(.number))원")
+            .font(.pretendardSemibold_16)
+            .foregroundStyle(Color.redDefault)
         }
       }
     }
   }
 }
 
+// MARK: - Preview
 #Preview {
   CalendarDailyView(
     viewModel: DIContainer.shared.makeCalendarViewModel(),
-    dayInfo: CalendarData.DayInfo(
+    dailyBudget: DailyBudget(
       date: Date(),
       harubee: 50000,
-      isAdjusted: true,
-      income: 1000,
+      memo: ["테스트 메모"],
       expense: 60000,
-      memos: ["아우아우아우아우"],
-      fixedExpenses: [
-        CalendarData.FixedExpenseItem.init(
-        from: TransactionItem(date: Date(), name: "월세", price: 500000)
-      )
-      ]
+      income: 1000
     )
   )
 }
