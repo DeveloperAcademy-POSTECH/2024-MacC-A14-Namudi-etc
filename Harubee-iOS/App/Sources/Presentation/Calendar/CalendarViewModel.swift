@@ -29,6 +29,7 @@ final class CalendarViewModel {
   enum Action {
     case initialData
     case movePeriod(PeriodDirection)
+    case moveToCurrent
     case selectDate(Date)
     case updateTransaction(income: Int?, expense: Int?)
     case addMemo(DailyBudget, String)
@@ -41,7 +42,6 @@ final class CalendarViewModel {
   private let dailyBudgetUseCase: DailyBudgetUseCase
   private var allSalaryBudgets: [SalaryBudget] = []
   
-  // MARK: - Computed Properties
   var canMovePrevious: Bool {
     guard let current = state.currentBudget else { return false }
     return allSalaryBudgets.contains { $0.endDate < current.startDate }
@@ -50,6 +50,12 @@ final class CalendarViewModel {
   var canMoveNext: Bool {
     guard let current = state.currentBudget else { return false }
     return allSalaryBudgets.contains { $0.startDate > current.endDate }
+  }
+  
+  var isCurrentPeriodContainsToday: Bool {
+    guard let budget = state.currentBudget else { return false }
+    let today = Date()
+    return (budget.startDate...budget.endDate).contains(today)
   }
   
   var periodTitle: String {
@@ -81,6 +87,8 @@ final class CalendarViewModel {
       loadTestData()
     case .movePeriod(let direction):
       handleMovePeriod(direction)
+    case .moveToCurrent:
+      handleMoveToToday()
     case .selectDate(let date):
       state.selectedDate = date
     case .updateTransaction(let income, let expense):
@@ -132,6 +140,16 @@ final class CalendarViewModel {
     if let budget = nextBudget,
        (budget.startDate...budget.endDate).contains(Date()) {
       state.selectedDate = Date()
+    }
+  }
+  
+  private func handleMoveToToday() {
+    let today = Date()
+    if let todayBudget = allSalaryBudgets.first(where: { budget in
+      (budget.startDate...budget.endDate).contains(today)
+    }) {
+      state.currentBudget = todayBudget
+      state.selectedDate = today
     }
   }
   

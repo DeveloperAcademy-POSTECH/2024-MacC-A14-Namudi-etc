@@ -28,7 +28,9 @@ struct CalendarView: View {
           canMovePrevious: viewModel.canMovePrevious,
           canMoveNext: viewModel.canMoveNext,
           onMove: { direction in
-            viewModel.send(.movePeriod(direction))
+            withAnimation {
+              viewModel.send(.movePeriod(direction))
+            }
           }
         )
         
@@ -42,6 +44,10 @@ struct CalendarView: View {
             }
           )
         }
+      }
+      
+      if !viewModel.isCurrentPeriodContainsToday {
+        moveToCurrentButton
       }
     }
     .navigationDestination(isPresented: $navigateToDailyView) {
@@ -62,6 +68,33 @@ struct CalendarView: View {
       Button("확인", role: .cancel) {}
     } message: {
       Text(viewModel.state.error?.localizedDescription ?? "")
+    }
+  }
+  
+  private var moveToCurrentButton: some View {
+    VStack(spacing: 0) {
+      Spacer()
+      Button {
+        withAnimation {
+          viewModel.send(.moveToCurrent)
+        }
+      } label: {
+        HStack(spacing: 4) {
+          Image(systemName: "arrow.clockwise")
+            .font(.system(size: 14))
+          Text("오늘로 돌아가기")
+            .font(.pretendardMedium_14)
+        }
+        .foregroundColor(.whiteDefault)
+        .padding(.horizontal, 16)
+        .padding(.vertical, 8)
+        .background(
+          Capsule()
+            .fill(Color.mainBright)
+            .shadow(color: .black.opacity(0.15), radius: 4, y: 2)
+        )
+      }
+      .padding(.bottom, 14)
     }
   }
 }
@@ -90,8 +123,7 @@ struct CalendarHeader: View {
       }
     }
     .frame(maxWidth: .infinity)
-    .padding(.top, 22)
-    .padding(.bottom, 15)
+    .frame(height: 82)
     .padding(.horizontal, 50)
     .background(Color.main)
     .foregroundStyle(Color.whiteDefault)

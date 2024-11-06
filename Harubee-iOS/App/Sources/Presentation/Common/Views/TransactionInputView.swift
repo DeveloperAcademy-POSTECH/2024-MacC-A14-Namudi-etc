@@ -43,6 +43,8 @@ struct TransactionInputView: View {
         isFocusedExpense: $isFocusedExpense
       )
       
+      Spacer()
+      
       AmountResultText(
         numberText: $expression
       ) {
@@ -158,6 +160,8 @@ private struct TransactionBodyItemView: View {
           isFocusedExpense = true
         }
     }
+    .padding(.top, 36)
+    .padding(.horizontal, 16)
   }
 }
 
