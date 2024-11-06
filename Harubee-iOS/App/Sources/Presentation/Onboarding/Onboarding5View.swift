@@ -7,9 +7,14 @@
 //
 
 import SwiftUI
+import Domain
 import Shared
 
 struct Onboarding5View: View {
+  @Environment(OnboardingViewModel.self) private var viewModel
+  
+  @State private var fixedExpenses: [TransactionItem] = []
+  
   @State private var isPresented: Bool = false
   
   var body: some View {
@@ -17,7 +22,13 @@ struct Onboarding5View: View {
       OnboardingHeaderView()
       
       OnboardingBodyView()
-
+        .padding(.top, 30)
+      
+      FixedExpenseListView()
+        .padding(.top, 30)
+      
+      Spacer()
+      
       MainColorButton(title: "다음으로") {
         self.isPresented = true
       }
@@ -26,6 +37,9 @@ struct Onboarding5View: View {
       )
       .padding(.horizontal, 16)
       .padding(.bottom, 9)
+    }
+    .onAppear {
+      viewModel.send(.updateFixedExpenses(fixedExpenses))
     }
     .navigationDestination(isPresented: $isPresented) {
       Onboarding6View()
@@ -69,23 +83,18 @@ private struct OnboardingHeaderView: View {
 private struct OnboardingBodyView: View {
   
   var body: some View {
-    VStack(spacing: 30) {
-      VStack(alignment: .leading, spacing: 6) {
-        Text("매달 고정으로 나가는 지출 내역을")
-        Text("입력해주세요 (예: 월세, 구독비, 저축)")
-      }
-      .frame(maxWidth: .infinity, alignment: .leading)
-      .font(.pretendardMedium_20)
-      .foregroundStyle(Color.textBlack)
-      .padding(.horizontal, 20)
-      
-      FixedExpenseListView()
+    VStack(alignment: .leading, spacing: 6) {
+      Text("매달 고정으로 나가는 지출 내역을")
+      Text("입력해주세요 (예: 월세, 구독비, 저축)")
     }
-    .padding(.top, 30)
-    .frame(maxHeight: .infinity, alignment: .top)
+    .frame(maxWidth: .infinity, alignment: .leading)
+    .font(.pretendardMedium_20)
+    .foregroundStyle(Color.textBlack)
+    .padding(.horizontal, 20)
   }
 }
 
 #Preview {
   Onboarding5View()
+    .environment(DIContainer.shared.makeOnboardingViewModel())
 }

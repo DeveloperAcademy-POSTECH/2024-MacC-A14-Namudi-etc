@@ -89,5 +89,9 @@ public protocol SalaryBudgetUseCase {
   /// - Returns: 계산된 평균 하루비
   func calculateAverageHarubee(
     endDate: Date, balance: Int
+<<<<<<< HEAD
   ) -> Double
+=======
+  ) throws -> Int
+>>>>>>> d5fc6df (Feature/#107: OnboardingViewModel 구현)
 }
