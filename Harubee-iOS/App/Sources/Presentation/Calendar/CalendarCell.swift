@@ -7,15 +7,69 @@
 //
 
 import SwiftUI
+import Domain
 
 struct CalendarCell: View {
+  // MARK: - Properties
   let date: Date
-  let dayInfo: CalendarData.DayInfo?
+  let defaultHarubee: Int
+  let dailyBudget: DailyBudget?
   
+  // MARK: - Computed Properties
+  private var isOverHarubee: Bool {
+    guard let budget = dailyBudget,
+          let expense = budget.expense,
+          let harubee = budget.harubee else { return false }
+    return expense > harubee
+  }
+  
+  private var hasExpense: Bool {
+    guard let budget = dailyBudget,
+          let expense = budget.expense else { return false }
+    return expense > 0
+  }
+  
+  private var amountText: String {
+    guard let budget = dailyBudget else { return "0" }
+    
+    if date <= Date(), let expense = budget.expense {
+      return expense.formatted(.number)
+    } else {
+      return (budget.harubee ?? defaultHarubee).formatted(.number)
+    }
+  }
+  
+  private var amountColor: Color {
+    if !date.isToday && date <= Date() {
+      return .textBright
+    }
+    if dailyBudget?.harubee != nil {
+      return .main
+    }
+    return .textBlack
+  }
+  
+  private var statusIcon: Image {
+    guard let _ = dailyBudget else { return .hexagonNone }
+    
+    if hasExpense && isOverHarubee {
+      return .hexagoneBad
+    }
+    if hasExpense && !isOverHarubee {
+      return .hexagoneGood
+    }
+    if date.isToday {
+      return .hexagonNone
+    }
+    
+    return Image(uiImage: UIImage())
+  }
+  
+  // MARK: - Body
   var body: some View {
     VStack(spacing: 0) {
       dateLabel
-      statusIcon
+      iconSection
       amountLabel
     }
     .frame(height: 90)
@@ -24,6 +78,7 @@ struct CalendarCell: View {
     .padding(.vertical, 10)
   }
   
+  // MARK: - Subviews
   private var dateLabel: some View {
     Text(date.calendarDayText)
       .font(.pretendardSemibold_14)
@@ -31,8 +86,8 @@ struct CalendarCell: View {
       .padding(.top, 5)
   }
   
-  private var statusIcon: some View {
-    hexagonIcon
+  private var iconSection: some View {
+    statusIcon
       .resizable()
       .aspectRatio(contentMode: .fit)
       .frame(width: 23, height: 23)
@@ -48,63 +103,53 @@ struct CalendarCell: View {
   
   private var cellBackground: some View {
     RoundedRectangle(cornerRadius: 5)
-      .fill(backgroundColor)
+      .fill(date.isToday ? Color.whiteDeep50 : .whiteDefault)
       .stroke(date.isToday ? Color.mainBright : Color.clear, lineWidth: 1)
       .padding(1)
   }
 }
 
-// MARK: - Computed Properties
-private extension CalendarCell {
-  var hexagonIcon: Image {
-    guard let dayInfo = dayInfo else { return .hexagonNone }
-    
-    if dayInfo.hasExpense && dayInfo.isOverHarubee {
-      return .hexagoneBad
-    }
-    if dayInfo.hasExpense && !dayInfo.isOverHarubee {
-      return .hexagoneGood
-    }
-    if dayInfo.date.isToday {
-      return .hexagonNone
-    }
-    
-    return Image("")
-  }
-  
-  var amountText: String {
-    guard let info = dayInfo else { return "0" }
-    return (date <= Date() && info.expense != nil)
-    ? (info.expense?.formatted(.number) ?? "0")
-    : info.harubee.formatted(.number)
-  }
-  
-  var amountColor: Color {
-    if !date.isToday && date <= Date() {
-      return .textBright
-    }
-    if dayInfo?.isAdjusted == true {
-      return .main
-    }
-    return .textBlack
-  }
-  
-  var backgroundColor: Color {
-    return date.isToday ? .whiteDeep50 : .whiteDefault
-  }
+// MARK: - Preview
+#Preview {
+  CalendarCell(
+    date: Date(),
+    defaultHarubee: 10000,
+    dailyBudget: DailyBudget(
+      date: Date(),
+      harubee: 10000,
+      memo: [],
+      expense: nil,
+      income: nil
+    )
+  )
+  .frame(width: 50)
 }
 
 #Preview {
   CalendarCell(
     date: Date(),
-    dayInfo: CalendarData.DayInfo.init(
+    defaultHarubee: 10000,
+    dailyBudget: DailyBudget(
+      date: Date(),
+      harubee: 10000,
+      memo: [],
+      expense: 12000,
+      income: 1000
+    )
+  )
+  .frame(width: 50)
+}
+
+#Preview {
+  CalendarCell(
     date: Date(),
-    harubee: 10000,
-    isAdjusted: true,
-    income: nil,
-    expense: nil,
-    memos: [],
-    fixedExpenses: []
+    defaultHarubee: 10000,
+    dailyBudget: DailyBudget(
+      date: Date(),
+      harubee: 10000,
+      memo: [],
+      expense: 8000,
+      income: nil
     )
   )
   .frame(width: 50)
