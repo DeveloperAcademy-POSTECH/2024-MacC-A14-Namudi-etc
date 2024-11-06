@@ -11,6 +11,7 @@ import Domain
 
 struct CalendarCell: View {
   // MARK: - Properties
+  let onSelect: (Date) -> Void
   let date: Date
   let defaultHarubee: Int
   let dailyBudget: DailyBudget?
@@ -75,6 +76,9 @@ struct CalendarCell: View {
     .frame(height: 90)
     .frame(maxWidth: .infinity)
     .background(cellBackground)
+    .tapFeedback {
+      onSelect(date)
+    }
     .padding(.vertical, 10)
   }
   
@@ -112,6 +116,7 @@ struct CalendarCell: View {
 // MARK: - Preview
 #Preview {
   CalendarCell(
+    onSelect: {_ in },
     date: Date(),
     defaultHarubee: 10000,
     dailyBudget: DailyBudget(
@@ -127,6 +132,7 @@ struct CalendarCell: View {
 
 #Preview {
   CalendarCell(
+    onSelect: {_ in },
     date: Date(),
     defaultHarubee: 10000,
     dailyBudget: DailyBudget(
@@ -142,6 +148,7 @@ struct CalendarCell: View {
 
 #Preview {
   CalendarCell(
+    onSelect: {_ in },
     date: Date(),
     defaultHarubee: 10000,
     dailyBudget: DailyBudget(

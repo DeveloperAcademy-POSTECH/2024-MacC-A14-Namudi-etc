@@ -13,20 +13,17 @@ struct CalendarGrid<CellContent: View>: View {
   private let startDate: Date
   private let endDate: Date
   private let selectedDate: Date?
-  private let onCellSelect: (Date) -> Void
   private let cellContent: (Date) -> CellContent
   
   init(
     startDate: Date,
     endDate: Date,
     selectedDate: Date? = nil,
-    onCellSelect: @escaping (Date) -> Void,
     @ViewBuilder cellContent: @escaping (Date) -> CellContent
   ) {
     self.startDate = startDate
     self.endDate = endDate
     self.selectedDate = selectedDate
-    self.onCellSelect = onCellSelect
     self.cellContent = cellContent
   }
   
@@ -41,7 +38,6 @@ struct CalendarGrid<CellContent: View>: View {
             week: weeks[weekIndex],
             isLastRow: weekIndex == weeks.count - 1,
             selectedDate: selectedDate,
-            onDateSelect: onCellSelect,
             cellContent: cellContent
           )
         }
@@ -108,7 +104,6 @@ private struct WeekRow<CellContent: View>: View {
   let week: [Date?]
   let isLastRow: Bool
   let selectedDate: Date?
-  let onDateSelect: (Date) -> Void
   let cellContent: (Date) -> CellContent
   
   var body: some View {
@@ -123,7 +118,6 @@ private struct WeekRow<CellContent: View>: View {
           if let date = week[index] {
             cellContent(date)
               .contentShape(Rectangle())
-              .onTapGesture { onDateSelect(date) }
           } else {
             Color.clear
               .frame(height: 90)
@@ -159,8 +153,7 @@ private extension Array {
     endDate: current.date(
       byAdding: .month, value: 1, to: Date()
     )! - 1,
-    selectedDate: Date(),
-    onCellSelect: { _ in }
+    selectedDate: Date()
   ) { date in
     VStack {
       Text("\(current.component(.day, from: date))")
