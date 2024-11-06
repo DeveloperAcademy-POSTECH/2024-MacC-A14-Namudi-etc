@@ -24,7 +24,10 @@ struct Onboarding4View: View {
           averageHarubee: viewModel.state.averageHarubee
         )
         
-        OnboardingBodyView(expenseAmount: $previousExpenseAmount)
+        OnboardingBodyView(
+          startDate: viewModel.state.incomeStartDate,
+          expenseAmount: $previousExpenseAmount
+        )
         
         
         MainColorButton(title: "다음으로", isEnabled: $isEnabled) {
@@ -84,12 +87,19 @@ private struct OnboardingHeaderView: View {
 }
 
 private struct OnboardingBodyView: View {
-  @Binding var expenseAmount: String
+  @Binding private var expenseAmount: String
+  
+  private let startDate: String
+  
+  init(startDate: Date, expenseAmount: Binding<String>) {
+    self.startDate = startDate.formattedDateToString(.Md)
+    self._expenseAmount = expenseAmount
+  }
   
   var body: some View {
     VStack(spacing: 30) {
       VStack(alignment: .leading, spacing: 6) {
-        Text("9월 15일부터 오늘까지")
+        Text("\(startDate)부터 오늘까지")
         Text("얼마를 사용하셨나요?")
       }
       .frame(maxWidth: .infinity, alignment: .leading)

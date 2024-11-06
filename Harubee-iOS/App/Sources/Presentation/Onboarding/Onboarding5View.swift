@@ -56,7 +56,7 @@ private struct OnboardingHeaderView: View {
       VStack(alignment: .leading, spacing: 6) {
         Text("현재 계산된 하루비는")
         HStack(spacing: 0) {
-          Image(systemName: "exclamationmark.triangle.fill")
+          Image.harubeeWhite
             .resizable()
             .frame(width: 20, height: 20)
           HStack(alignment: .bottom, spacing: 0) {
