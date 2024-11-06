@@ -9,10 +9,17 @@
 import SwiftUI
 import Shared
 
+extension UIApplication {
+  func endEditing() {
+    sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+  }
+}
+
 struct Onboarding3View: View {
   @Environment(OnboardingViewModel.self) private var viewModel
   
   @State private var isPresented: Bool = false
+  @State private var isEnabled: Bool = false
   @State private var incomeDay: Int = 1
   @State private var incomeAmount: String = ""
   
@@ -22,11 +29,12 @@ struct Onboarding3View: View {
       
       OnboardingBodyView(incomeDay: $incomeDay, incomeAmount: $incomeAmount)
       
-      MainColorButton(title: "다음으로") {
+      Spacer()
+      
+      MainColorButton(title: "다음으로", isEnabled: $isEnabled) {
         viewModel.send(.nextButtonTapped(
           incomeDay: incomeDay,
           incomeAmount: incomeAmount.numberFormat)
-        
         )
         self.isPresented = true
       }
@@ -36,6 +44,12 @@ struct Onboarding3View: View {
       .padding(.horizontal, 16)
       .padding(.bottom, 9)
     }
+    .onTapGesture {
+      UIApplication.shared.endEditing()
+    }
+    .onChange(of: incomeAmount, { _, _ in
+      self.isEnabled = true
+    })
     .navigationDestination(isPresented: $isPresented) {
       Onboarding4View()
         .navigationBarBackButtonHidden()
@@ -97,13 +111,12 @@ private struct OnboardingBodyView: View {
           title: "금액",
           text: $incomeAmount
         )
-          .padding(.top, 24)
-          .keyboardType(.numberPad)
+        .padding(.top, 24)
+        .keyboardType(.numberPad)
       }
       .padding(.horizontal, 20)
       
     }
-    .frame(maxHeight: .infinity, alignment: .top)
     .onChange(of: incomeAmount) { oldValue, newValue in
       incomeAmount = (incomeAmount.numberFormat ?? 0).decimal
     }

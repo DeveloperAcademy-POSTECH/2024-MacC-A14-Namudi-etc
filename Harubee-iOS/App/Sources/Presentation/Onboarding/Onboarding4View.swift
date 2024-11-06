@@ -30,7 +30,9 @@ struct Onboarding4View: View {
         }
         
         NumberKeypadView(expression: $previousExpenseAmount) { isEnabled in
-          viewModel.send(.nextButtonTapped(previousExpense: previousExpenseAmount.numberFormat))
+          viewModel.send(.nextButtonTapped(
+            previousExpense: previousExpenseAmount.numberFormat
+          ))
           
           self.isEnabled = isEnabled
         }

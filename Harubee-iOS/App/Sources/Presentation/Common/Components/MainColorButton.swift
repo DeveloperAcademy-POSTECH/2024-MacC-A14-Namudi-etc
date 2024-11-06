@@ -39,7 +39,7 @@ struct MainColorButton: View {
       .frame(maxWidth: .infinity)
       .background(isEnabled ? Color.main : Color.main30)
     }
-    
+    .disabled(!isEnabled)
   }
 }
 
