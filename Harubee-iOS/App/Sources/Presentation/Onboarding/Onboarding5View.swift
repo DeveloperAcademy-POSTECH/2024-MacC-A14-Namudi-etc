@@ -19,13 +19,15 @@ struct Onboarding5View: View {
   
   var body: some View {
     VStack(spacing: 0) {
-      OnboardingHeaderView()
+      OnboardingHeaderView(harubee: viewModel.state.averageHarubee)
       
       OnboardingBodyView()
         .padding(.top, 30)
+        .padding(.horizontal, 20)
       
-      FixedExpenseListView()
+      FixedExpensesListView(fixedExpenses: $fixedExpenses)
         .padding(.top, 30)
+
       
       Spacer()
       
@@ -41,6 +43,9 @@ struct Onboarding5View: View {
     .onAppear {
       viewModel.send(.updateFixedExpenses(fixedExpenses))
     }
+    .onChange(of: fixedExpenses, { _, _ in
+      viewModel.send(.updateFixedExpenses(fixedExpenses))
+    })
     .navigationDestination(isPresented: $isPresented) {
       Onboarding6View()
         .navigationBarBackButtonHidden()
@@ -49,6 +54,12 @@ struct Onboarding5View: View {
 }
 
 private struct OnboardingHeaderView: View {
+  private let harubee: Int
+  
+  init(harubee: Int) {
+    self.harubee = harubee
+  }
+  
   var body: some View {
     VStack(spacing: 28) {
       OnboardingNavigationHeaderView(onboardingPage: .third)
@@ -60,7 +71,7 @@ private struct OnboardingHeaderView: View {
             .resizable()
             .frame(width: 20, height: 20)
           HStack(alignment: .bottom, spacing: 0) {
-            Text("100,000원")
+            Text(harubee.decimalWithWon)
               .padding(.leading, 6)
               .font(.pretendardSemibold_28)
             Text("입니다")
@@ -84,13 +95,83 @@ private struct OnboardingBodyView: View {
   
   var body: some View {
     VStack(alignment: .leading, spacing: 6) {
-      Text("매달 고정으로 나가는 지출 내역을")
+      Text("매달 고정으로 나가는 지출 목록을")
       Text("입력해주세요 (예: 월세, 구독비, 저축)")
     }
     .frame(maxWidth: .infinity, alignment: .leading)
     .font(.pretendardMedium_20)
     .foregroundStyle(Color.textBlack)
-    .padding(.horizontal, 20)
+  }
+}
+
+private struct FixedExpensesListView: View {
+  
+  @State private var isPresented: Bool = false
+  @Binding private var fixedExpenses: [TransactionItem]
+  
+  init(fixedExpenses: Binding<[TransactionItem]>) {
+    self._fixedExpenses = fixedExpenses
+  }
+  
+  var body: some View {
+    VStack {
+      HStack(spacing: 0) {
+        Text("목록")
+          .font(.pretendardSemibold_16)
+        
+        Spacer()
+        
+        Button {
+          self.isPresented = true
+        } label: {
+          Image(systemName: "plus")
+            .frame(width: 19, height: 21)
+        }
+        .sheet(isPresented: $isPresented) {
+          FixedExpenseManageView(mode: .add)
+            .presentationDetents([.fraction(0.8)])
+            .presentationCornerRadius(20)
+        }
+      }
+      .padding(.horizontal, 20)
+      .foregroundStyle(Color.textBlack)
+      
+      if fixedExpenses.isEmpty {
+        Text("목록을 추가해주세요")
+          .font(.pretendardMedium_16)
+          .foregroundStyle(Color.textBlack30)
+          .padding(.top, 150)
+          
+      } else {
+        List(fixedExpenses) { item in
+          HStack(spacing: 0) {
+            Text("매달 \(item.date.formattedDateToString(.d))")
+              .font(.pretendardMedium_16)
+              .foregroundStyle(Color.textBlack)
+              .padding(.vertical, 6)
+              .padding(.horizontal, 11)
+              .background(
+                RoundedRectangle(cornerRadius: 6)
+                  .foregroundStyle(Color.textBrighter30)
+              )
+            
+            Spacer()
+            
+            VStack(alignment: .trailing, spacing: 0) {
+              Text(item.name)
+                .font(.pretendardMedium_12)
+                .foregroundStyle(Color.textBlack)
+              Text(item.price.decimalWithWon)
+                .font(.pretendardSemibold_18)
+                .foregroundStyle(Color.textBlack)
+            }
+          }
+          .padding(.vertical, 1)
+        }
+        .listStyle(.plain)
+        .scrollBounceBehavior(.basedOnSize)
+      }
+    }
   }
 }
 

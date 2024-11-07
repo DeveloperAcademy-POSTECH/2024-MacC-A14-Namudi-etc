@@ -8,7 +8,7 @@
 
 import Foundation
 
-public struct TransactionItem: Identifiable {
+public struct TransactionItem: Identifiable, Equatable {
   public let id: String
   public var date: Date
   public var name: String
