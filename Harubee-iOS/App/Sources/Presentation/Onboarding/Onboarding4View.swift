@@ -31,14 +31,14 @@ struct Onboarding4View: View {
         
         
         MainColorButton(title: "다음으로", isEnabled: $isEnabled) {
-          self.isPresented = true
-        }
-        
-        NumberKeypadView(expression: $previousExpenseAmount) { isEnabled in
           viewModel.send(.nextButtonTapped(
             previousExpense: previousExpenseAmount.numberFormat
           ))
           
+          self.isPresented = true
+        }
+        
+        NumberKeypadView(expression: $previousExpenseAmount) { isEnabled in
           self.isEnabled = isEnabled
         }
         .padding(.top, 26)

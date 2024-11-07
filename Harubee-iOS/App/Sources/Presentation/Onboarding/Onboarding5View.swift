@@ -146,36 +146,39 @@ private struct FixedExpensesListView: View {
           .padding(.top, 150)
         
       } else {
-        List(fixedExpenses) { item in
-          HStack(spacing: 0) {
-            Text("매달 \(item.date.formattedDateToString(.d))")
-              .font(.pretendardMedium_16)
-              .foregroundStyle(Color.textBlack)
-              .padding(.vertical, 6)
-              .padding(.horizontal, 11)
-              .background(
-                RoundedRectangle(cornerRadius: 6)
-                  .foregroundStyle(Color.textBrighter30)
-              )
-            
-            Spacer()
-            
-            VStack(alignment: .trailing, spacing: 0) {
-              Text(item.name)
-                .font(.pretendardMedium_12)
+        List {
+          ForEach(fixedExpenses, id: \.id) { item in
+            HStack(spacing: 0) {
+              Text("매달 \(item.date.formattedDateToString(.d))")
+                .font(.pretendardMedium_16)
                 .foregroundStyle(Color.textBlack)
-              Text(item.price.decimalWithWon)
-                .font(.pretendardSemibold_18)
-                .foregroundStyle(Color.textBlack)
+                .padding(.vertical, 6)
+                .padding(.horizontal, 11)
+                .background(
+                  RoundedRectangle(cornerRadius: 6)
+                    .foregroundStyle(Color.textBrighter30)
+                )
+              
+              Spacer()
+              
+              VStack(alignment: .trailing, spacing: 0) {
+                Text(item.name)
+                  .font(.pretendardMedium_12)
+                  .foregroundStyle(Color.textBlack)
+                Text(item.price.decimalWithWon)
+                  .font(.pretendardSemibold_18)
+                  .foregroundStyle(Color.textBlack)
+              }
+            }
+            .padding(.vertical, 1)
+            .contentShape(Rectangle())
+            .onTapGesture {
+              self.manageMode = .modify
+              self.selectedItem = item
+              self.isPresented = true
             }
           }
-          .padding(.vertical, 1)
-          .contentShape(Rectangle())
-          .onTapGesture {
-            self.manageMode = .modify
-            self.selectedItem = item
-            self.isPresented = true
-          }
+          .onDelete(perform: removeList)
         }
         .listStyle(.plain)
         .scrollBounceBehavior(.basedOnSize)
@@ -186,7 +189,7 @@ private struct FixedExpensesListView: View {
         mode: self.manageMode,
         selectedDay: selectedItem?.date.day ?? 1,
         fixedExpenseName: selectedItem?.name ?? "",
-        fixedExpenseAmount: selectedItem?.price.decimalWithWon ?? ""
+        fixedExpenseAmount: selectedItem?.price.decimal ?? ""
       ) { day, name, price in
         
         let date = day.convertDateBetweenStartAndEnd(
@@ -212,6 +215,13 @@ private struct FixedExpensesListView: View {
       .presentationCornerRadius(20)
     }
     .onChange(of: selectedItem) { _, _ in }
+    .onChange(of: fixedExpenses) { _, _ in
+      fixedExpenses.sort(by: { $0.date < $1.date })
+    }
+  }
+  
+  func removeList(at offsets: IndexSet) {
+    fixedExpenses.remove(atOffsets: offsets)
   }
 }
 
