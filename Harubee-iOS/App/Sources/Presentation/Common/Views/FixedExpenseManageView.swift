@@ -89,6 +89,10 @@ private struct BodyView: View {
         .padding(.horizontal, 16)
       FloatingTitleTextField(title: "금액", text: $fixedExpenseAmount)
         .padding(.horizontal, 16)
+        .keyboardType(.numberPad)
+    }
+    .onChange(of: fixedExpenseAmount) { _, _ in
+      fixedExpenseAmount = fixedExpenseAmount.numberFormat!.decimal
     }
   }
 }
