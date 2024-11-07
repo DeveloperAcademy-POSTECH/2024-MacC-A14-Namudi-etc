@@ -27,6 +27,7 @@ public final class BudgetUseCaseImpl: BudgetUseCase {
     self.userDefaultsRepository = userDefaultsRepository
   }
   
+  @discardableResult
   public func createSalaryBudget(
     startDate: Date,
     endDate: Date,
@@ -334,7 +335,7 @@ public final class BudgetUseCaseImpl: BudgetUseCase {
     return (newDailyBudget, newSalaryBudget)
   }
   
-  // TODO: 실제 지출, 수입 기록 시 기본 하루비도 같이 변경되어야 합니다. 추가적인 로직 필요
+  
   public func recordTransaction(
     expense: Int?,
     income: Int?,
@@ -348,8 +349,6 @@ public final class BudgetUseCaseImpl: BudgetUseCase {
             && date <= salaryBudget.endDate else {
       throw DomainError.dateOutOfRange
     }
-    
-    let salaryBudget = salaryBudget
     
     // 2. SalaryBudget 내에서 dailyBudget의 index 찾기
     guard let index = salaryBudget.dailyBudgets.firstIndex(where: {
@@ -385,6 +384,7 @@ public final class BudgetUseCaseImpl: BudgetUseCase {
     return (newDailyBudget, newSalaryBudget)
   }
   
+  
   public func updateMemoList(
     memoList: [String],
     dailyBudget: DailyBudget
@@ -396,9 +396,12 @@ public final class BudgetUseCaseImpl: BudgetUseCase {
     )
   }
   
+  
   public func setIncomeDay(
     day: Int
   ) throws {
+    let today = Date().formattedDate
+    
     // 1. 월급일이 1일부터 31일 사이에 속하는지 확인하기
     guard (1...31).contains(day) else {
       throw DomainError.dateOutOfRange
@@ -406,7 +409,51 @@ public final class BudgetUseCaseImpl: BudgetUseCase {
     
     // 2. UserDefaults에 설정하기
     try userDefaultsRepository.saveIncomeDay(day)
+    
+    // 3. 기존 SalaryBudget 찾기
+    let oldSalaryBudget = try self.getCurrentSalaryBudget(date: today)
+    
+    
+    // 4. 새로운 SalaryBudget을 위한 데이트 계산하기
+    var incomeStartDate: Date {
+      var components = calendar.dateComponents([.year, .month, .day], from: today)
+      if components.day! < day {
+        components.month! -= 1
+      }
+      components.day! = day
+      let startDate = calendar.date(from: components)!
+      return startDate
+    }
+    
+    var incomeEndDate: Date {
+      // startDate가 한 달의 시작 날짜가 됩니다.
+      let startDate = incomeStartDate
+      // startDate의 일자(day)를 기준으로 한 달 후의 날짜를 구함
+      var components = calendar.dateComponents([.year, .month, .day], from: startDate)
+      components.month! += 1 // 한 달 뒤로 설정
+      // 다음 달에 동일한 일자가 있는지 확인하여 날짜를 생성
+      if let calculatedEndDate = calendar.date(from: components) {
+        return calculatedEndDate.addingTimeInterval(-86400)
+      } else {
+        // 동일 일자가 없는 경우(예: 30일이나 31일이 없는 달) 해당 월의 마지막 날로 조정
+        var fallbackComponents = components
+        fallbackComponents.day = calendar.range(of: .day, in: .month, for: calendar.date(from: components)!)?.last
+        return calendar.date(from: fallbackComponents)!
+      }
+    }
+    
+    
+    // 5. 새로운 SalaryBudget 생성
+    try self.createSalaryBudget(startDate: incomeStartDate,
+                                endDate: incomeEndDate,
+                                previousExpense: 0,
+                                fixedIncome: oldSalaryBudget.fixedIncome,
+                                fixedExpenses: oldSalaryBudget.fixedExpenses)
+    
+    // 6.  기존 salaryBudget 삭제하기
+    try salaryBudgetRepository.deleteById(oldSalaryBudget.id)
   }
+  
   
   public func getIncomeDay(
   ) throws -> Int {
@@ -420,3 +467,4 @@ public final class BudgetUseCaseImpl: BudgetUseCase {
     return incomeDay
   }
 }
+
