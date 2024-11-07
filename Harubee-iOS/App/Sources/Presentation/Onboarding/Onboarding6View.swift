@@ -42,6 +42,7 @@ struct Onboarding6View: View {
             incomeAmount: viewModel.state.incomeAmount ?? 0,
             previousExpense: viewModel.state.previousExpense ?? 0,
             fixedExpenses: viewModel.state.fixedExpenses,
+            startDate: viewModel.state.incomeStartDate,
             endDate: viewModel.state.incomeEndDate
           )
             .padding(.top, 26)
@@ -117,17 +118,20 @@ private struct UserInfoView: View {
   private let incomeAmount: Int
   private let previousExpense: Int
   private let fixedExpenses: [TransactionItem]
+  private let startDate: Date
   private let endDate: Date
   
   init(
     incomeAmount: Int,
     previousExpense: Int,
     fixedExpenses: [TransactionItem],
+    startDate: Date,
     endDate: Date
   ) {
     self.incomeAmount = incomeAmount
     self.previousExpense = previousExpense
     self.fixedExpenses = fixedExpenses
+    self.startDate = startDate
     self.endDate = endDate
   }
   
@@ -138,16 +142,16 @@ private struct UserInfoView: View {
         content: incomeAmount.decimalWithWon
       )
       UserInfoItemView(
-        title: "수입일(9월 15일) 이후 지출한 금액",
+        title: "수입일(\(startDate.formattedDateToString(.Md))) 이후 지출한 금액",
         content: "- \(previousExpense.decimalWithWon)"
       )
       UserInfoItemView(
-        title: "고정 지출 (총 7건)",
-        content: "- 120,000원"
+        title: "고정 지출 (총 \(fixedExpenses.count)건)",
+        content: "- \(fixedExpenses.reduce(0) { $0 + $1.price }.decimalWithWon)"
       )
       UserInfoItemView(
         title: "다음 수입일까지 남은 기간",
-        content: "÷ 15일"
+        content: "÷ \((Int(endDate.timeIntervalSinceNow) + 86400) / 86400)일"
       )
     }
   }

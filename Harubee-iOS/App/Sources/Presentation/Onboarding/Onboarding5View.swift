@@ -13,9 +13,7 @@ import Shared
 struct Onboarding5View: View {
   @Environment(OnboardingViewModel.self) private var viewModel
   
-  @State private var fixedExpenses: [TransactionItem] = [
-    .init(date: .now, name: "33", price: 3)
-  ]
+  @State private var fixedExpenses: [TransactionItem] = []
   
   @State private var isPresented: Bool = false
   
