@@ -24,22 +24,29 @@ enum Mode {
 }
 
 struct FixedExpenseManageView: View {
-  
-  private let mode: Mode
+  @Environment(\.dismiss) private var dismiss
+  @State private var selectedDay: Int
   @State private var fixedExpenseName: String
   @State private var fixedExpenseAmount: String
-  @State private var selectedDay: Int
+
+  private let mode: Mode
+  private let action: ((Int, String, String) -> Void)
   
   init(
     mode: Mode,
+    selectedDay: Int = 1,
     fixedExpenseName: String = "",
     fixedExpenseAmount: String = "",
-    selectedDay: Int = 1
+    action: @escaping ((Int, String, String) -> Void)
   ) {
+    print(selectedDay)
+    print(fixedExpenseName)
+    print(fixedExpenseAmount)
     self.mode = mode
     self._fixedExpenseName = State(initialValue: fixedExpenseName)
     self._fixedExpenseAmount = State(initialValue: fixedExpenseAmount)
     self._selectedDay = State(initialValue: selectedDay)
+    self.action = action
   }
   
   var body: some View {
@@ -58,7 +65,8 @@ struct FixedExpenseManageView: View {
         // TODO: Binding 연결 필요
         isEnabled: .constant(true)
       ) {
-        print("저장하기 버튼 Tapped")
+        self.action(selectedDay, fixedExpenseName, fixedExpenseAmount)
+        self.dismiss()
       }
       .clipShape(RoundedRectangle(cornerRadius: 10))
       .padding(.horizontal, 16)
@@ -86,5 +94,6 @@ private struct BodyView: View {
 }
 
 #Preview {
-  FixedExpenseManageView(mode: .add)
+  FixedExpenseManageView(mode: .add) { _, _, _ in
+  }
 }

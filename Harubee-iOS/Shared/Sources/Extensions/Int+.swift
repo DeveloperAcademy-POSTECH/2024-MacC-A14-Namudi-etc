@@ -27,4 +27,25 @@ public extension Int {
     let number = formatter.string(from: NSNumber(value: self)) ?? "NA"
     return number + "원"
   }
+  
+  
+  func convertDateBetweenStartAndEnd(start: Date, end: Date) -> Date {
+    let calendar = Calendar.current
+    
+    var startDateComponents = calendar.dateComponents([.year, .month, .day], from: start)
+    let endDateComponents = calendar.dateComponents([.year, .month, .day], from: end)
+    
+    var convertedDate = Date()
+    
+    while startDateComponents != endDateComponents {
+      let day = startDateComponents.day!
+      if day == self {
+        convertedDate = calendar.date(from: startDateComponents)!
+        break
+      }
+      startDateComponents.day! += 1
+    }
+    
+    return convertedDate
+  }
 }

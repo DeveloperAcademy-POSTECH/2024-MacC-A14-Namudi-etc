@@ -42,6 +42,10 @@ public extension Date {
     return calendar.date(from: dateComponent)!
   }
   
+  var day: Int {
+    return configuredCalendar.component(.day, from: self)
+  }
+  
   
   /// DateFormat을 변환합니다
   /// - Parameter format: Date에 사용할 DateComponent 타입들
