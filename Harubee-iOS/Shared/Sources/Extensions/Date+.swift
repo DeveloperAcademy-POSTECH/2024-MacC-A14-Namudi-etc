@@ -66,4 +66,5 @@ public extension Date {
 public enum DateFormatType: String {
   case yyyyMMddE = "yyyy년 MM월 dd일 (E)"
   case Md = "M월 d일"
+  case d = "d일"
 }
