@@ -13,7 +13,9 @@ import Shared
 struct Onboarding5View: View {
   @Environment(OnboardingViewModel.self) private var viewModel
   
-  @State private var fixedExpenses: [TransactionItem] = []
+  @State private var fixedExpenses: [TransactionItem] = [
+    .init(date: .now, name: "33", price: 3)
+  ]
   
   @State private var isPresented: Bool = false
   
@@ -27,7 +29,7 @@ struct Onboarding5View: View {
       
       FixedExpensesListView(fixedExpenses: $fixedExpenses)
         .padding(.top, 30)
-
+      
       
       Spacer()
       
@@ -105,12 +107,16 @@ private struct OnboardingBodyView: View {
 }
 
 private struct FixedExpensesListView: View {
-  
+  @Environment(OnboardingViewModel.self) private var viewModel
   @State private var isPresented: Bool = false
   @Binding private var fixedExpenses: [TransactionItem]
   
+  @State private var manageMode: Mode
+  @State private var selectedItem: TransactionItem?
+  
   init(fixedExpenses: Binding<[TransactionItem]>) {
     self._fixedExpenses = fixedExpenses
+    self._manageMode = State(initialValue: .add)
   }
   
   var body: some View {
@@ -122,15 +128,12 @@ private struct FixedExpensesListView: View {
         Spacer()
         
         Button {
+          self.manageMode = .add
+          self.selectedItem = nil
           self.isPresented = true
         } label: {
           Image(systemName: "plus")
             .frame(width: 19, height: 21)
-        }
-        .sheet(isPresented: $isPresented) {
-          FixedExpenseManageView(mode: .add)
-            .presentationDetents([.fraction(0.8)])
-            .presentationCornerRadius(20)
         }
       }
       .padding(.horizontal, 20)
@@ -141,7 +144,7 @@ private struct FixedExpensesListView: View {
           .font(.pretendardMedium_16)
           .foregroundStyle(Color.textBlack30)
           .padding(.top, 150)
-          
+        
       } else {
         List(fixedExpenses) { item in
           HStack(spacing: 0) {
@@ -167,11 +170,48 @@ private struct FixedExpensesListView: View {
             }
           }
           .padding(.vertical, 1)
+          .contentShape(Rectangle())
+          .onTapGesture {
+            self.manageMode = .modify
+            self.selectedItem = item
+            self.isPresented = true
+          }
         }
         .listStyle(.plain)
         .scrollBounceBehavior(.basedOnSize)
       }
     }
+    .sheet(isPresented: $isPresented) {
+      FixedExpenseManageView(
+        mode: self.manageMode,
+        selectedDay: selectedItem?.date.day ?? 1,
+        fixedExpenseName: selectedItem?.name ?? "",
+        fixedExpenseAmount: selectedItem?.price.decimalWithWon ?? ""
+      ) { day, name, price in
+        
+        let date = day.convertDateBetweenStartAndEnd(
+          start: viewModel.state.incomeStartDate,
+          end: viewModel.state.incomeEndDate
+        )
+        
+        if let item = selectedItem {
+          if let index = fixedExpenses.firstIndex(where: { $0.id == item.id }) {
+            fixedExpenses[index].date = date
+            fixedExpenses[index].name = name
+            fixedExpenses[index].price = price.numberFormat ?? 0
+          }
+        } else {
+          fixedExpenses.append(.init(
+            date: date,
+            name: name,
+            price: price.numberFormat ?? 0)
+          )
+        }
+      }
+      .presentationDetents([.fraction(0.8)])
+      .presentationCornerRadius(20)
+    }
+    .onChange(of: selectedItem) { _, _ in }
   }
 }
 

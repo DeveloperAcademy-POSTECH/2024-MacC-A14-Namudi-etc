@@ -27,7 +27,9 @@ struct FixedExpenseListView: View {
             .frame(width: 19, height: 21)
         }
         .sheet(isPresented: $showingSheet) {
-          FixedExpenseManageView(mode: .add)
+          FixedExpenseManageView(mode: .add) { day, name, price in
+            
+          }
             .presentationDetents([.fraction(0.8)])
             .presentationCornerRadius(20)
         }
@@ -103,7 +105,9 @@ private struct ListItemView: View {
       .padding(.horizontal, 6)
     }
     .sheet(isPresented: $showingSheet) {
-      FixedExpenseManageView(mode: .modify)
+      FixedExpenseManageView(mode: .modify) { day, name, price in
+        
+      }
         .presentationDetents([.fraction(0.8)])
         .presentationCornerRadius(20)
     }
