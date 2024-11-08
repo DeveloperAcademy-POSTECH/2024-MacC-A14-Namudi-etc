@@ -30,33 +30,44 @@ struct TodayView: View {
           
           Color.main.ignoresSafeArea()
           
+          
+          
           TodayPrimaryLayerView(todayViewModel: todayViewModel,
                                 proxy: proxy,
                                 isInfoBubbleVisible: $isInfoBubbleVisible)
           
           TodaySecondaryLayerView(todayViewModel: todayViewModel, isInfoBubbleVisible: $isInfoBubbleVisible)
           
-          
-          NavigationLink {
-            SettingView()
-          } label: {
-            Image(systemName: "gearshape")
-              .font(Font.system(size: 22, weight: .regular))
-              .foregroundStyle(Color.whiteDefault)
+          if isInfoBubbleVisible {
+            Color.clear
+              .contentShape(Rectangle())
+              .ignoresSafeArea()
+              .onTapGesture {
+                isInfoBubbleVisible.toggle()
+              }
           }
-          .padding(.trailing, 16)
-          .padding(.top, 11)
           
-          Button(action: {
-            isInfoBubbleVisible.toggle()
-          }, label: {
-            Image(systemName: "questionmark.circle")
-              .font(Font.system(size: 22, weight: .regular))
-              .foregroundStyle(Color.whiteDefault)
-          })
-          .padding(.trailing, 68)
-          .padding(.top, 11)
+        }
+        .toolbar {
+          ToolbarItem(placement: .topBarTrailing) {
+            Button(action: {
+              isInfoBubbleVisible.toggle()
+            }, label: {
+              Image(systemName: "questionmark.circle")
+                .font(Font.system(size: 18, weight: .regular))
+                .foregroundStyle(Color.whiteDefault)
+            })
+          }
           
+          ToolbarItem(placement: .topBarTrailing) {
+            NavigationLink {
+              SettingView()
+            } label: {
+              Image(systemName: "gearshape")
+                .font(Font.system(size: 18, weight: .regular))
+                .foregroundStyle(Color.whiteDefault)
+            }
+          }
         }
       }.onAppear {
         todayViewModel.send(.viewDidLoad)
@@ -212,8 +223,10 @@ private struct HarubeeHexagon: View {
         .frame(width: hexgonSize, height: hexgonSize)
         .clipShape(RoundedHexagon())
         .onAppear {
-          withAnimation(Animation.linear(duration: 6).repeatForever(autoreverses: false)) {
-            firstWaveOffset = isTodayHarubee ? hexgonSize : hexgonSize / 2 * 3
+          if fillPercentage > 0 && fillPercentage < 1 {
+            withAnimation(Animation.spring(duration: 6).repeatForever(autoreverses: false)) {
+              firstWaveOffset = isTodayHarubee ? hexgonSize : hexgonSize / 2 * 3
+            }
           }
         }
       
@@ -222,8 +235,10 @@ private struct HarubeeHexagon: View {
         .frame(width: hexgonSize, height: hexgonSize)
         .clipShape(RoundedHexagon())
         .onAppear {
-          withAnimation(Animation.linear(duration: 5).repeatForever(autoreverses: false)) {
-            secondWaveOffset = isTodayHarubee ? hexgonSize : hexgonSize / 2 * 3
+          if fillPercentage > 0 && fillPercentage < 1 {
+            withAnimation(Animation.linear(duration: 5).repeatForever(autoreverses: false)) {
+              secondWaveOffset = isTodayHarubee ? hexgonSize : hexgonSize / 2 * 3
+            }
           }
         }
       
@@ -231,7 +246,7 @@ private struct HarubeeHexagon: View {
         .stroke(Color.whiteDefault, lineWidth: 1.5)
         .frame(width: hexgonSize, height: hexgonSize)
       
-      VStack(spacing: 2) {
+      VStack(spacing: isTodayHarubee ? 9 : 2) {
         Text(isTodayHarubee ? "오늘의 남은 하루비" : "평균 하루비")
           .font(isTodayHarubee ? .pretendardSemibold_20 : .pretendardSemibold_16)
           .foregroundStyle(isTodayHarubee ? (fillPercentage <= 0.5 ? Color.whiteDefault : Color.textBlack) :  Color.whiteDeep50)
@@ -244,19 +259,23 @@ private struct HarubeeHexagon: View {
             .foregroundStyle(Color.textBlack)
           }
         if isTodayHarubee {
-          ZStack {
+          HStack {
+            (fillPercentage <= 0.33 ? Image.harubeeWhite : Image.harubeeMain)
+              .resizable()
+              .frame(width: 20, height: 20)
+            Text((todayViewModel.state.todayHarubee.decimalWithWon))
+              .foregroundStyle(fillPercentage <= 0.33 ? Color.whiteDefault : Color.main)
+              .font(.pretendardSemibold_24)
+          }
+          .fixedSize()
+          .padding(EdgeInsets(top: 4,
+                              leading: 9,
+                              bottom: 6,
+                              trailing: 10))
+          .background(
             RoundedRectangle(cornerRadius: 8)
               .foregroundStyle(Color.mainBrighter60)
-              .frame(width: 148, height: 39)
-            HStack {
-              (fillPercentage <= 0.33 ? Image.harubeeWhite : Image.harubeeMain)
-                .resizable()
-                .frame(width: 20, height: 20)
-              Text((todayViewModel.state.todayHarubee.decimalWithWon))
-                .foregroundStyle(fillPercentage <= 0.33 ? Color.whiteDefault : Color.main)
-                .font(.pretendardSemibold_24)
-            }
-          }
+          )
         } else {
           Text(todayViewModel.state.averageHarubee.decimalWithWon)
             .font(.pretendardSemibold_20)
@@ -307,7 +326,8 @@ private struct TodayHeaderView: View {
         .font(.pretendardSemibold_14)
         .foregroundStyle(Color.whiteDefault)
     }.frame(maxWidth: .infinity, alignment: .trailing)
-      .padding(EdgeInsets(top: 50, leading: 0, bottom: 0, trailing: 16))
+      .padding(.trailing, 16)
+      .padding(.top, 6)
   }
 }
 
@@ -502,4 +522,3 @@ private struct StreakCell: View {
 #Preview {
   TodayView(todayViewModel: DIContainer.shared.makeTodayViewModel())
 }
-
