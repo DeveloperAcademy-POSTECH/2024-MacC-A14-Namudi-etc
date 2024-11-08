@@ -10,22 +10,9 @@ import SwiftUI
 
 // MARK: - Calendar Grid Component
 struct CalendarGrid<CellContent: View>: View {
-  private let startDate: Date
-  private let endDate: Date
-  private let selectedDate: Date?
-  private let cellContent: (Date) -> CellContent
-  
-  init(
-    startDate: Date,
-    endDate: Date,
-    selectedDate: Date? = nil,
-    @ViewBuilder cellContent: @escaping (Date) -> CellContent
-  ) {
-    self.startDate = startDate
-    self.endDate = endDate
-    self.selectedDate = selectedDate
-    self.cellContent = cellContent
-  }
+  let startDate: Date
+  let endDate: Date
+  let cellContent: (Date) -> CellContent
   
   var body: some View {
     VStack(spacing: 0) {
@@ -37,7 +24,6 @@ struct CalendarGrid<CellContent: View>: View {
           WeekRow(
             week: weeks[weekIndex],
             isLastRow: weekIndex == weeks.count - 1,
-            selectedDate: selectedDate,
             cellContent: cellContent
           )
         }
@@ -103,7 +89,6 @@ private struct WeekdayHeaderRow: View {
 private struct WeekRow<CellContent: View>: View {
   let week: [Date?]
   let isLastRow: Bool
-  let selectedDate: Date?
   let cellContent: (Date) -> CellContent
   
   var body: some View {
@@ -152,8 +137,7 @@ private extension Array {
     startDate: Date(),
     endDate: current.date(
       byAdding: .month, value: 1, to: Date()
-    )! - 1,
-    selectedDate: Date()
+    )! - 1
   ) { date in
     VStack {
       Text("\(current.component(.day, from: date))")
