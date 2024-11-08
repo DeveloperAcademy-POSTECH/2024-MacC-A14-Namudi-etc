@@ -60,11 +60,10 @@ final class OnboardingViewModel {
       incomeDay: Int? = nil,
       incomeAmount: Int? = nil,
       previousExpense: Int? = nil,
-      fixedExpenses: [TransactionItem] = []
+      fixedExpenses: [TransactionItem]? = nil
     )
-    case onAppear
     case updateFixedExpenses([TransactionItem])
-    case finishButtonTapped
+    case updatePreviousExpense(Int)
   }
   
   private let salaryBudgetUseCase: SalaryBudgetUseCase
@@ -77,9 +76,6 @@ final class OnboardingViewModel {
   
   func send(_ action: Action) {
     switch action {
-    case .onAppear:
-      self.state.averageHarubee = self.calculateAverageHarubee()
-      
     case let .nextButtonTapped(
       incomeDay,
       incomeAmount,
@@ -89,14 +85,16 @@ final class OnboardingViewModel {
       if let incomeDay = incomeDay { self.state.incomeDay = incomeDay }
       if let incomeAmount = incomeAmount { self.state.incomeAmount = incomeAmount }
       if let previousExpense = previousExpense { self.state.previousExpense = previousExpense }
-      self.state.fixedExpenses = fixedExpenses
+      if let fixedExpenses = fixedExpenses { self.state.fixedExpenses = fixedExpenses }
+      self.state.averageHarubee = self.calculateAverageHarubee()
       
     case let .updateFixedExpenses(fixedExpenses):
       self.state.fixedExpenses = fixedExpenses
       self.state.averageHarubee = self.calculateAverageHarubee()
       
-    case .finishButtonTapped:
-      break
+    case let .updatePreviousExpense(previousExpense):
+      self.state.previousExpense = previousExpense
+      self.state.averageHarubee = self.calculateAverageHarubee()
     }
   }
 }
@@ -122,7 +120,8 @@ extension OnboardingViewModel {
     previousExpense: Int,
     fixedExpenses: [TransactionItem]
   ) -> Int {
-    let totalExpenses = fixedExpenses.reduce(0) { $0 + $1.price }
+    let now = Date().formattedDate
+    let totalExpenses = fixedExpenses.filter { $0.date > now }.reduce(0) { $0 + $1.price }
     return incomeAmount - previousExpense - totalExpenses
   }
 }

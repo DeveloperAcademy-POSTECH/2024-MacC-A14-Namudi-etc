@@ -16,12 +16,20 @@ extension UIApplication {
 }
 
 struct Onboarding3View: View {
-  @Environment(OnboardingViewModel.self) private var viewModel
+  private var viewModel: OnboardingViewModel
   
   @State private var isPresented: Bool = false
-  @State private var isEnabled: Bool = false
-  @State private var incomeDay: Int = 1
-  @State private var incomeAmount: String = ""
+  @State private var isEnabled: Bool
+  @State private var incomeDay: Int
+  @State private var incomeAmount: String
+  
+  init(viewModel: OnboardingViewModel) {
+    self.viewModel = viewModel
+    self._incomeDay = .init(initialValue: viewModel.state.incomeDay)
+    self._incomeAmount = .init(initialValue: viewModel.state.incomeAmount?.decimal ?? "")
+    
+    self._isEnabled = .init(initialValue: viewModel.state.incomeAmount == nil ? false : true)
+  }
   
   var body: some View {
     VStack(spacing: 0) {
@@ -44,6 +52,7 @@ struct Onboarding3View: View {
       .padding(.horizontal, 16)
       .padding(.bottom, 9)
     }
+    .contentShape(Rectangle())
     .onTapGesture {
       UIApplication.shared.endEditing()
     }
@@ -51,7 +60,7 @@ struct Onboarding3View: View {
       self.isEnabled = true
     })
     .navigationDestination(isPresented: $isPresented) {
-      Onboarding4View()
+      Onboarding4View(viewModel: viewModel)
         .navigationBarBackButtonHidden()
     }
   }
@@ -124,6 +133,5 @@ private struct OnboardingBodyView: View {
 }
 
 #Preview {
-  Onboarding3View()
-    .environment(DIContainer.shared.makeOnboardingViewModel())
+  Onboarding3View(viewModel: DIContainer.shared.makeOnboardingViewModel())
 }

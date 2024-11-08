@@ -11,11 +11,16 @@ import Domain
 import Shared
 
 struct Onboarding5View: View {
-  @Environment(OnboardingViewModel.self) private var viewModel
+  private var viewModel: OnboardingViewModel
   
-  @State private var fixedExpenses: [TransactionItem] = []
+  @State private var fixedExpenses: [TransactionItem]
   
   @State private var isPresented: Bool = false
+  
+  init(viewModel: OnboardingViewModel) {
+    self.viewModel = viewModel
+    self._fixedExpenses = .init(initialValue: viewModel.state.fixedExpenses)
+  }
   
   var body: some View {
     VStack(spacing: 0) {
@@ -39,9 +44,6 @@ struct Onboarding5View: View {
       )
       .padding(.horizontal, 16)
       .padding(.bottom, 9)
-    }
-    .onAppear {
-      viewModel.send(.updateFixedExpenses(fixedExpenses))
     }
     .onChange(of: fixedExpenses, { _, _ in
       viewModel.send(.updateFixedExpenses(fixedExpenses))
@@ -195,6 +197,8 @@ private struct FixedExpensesListView: View {
           end: viewModel.state.incomeEndDate
         )
         
+        print(date)
+        
         if let item = selectedItem {
           if let index = fixedExpenses.firstIndex(where: { $0.id == item.id }) {
             fixedExpenses[index].date = date
@@ -214,7 +218,9 @@ private struct FixedExpensesListView: View {
     }
     .onChange(of: selectedItem) { _, _ in }
     .onChange(of: fixedExpenses) { _, _ in
-      fixedExpenses.sort(by: { $0.date < $1.date })
+      fixedExpenses.sort(by: {
+        $0.date.day < $1.date.day
+      })
     }
   }
   
@@ -224,6 +230,5 @@ private struct FixedExpensesListView: View {
 }
 
 #Preview {
-  Onboarding5View()
-    .environment(DIContainer.shared.makeOnboardingViewModel())
+  Onboarding5View(viewModel: DIContainer.shared.makeOnboardingViewModel())
 }

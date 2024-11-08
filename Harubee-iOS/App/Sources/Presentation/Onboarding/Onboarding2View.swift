@@ -10,6 +10,7 @@ import SwiftUI
 import Shared
 
 struct Onboarding2View: View {
+  @Environment(OnboardingViewModel.self) private var viewModel
   @State private var isPresented: Bool = false
   
   var body: some View {
@@ -35,7 +36,7 @@ struct Onboarding2View: View {
       .frame(maxHeight: .infinity, alignment: .top)
       .padding(.top, 76)
       .navigationDestination(isPresented: $isPresented) {
-        Onboarding3View()
+        Onboarding3View(viewModel: viewModel)
           .navigationBarBackButtonHidden()
       }
     }
@@ -124,4 +125,5 @@ private struct CalculateContentView: View {
 
 #Preview {
   Onboarding2View()
+    .environment(DIContainer.shared.makeOnboardingViewModel())
 }

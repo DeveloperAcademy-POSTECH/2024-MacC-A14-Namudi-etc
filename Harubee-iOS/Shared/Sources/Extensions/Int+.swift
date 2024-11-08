@@ -35,17 +35,17 @@ public extension Int {
     var startDateComponents = calendar.dateComponents([.year, .month, .day], from: start)
     let endDateComponents = calendar.dateComponents([.year, .month, .day], from: end)
     
-    var convertedDate = Date()
-    
     while startDateComponents != endDateComponents {
       let day = startDateComponents.day!
       if day == self {
-        convertedDate = calendar.date(from: startDateComponents)!
-        break
+        return calendar.date(from: startDateComponents)!
       }
       startDateComponents.day! += 1
+      
+      let start = calendar.date(from: startDateComponents)!
+      startDateComponents = calendar.dateComponents([.year, .month, .day], from: start)
     }
     
-    return convertedDate
+    return calendar.date(from: endDateComponents)!
   }
 }

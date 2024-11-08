@@ -28,6 +28,8 @@ struct FixedExpenseManageView: View {
   @State private var selectedDay: Int
   @State private var fixedExpenseName: String
   @State private var fixedExpenseAmount: String
+  
+  @State private var isEnabled: Bool = false
 
   private let mode: Mode
   private let action: ((Int, String, String) -> Void)
@@ -39,9 +41,6 @@ struct FixedExpenseManageView: View {
     fixedExpenseAmount: String = "",
     action: @escaping ((Int, String, String) -> Void)
   ) {
-    print(selectedDay)
-    print(fixedExpenseName)
-    print(fixedExpenseAmount)
     self.mode = mode
     self._fixedExpenseName = State(initialValue: fixedExpenseName)
     self._fixedExpenseAmount = State(initialValue: fixedExpenseAmount)
@@ -62,8 +61,7 @@ struct FixedExpenseManageView: View {
       
       MainColorButton(
         title: "저장하기",
-        // TODO: Binding 연결 필요
-        isEnabled: .constant(true)
+        isEnabled: $isEnabled
       ) {
         self.action(selectedDay, fixedExpenseName, fixedExpenseAmount)
         self.dismiss()
@@ -71,6 +69,24 @@ struct FixedExpenseManageView: View {
       .clipShape(RoundedRectangle(cornerRadius: 10))
       .padding(.horizontal, 16)
       .padding(.bottom, 9)
+    }
+    .onChange(of: fixedExpenseName) { _, _ in
+      if (fixedExpenseName.isEmpty
+          || fixedExpenseAmount.isEmpty
+          || fixedExpenseAmount == "0") {
+        isEnabled = false
+      } else {
+        isEnabled = true
+      }
+    }
+    .onChange(of: fixedExpenseAmount) { _, _ in
+      if (fixedExpenseName.isEmpty
+          || fixedExpenseAmount.isEmpty
+          || fixedExpenseAmount == "0") {
+        isEnabled = false
+      } else {
+        isEnabled = true
+      }
     }
   }
 }
@@ -92,7 +108,7 @@ private struct BodyView: View {
         .keyboardType(.numberPad)
     }
     .onChange(of: fixedExpenseAmount) { _, _ in
-      fixedExpenseAmount = fixedExpenseAmount.numberFormat!.decimal
+      fixedExpenseAmount = (fixedExpenseAmount.numberFormat ?? 0).decimal
     }
   }
 }

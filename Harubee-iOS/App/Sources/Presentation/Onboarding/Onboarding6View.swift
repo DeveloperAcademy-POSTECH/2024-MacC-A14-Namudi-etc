@@ -151,7 +151,7 @@ private struct UserInfoView: View {
       )
       UserInfoItemView(
         title: "다음 수입일까지 남은 기간",
-        content: "÷ \((Int(endDate.timeIntervalSinceNow) + 86400) / 86400)일"
+        content: "÷ \((Int(endDate.timeIntervalSince(.now.formattedDate) + 86400.0)) / 86400)일"
       )
     }
   }
