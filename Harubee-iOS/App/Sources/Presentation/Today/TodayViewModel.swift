@@ -9,6 +9,13 @@
 import Foundation
 import Domain
 
+struct DailyStreak {
+  let date: Date
+  let isAfterToday: Bool
+  let harubee: Int
+  let isOverHarubee: Bool?
+}
+
 @Observable
 final class TodayViewModel {
   // MARK: - State
@@ -18,7 +25,7 @@ final class TodayViewModel {
     var averageHarubee = 0
     var todayHarubeePercentage: Double = 0.0
     var todayAverageHarubeePercentage: Double = 0.0
-    var weeklyStreaks: [DailyBudget]?
+    var weeklyStreaks: [DailyStreak]?
     
     var salaryBudget: SalaryBudget?
     var todayDailyBudget: DailyBudget?
@@ -122,7 +129,7 @@ extension TodayViewModel {
     let todayHarubee = todayDailyBudget?.harubee ?? Int(salaryBudget.defaultHarubee)
     let averageHarubee = Int(budgetUseCase.calculateAverageHarubee(endDate: currentEndDate,
                                                                          balance: currentBalance))
-    let weeklyStreaks = getWeeklyStreaks()
+    let weeklyStreaks = getWeeklyStreaks(salaryBudget: salaryBudget)
     let todayHarubeePercentage = todayDailyBudget?.expense == nil ? 1.0 : Double((todayDailyBudget?.expense)! / todayHarubee)
     let originalAverageHarubee = Double(salaryBudget.fixedIncome / 30)
     let todayAverageHarubeePercentage = Double(averageHarubee) / originalAverageHarubee
@@ -136,7 +143,7 @@ extension TodayViewModel {
     state.todayAverageHarubeePercentage = todayAverageHarubeePercentage / 2
   }
   
-  private func getWeeklyStreaks() -> [DailyBudget] {
+  private func getWeeklyStreaks(salaryBudget: SalaryBudget) -> [DailyStreak] {
     let calendar = Calendar.current
     let today = state.todayDate
     
@@ -147,7 +154,7 @@ extension TodayViewModel {
       return []
     }
     
-    var weeklyStreaks = [DailyBudget]()
+    var weeklyStreaks = [DailyStreak]()
     var currentDate = startDate
     
     // 각 날짜에 대해 DailyBudget을 가져오거나, 없으면 임의로 생성하여 추가
@@ -155,13 +162,33 @@ extension TodayViewModel {
       do {
         
         let dailyBudget = try budgetUseCase.getDailyBudget(date: currentDate)
-        weeklyStreaks.append(dailyBudget)
+        
+        let harubee = dailyBudget.harubee == nil ? Int(salaryBudget.defaultHarubee) : dailyBudget.harubee
+        let isOverHarubee = dailyBudget.expense == nil ? nil : (dailyBudget.expense! <= harubee!)
+        
+        let newDailyStreak = DailyStreak(date: currentDate,
+                                         isAfterToday: currentDate > today,
+                                         harubee: harubee!,
+                                         isOverHarubee: isOverHarubee)
+        
+        weeklyStreaks.append(newDailyStreak)
         
       } catch DomainError.dataNotFound {
         
-        let nextHarubee = state.salaryBudget!.fixedIncome / 30
-        let defaultDailyBudget = DailyBudget(date: currentDate, harubee: nextHarubee, memo: [])
-        weeklyStreaks.append(defaultDailyBudget)
+        let nextStartDate = calendar.date(byAdding: .month, value: 1, to: salaryBudget.startDate)!
+        let nextEndDate = calendar.date(byAdding: .month, value: 1, to: nextStartDate)!
+        let nextSalaryBudgetDays = calendar.dateComponents([.year, .month, .day],
+                                                           from: nextStartDate,
+                                                           to: nextEndDate).day! - 1
+        
+        let harubee = salaryBudget.fixedIncome / nextSalaryBudgetDays
+        
+        let newDailyStreak = DailyStreak(date: currentDate,
+                                         isAfterToday: currentDate > today,
+                                         harubee: harubee,
+                                         isOverHarubee: nil)
+        
+        weeklyStreaks.append(newDailyStreak)
         
       } catch {
         print("other error: \(error)")
@@ -172,7 +199,7 @@ extension TodayViewModel {
     }
     
     // 최종적으로 정렬하여 반환
-    return weeklyStreaks.sorted { $0.date < $1.date }
+    return weeklyStreaks
   }
   
 }

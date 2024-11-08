@@ -8,7 +8,6 @@
 
 import SwiftUI
 import Shared
-import Domain
 
 
 // MARK: - TodayView
@@ -370,10 +369,9 @@ private struct TodayFooterView: View {
 private struct CalendarStreakView: View {
   
   private let todayViewModel: TodayViewModel
-  private let firstStreakGroup: [DailyBudget]
-  private let secondStreakGroup: [DailyBudget]
-  private let todayDailyBudget: DailyBudget?
-  private let harubee: Int
+  private let firstStreakGroup: [DailyStreak]
+  private let secondStreakGroup: [DailyStreak]
+  private let todayStreak: DailyStreak?
   
   @Binding private var isInfoBubbleVisible: Bool
   
@@ -382,18 +380,18 @@ private struct CalendarStreakView: View {
     let weeklyStreaks = todayViewModel.state.weeklyStreaks ?? []
     self.firstStreakGroup = Array(weeklyStreaks.prefix(3))
     self.secondStreakGroup = Array(weeklyStreaks.suffix(3))
-    self.todayDailyBudget = weeklyStreaks.indices.contains(3) ? weeklyStreaks[3] : nil
-    let defaultHarubee = todayViewModel.state.salaryBudget?.defaultHarubee
-    self.harubee = todayDailyBudget?.harubee == nil ? Int(defaultHarubee ?? 0) : (todayDailyBudget?.harubee!)!
-    
     self._isInfoBubbleVisible = isInfoBubbleVisible
+    self.todayStreak = weeklyStreaks.indices.contains(3) ? weeklyStreaks[3] : nil
   }
   
   var hexagonImage: Image {
-    if let expense = todayDailyBudget?.expense {
-      return expense <= harubee ? Image.hexagoneGood : Image.hexagoneBad
-    } else {
+    switch(todayStreak?.isOverHarubee) {
+    case .none:
       return Image.hexagonNone
+    case .some(true):
+      return Image.hexagonBad
+    case .some(false):
+      return Image.hexagonGood
     }
   }
   
@@ -422,7 +420,7 @@ private struct CalendarStreakView: View {
       
       HStack(spacing: 7) {
         
-        StreakGroupView(streaks: firstStreakGroup, harubee: harubee)
+        StreakGroupView(streaks: firstStreakGroup)
         
         ZStack {
           RoundedRectangle(cornerRadius: 10)
@@ -442,7 +440,7 @@ private struct CalendarStreakView: View {
           }
         }
        
-        StreakGroupView(streaks: secondStreakGroup, harubee: harubee)
+        StreakGroupView(streaks: secondStreakGroup)
         
       }
     }.padding(.top, 10)
@@ -452,12 +450,10 @@ private struct CalendarStreakView: View {
 // MARK: - StreakGroupView
 private struct StreakGroupView: View {
   
-  private let streaks: [DailyBudget]
-  private let harubee: Int
+  private let streaks: [DailyStreak]
   
-  init(streaks: [DailyBudget], harubee: Int) {
+  init(streaks: [DailyStreak]) {
     self.streaks = streaks
-    self.harubee = harubee
   }
   
   var body: some View {
@@ -467,7 +463,7 @@ private struct StreakGroupView: View {
         .frame(maxWidth: .infinity, maxHeight: 72)
       HStack {
         ForEach(streaks.indices, id: \.self) { index in
-          StreakCell(dailyBudget: streaks[index], harubee: harubee)
+          StreakCell(dailyStreak: streaks[index])
           if index < streaks.count - 1 {
             Spacer()
           }
@@ -481,31 +477,32 @@ private struct StreakGroupView: View {
 // MARK: - StreakCell(Secondary Layer)
 private struct StreakCell: View {
   
-  private let dailyBudget: DailyBudget
-  private let harubee: Int
+  private let dailyStreak: DailyStreak
   
-  init(dailyBudget: DailyBudget, harubee: Int) {
-    self.dailyBudget = dailyBudget
-    self.harubee = harubee
+  init(dailyStreak: DailyStreak) {
+    self.dailyStreak = dailyStreak
   }
   
   var hexagonImage: Image {
-    if let expense = dailyBudget.expense {
-      return expense <= harubee ? Image.hexagoneGood : Image.hexagoneBad
-    } else {
+    switch(dailyStreak.isOverHarubee) {
+    case .none:
       return Image.hexagonNone
+    case .some(true):
+      return Image.hexagonBad
+    case .some(false):
+      return Image.hexagonGood
     }
   }
   
   var body: some View {
     VStack(spacing: 15) {
-      Text(dailyBudget.date.koreanShortDateString)
+      Text(dailyStreak.date.koreanShortDateString)
         .font(.pretendardSemibold_12)
         .foregroundStyle(Color.textBright)
         .frame(width: 33, height: 14)
       
-      if dailyBudget.date > Date() {
-        Text(harubee.decimal)
+      if dailyStreak.isAfterToday {
+        Text(dailyStreak.harubee.decimal)
           .font(.pretendardMedium_12)
           .foregroundStyle(Color.main)
           .padding(.vertical, 5)
