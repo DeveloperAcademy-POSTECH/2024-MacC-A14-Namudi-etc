@@ -63,6 +63,7 @@ public extension Date {
     let formatter = DateFormatter()
     formatter.dateFormat = dateFormatType.rawValue
     formatter.locale = Locale(identifier: "ko_KR")
+    print(formatter.string(from: self))
     return formatter.string(from: self)
   }
 }

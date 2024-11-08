@@ -45,6 +45,6 @@ struct MainColorButton: View {
 
 #Preview {
   MainColorButton(title: "X") {
-    print("Tapped")
+//    print("Tapped")
   }
 }

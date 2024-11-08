@@ -10,47 +10,50 @@ import SwiftUI
 import Shared
 
 struct Onboarding4View: View {
-  @Environment(OnboardingViewModel.self) private var viewModel
+  private var viewModel: OnboardingViewModel
   
-  @State private var previousExpenseAmount: String = ""
+  @State private var previousExpenseAmount: String
   
-  @State private var isEnabled: Bool = false
+  @State private var isEnabled: Bool
   @State private var isPresented: Bool = false
   
-  var body: some View {
+  init(viewModel: OnboardingViewModel) {
+    self.viewModel = viewModel
+    self._previousExpenseAmount = .init(initialValue: viewModel.state.previousExpense?.decimal ?? "")
     
-      VStack(spacing: 0) {
-        OnboardingHeaderView(
-          averageHarubee: viewModel.state.averageHarubee
-        )
-        
-        OnboardingBodyView(
-          startDate: viewModel.state.incomeStartDate,
-          expenseAmount: $previousExpenseAmount
-        )
-        
-        
-        MainColorButton(title: "다음으로", isEnabled: $isEnabled) {
-          viewModel.send(.nextButtonTapped(
-            previousExpense: previousExpenseAmount.numberFormat
-          ))
-          
-          self.isPresented = true
-        }
-        
-        NumberKeypadView(expression: $previousExpenseAmount) { isEnabled in
-          self.isEnabled = isEnabled
-        }
-        .padding(.top, 26)
-        .padding(.horizontal, 16)
+    self._isEnabled = .init(initialValue: viewModel.state.previousExpense == nil ? false : true)
+  }
+  
+  var body: some View {
+    VStack(spacing: 0) {
+      OnboardingHeaderView(
+        averageHarubee: viewModel.state.averageHarubee
+      )
+      
+      OnboardingBodyView(
+        startDate: viewModel.state.incomeStartDate,
+        expenseAmount: $previousExpenseAmount
+      )
+      
+      
+      MainColorButton(title: "다음으로", isEnabled: $isEnabled) {
+        viewModel.send(.nextButtonTapped(
+          previousExpense: previousExpenseAmount.numberFormat
+        ))
+        self.isPresented = true
       }
-      .onAppear {
-        viewModel.send(.onAppear)
+      
+      NumberKeypadView(expression: $previousExpenseAmount) { isEnabled in
+        viewModel.send(.updatePreviousExpense(previousExpenseAmount.numberFormat ?? 0))
+        self.isEnabled = isEnabled
       }
-      .navigationDestination(isPresented: $isPresented) {
-        Onboarding5View()
-          .navigationBarBackButtonHidden()
-      }
+      .padding(.top, 26)
+      .padding(.horizontal, 16)
+    }
+    .navigationDestination(isPresented: $isPresented) {
+      Onboarding5View(viewModel: viewModel)
+        .navigationBarBackButtonHidden()
+    }
   }
 }
 
@@ -107,7 +110,7 @@ private struct OnboardingBodyView: View {
       .foregroundStyle(Color.textBlack)
       .padding(.horizontal, 20)
       
-      VStack(spacing: 0) {
+      VStack(alignment: .leading, spacing: 0) {
         
         Text("지출 금액")
           .font(.pretendardMedium_12)
@@ -127,6 +130,12 @@ private struct OnboardingBodyView: View {
           .frame(height: 1)
           .foregroundStyle(expenseAmount.isEmpty ? Color.textBrighter : Color.main)
           .padding(.top, 8)
+        
+        Text("*계산이 어렵다면 수입금에서 잔액을 빼서 계산하는 방법도 있어요!")
+          .foregroundStyle(Color.textBlack30)
+          .font(.pretendardMedium_12)
+          .padding(.top, 6)
+          .padding(.horizontal, 4)
       }
       .padding(.horizontal, 16)
     }
@@ -136,6 +145,5 @@ private struct OnboardingBodyView: View {
 }
 
 #Preview {
-  Onboarding4View()
-    .environment(DIContainer.shared.makeOnboardingViewModel())
+  Onboarding4View(viewModel: DIContainer.shared.makeOnboardingViewModel())
 }

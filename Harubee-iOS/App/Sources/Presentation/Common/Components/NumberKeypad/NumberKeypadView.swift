@@ -44,9 +44,6 @@ struct NumberKeypadView: View {
       }
     }
     .frame(maxWidth: .infinity)
-    .onChange(of: expression) { oldValue, newValue in
-      print(expression)
-    }
   }
 }
 
@@ -135,6 +132,6 @@ private struct NumberKeypadButton: View {
 #Preview {
   @Previewable @State var expression: String = ""
   return NumberKeypadView(expression: $expression) { bool in
-    print("\(bool)")
+//    print("\(bool)")
   }
 }
