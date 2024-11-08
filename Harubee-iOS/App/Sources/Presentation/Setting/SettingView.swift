@@ -10,6 +10,9 @@ import SwiftUI
 import Shared
 
 struct SettingView: View {
+
+  @State private var navigateFixedExpense: Bool = false
+  @State private var navigateFixedIncome: Bool = false
   
   var body: some View {
     ZStack(alignment: .top) {
@@ -17,13 +20,27 @@ struct SettingView: View {
       VStack(spacing: 6) {
         SectionContainer {
           SettingItem(title: "고정지출 관리", previewText: "총 8건 / 120,000원")
+          .onTapGesture {
+            navigateFixedExpense = true
+          }
+          .navigationDestination(isPresented: $navigateFixedExpense) {
+            FixedExpenseView()
+          }
+          
           SettingItem(title: "고정수입 관리", previewText: "매달 12일 / 1,300,000원")
+            .onTapGesture {
+              navigateFixedIncome = true
+            }
+            .navigationDestination(isPresented: $navigateFixedIncome) {
+              FixedIncomeView()
+            }
         }
         
         SettingFooterView()
       }
     }
     .navigationBarTitle("설정")
+    .navigationBarTitleDisplayMode(.inline)
     .font(.pretendardMedium_18)
     .foregroundStyle(Color.textBlack)
   }
@@ -103,5 +120,7 @@ private struct SectionContainer<Content: View>: View {
 }
 
 #Preview {
-  SettingView()
+  NavigationStack {
+    SettingView()
+  }
 }
