@@ -12,6 +12,6 @@ public extension Image {
   static let harubeeMain = Image(.harubeeMain)
   static let harubeeWhite = Image(.harubeeWhite)
   static let hexagonNone = Image(.hexagonNone)
-  static let hexagoneGood = Image(.hexagonGood)
-  static let hexagoneBad = Image(.hexagonBad)
+  static let hexagonGood = Image(.hexagonGood)
+  static let hexagonBad = Image(.hexagonBad)
 }
