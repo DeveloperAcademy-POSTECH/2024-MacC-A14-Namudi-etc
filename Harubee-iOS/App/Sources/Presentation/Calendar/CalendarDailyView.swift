@@ -71,7 +71,7 @@ struct CalendarDailyView: View {
             TransactionSectionView(
               income: dailyBudget.income,
               expense: dailyBudget.expense,
-              harubee: dailyBudget.harubee ?? 0,
+              harubee: dailyBudget.harubee ?? Int(viewModel.state.currentBudget!.defaultHarubee),
               onIncomeEdit: { activeSheet = .transactionIncome },
               onExpenseEdit: { activeSheet = .transactionExpense }
             )
