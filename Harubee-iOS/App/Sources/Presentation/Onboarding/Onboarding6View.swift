@@ -97,7 +97,7 @@ private struct CurrentHarubeeView: View {
       }
       .padding(.horizontal, 4)
       
-      Text("(나의 수입 - 고정지출) ÷ 다음 주요 수입일까지 남은 일수")
+      Text("(잔액 - 미래 고정지출) ÷ 다음 주요 수입일까지 남은 일수")
         .font(.pretendardSemibold_14)
         .foregroundStyle(Color.whiteDefault)
         .frame(maxWidth: .infinity)
@@ -141,14 +141,23 @@ private struct UserInfoView: View {
         title: "한 달 수입금",
         content: incomeAmount.decimalWithWon
       )
+      
       UserInfoItemView(
         title: "수입일(\(startDate.formattedDateToString(.Md))) 이후 지출한 금액",
         content: "- \(previousExpense.decimalWithWon)"
       )
+      
       UserInfoItemView(
         title: "고정 지출 (총 \(fixedExpenses.count)건)",
         content: "- \(fixedExpenses.reduce(0) { $0 + $1.price }.decimalWithWon)"
       )
+      
+      UserInfoItemView(
+        title: "앞으로 나갈 고정 지출 (총 \(fixedExpenses.filter { $0.date < .now.formattedDate }.count)건)",
+        content: "- \(fixedExpenses.filter { $0.date < .now.formattedDate }.reduce(0) { $0 + $1.price }.decimalWithWon)"
+      )
+      .padding(.leading, 14)
+      
       UserInfoItemView(
         title: "다음 수입일까지 남은 기간",
         content: "÷ \((Int(endDate.timeIntervalSince(.now.formattedDate) + 86400.0)) / 86400)일"
@@ -186,9 +195,24 @@ private struct OnboardingFooterView: View {
         .font(.pretendardMedium_12)
         .foregroundStyle(Color.whiteDeep50)
       
-      MainColorButton(title: "하루비 시작하기") {
-        print("harubee start")
+      Button {
+        
+      } label: {
+        HStack {
+          Text("하루비 시작하기")
+            .font(.pretendardSemibold_18)
+            .foregroundStyle(Color.main)
+            .padding(.vertical, 20)
+        }
+        .frame(maxWidth: .infinity)
+        .background(Color.whiteDefault)
       }
+      .clipShape(
+        RoundedRectangle(cornerRadius: 10)
+      )
+      .padding(.top, 10)
+      .padding(.bottom, 9)
+      .padding(.horizontal, 16)
     }
   }
 }
