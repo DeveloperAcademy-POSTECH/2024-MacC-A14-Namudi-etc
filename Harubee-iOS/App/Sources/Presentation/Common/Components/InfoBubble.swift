@@ -29,47 +29,59 @@ struct InfoBubble<Label: View>: ViewModifier {
   }
 
   func body(content: Content) -> some View {
-    if isVisible {
-      content
-        .background(
-          GeometryReader { contentProxy in
-            Color.clear.preference(key: ContentSizeKey.self,
-                                   value: CGSize(width: contentProxy.size.width,
-                                                 height: contentProxy.size.height))
-          }
-        )
-        .onPreferenceChange(ContentSizeKey.self) { newSize in
-          contentSize = newSize
+    content
+      .background(
+        GeometryReader { contentProxy in
+          Color.clear.preference(key: ContentSizeKey.self,
+                                 value: CGSize(width: contentProxy.size.width,
+                                               height: contentProxy.size.height))
         }
-        .overlay(
-          VStack(spacing: 0) {
-            label()
-              .fixedSize()
-              .padding(10)
-              .background(
-                GeometryReader { labelProxy in
-                  Color.clear.preference(key: LabelSizeKey.self,
-                                         value: CGSize(width: labelProxy.size.width,
-                                                       height: labelProxy.size.height))
-                }
-              )
-              .onPreferenceChange(LabelSizeKey.self) { newSize in
-                labelSize = newSize
+      )
+      .onPreferenceChange(ContentSizeKey.self) { newSize in
+        contentSize = newSize
+      }
+      .overlay(
+        VStack(spacing: 0) {
+          label()
+            .fixedSize()
+            .padding(10)
+            .background(
+              GeometryReader { labelProxy in
+                Color.clear.preference(key: LabelSizeKey.self,
+                                       value: CGSize(width: labelProxy.size.width,
+                                                     height: labelProxy.size.height))
               }
-          }
-            .background(Color.whiteDefault)
-            .cornerRadius(8)
-            .offset(calculateOffset())
-        )
-        .overlay(
-          Image(systemName: "triangle.fill")
-            .resizable()
-            .frame(width: 20, height: 14)
-            .rotationEffect(.degrees([.bottom, .bottomLeading, .bottomTrailing].contains(alignment) ? 0 : 180))
-            .foregroundStyle(Color.whiteDefault)
-            .offset(y: [.bottom, .bottomLeading, .bottomTrailing].contains(alignment) ? contentSize.height / 2 + spacing : -contentSize.height / 2 - spacing)
-        )
-    } else { content }
+            )
+            .background(
+              RoundedRectangle(cornerRadius: 8)
+                .fill(Color.whiteDefault)
+                .shadow(color: Color.textBlack.opacity(0.2), radius: 12, x: 2, y: 4)
+            )
+            .onPreferenceChange(LabelSizeKey.self) { newSize in
+              labelSize = newSize
+            }
+        }
+          .offset(calculateOffset())
+          .opacity(isVisible ? 1 : 0)
+          .scaleEffect(isVisible ? 1 : 0)
+          .animation(.spring(duration: 0.2), value: isVisible)
+      )
+      .overlay(
+        Image(systemName: "triangle.fill")
+          .resizable()
+          .frame(width: 20, height: 14)
+          .rotationEffect(.degrees([.bottom, .bottomLeading, .bottomTrailing].contains(alignment) ? 0 : 180))
+          .foregroundStyle(Color.whiteDefault)
+          .offset(y: [.bottom, .bottomLeading, .bottomTrailing].contains(alignment) ? contentSize.height / 2 + spacing : -contentSize.height / 2 - spacing)
+          .opacity(isVisible ? 1 : 0)
+          .scaleEffect(isVisible ? 1 : 0)
+          .animation(.spring(duration: 0.2), value: isVisible)
+          .mask(
+            Rectangle()
+              .frame(height: 12)
+              .offset(y: [.bottom, .bottomLeading, .bottomTrailing].contains(alignment) ? contentSize.height / 2 + spacing - 6 : -contentSize.height / 2 - spacing + 6)
+          )
+      )
   }
 
   private func calculateOffset() -> CGSize {
