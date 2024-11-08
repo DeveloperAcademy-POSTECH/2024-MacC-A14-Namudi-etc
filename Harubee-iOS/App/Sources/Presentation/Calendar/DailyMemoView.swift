@@ -116,7 +116,7 @@ struct DailyMemoView: View {
   }
 }
 
-// MARK: - Previews
+// MARK: - Preview
 #Preview {
   Group {
     DailyMemoView { memo in

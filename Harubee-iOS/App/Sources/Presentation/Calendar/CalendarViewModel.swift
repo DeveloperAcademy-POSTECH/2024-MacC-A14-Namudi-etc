@@ -6,122 +6,130 @@
 //  Copyright © 2024 namudiEtc. All rights reserved.
 //
 
-import Foundation
 import Domain
 import SwiftUI
 
 @Observable
 final class CalendarViewModel {
-  // MARK: - State
   struct State {
     var currentBudget: SalaryBudget?
     var selectedDate: Date?
     var error: Error?
     
-    static let initial = State(
-      currentBudget: nil,
-      selectedDate: nil,
-      error: nil
-    )
+    static let initial = State()
   }
   
-  // MARK: - Action
+  struct NavigationState: Equatable {
+    let canMovePrevious: Bool
+    let canMoveNext: Bool
+  }
+  
   enum Action {
-    case initialData
+    case loadInitialData
     case movePeriod(PeriodDirection)
     case moveToCurrent
     case selectDate(Date)
-    case updateTransaction(income: Int?, expense: Int?)
-    case addMemo(DailyBudget, String)
-    case deleteMemo(DailyBudget, String)
+    case updateTransaction(TransactionUpdate)
+    case updateHarubee(Int)
+    case updateMemo(MemoUpdate)
+    case deleteMemo(String)
+  }
+  
+  struct TransactionUpdate: Equatable {
+    let income: Int?
+    let expense: Int?
+  }
+  
+  struct MemoUpdate: Equatable {
+    let oldMemo: String?
+    let newMemo: String
   }
   
   // MARK: - Properties
+  
   private(set) var state: State
   private let salaryBudgetUseCase: SalaryBudgetUseCase
   private let dailyBudgetUseCase: DailyBudgetUseCase
   private var allSalaryBudgets: [SalaryBudget] = []
   
-  var canMovePrevious: Bool {
-    guard let current = state.currentBudget else { return false }
-    return allSalaryBudgets.contains { $0.endDate < current.startDate }
-  }
+  // MARK: - Computed Properties
   
-  var canMoveNext: Bool {
-    guard let current = state.currentBudget else { return false }
-    return allSalaryBudgets.contains { $0.startDate > current.endDate }
+  var navigationState: NavigationState {
+    guard let current = state.currentBudget else {
+      return NavigationState(canMovePrevious: false, canMoveNext: false)
+    }
+    
+    return NavigationState(
+      canMovePrevious: hasPreviousBudget(from: current),
+      canMoveNext: hasNextBudget(from: current)
+    )
   }
   
   var isCurrentPeriodContainsToday: Bool {
     guard let budget = state.currentBudget else { return false }
-    let today = Date()
-    return (budget.startDate...budget.endDate).contains(today)
+    return budget.contains(date: Date())
   }
   
   var periodTitle: String {
-    guard let budget = state.currentBudget else { return "" }
-    return "\(budget.startDate.monthDayString) - \(budget.endDate.monthDayString)"
+    state.currentBudget.map { budget in
+      "\(budget.startDate.monthDayString) - \(budget.endDate.monthDayString)"
+    } ?? ""
   }
   
   var selectedDailyBudget: DailyBudget? {
     guard let date = state.selectedDate,
           let budget = state.currentBudget else { return nil }
-    return budget.dailyBudgets.first { $0.date.isSameDay(as: date) }
+    return budget.dailyBudget(for: date)
   }
   
   // MARK: - Initialization
   init(
     salaryBudgetUseCase: SalaryBudgetUseCase,
-    dailyBudgetUseCase: DailyBudgetUseCase
+    dailyBudgetUseCase: DailyBudgetUseCase,
+    initialState: State = .initial
   ) {
     self.salaryBudgetUseCase = salaryBudgetUseCase
     self.dailyBudgetUseCase = dailyBudgetUseCase
-    self.state = .initial
+    self.state = initialState
   }
   
   // MARK: - Public Methods
   func send(_ action: Action) {
     switch action {
-    case .initialData:
-//      handleInitialData()
-      loadTestData()
+    case .loadInitialData:
+      handleLoadInitialData()
     case .movePeriod(let direction):
       handleMovePeriod(direction)
     case .moveToCurrent:
       handleMoveToToday()
     case .selectDate(let date):
-      state.selectedDate = date
-    case .updateTransaction(let income, let expense):
-      handleUpdateTransaction(income: income, expense: expense)
-    case .addMemo(let budget, let memo):
-      handleAddMemo(memo, for: budget)
-    case .deleteMemo(let budget, let memo):
-      handleDeleteMemo(memo, from: budget)
+      handleSelectDate(date)
+    case .updateTransaction(let update):
+      handleUpdateTransaction(update)
+    case .updateHarubee(let amount):
+      handleUpdateHarubee(amount)
+    case .updateMemo(let update):
+      handleUpdateMemo(update)
+    case .deleteMemo(let memo):
+      handleDeleteMemo(memo)
     }
   }
   
   // MARK: - Private Methods
-  private func handleInitialData() {
+  private func handleLoadInitialData() {
     do {
-      allSalaryBudgets = try salaryBudgetUseCase.getAllSalaryBudget()
-      let today = Date()
-      state.currentBudget = try salaryBudgetUseCase.getCurrentSalaryBudget(date: today)
-      state.selectedDate = today
-      state.error = nil
-    } catch {
-      state.error = error
-    }
-  }
-  
-  private func loadTestData() {
-    do {
-      allSalaryBudgets = try SampleDataGenerator.createMultipleSampleBudgets(withError: false)
-      let today = Date()
-      state.currentBudget = allSalaryBudgets.first { budget in
-        (budget.startDate...budget.endDate).contains(today)
+      allSalaryBudgets = try loadBudgets()
+      let today = Date().formattedDate
+      
+      guard let currentBudget = allSalaryBudgets.first(where: { $0.contains(date: today) })
+      else {
+        return
       }
+      
+      state.currentBudget = currentBudget
       state.selectedDate = today
       state.error = nil
+      
     } catch {
       state.error = error
     }
@@ -130,92 +138,156 @@ final class CalendarViewModel {
   private func handleMovePeriod(_ direction: PeriodDirection) {
     guard let current = state.currentBudget else { return }
     
-    let nextBudget = direction == .next
-    ? allSalaryBudgets.first { $0.startDate > current.endDate }
-    : allSalaryBudgets.last { $0.endDate < current.startDate }
-    
+    let nextBudget = findBudget(from: current, direction: direction)
     state.currentBudget = nextBudget
     
-    // 이동한 기간에 오늘 날짜가 포함되어 있다면 오늘 날짜 선택
     if let budget = nextBudget,
-       (budget.startDate...budget.endDate).contains(Date()) {
-      state.selectedDate = Date()
+       budget.contains(date: Date()) {
+      state.selectedDate = Date().formattedDate
     }
   }
   
   private func handleMoveToToday() {
-    let today = Date()
-    if let todayBudget = allSalaryBudgets.first(where: { budget in
-      (budget.startDate...budget.endDate).contains(today)
-    }) {
-      state.currentBudget = todayBudget
-      state.selectedDate = today
-    }
+    let today = Date().formattedDate
+    guard let todayBudget = allSalaryBudgets.first(where: { $0.contains(date: today) })
+    else { return }
+    
+    state.currentBudget = todayBudget
+    state.selectedDate = today
   }
   
-  private func handleUpdateTransaction(income: Int?, expense: Int?) {
+  private func handleSelectDate(_ date: Date) {
+    state.selectedDate = date.formattedDate
+  }
+  
+  private func handleUpdateTransaction(_ update: TransactionUpdate) {
     guard let date = state.selectedDate,
           let budget = state.currentBudget else { return }
     
     do {
       let (_, updatedBudget) = try dailyBudgetUseCase.recordTransaction(
-        expense: expense,
-        income: income,
+        expense: update.expense,
+        income: update.income,
         date: date,
         salaryBudget: budget
       )
+      updateBudget(updatedBudget)
       
-      if let index = allSalaryBudgets.firstIndex(where: { $0.id == budget.id }) {
-        allSalaryBudgets[index] = updatedBudget
-        state.currentBudget = updatedBudget
+    } catch {
+      state.error = error
+    }
+  }
+  
+  private func handleUpdateHarubee(_ amount: Int) {
+    guard let date = state.selectedDate,
+          let budget = state.currentBudget else { return }
+    
+    do {
+      let (dailyBudget, salaryBudget) = try dailyBudgetUseCase.adjustHarubee(
+        amount: amount,
+        date: date,
+        salaryBudget: budget
+      )
+      updateDailyBudget(dailyBudget)
+      updateBudget(salaryBudget)
+      
+    } catch {
+      state.error = error
+    }
+  }
+  
+  private func handleUpdateMemo(_ update: MemoUpdate) {
+    guard let budget = selectedDailyBudget else { return }
+    
+    do {
+      var updatedMemos = budget.memo
+      
+      if let oldMemo = update.oldMemo,
+         let index = updatedMemos.firstIndex(of: oldMemo) {
+        updatedMemos[index] = update.newMemo
+      } else {
+        updatedMemos.append(update.newMemo)
       }
       
-      state.error = nil
+      let updatedBudget = try dailyBudgetUseCase.updateMemoList(
+        memoList: updatedMemos,
+        dailyBudget: budget
+      )
+      updateDailyBudget(updatedBudget)
+      
     } catch {
       state.error = error
     }
   }
   
-  private func handleAddMemo(_ memo: String, for dailyBudget: DailyBudget) {
+  private func handleDeleteMemo(_ memo: String) {
+    guard let budget = selectedDailyBudget else { return }
+    
     do {
-      var memos = dailyBudget.memo
-      memos.append(memo)
+      var updatedMemos = budget.memo
+      updatedMemos.removeAll { $0 == memo }
       
       let updatedBudget = try dailyBudgetUseCase.updateMemoList(
-        memoList: memos,
-        dailyBudget: dailyBudget
+        memoList: updatedMemos,
+        dailyBudget: budget
       )
-      
       updateDailyBudget(updatedBudget)
-      state.error = nil
+      
     } catch {
       state.error = error
     }
   }
   
-  private func handleDeleteMemo(_ memo: String, from dailyBudget: DailyBudget) {
-    do {
-      var memos = dailyBudget.memo
-      memos.removeAll { $0 == memo }
-      
-      let updatedBudget = try dailyBudgetUseCase.updateMemoList(
-        memoList: memos,
-        dailyBudget: dailyBudget
-      )
-      
-      updateDailyBudget(updatedBudget)
-      state.error = nil
-    } catch {
-      state.error = error
+  // MARK: - Helper Methods
+  private func loadBudgets() throws -> [SalaryBudget] {
+    let budgets = try SampleDataGenerator.createMultipleSampleBudgets(withError: false)
+    return budgets.sorted { $0.startDate < $1.startDate }
+  }
+  
+  private func findBudget(from current: SalaryBudget, direction: PeriodDirection) -> SalaryBudget? {
+    switch direction {
+    case .next:
+      return allSalaryBudgets.first { $0.startDate > current.endDate }
+    case .previous:
+      return allSalaryBudgets.last { $0.endDate < current.startDate }
     }
+  }
+  
+  private func hasPreviousBudget(from current: SalaryBudget) -> Bool {
+    allSalaryBudgets.contains { $0.endDate < current.startDate }
+  }
+  
+  private func hasNextBudget(from current: SalaryBudget) -> Bool {
+    allSalaryBudgets.contains { $0.startDate > current.endDate }
+  }
+  
+  private func updateBudget(_ updatedBudget: SalaryBudget) {
+    guard let index = allSalaryBudgets.firstIndex(where: { $0.id == updatedBudget.id })
+    else { return }
+    
+    allSalaryBudgets[index] = updatedBudget
+    state.currentBudget = updatedBudget
+    state.error = nil
   }
   
   private func updateDailyBudget(_ updatedBudget: DailyBudget) {
     guard var currentBudget = state.currentBudget,
-          let index = currentBudget.dailyBudgets.firstIndex(where: { $0.id == updatedBudget.id }) else { return }
+          let index = currentBudget.dailyBudgets.firstIndex(where: { $0.id == updatedBudget.id })
+    else { return }
     
     currentBudget.dailyBudgets[index] = updatedBudget
     state.currentBudget = currentBudget
+  }
+}
+
+// MARK: - SalaryBudget Extensions
+private extension SalaryBudget {
+  func contains(date: Date) -> Bool {
+    (startDate...endDate).contains(date)
+  }
+  
+  func dailyBudget(for date: Date) -> DailyBudget? {
+    dailyBudgets.first { $0.date.isSameDay(as: date) }
   }
 }
 
