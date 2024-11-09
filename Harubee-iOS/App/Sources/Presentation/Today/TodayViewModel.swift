@@ -122,6 +122,8 @@ extension TodayViewModel {
   }
   
   private func initializeState(salaryBudget: SalaryBudget) {
+    state.salaryBudget = salaryBudget
+    
     let currentEndDate = salaryBudget.endDate
     let currentBalance = salaryBudget.balance
     let todayDailyBudget = salaryBudget.dailyBudgets.first(where: { $0.date == state.todayDate.formattedDate })
@@ -137,7 +139,7 @@ extension TodayViewModel {
     state.todayHarubee = todayHarubee
     state.averageHarubee = averageHarubee
     state.weeklyStreaks = weeklyStreaks
-    state.salaryBudget = salaryBudget
+    
     state.todayDailyBudget = todayDailyBudget
     state.todayHarubeePercentage = todayHarubeePercentage
     state.todayAverageHarubeePercentage = todayAverageHarubeePercentage / 2

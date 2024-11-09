@@ -30,7 +30,10 @@ struct Onboarding5View: View {
         .padding(.top, 30)
         .padding(.horizontal, 20)
       
-      FixedExpensesListView(fixedExpenses: $fixedExpenses)
+      FixedExpensesListView(
+        viewModel: viewModel,
+        fixedExpenses: $fixedExpenses
+      )
         .padding(.top, 30)
       
       
@@ -107,14 +110,19 @@ private struct OnboardingBodyView: View {
 }
 
 private struct FixedExpensesListView: View {
-  @Environment(OnboardingViewModel.self) private var viewModel
+  private var viewModel: OnboardingViewModel
+  
   @State private var isPresented: Bool = false
   @Binding private var fixedExpenses: [TransactionItem]
   
   @State private var manageMode: Mode
   @State private var selectedItem: TransactionItem?
   
-  init(fixedExpenses: Binding<[TransactionItem]>) {
+  init(
+    viewModel: OnboardingViewModel,
+    fixedExpenses: Binding<[TransactionItem]>
+  ) {
+    self.viewModel = viewModel
     self._fixedExpenses = fixedExpenses
     self._manageMode = State(initialValue: .add)
   }
