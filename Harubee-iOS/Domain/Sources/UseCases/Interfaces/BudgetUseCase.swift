@@ -1,5 +1,5 @@
 //
-//  BudgetUseCase.swift
+//  budgetUseCase.swift
 //  Harubee-iOS
 //
 //  Created by 신승재 on 11/6/24.

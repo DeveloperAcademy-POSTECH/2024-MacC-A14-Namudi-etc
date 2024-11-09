@@ -23,10 +23,6 @@ public struct ContentView: View {
         Text("Hello, World")
       }
     }
-    .sheet(isPresented: $isPresented) {
-      HarubeeAdjustView()
-        .presentationDetents([.fraction(0.8)])
-    }
   }
 }
 

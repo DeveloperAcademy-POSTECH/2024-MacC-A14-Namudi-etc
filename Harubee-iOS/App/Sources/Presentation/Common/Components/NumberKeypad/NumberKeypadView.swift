@@ -114,8 +114,12 @@ private struct NumberKeypadButton: View {
         expression: expression
       )
       
-      if keypad == .done { buttonAction(true) }
-      if keypad == .plus || keypad == .minus { buttonAction(false) }
+      switch keypad {
+      case .done:
+        buttonAction(true)
+      default:
+        buttonAction(false)
+      }
       
       self.isPressed = true
       DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {

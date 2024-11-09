@@ -16,7 +16,7 @@ final class UseCaseProvider {
     self.repositoryProvider = repositoryProvider
   }
   
-  lazy var BudgetUseCase: BudgetUseCase = {
+  lazy var budgetUseCase: BudgetUseCase = {
     BudgetUseCaseImpl(
       salaryBudgetRepository: repositoryProvider.salaryBudgetRepository,
       dailyBudgetRepository: repositoryProvider.dailyBudgetRepository,

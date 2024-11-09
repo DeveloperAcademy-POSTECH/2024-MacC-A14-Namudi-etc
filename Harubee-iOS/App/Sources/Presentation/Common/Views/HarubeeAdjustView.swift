@@ -8,16 +8,24 @@
 
 import SwiftUI
 import Shared
+import Domain
 
 // MARK: - HarubeeAdjustView
 struct HarubeeAdjustView: View {
+  @State private var viewModel: HarubeeAdjustViewModel
   
-  @State private var harubee: Int = 0
   @State private var expression: String = ""
   
   @State private var isUpdated: Bool = false
+  @State private var isEnabled: Bool = false
   
   // TODO: SalaryBudget, InitialHarubee 저장
+  private let beforeHarubee: Int
+  
+  init(viewModel: HarubeeAdjustViewModel) {
+    self._viewModel = State(initialValue: viewModel)
+    self.beforeHarubee = viewModel.state.dailyBudget.harubee ?? Int(viewModel.state.salaryBudget.defaultHarubee)
+  }
   
   var body: some View {
     VStack {
@@ -25,7 +33,7 @@ struct HarubeeAdjustView: View {
       
       HarubeeAdjustBodyView(
         isUpdated: $isUpdated,
-        defaultHarubee: $harubee
+        defaultHarubee: viewModel.state.salaryBudget.defaultHarubee
       )
       .padding(.horizontal, 22)
       .padding(.top, 36)
@@ -40,16 +48,26 @@ struct HarubeeAdjustView: View {
       
       MainColorButton(
         title: "저장하기",
-        isEnabled: $isUpdated
+        isEnabled: $isEnabled
       ) {
-          print("저장하기 Tap")
-        }
+        viewModel.send(.saveButtonTapped)
+      }
       
       NumberKeypadView(expression: $expression) { isEnabled in
-        print("Done")
+        self.isEnabled = isEnabled
+        if isEnabled {
+          self.isUpdated = true
+          
+          viewModel.send(.doneButtonTapped(expression.numberFormat ?? 0))
+        }
       }
     }
     .frame(maxWidth: .infinity)
+    .onChange(of: isUpdated) { _, _ in
+      if !isUpdated {
+        
+      }
+    }
   }
 }
 
@@ -57,11 +75,11 @@ struct HarubeeAdjustView: View {
 private struct HarubeeAdjustBodyView: View {
   
   @Binding private var isUpdated: Bool
-  @Binding private var defaultHarubee: Int
+  private var defaultHarubee: Double
   
-  init(isUpdated: Binding<Bool>, defaultHarubee: Binding<Int>) {
+  init(isUpdated: Binding<Bool>, defaultHarubee: Double) {
     self._isUpdated = isUpdated
-    self._defaultHarubee = defaultHarubee
+    self.defaultHarubee = defaultHarubee
   }
   
   var body: some View {
@@ -76,7 +94,7 @@ private struct HarubeeAdjustBodyView: View {
       
       HighlightDefaultHarubeeLabel(
         title: isUpdated ? "기본 하루비는" : "현재 기본 하루비는",
-        amount: defaultHarubee
+        amount: Int(defaultHarubee)
       )
       .padding(.top, isUpdated ? 6 : 0)
       
@@ -125,5 +143,10 @@ private struct HighlightDefaultHarubeeLabel: View {
 
 // MARK: - Preview
 #Preview {
-  HarubeeAdjustView()
+  HarubeeAdjustView(
+    viewModel: DIContainer.shared.makeHarubeeAdjustViewModel(
+      salaryBudget: SalaryBudget.default,
+      dailyBudget: DailyBudget.default
+    )
+  )
 }
