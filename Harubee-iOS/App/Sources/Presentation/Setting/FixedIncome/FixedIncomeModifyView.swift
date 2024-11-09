@@ -10,7 +10,18 @@ import SwiftUI
 import Shared
 
 struct FixedIncomeModifyView: View {
-  @State private var fixedIncomeAmount: String = ""
+  @Environment(\.dismiss) private var dismiss
+  @State private var fixedIncomeAmount: String
+  
+  private var action: (String) -> Void
+  
+  init(
+    fixedIncomeAmount: String,
+    action: @escaping (String) -> Void
+  ) {
+    self.fixedIncomeAmount = fixedIncomeAmount
+    self.action = action
+  }
   
   var body: some View {
     VStack(spacing: 0) {
@@ -24,10 +35,11 @@ struct FixedIncomeModifyView: View {
         .padding(.horizontal, 16)
       
       MainColorButton(
-        title: "저장하기",
+        title: "완료하기",
         isEnabled: .constant(true)
       ) {
-        print("저장하기 버튼 Tapped")
+        action(fixedIncomeAmount)
+        dismiss()
       }
       .padding(.top, 24)
       
@@ -43,5 +55,7 @@ struct FixedIncomeModifyView: View {
 }
 
 #Preview {
-  FixedIncomeModifyView()
+  FixedIncomeModifyView(fixedIncomeAmount: "") {_ in 
+    print("button tapped")
+  }
 }

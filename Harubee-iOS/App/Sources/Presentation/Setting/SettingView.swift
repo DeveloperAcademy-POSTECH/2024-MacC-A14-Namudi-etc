@@ -8,11 +8,17 @@
 
 import SwiftUI
 import Shared
+import Domain
 
 struct SettingView: View {
-
   @State private var navigateFixedExpense: Bool = false
   @State private var navigateFixedIncome: Bool = false
+  
+  private var settingViewModel: SettingViewModel
+  
+  init(settingViewModel: SettingViewModel) {
+    self.settingViewModel = settingViewModel
+  }
   
   var body: some View {
     ZStack(alignment: .top) {
@@ -27,12 +33,13 @@ struct SettingView: View {
             FixedExpenseView()
           }
           
-          SettingItem(title: "고정수입 관리", previewText: "매달 12일 / 1,300,000원")
+          SettingItem(title: "고정수입 관리",
+                      previewText: "매달 \(settingViewModel.state.salaryBudget?.startDate.formattedDateToString(.d) ?? "1일") / \(settingViewModel.state.salaryBudget?.fixedIncome.decimalWithWon ?? "")")
             .onTapGesture {
               navigateFixedIncome = true
             }
             .navigationDestination(isPresented: $navigateFixedIncome) {
-              FixedIncomeView()
+              FixedIncomeView(settingViewModel: settingViewModel)
             }
         }
         
@@ -121,6 +128,14 @@ private struct SectionContainer<Content: View>: View {
 
 #Preview {
   NavigationStack {
-    SettingView()
+    SettingView(settingViewModel: SettingViewModel(salaryBudget: SalaryBudget(startDate: Date(),
+                                                                              endDate: Date(),
+                                                                              fixedIncome: 1_000_000,
+                                                                              fixedExpenses: [],
+                                                                              balance: 0,
+                                                                              defaultHarubee: 0,
+                                                                              dailyBudgets: []
+                                                                             )
+    ))
   }
 }

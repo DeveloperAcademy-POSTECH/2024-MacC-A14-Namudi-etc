@@ -46,6 +46,7 @@ struct TodayView: View {
           .contentShape(Rectangle())
           .ignoresSafeArea()
           .onTapGesture {
+            
             isInfoBubbleVisible.toggle()
           }
       }
@@ -142,7 +143,7 @@ private struct Honeycomb: View {
     [false, true, true],
     [false, true]
   ]
-    
+  
   init(todayViewModel: TodayViewModel, screenWidth: CGFloat, screenHeight: CGFloat, isInfoBubbleVisible: Binding<Bool>) {
     self.todayViewModel = todayViewModel
     self.screenWidth = screenWidth
@@ -190,7 +191,7 @@ private struct HarubeeHexagon: View {
   @State private var firstWaveOffset: CGFloat
   @State private var secondWaveOffset: CGFloat
   @Binding private var isInfoBubbleVisible: Bool
-
+  
   
   private let todayViewModel: TodayViewModel
   private let isTodayHarubee: Bool
@@ -219,7 +220,7 @@ private struct HarubeeHexagon: View {
           .frame(width: hexgonSize, height: hexgonSize)
           .shadow(color: Color.textBlack.opacity(0.3), radius: 7, x: 1, y: 4)
       }
-
+      
       Wave(xOffset: firstWaveOffset, fillPercentage: fillPercentage)
         .fill(isTodayHarubee ? Color.textBrighter : Color.textBlack30)
         .frame(width: hexgonSize, height: hexgonSize)
@@ -438,7 +439,7 @@ private struct CalendarStreakView: View {
               .frame(width: 23, height: 23)
           }
         }
-       
+        
         StreakGroupView(streaks: secondStreakGroup)
         
       }

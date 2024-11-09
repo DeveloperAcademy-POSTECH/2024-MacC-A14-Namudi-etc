@@ -1,15 +1,13 @@
 //
-//  Date+.swift
-//  Harubee-iOS
+// Date+.swift
+// Harubee-iOS
 //
-//  Created by 신승재 on 10/30/24.
-//  Copyright © 2024 namudiEtc. All rights reserved.
+// Created by 신승재 on 10/30/24.
+// Copyright © 2024 namudiEtc. All rights reserved.
 //
 
 import Foundation
-
 public extension Date {
-  
   private var configuredCalendar: Calendar {
     var calendar = Calendar.current
     // 달력 표기 방법 설정
@@ -45,7 +43,6 @@ public extension Date {
   var day: Int {
     return configuredCalendar.component(.day, from: self)
   }
-  
   
   /// DateFormat을 변환합니다
   /// - Parameter format: Date에 사용할 DateComponent 타입들
