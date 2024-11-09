@@ -19,7 +19,7 @@ final class CalendarViewModel {
     static let initial = State()
   }
   
-  struct NavigationState: Equatable {
+  struct PeriodDirectionState: Equatable {
     let canMovePrevious: Bool
     let canMoveNext: Bool
   }
@@ -46,20 +46,17 @@ final class CalendarViewModel {
   }
   
   // MARK: - Properties
-  
   private(set) var state: State
-  private let salaryBudgetUseCase: SalaryBudgetUseCase
-  private let dailyBudgetUseCase: DailyBudgetUseCase
+  private let budgetUseCase: BudgetUseCase
   private var allSalaryBudgets: [SalaryBudget] = []
   
   // MARK: - Computed Properties
-  
-  var navigationState: NavigationState {
+  var periodDirectionState: PeriodDirectionState {
     guard let current = state.currentBudget else {
-      return NavigationState(canMovePrevious: false, canMoveNext: false)
+      return PeriodDirectionState(canMovePrevious: false, canMoveNext: false)
     }
     
-    return NavigationState(
+    return PeriodDirectionState(
       canMovePrevious: hasPreviousBudget(from: current),
       canMoveNext: hasNextBudget(from: current)
     )
@@ -84,12 +81,10 @@ final class CalendarViewModel {
   
   // MARK: - Initialization
   init(
-    salaryBudgetUseCase: SalaryBudgetUseCase,
-    dailyBudgetUseCase: DailyBudgetUseCase,
+    budgetUseCase: BudgetUseCase,
     initialState: State = .initial
   ) {
-    self.salaryBudgetUseCase = salaryBudgetUseCase
-    self.dailyBudgetUseCase = dailyBudgetUseCase
+    self.budgetUseCase = budgetUseCase
     self.state = initialState
   }
   
@@ -165,7 +160,7 @@ final class CalendarViewModel {
           let budget = state.currentBudget else { return }
     
     do {
-      let (_, updatedBudget) = try dailyBudgetUseCase.recordTransaction(
+      let (_, updatedBudget) = try budgetUseCase.recordTransaction(
         expense: update.expense,
         income: update.income,
         date: date,
@@ -183,7 +178,7 @@ final class CalendarViewModel {
           let budget = state.currentBudget else { return }
     
     do {
-      let (dailyBudget, salaryBudget) = try dailyBudgetUseCase.adjustHarubee(
+      let (dailyBudget, salaryBudget) = try budgetUseCase.adjustHarubee(
         amount: amount,
         date: date,
         salaryBudget: budget
@@ -209,7 +204,7 @@ final class CalendarViewModel {
         updatedMemos.append(update.newMemo)
       }
       
-      let updatedBudget = try dailyBudgetUseCase.updateMemoList(
+      let updatedBudget = try budgetUseCase.updateMemoList(
         memoList: updatedMemos,
         dailyBudget: budget
       )
@@ -227,7 +222,7 @@ final class CalendarViewModel {
       var updatedMemos = budget.memo
       updatedMemos.removeAll { $0 == memo }
       
-      let updatedBudget = try dailyBudgetUseCase.updateMemoList(
+      let updatedBudget = try budgetUseCase.updateMemoList(
         memoList: updatedMemos,
         dailyBudget: budget
       )
@@ -240,6 +235,11 @@ final class CalendarViewModel {
   
   // MARK: - Helper Methods
   private func loadBudgets() throws -> [SalaryBudget] {
+    let budgets = try budgetUseCase.getAllSalaryBudget()
+    return budgets.sorted { $0.startDate < $1.startDate }
+  }
+  
+  private func loadTestBudgets() throws -> [SalaryBudget] {
     let budgets = try SampleDataGenerator.createMultipleSampleBudgets(withError: false)
     return budgets.sorted { $0.startDate < $1.startDate }
   }

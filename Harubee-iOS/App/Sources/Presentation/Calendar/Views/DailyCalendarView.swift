@@ -15,6 +15,7 @@ struct DailyCalendarView: View {
   let initialDate: Date
   
   @State private var activeSheet: SheetType?
+  @State private var infoBubbleVisible: Bool = false
   
   var body: some View {
     VStack(spacing: 0) {
@@ -36,6 +37,7 @@ struct DailyCalendarView: View {
             ) {
               activeSheet = .harubeeAdjust
             }
+            .harubeeInfoBubble($infoBubbleVisible)
             
             TransactionSection(
               budget: budget,
@@ -43,6 +45,7 @@ struct DailyCalendarView: View {
               onIncomeEdit: { activeSheet = .transactionIncome },
               onExpenseEdit: { activeSheet = .transactionExpense }
             )
+            .transactionInfoBubble($infoBubbleVisible)
             
             MemoSection(
               memos: budget.memo,
@@ -50,9 +53,10 @@ struct DailyCalendarView: View {
               onEdit: { activeSheet = .editMemo($0) },
               onDelete: { viewModel.send(.deleteMemo($0)) }
             )
+            .memoInfoBubble($infoBubbleVisible)
             
             let fixedExpenses = currentBudget.fixedExpenses.filter {
-              Calendar.current.isDate($0.date, equalTo: budget.date, toGranularity: .day)
+              return $0.date.isSameDay(as: budget.date)
             }
             if !fixedExpenses.isEmpty {
               FixedExpenseSection(expenses: fixedExpenses)
@@ -60,6 +64,16 @@ struct DailyCalendarView: View {
           }
           .padding(.top, 20)
         }
+      }
+    }
+    .overlay {
+      if infoBubbleVisible {
+        Color.clear
+          .contentShape(Rectangle())
+          .ignoresSafeArea()
+          .onTapGesture {
+            infoBubbleVisible = false
+          }
       }
     }
     .overlay(alignment: .bottom) {
@@ -73,12 +87,15 @@ struct DailyCalendarView: View {
     .sheet(item: $activeSheet) { type in
       switch type {
       case .harubeeAdjust:
+        // TODO: - 하루비 조정 시트 연결 필요
         HarubeeAdjustView()
           .presentationDetents([.fraction(0.75)])
       case .transactionIncome:
+        // TODO: - 실제 수입 입력 로직 연결 필요
         TransactionInputView(isFocusedExpense: false)
           .presentationDetents([.fraction(0.75)])
       case .transactionExpense:
+        // TODO: - 실제 지출 입력 로직 연결 필요
         TransactionInputView(isFocusedExpense: true)
           .presentationDetents([.fraction(0.75)])
       case .addMemo:
@@ -95,7 +112,7 @@ struct DailyCalendarView: View {
         .presentationDetents([.fraction(0.25)])
       }
     }
-    .navigationBarStyle(.main(title: "일별 보기", backTitle: "뒤로"))
+    .applyNavigationBarStyle(infoBubbleVisible: $infoBubbleVisible)
   }
 }
 
@@ -383,5 +400,59 @@ private struct FixedExpenseSection: View {
       }
       .padding(.horizontal, 22)
     }
+  }
+}
+
+// MARK: - View Modifiers
+private extension View {
+  func applyNavigationBarStyle(
+    infoBubbleVisible: Binding<Bool>
+  ) -> some View {
+    self.navigationBarStyle(.main(title: "", backTitle: "뒤로"))
+      .toolbar {
+        ToolbarItem(placement: .topBarTrailing) {
+          HelpButton(infoBubbleVisible: infoBubbleVisible)
+        }
+      }
+  }
+  
+  func errorAlert(error: Error?) -> some View {
+    alert("오류", isPresented: .constant(error != nil)) {
+      Button("확인", role: .cancel) {}
+    } message: {
+      if let error = error {
+        Text(error.localizedDescription)
+      }
+    }
+  }
+}
+
+// MARK: - InfoBubbles Modifiers
+private extension View {
+  func harubeeInfoBubble(_ isVisible: Binding<Bool>) -> some View {
+    self
+      .infoBubble(isVisible: isVisible, alignment: .bottom) {
+        Text("오늘과 미래의 하루비를 확인하고 조정할 수 있어요")
+          .font(.pretendardMedium_12)
+          .foregroundStyle(Color.textBlack)
+      }
+  }
+  
+  func transactionInfoBubble(_ isVisible: Binding<Bool>) -> some View {
+    self
+      .infoBubble(isVisible: isVisible, alignment: .bottom) {
+        Text("실제 수입과 지출을 입력할 수 있어요")
+          .font(.pretendardMedium_12)
+          .foregroundStyle(Color.textBlack)
+      }
+  }
+  
+  func memoInfoBubble(_ isVisible: Binding<Bool>) -> some View {
+    self
+      .infoBubble(isVisible: isVisible, alignment: .top) {
+        Text("하루비 조정 이유, 이 날의 일정, 지출 일기 등\n자유롭게 메모를 작성할 수 있어요")
+          .font(.pretendardMedium_12)
+          .foregroundStyle(Color.textBlack)
+      }
   }
 }

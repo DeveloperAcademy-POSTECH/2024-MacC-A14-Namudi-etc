@@ -23,25 +23,4 @@ final class UseCaseProvider {
       userDefaultsRepository: repositoryProvider.userDefaltsRepository
     )
   }()
-  
-  lazy var salaryBudgetUseCase: SalaryBudgetUseCase = {
-    SalaryBudgetUseCaseImpl(
-      salaryBudgetRepository: repositoryProvider.salaryBudgetRepository
-    )
-  }()
-  
-  lazy var dailyBudgetUseCase: DailyBudgetUseCase = {
-    DailyBudgetUseCaseImpl(
-      dailyBudgetRepository: repositoryProvider.dailyBudgetRepository,
-      salaryBudgetUseCase: salaryBudgetUseCase
-    )
-  }()
-  
-  lazy var settingsUseCase: SettingsUseCase = {
-    SettingsUseCaseImpl(
-      userDefaultsRepository: repositoryProvider.userDefaltsRepository,
-      salaryBudgetRepository: repositoryProvider.salaryBudgetRepository,
-      salaryBudgetUseCase: salaryBudgetUseCase
-    )
-  }()
 }

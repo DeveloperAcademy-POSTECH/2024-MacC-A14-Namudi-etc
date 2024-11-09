@@ -10,14 +10,11 @@ import Foundation
 public extension Date {
   private var configuredCalendar: Calendar {
     var calendar = Calendar.current
-    calendar.locale = Locale(identifier: "ko_KR")
+    calendar.locale = .current
     calendar.timeZone = .current
     return calendar
-  }()
-}
-
-// MARK: - Date Formatting
-public extension Date {
+  }
+  
   /// 날짜의 연도를 "2024년" 형태로 반환
   var yearString: String {
     formatted(.dateTime.year().locale(Locale(identifier: "ko_KR")))
@@ -41,18 +38,17 @@ public extension Date {
   
   /// 일(요일) 표기 - [Ex. 31일 (목)]
   var koreanShortDateString: String {
-      let dayFormatter = DateFormatter()
-      dayFormatter.dateFormat = "d(EEE)"
-      dayFormatter.locale = Locale(identifier: "ko_KR")
-      return dayFormatter.string(from: self)
+    let dayFormatter = DateFormatter()
+    dayFormatter.dateFormat = "d(EEE)"
+    dayFormatter.locale = Locale(identifier: "ko_KR")
+    return dayFormatter.string(from: self)
   }
   
   /// 캘린더 셀에 표시되는 날짜 텍스트
   /// 1일인 경우 "M/d" 형태로, 나머지는 "d" 형태로 반환
   var calendarDayText: String {
-    let calendar = Calendar.korean
-    let day = calendar.component(.day, from: self)
-    let month = calendar.component(.month, from: self)
+    let day = configuredCalendar.component(.day, from: self)
+    let month = configuredCalendar.component(.month, from: self)
     return day == 1 ? "\(month)/\(day)" : "\(day)"
   }
 }
@@ -61,19 +57,18 @@ public extension Date {
 public extension Date {
   /// 년, 월, 일 값만 사용하기 위한 Date 형식 - [Ex. 2024-10-31 15:00:00 +0000]
   var formattedDate: Date {
-    let calendar = Calendar.korean
-    let dateComponent = calendar.dateComponents([.year, .month, .day], from: self)
-    return calendar.date(from: dateComponent) ?? self
+    let dateComponent = configuredCalendar.dateComponents([.year, .month, .day], from: self)
+    return configuredCalendar.date(from: dateComponent) ?? self
   }
   
   /// 오늘 날짜인지 확인
   var isToday: Bool {
-    Calendar.korean.isDateInToday(self)
+    configuredCalendar.isDateInToday(self)
   }
   
   /// 두 날짜가 같은 날인지 확인
   func isSameDay(as date: Date) -> Bool {
-    Calendar.korean.isDate(self, inSameDayAs: date)
+    configuredCalendar.isDate(self, inSameDayAs: date)
   }
   
   /// 연, 월, 일을 지정하여 Date 생성
@@ -86,7 +81,7 @@ public extension Date {
     components.minute = 0
     components.second = 0
     
-    return Calendar.korean.date(from: components) ?? Date().formattedDate
+    return Calendar.current.date(from: components)?.formattedDate ?? Date().formattedDate
   }
   
   var day: Int {

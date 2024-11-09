@@ -63,12 +63,12 @@ final class OnboardingViewModel {
     case finishOnboardingSetting
   }
   
-  private let salaryBudgetUseCase: SalaryBudgetUseCase
+  private let budgetUseCase: BudgetUseCase
   
   private(set) var state: State = .init()
   
-  init(salaryBudgetUseCase: SalaryBudgetUseCase) {
-    self.salaryBudgetUseCase = salaryBudgetUseCase
+  init(budgetUseCase: BudgetUseCase) {
+    self.budgetUseCase = budgetUseCase
   }
   
   func send(_ action: Action) {
@@ -86,7 +86,7 @@ final class OnboardingViewModel {
       self.state.previousExpense = previousExpense
       
     case .finishOnboardingSetting:
-      let _ = try? salaryBudgetUseCase.createSalaryBudget(
+      let _ = try? budgetUseCase.createSalaryBudget(
         startDate: self.state.incomeStartDate,
         endDate: self.state.incomeEndDate,
         previousExpense: self.state.previousExpense,
@@ -109,12 +109,12 @@ extension OnboardingViewModel {
       fixedExpenses: self.state.fixedExpenses
     )
     
-    let averageHarubee = (try? salaryBudgetUseCase.calculateAverageHarubee(
+    let averageHarubee = budgetUseCase.calculateAverageHarubee(
       endDate: self.state.incomeEndDate,
       balance: balance
-    )) ?? 0
+    )
     
-    return averageHarubee
+    return Int(averageHarubee)
   }
   
   private func calculateBalance(

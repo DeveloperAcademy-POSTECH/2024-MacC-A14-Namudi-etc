@@ -103,7 +103,11 @@ public final class BudgetUseCaseImpl: BudgetUseCase {
   }
   
   public func getAllSalaryBudget() throws -> [SalaryBudget] {
-    return try salaryBudgetRepository.readAll()
+    let budgets = try salaryBudgetRepository.readAll()
+    if budgets.isEmpty {
+      throw DomainError.dataNotFound
+    }
+    return budgets
   }
   
   public func getCurrentSalaryBudget(

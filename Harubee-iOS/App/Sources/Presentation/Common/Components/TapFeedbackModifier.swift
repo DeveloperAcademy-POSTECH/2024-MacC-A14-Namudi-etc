@@ -33,19 +33,21 @@ struct TapFeedbackModifier: ViewModifier {
   
   // MARK: - UI Components
   private var backgroundOverlay: some View {
-    RoundedRectangle(cornerRadius: 8)
-      .fill(isTapped ? config.tappedBackgroundColor : config.backgroundColor)
+    RoundedRectangle(cornerRadius: config.rectangleRadius)
+      .fill(
+        isTapped
+        ? config.tappedBackgroundColor
+        : config.backgroundColor
+      )
   }
   
   // MARK: - Actions
   private func handleTap() {
-    // 탭 시작
     withAnimation(config.animation) {
       isTapped = true
     }
     HapticManager.shared.trigger(config.haptic)
     
-    // 탭 종료 및 액션 실행
     DispatchQueue.main.asyncAfter(deadline: .now() + config.duration) {
       withAnimation(config.animation) {
         isTapped = false
@@ -62,6 +64,7 @@ struct TapConfig {
   let animation: Animation
   let backgroundColor: Color
   let tappedBackgroundColor: Color
+  let rectangleRadius: CGFloat
   let haptic: HapticType
   
   init(
@@ -70,6 +73,7 @@ struct TapConfig {
     animation: Animation = .spring(response: 0.2, dampingFraction: 0.6),
     backgroundColor: Color = .clear,
     tappedBackgroundColor: Color = Color.textBright.opacity(0.1),
+    rectangleRadius: CGFloat = 5,
     haptic: HapticType = .soft
   ) {
     self.scale = scale
@@ -77,6 +81,7 @@ struct TapConfig {
     self.animation = animation
     self.backgroundColor = backgroundColor
     self.tappedBackgroundColor = tappedBackgroundColor
+    self.rectangleRadius = rectangleRadius
     self.haptic = haptic
   }
 }
