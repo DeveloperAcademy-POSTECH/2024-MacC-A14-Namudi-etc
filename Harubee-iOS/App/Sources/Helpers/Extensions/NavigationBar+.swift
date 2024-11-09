@@ -24,8 +24,16 @@ enum NavigationBarStyle {
   var tintColor: Color {
     switch self {
     case .main: return .whiteDefault
+    case .white: return .main
+    case .clear: return .clear
+    }
+  }
+  
+  var titleColor: Color {
+    switch self {
+    case .main: return .whiteDefault
     case .white: return .textBlack
-    case .clear: return .textBlack
+    case .clear: return .clear
     }
   }
   
@@ -74,7 +82,7 @@ struct NavigationBarStyleModifier: ViewModifier {
         ToolbarItem(placement: .principal) {
           Text(style.title)
             .font(.pretendardSemibold_18)
-            .foregroundStyle(style.tintColor)
+            .foregroundStyle(style.titleColor)
         }
         
         if !style.backTitle.isEmpty {
@@ -83,7 +91,7 @@ struct NavigationBarStyleModifier: ViewModifier {
               Image(systemName: "chevron.left")
                 .font(.system(size: 17))
               Text(style.backTitle)
-                .font(.pretendardMedium_16)
+                .font(.pretendardMedium_18)
             }
             .foregroundStyle(style.tintColor)
             .tapFeedback(haptic: .none) {

@@ -20,8 +20,8 @@ struct CalendarCell: View {
     
     var icon: Image {
       switch self {
-      case .overBudget: return .hexagoneBad
-      case .underBudget: return .hexagoneGood
+      case .overBudget: return .hexagonBad
+      case .underBudget: return .hexagonGood
       case .today: return .hexagonNone
       case .noExpense, .past: return Image(uiImage: UIImage())
       }

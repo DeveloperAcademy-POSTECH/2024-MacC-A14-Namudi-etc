@@ -8,8 +8,8 @@
 
 import SwiftUI
 
-// MARK: - Calendar Grid Component
-struct CalendarGrid<CellContent: View>: View {
+// MARK: - Periodly Calendar Component
+struct PeriodlyCalendar<CellContent: View>: View {
   let startDate: Date
   let endDate: Date
   let cellContent: (Date) -> CellContent
@@ -133,7 +133,7 @@ private extension Array {
 #Preview {
   let current = Calendar.current
   
-  CalendarGrid(
+  PeriodlyCalendar(
     startDate: Date(),
     endDate: current.date(
       byAdding: .month, value: 1, to: Date()

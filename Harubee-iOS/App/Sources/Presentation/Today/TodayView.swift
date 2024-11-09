@@ -27,8 +27,6 @@ struct TodayView: View {
     }
     
     self.screenSize = window.screen.bounds
-    
-    setNavigationBar()
   }
   
   var body: some View {
@@ -80,16 +78,7 @@ struct TodayView: View {
         }
       }
     }
-  }
-  
-  private func setNavigationBar() {
-    let appearance = UINavigationBarAppearance()
-    appearance.configureWithOpaqueBackground()
-    appearance.backgroundColor = .clear
-    appearance.shadowColor = .clear
-    
-    UINavigationBar.appearance().standardAppearance = appearance
-    UINavigationBar.appearance().scrollEdgeAppearance = appearance
+    .navigationBarStyle(.clear(title: "", backTitle: ""))
   }
 }
 
@@ -378,6 +367,7 @@ private struct CalendarStreakView: View {
   private let secondStreakGroup: [DailyStreak]
   private let todayStreak: DailyStreak?
   
+  @State private var navigateToCalendarView: Bool = false
   @Binding private var isInfoBubbleVisible: Bool
   
   init(todayViewModel: TodayViewModel, isInfoBubbleVisible: Binding<Bool>) {
@@ -421,7 +411,8 @@ private struct CalendarStreakView: View {
           .font(Font.system(size: 12, weight: .semibold))
           .foregroundStyle(Color.textBlack)
           .frame(width: 10, height: 14)
-      }.padding(.horizontal, 4)
+      }
+      .padding(.horizontal, 4)
       
       HStack(spacing: 7) {
         
@@ -448,7 +439,18 @@ private struct CalendarStreakView: View {
         StreakGroupView(streaks: secondStreakGroup)
         
       }
-    }.padding(.top, 10)
+      .tapFeedback {
+        navigateToCalendarView = true
+      }
+    }
+    .padding(.top, 10)
+    .contentShape(Rectangle())
+    .navigationDestination(isPresented: $navigateToCalendarView) {
+      PeriodlyCalendarView(viewModel: DIContainer.shared.makeCalendarViewModel())
+    }
+    .onTapGesture {
+      navigateToCalendarView = true
+    }
   }
 }
 
@@ -527,5 +529,7 @@ private struct StreakCell: View {
 
 
 #Preview {
-  TodayView(todayViewModel: DIContainer.shared.makeTodayViewModel())
+  NavigationStack {
+    TodayView(todayViewModel: DIContainer.shared.makeTodayViewModel())
+  }
 }
