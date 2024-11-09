@@ -32,7 +32,7 @@ public struct DailyBudget: Identifiable {
     self.income = income
   }
   
-  static var `default`: DailyBudget {
+  public static var `default`: DailyBudget {
     .init(
       date: .init(),
       harubee: nil,

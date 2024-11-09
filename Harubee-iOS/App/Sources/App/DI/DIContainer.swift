@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Domain
 
 final class DIContainer {
   static let shared = DIContainer()
@@ -28,7 +29,7 @@ final class DIContainer {
   // MARK: - ViewModels
   func makeTodayViewModel() -> TodayViewModel {
     TodayViewModel(
-      budgetUseCase: useCaseProvider.BudgetUseCase
+      budgetUseCase: useCaseProvider.budgetUseCase
     )
   }
   
@@ -41,6 +42,17 @@ final class DIContainer {
   func makeCalendarViewModel() -> CalendarViewModel {
     CalendarViewModel(
       salaryBudgetUseCase: useCaseProvider.salaryBudgetUseCase
+    )
+  }
+  
+  func makeHarubeeAdjustViewModel(
+    salaryBudget: SalaryBudget,
+    dailyBudget: DailyBudget
+  ) -> HarubeeAdjustViewModel {
+    HarubeeAdjustViewModel(
+      salaryBudget: salaryBudget,
+      dailyBudget: dailyBudget,
+      budgetUseCase: useCaseProvider.budgetUseCase
     )
   }
 }

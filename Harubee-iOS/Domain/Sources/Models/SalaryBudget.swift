@@ -38,14 +38,14 @@ public struct SalaryBudget: Identifiable {
     self.dailyBudgets = dailyBudgets
   }
   
-  static var `default`: SalaryBudget {
+  public static var `default`: SalaryBudget {
     .init(
       startDate: .init(),
       endDate: .init(),
       fixedIncome: 0,
       fixedExpenses: [],
       balance: 0,
-      defaultHarubee: 0,
+      defaultHarubee: 100000,
       dailyBudgets: []
     )
   }
