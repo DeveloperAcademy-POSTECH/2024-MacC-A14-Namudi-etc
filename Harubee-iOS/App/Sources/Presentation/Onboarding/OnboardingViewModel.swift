@@ -56,12 +56,8 @@ final class OnboardingViewModel {
   }
   
   enum Action {
-    case nextButtonTapped(
-      incomeDay: Int? = nil,
-      incomeAmount: Int? = nil,
-      previousExpense: Int? = nil,
-      fixedExpenses: [TransactionItem]? = nil
-    )
+    case updateFixedIncomeDay(Int)
+    case updateFixedIncomeAmount(Int)
     case updateFixedExpenses([TransactionItem])
     case updatePreviousExpense(Int)
   }
@@ -76,26 +72,20 @@ final class OnboardingViewModel {
   
   func send(_ action: Action) {
     switch action {
-    case let .nextButtonTapped(
-      incomeDay,
-      incomeAmount,
-      previousExpense,
-      fixedExpenses
-    ):
-      if let incomeDay = incomeDay { self.state.incomeDay = incomeDay }
-      if let incomeAmount = incomeAmount { self.state.incomeAmount = incomeAmount }
-      if let previousExpense = previousExpense { self.state.previousExpense = previousExpense }
-      if let fixedExpenses = fixedExpenses { self.state.fixedExpenses = fixedExpenses }
-      self.state.averageHarubee = self.calculateAverageHarubee()
+    case let .updateFixedIncomeDay(day):
+      self.state.incomeDay = day
+      
+    case let .updateFixedIncomeAmount(amount):
+      self.state.incomeAmount = amount
       
     case let .updateFixedExpenses(fixedExpenses):
       self.state.fixedExpenses = fixedExpenses
-      self.state.averageHarubee = self.calculateAverageHarubee()
       
     case let .updatePreviousExpense(previousExpense):
       self.state.previousExpense = previousExpense
-      self.state.averageHarubee = self.calculateAverageHarubee()
     }
+    
+    self.state.averageHarubee = self.calculateAverageHarubee()
   }
 }
 

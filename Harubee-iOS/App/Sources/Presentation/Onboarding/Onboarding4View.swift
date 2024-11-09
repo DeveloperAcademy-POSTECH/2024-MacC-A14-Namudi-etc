@@ -37,9 +37,6 @@ struct Onboarding4View: View {
       
       
       MainColorButton(title: "다음으로", isEnabled: $isEnabled) {
-        viewModel.send(.nextButtonTapped(
-          previousExpense: previousExpenseAmount.numberFormat
-        ))
         self.isPresented = true
       }
       

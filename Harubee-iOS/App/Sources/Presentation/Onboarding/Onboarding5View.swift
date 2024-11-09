@@ -197,8 +197,6 @@ private struct FixedExpensesListView: View {
           end: viewModel.state.incomeEndDate
         )
         
-        print(date)
-        
         if let item = selectedItem {
           if let index = fixedExpenses.firstIndex(where: { $0.id == item.id }) {
             fixedExpenses[index].date = date

@@ -40,10 +40,6 @@ struct Onboarding3View: View {
       Spacer()
       
       MainColorButton(title: "다음으로", isEnabled: $isEnabled) {
-        viewModel.send(.nextButtonTapped(
-          incomeDay: incomeDay,
-          incomeAmount: incomeAmount.numberFormat)
-        )
         self.isPresented = true
       }
       .clipShape(
@@ -57,7 +53,11 @@ struct Onboarding3View: View {
       UIApplication.shared.endEditing()
     }
     .onChange(of: incomeAmount, { _, _ in
+      viewModel.send(.updateFixedIncomeAmount(incomeAmount.numberFormat ?? 0))
       self.isEnabled = true
+    })
+    .onChange(of: incomeDay, { _, _ in
+      viewModel.send(.updateFixedIncomeDay(incomeDay))
     })
     .navigationDestination(isPresented: $isPresented) {
       Onboarding4View(viewModel: viewModel)
