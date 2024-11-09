@@ -15,84 +15,64 @@ struct TodayView: View {
   
   @State private var todayViewModel: TodayViewModel
   @State private var isInfoBubbleVisible = false
+  private var screenSize: CGRect
   
   init(todayViewModel: TodayViewModel) {
     self.todayViewModel = todayViewModel
+    
+    guard let window = UIApplication.shared.connectedScenes.first as? UIWindowScene else {
+      self.screenSize = .zero
+      return
+    }
+    
+    self.screenSize = window.screen.bounds
     
     setNavigationBar()
   }
   
   var body: some View {
-    GeometryReader { proxy in
-      NavigationStack {
-        ZStack(alignment: .topTrailing) {
-          
-          Color.main.ignoresSafeArea()
-          
-          
-          
-          TodayPrimaryLayerView(todayViewModel: todayViewModel,
-                                proxy: proxy,
-                                isInfoBubbleVisible: $isInfoBubbleVisible)
-          
-          TodaySecondaryLayerView(todayViewModel: todayViewModel, isInfoBubbleVisible: $isInfoBubbleVisible)
-          
-          if isInfoBubbleVisible {
-            Color.clear
-              .contentShape(Rectangle())
-              .ignoresSafeArea()
-              .onTapGesture {
-                isInfoBubbleVisible.toggle()
-              }
+    ZStack(alignment: .topTrailing) {
+      
+      Color.main.ignoresSafeArea()
+      
+      TodayPrimaryLayerView(todayViewModel: todayViewModel,
+                            screenSize: screenSize,
+                            isInfoBubbleVisible: $isInfoBubbleVisible)
+      
+      TodaySecondaryLayerView(todayViewModel: todayViewModel, isInfoBubbleVisible: $isInfoBubbleVisible)
+      
+      if isInfoBubbleVisible {
+        Color.clear
+          .contentShape(Rectangle())
+          .ignoresSafeArea()
+          .onTapGesture {
+            isInfoBubbleVisible.toggle()
           }
-          
-        }
-        .toolbar {
-          ToolbarItem(placement: .topBarTrailing) {
-            Button(action: {
-              isInfoBubbleVisible.toggle()
-            }, label: {
-              Image(systemName: "questionmark.circle")
-                .font(Font.system(size: 18, weight: .regular))
-                .foregroundStyle(Color.whiteDefault)
-            })
-          }
-          
-          ToolbarItem(placement: .topBarTrailing) {
-            NavigationLink {
-              SettingView()
-            } label: {
-              Image(systemName: "gearshape")
-                .font(Font.system(size: 18, weight: .regular))
-                .foregroundStyle(Color.whiteDefault)
-            }
-          }
-        }
-        .padding(.trailing, 16)
-        .padding(.top, 11)
-        
-        if isInfoBubbleVisible {
-          Color.black.opacity(0.3)
-            .ignoresSafeArea()
-            .onTapGesture {
-              isInfoBubbleVisible.toggle()
-            }
-        }
-        
-        Button(action: {
-          isInfoBubbleVisible.toggle()
-        }, label: {
-          Image(systemName: "questionmark.circle")
-            .font(Font.system(size: 22, weight: .regular))
-            .foregroundStyle(Color.whiteDefault)
-        })
-        .padding(.trailing, 68)
-        .padding(.top, 11)
-        
       }
     }
     .onAppear {
       todayViewModel.send(.viewDidLoad)
+    }
+    .toolbar {
+      ToolbarItem(placement: .topBarTrailing) {
+        Button(action: {
+          isInfoBubbleVisible.toggle()
+        }, label: {
+          Image(systemName: "questionmark.circle")
+            .font(Font.system(size: 18, weight: .regular))
+            .foregroundStyle(Color.whiteDefault)
+        })
+      }
+      
+      ToolbarItem(placement: .topBarTrailing) {
+        NavigationLink {
+          SettingView()
+        } label: {
+          Image(systemName: "gearshape")
+            .font(Font.system(size: 18, weight: .regular))
+            .foregroundStyle(Color.whiteDefault)
+        }
+      }
     }
   }
   
@@ -116,12 +96,12 @@ private struct TodayPrimaryLayerView: View {
   
   @Binding private var isInfoBubbleVisible: Bool
   
-  init(todayViewModel: TodayViewModel, proxy: GeometryProxy, isInfoBubbleVisible: Binding<Bool>) {
+  init(todayViewModel: TodayViewModel, screenSize: CGRect, isInfoBubbleVisible: Binding<Bool>) {
     self.todayViewModel = todayViewModel
-    self.screenWidth = proxy.size.width
-    self.screenHeight = proxy.size.height
-    
     self._isInfoBubbleVisible = isInfoBubbleVisible
+    
+    self.screenWidth = screenSize.width
+    self.screenHeight = screenSize.height
   }
   
   var body: some View {
@@ -210,6 +190,7 @@ private struct HarubeeHexagon: View {
   @State private var firstWaveOffset: CGFloat
   @State private var secondWaveOffset: CGFloat
   @Binding private var isInfoBubbleVisible: Bool
+
   
   private let todayViewModel: TodayViewModel
   private let isTodayHarubee: Bool
@@ -238,16 +219,14 @@ private struct HarubeeHexagon: View {
           .frame(width: hexgonSize, height: hexgonSize)
           .shadow(color: Color.textBlack.opacity(0.3), radius: 7, x: 1, y: 4)
       }
-      
+
       Wave(xOffset: firstWaveOffset, fillPercentage: fillPercentage)
         .fill(isTodayHarubee ? Color.textBrighter : Color.textBlack30)
         .frame(width: hexgonSize, height: hexgonSize)
         .clipShape(RoundedHexagon())
         .onAppear {
-          if fillPercentage > 0 && fillPercentage < 1 {
-            withAnimation(Animation.spring(duration: 6).repeatForever(autoreverses: false)) {
-              firstWaveOffset = isTodayHarubee ? hexgonSize : hexgonSize / 2 * 3
-            }
+          withAnimation(Animation.spring(duration: 6).repeatForever(autoreverses: false)) {
+            firstWaveOffset = isTodayHarubee ? hexgonSize : hexgonSize / 2 * 3
           }
         }
       
@@ -256,10 +235,8 @@ private struct HarubeeHexagon: View {
         .frame(width: hexgonSize, height: hexgonSize)
         .clipShape(RoundedHexagon())
         .onAppear {
-          if fillPercentage > 0 && fillPercentage < 1 {
-            withAnimation(Animation.linear(duration: 5).repeatForever(autoreverses: false)) {
-              secondWaveOffset = isTodayHarubee ? hexgonSize : hexgonSize / 2 * 3
-            }
+          withAnimation(Animation.linear(duration: 5).repeatForever(autoreverses: false)) {
+            secondWaveOffset = isTodayHarubee ? hexgonSize : hexgonSize / 2 * 3
           }
         }
       
