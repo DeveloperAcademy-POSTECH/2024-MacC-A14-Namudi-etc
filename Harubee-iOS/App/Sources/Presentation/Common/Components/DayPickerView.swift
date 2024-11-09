@@ -24,10 +24,11 @@ enum TitleFont {
 }
 
 struct DayPickerView: View {
+  @State private var showDayPicker: Bool = false
+  @Binding private var selectedDay: Int
+  
   private let title: String
   private let titleFont: TitleFont
-  @State private var showDayPicker: Bool = false
-  @Binding var selectedDay: Int
   
   init(title: String, titleFont: TitleFont, selectedDay: Binding<Int>) {
     self.title = title
