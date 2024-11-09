@@ -68,10 +68,32 @@ struct TodayView: View {
             }
           }
         }
-      }.onAppear {
-        todayViewModel.send(.viewDidLoad)
+        .padding(.trailing, 16)
+        .padding(.top, 11)
+        
+        if isInfoBubbleVisible {
+          Color.black.opacity(0.3)
+            .ignoresSafeArea()
+            .onTapGesture {
+              isInfoBubbleVisible.toggle()
+            }
+        }
+        
+        Button(action: {
+          isInfoBubbleVisible.toggle()
+        }, label: {
+          Image(systemName: "questionmark.circle")
+            .font(Font.system(size: 22, weight: .regular))
+            .foregroundStyle(Color.whiteDefault)
+        })
+        .padding(.trailing, 68)
+        .padding(.top, 11)
+        
       }
-    }.ignoresSafeArea()
+    }
+    .onAppear {
+      todayViewModel.send(.viewDidLoad)
+    }
   }
   
   private func setNavigationBar() {
@@ -216,7 +238,7 @@ private struct HarubeeHexagon: View {
           .frame(width: hexgonSize, height: hexgonSize)
           .shadow(color: Color.textBlack.opacity(0.3), radius: 7, x: 1, y: 4)
       }
-
+      
       Wave(xOffset: firstWaveOffset, fillPercentage: fillPercentage)
         .fill(isTodayHarubee ? Color.textBrighter : Color.textBlack30)
         .frame(width: hexgonSize, height: hexgonSize)

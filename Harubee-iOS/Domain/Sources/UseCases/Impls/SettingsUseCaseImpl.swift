@@ -121,7 +121,7 @@ public final class SettingsUseCaseImpl: SettingsUseCase {
     updatedExpenses.append(expense)
     
     // 8. 기본 하루비 다시 계산하기
-    let defaultHarubee = try salaryBudgetUseCase.calculateDefaultHarubee(
+    let defaultHarubee = salaryBudgetUseCase.calculateDefaultHarubee(
       salaryBudget: currentSalaryBudget
     )
     
@@ -171,7 +171,7 @@ public final class SettingsUseCaseImpl: SettingsUseCase {
     updatedExpenses[index] = expense
     
     // 8. 기본 하루비 다시 계산하기
-    let defaultHarubee = try salaryBudgetUseCase.calculateDefaultHarubee(
+    let defaultHarubee = salaryBudgetUseCase.calculateDefaultHarubee(
       salaryBudget: currentSalaryBudget
     )
     

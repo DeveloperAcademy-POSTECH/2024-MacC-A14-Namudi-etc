@@ -50,7 +50,7 @@ struct Onboarding6View: View {
           
           Spacer()
           
-          OnboardingFooterView()
+          OnboardingFooterView(viewModel: viewModel)
             .padding(.bottom, 9)
         }
         .padding(.horizontal, 16)
@@ -189,6 +189,8 @@ private struct UserInfoItemView: View {
 }
 
 private struct OnboardingFooterView: View {
+  let viewModel: OnboardingViewModel
+  
   var body: some View {
     VStack(spacing: 0) {
       Text("입력한 정보들은 설정에서 언제든지 수정할 수 있어요")
@@ -196,7 +198,7 @@ private struct OnboardingFooterView: View {
         .foregroundStyle(Color.whiteDeep50)
       
       Button {
-        
+        viewModel.send(.finishOnboardingSetting)
       } label: {
         HStack {
           Text("하루비 시작하기")

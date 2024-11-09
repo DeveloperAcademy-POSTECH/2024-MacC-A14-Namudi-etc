@@ -12,6 +12,8 @@ import Shared
 @main
 struct HarubeeIOSApp: App {
   
+  @AppStorage("isOnboarding") private var isOnboarding: Bool = true
+  
   init() {
     Font.registerFont()
     
@@ -29,10 +31,16 @@ struct HarubeeIOSApp: App {
   
   var body: some Scene {
     WindowGroup {
-      NavigationStack {
-        Onboarding1View()
+      if isOnboarding {
+        NavigationStack {
+          Onboarding1View()
+        }
+        .environment(DIContainer.shared.makeOnboardingViewModel())
+      } else {
+        NavigationStack {
+          TodayView(todayViewModel: DIContainer.shared.makeTodayViewModel())
+        }
       }
-      .environment(DIContainer.shared.makeOnboardingViewModel())
     }
   }
 }

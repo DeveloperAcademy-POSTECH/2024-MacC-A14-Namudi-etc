@@ -60,6 +60,7 @@ final class OnboardingViewModel {
     case updateFixedIncomeAmount(Int)
     case updateFixedExpenses([TransactionItem])
     case updatePreviousExpense(Int)
+    case finishOnboardingSetting
   }
   
   private let salaryBudgetUseCase: SalaryBudgetUseCase
@@ -83,6 +84,17 @@ final class OnboardingViewModel {
       
     case let .updatePreviousExpense(previousExpense):
       self.state.previousExpense = previousExpense
+      
+    case .finishOnboardingSetting:
+      let _ = try? salaryBudgetUseCase.createSalaryBudget(
+        startDate: self.state.incomeStartDate,
+        endDate: self.state.incomeEndDate,
+        previousExpense: self.state.previousExpense,
+        fixedIncome: self.state.incomeAmount ?? 0,
+        fixedExpenses: self.state.fixedExpenses
+      )
+      
+      UserDefaults.standard.set(false, forKey: "isOnboarding")
     }
     
     self.state.averageHarubee = self.calculateAverageHarubee()
