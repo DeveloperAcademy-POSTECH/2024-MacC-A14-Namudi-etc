@@ -12,10 +12,10 @@ import Domain
 
 // MARK: - HarubeeAdjustView
 struct HarubeeAdjustView: View {
+  @Environment(\.dismiss) private var dismiss
   @State private var viewModel: HarubeeAdjustViewModel
   
   @State private var expression: String = ""
-  
   @State private var isUpdated: Bool = false
   @State private var isEnabled: Bool = false
   
@@ -50,7 +50,9 @@ struct HarubeeAdjustView: View {
         title: "저장하기",
         isEnabled: $isEnabled
       ) {
-        viewModel.send(.saveButtonTapped)
+        self.viewModel.send(.saveButtonTapped)
+        
+        self.dismiss()
       }
       
       NumberKeypadView(expression: $expression) { isEnabled in
