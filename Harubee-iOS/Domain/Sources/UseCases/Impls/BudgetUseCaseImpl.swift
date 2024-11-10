@@ -170,7 +170,7 @@ public final class BudgetUseCaseImpl: BudgetUseCase {
   public func updateFixedIncome(
     salaryBudget: SalaryBudget,
     newIncome: Int
-  ) throws {
+  ) throws -> SalaryBudget {
     
     // 1. 새로운 잔액 = oldBalance - (기존 월급 - 새로운 월급)
     let newBalance = salaryBudget.balance - (salaryBudget.fixedIncome - newIncome)
@@ -194,7 +194,7 @@ public final class BudgetUseCaseImpl: BudgetUseCase {
     
     // 6. Repository 통해 저장하기
     do {
-      try salaryBudgetRepository.updateSalaryBudget(
+      return try salaryBudgetRepository.updateSalaryBudget(
         salaryBudget.id,
         fixedIncome: .set(newIncome),
         fixedExpenses: .keep,
