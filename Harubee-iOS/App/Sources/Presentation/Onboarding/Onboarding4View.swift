@@ -41,7 +41,10 @@ struct Onboarding4View: View {
       }
       
       NumberKeypadView(expression: $previousExpenseAmount) { isEnabled in
-        viewModel.send(.updatePreviousExpense(previousExpenseAmount.numberFormat ?? 0))
+        if isEnabled {
+          viewModel.send(.updatePreviousExpense(previousExpenseAmount.numberFormat ?? 0))
+        }
+        
         self.isEnabled = isEnabled
       }
       .padding(.top, 26)
