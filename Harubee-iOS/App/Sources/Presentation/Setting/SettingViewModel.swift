@@ -70,10 +70,10 @@ final class SettingViewModel {
   private func updateFixedIncomeAmount(_ incomeAmount: Int) {
     do {
       if let salaryBudget = self.state.salaryBudget {
-        try budgetUseCase.updateFixedIncome(salaryBudget: salaryBudget,
+        let newSalaryBudget = try budgetUseCase.updateFixedIncome(salaryBudget: salaryBudget,
                                             newIncome: incomeAmount
         )
-        self.state.salaryBudget = salaryBudget
+        self.state.salaryBudget = newSalaryBudget
       }
     } catch {
       print(#function, "error: \(error.localizedDescription)")

@@ -84,7 +84,7 @@ public protocol BudgetUseCase {
   func updateFixedIncome(
     salaryBudget: SalaryBudget,
     newIncome: Int
-  ) throws
+  ) throws -> SalaryBudget
   
   
   /// 모든 지출 항목을 수정합니다.
