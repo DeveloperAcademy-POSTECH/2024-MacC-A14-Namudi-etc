@@ -28,6 +28,12 @@ let project = Project(
       deploymentTargets: .iOS("17.0"),
       infoPlist: .extendingDefault(
         with: [
+          "CFBundleDisplayName": "하루비",
+          "UIUserInterfaceStyle": "Light",
+          "UISupportedInterfaceOrientations": [
+            "UIInterfaceOrientationPortrait"
+          ],
+          "LSApplicationCategoryType": "public.app-category.finance",
           "UILaunchScreen": [
             "UIColorName": "",
             "UIImageName": "",
