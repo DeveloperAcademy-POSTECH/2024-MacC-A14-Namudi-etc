@@ -70,7 +70,7 @@ private struct SettingFooterView: View {
           .foregroundStyle(Color.textBlack30)
       }.frame(maxWidth: .infinity, alignment: .leading)
       
-      SettingItem(title: "개발자 정보", previewText: "")
+//      SettingItem(title: "개발자 정보", previewText: "")
     }
   }
 }
