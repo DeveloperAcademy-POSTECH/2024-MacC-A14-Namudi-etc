@@ -12,30 +12,56 @@ import Domain
 
 struct FixedExpenseView: View {
   @State private var settingViewModel: SettingViewModel
-  
   @State private var mode: Mode = .add
+  @State private var isInfoBubbleVisible: Bool = false
   
   init(settingViewModel: SettingViewModel) {
     self.settingViewModel = settingViewModel
   }
   
   var body: some View {
-    VStack(spacing: 0) {
-      HeaderView(
-        fixedExpenses: settingViewModel.state.salaryBudget?.fixedExpenses ?? []
-      )
-      FixedExpensesListView(
-        settingViewModel: settingViewModel,
-        fixedExpenses: .init(
-          get: {
-            settingViewModel.state.salaryBudget?.fixedExpenses ?? []
-        }, set: { items in
-          settingViewModel.send(.updateFixedExpenses(items))
-        })
-      )
+    ZStack {
+      VStack(spacing: 0) {
+        HeaderView(
+          fixedExpenses: settingViewModel.state.salaryBudget?.fixedExpenses ?? []
+        )
+        FixedExpensesListView(
+          settingViewModel: settingViewModel,
+          fixedExpenses: .init(
+            get: {
+              settingViewModel.state.salaryBudget?.fixedExpenses ?? []
+            }, set: { items in
+              settingViewModel.send(.updateFixedExpenses(items))
+            }),
+          isInfoBubbleVisible: $isInfoBubbleVisible
+        )
         .padding(.top, 33)
+      }
+      .frame(maxHeight: .infinity, alignment: .top)
+      .navigationTitle("고정지출 관리")
+      .navigationBarTitleDisplayMode(.inline)
+      
+      if isInfoBubbleVisible {
+        Color.clear
+          .contentShape(Rectangle())
+          .ignoresSafeArea()
+          .onTapGesture {
+            
+            isInfoBubbleVisible.toggle()
+          }
+      }
     }
-    .frame(maxHeight: .infinity, alignment: .top)
+    .toolbar {
+      ToolbarItem(placement: .topBarTrailing) {
+        Button {
+          isInfoBubbleVisible.toggle()
+        } label: {
+          Image(systemName: "questionmark.circle")
+            .font(Font.system(size: 18, weight: .regular))
+            .foregroundStyle(Color.textBlack)
+        }
+      }
+    }
   }
 }
 
@@ -70,17 +96,20 @@ private struct FixedExpensesListView: View {
   
   @State private var isPresented: Bool = false
   @Binding private var fixedExpenses: [TransactionItem]
+  @Binding private var isInfoBubbleVisible: Bool
   
   @State private var manageMode: Mode
   @State private var selectedItem: TransactionItem?
   
   init(
     settingViewModel: SettingViewModel,
-    fixedExpenses: Binding<[TransactionItem]>
+    fixedExpenses: Binding<[TransactionItem]>,
+    isInfoBubbleVisible: Binding<Bool>
   ) {
     self.settingViewModel = settingViewModel
     self._fixedExpenses = fixedExpenses
     self._manageMode = State(initialValue: .add)
+    self._isInfoBubbleVisible = isInfoBubbleVisible
   }
   
   var body: some View {
@@ -98,6 +127,14 @@ private struct FixedExpensesListView: View {
         } label: {
           Image(systemName: "plus")
             .frame(width: 19, height: 21)
+        }
+        .infoBubble(isVisible: $isInfoBubbleVisible, alignment: .topTrailing) {
+          VStack(alignment: .leading, spacing: 2) {
+            Text("저축, 구독비, 보험료, 월세, 카드 할부금 등")
+            Text("매달 고정으로 나가는 지출을 추가할 수 있어요")
+          }
+          .font(.pretendardSemibold_12)
+          .foregroundStyle(Color.textBlack)
         }
       }
       .padding(.horizontal, 20)

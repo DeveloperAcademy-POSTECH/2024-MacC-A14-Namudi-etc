@@ -15,6 +15,7 @@ struct FixedIncomeView: View {
   @State private var isUpdated: Bool = false
   @State private var selectedDay: Int
   @State private var fixedIncomeAmount: Int
+  @State private var isInfoBubbleVisible: Bool = false
   
   private var settingViewModel: SettingViewModel
   
@@ -27,47 +28,79 @@ struct FixedIncomeView: View {
   }
   
   var body: some View {
-    VStack(spacing: 48) {
-      HeaderView()
-      
-      BodyView(
-        settingViewModel: settingViewModel,
-        selectedDay: $selectedDay,
-        fixedIncomeAmount: $fixedIncomeAmount
-      )
-      
-      Spacer()
-      
-      MainColorButton(
-        title: "저장하기",
-        isEnabled: $isUpdated
-      ) {
-        settingViewModel.send(.fixedIncomeSaveButtonTapped(selectedDay, fixedIncomeAmount))
-        dismiss()
+    ZStack {
+      VStack(spacing: 48) {
+        HeaderView(isInfoBubbleVisible: $isInfoBubbleVisible)
+        .zIndex(1)
+        
+        BodyView(
+          settingViewModel: settingViewModel,
+          selectedDay: $selectedDay,
+          fixedIncomeAmount: $fixedIncomeAmount
+        )
+        
+        Spacer()
+        
+        MainColorButton(
+          title: "저장하기",
+          isEnabled: $isUpdated
+        ) {
+          settingViewModel.send(.fixedIncomeSaveButtonTapped(selectedDay, fixedIncomeAmount))
+          dismiss()
+        }
+        .clipShape(RoundedRectangle(cornerRadius: 10))
+        .padding(.bottom, 9)
+        .padding(.horizontal, 16)
       }
-      .clipShape(RoundedRectangle(cornerRadius: 10))
-      .padding(.bottom, 9)
-      .padding(.horizontal, 16)
-    }
-    .onChange(of: selectedDay) { _, newValue in
-      if newValue != settingViewModel.state.salaryBudget?.startDate.day {
-        isUpdated = true
-      } else {
-        isUpdated = false
+      .onChange(of: selectedDay) { _, newValue in
+        if newValue != settingViewModel.state.salaryBudget?.startDate.day {
+          isUpdated = true
+        } else {
+          isUpdated = false
+        }
+      }
+      .onChange(of: fixedIncomeAmount) { _, newValue in
+        if newValue != settingViewModel.state.salaryBudget?.fixedIncome {
+          isUpdated = true
+        } else {
+          isUpdated = false
+        }
+      }
+      .frame(maxHeight: .infinity, alignment: .top)
+      .navigationTitle("고정수입 관리")
+      .navigationBarTitleDisplayMode(.inline)
+      
+      if isInfoBubbleVisible {
+        Color.clear
+          .contentShape(Rectangle())
+          .ignoresSafeArea()
+          .onTapGesture {
+            
+            isInfoBubbleVisible.toggle()
+          }
       }
     }
-    .onChange(of: fixedIncomeAmount) { _, newValue in
-      if newValue != settingViewModel.state.salaryBudget?.fixedIncome {
-        isUpdated = true
-      } else {
-        isUpdated = false
+    .toolbar {
+      ToolbarItem(placement: .topBarTrailing) {
+        Button {
+          isInfoBubbleVisible.toggle()
+        } label: {
+          Image(systemName: "questionmark.circle")
+            .font(Font.system(size: 18, weight: .regular))
+            .foregroundStyle(Color.textBlack)
+        }
       }
     }
-    .frame(maxHeight: .infinity, alignment: .top)
   }
 }
 
 private struct HeaderView: View {
+  @Binding private var isInfoBubbleVisible: Bool
+  
+  init(isInfoBubbleVisible: Binding<Bool>) {
+    self._isInfoBubbleVisible = isInfoBubbleVisible
+  }
+  
   var body: some View {
     VStack(spacing: 4) {
       VStack(alignment: .leading, spacing: 10) {
@@ -77,6 +110,14 @@ private struct HeaderView: View {
       .foregroundStyle(Color.textBlack)
       .frame(maxWidth: .infinity, alignment: .leading)
       .padding(.horizontal, 4)
+      .infoBubble(isVisible: $isInfoBubbleVisible, alignment: .bottomLeading) {
+        VStack(alignment: .leading, spacing: 2) {
+          Text("하루비는 고정수입 날짜와 금액을 기준으로 계산돼요")
+          Text("원활한 서비스 사용을 위해, 정확한 정보를 입력해주세요")
+        }
+        .font(.pretendardSemibold_12)
+        .foregroundStyle(Color.textBlack)
+      }
       
       Rectangle()
         .frame(height: 1)
@@ -89,7 +130,6 @@ private struct HeaderView: View {
 }
 
 private struct BodyView: View {
-  
   @State private var showingSheet: Bool = false
   @Binding private var selectedDay: Int
   @Binding private var fixedIncomeAmount: Int
