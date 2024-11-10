@@ -18,7 +18,7 @@ final class TransactionInputViewModel {
   
   enum Action {
     case doneButtonTapped(Int, Bool)
-    case resetButtonTapped(Int, Bool)
+    case resetButtonTapped(Int?, Bool)
     case saveButtonTapped
   }
   
@@ -57,7 +57,7 @@ final class TransactionInputViewModel {
 }
 
 extension TransactionInputViewModel {
-  private func updateTransaction(amount: Int, isExpense: Bool) {
+  private func updateTransaction(amount: Int?, isExpense: Bool) {
     if isExpense {
       self.state.dailyBudget.expense = amount
     } else {

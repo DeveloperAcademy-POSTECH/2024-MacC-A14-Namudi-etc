@@ -18,6 +18,10 @@ struct TransactionInputView: View {
   @State private var isUpdated: Bool = false
   @State private var isEnabled: Bool = false
   @State private var isFocusedExpense: Bool = true
+  @State private var isAlert: Bool = false
+  
+  private let beforeExpense: Int?
+  private let beforeIncome: Int?
   
   init(
     viewModel: TransactionInputViewModel,
@@ -25,6 +29,9 @@ struct TransactionInputView: View {
   ) {
     self._viewModel = State(initialValue: viewModel)
     self._isFocusedExpense = State(initialValue: isFocusedExpense)
+    
+    self.beforeExpense = viewModel.state.dailyBudget.expense
+    self.beforeIncome = viewModel.state.dailyBudget.income
   }
   
   var body: some View {
@@ -39,18 +46,28 @@ struct TransactionInputView: View {
       Spacer()
       
       AmountResultText(
-        numberText: $expression,
-        isUpdated: $isUpdated
-      )
+        numberText: $expression
+      ) {
+        self.isUpdated = false
+        self.isEnabled = false
+        
+        let before = isFocusedExpense
+        ? self.beforeExpense
+        : self.beforeIncome
+        
+        viewModel.send(.resetButtonTapped(
+          before,
+          isFocusedExpense
+        ))
+        self.expression = before?.decimal ?? ""
+      }
       .padding(.horizontal, 40)
       
       MainColorButton(
         title: "저장하기",
         isEnabled: $isEnabled
       ) {
-        self.viewModel.send(.saveButtonTapped)
-        
-        self.dismiss()
+        self.isAlert = true
       }
       
       NumberKeypadView(expression: $expression) { isEnabled in
@@ -72,6 +89,26 @@ struct TransactionInputView: View {
       } else {
         self.expression = self.viewModel.state.dailyBudget.income?.decimal ?? ""
       }
+    }
+    .alert(
+      "실제 지출 및 수입 저장하기",
+      isPresented: $isAlert
+    ) {
+      Button(role: .cancel) {
+        
+      } label: {
+        Text("취소")
+      }
+
+      Button {
+        self.viewModel.send(.saveButtonTapped)
+        self.dismiss()
+      } label: {
+        Text("저장")
+      }
+    } message: {
+      let dailyBudget = self.viewModel.state.dailyBudget
+      Text("수입 \((dailyBudget.income ?? 0).decimalWithWon), 지출 \((dailyBudget.expense ?? 0).decimalWithWon)으로 저장하시겠습니까?")
     }
   }
 }

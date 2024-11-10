@@ -11,11 +11,15 @@ import Shared
 
 struct AmountResultText: View {
   @Binding private var numberText: String
-  @Binding private var isUpdated: Bool
   
-  init(numberText: Binding<String>, isUpdated: Binding<Bool>) {
+  private let resetAction: () -> Void
+  
+  init(
+    numberText: Binding<String>,
+    resetAction: @escaping () -> Void
+  ) {
     self._numberText = numberText
-    self._isUpdated = isUpdated
+    self.resetAction = resetAction
   }
   
   var body: some View {
@@ -40,7 +44,7 @@ struct AmountResultText: View {
       }
       
       Button {
-        self.isUpdated = false
+        self.resetAction()
       } label: {
         Image(systemName: "arrow.trianglehead.counterclockwise")
           .font(.system(size: 32, weight: .bold))
@@ -52,5 +56,7 @@ struct AmountResultText: View {
 }
 
 #Preview {
-  AmountResultText(numberText: .constant("1234567890"), isUpdated: .constant(true))
+  AmountResultText(numberText: .constant("1234567890")) {
+    
+  }
 }

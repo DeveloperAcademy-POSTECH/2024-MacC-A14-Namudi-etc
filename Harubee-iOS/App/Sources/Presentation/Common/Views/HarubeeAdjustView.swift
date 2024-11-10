@@ -15,16 +15,18 @@ struct HarubeeAdjustView: View {
   @Environment(\.dismiss) private var dismiss
   @State private var viewModel: HarubeeAdjustViewModel
   
-  @State private var expression: String = ""
+  @State private var expression: String
   @State private var isUpdated: Bool = false
   @State private var isEnabled: Bool = false
+  @State private var isAlert: Bool = false
   
-  // TODO: SalaryBudget, InitialHarubee 저장
   private let beforeHarubee: Int
   
   init(viewModel: HarubeeAdjustViewModel) {
+    let initialHarubee = viewModel.state.dailyBudget.harubee ?? Int(viewModel.state.salaryBudget.defaultHarubee)
     self._viewModel = State(initialValue: viewModel)
-    self.beforeHarubee = viewModel.state.dailyBudget.harubee ?? Int(viewModel.state.salaryBudget.defaultHarubee)
+    self.beforeHarubee = initialHarubee
+    self._expression = State(initialValue: initialHarubee.decimal)
   }
   
   var body: some View {
@@ -41,18 +43,21 @@ struct HarubeeAdjustView: View {
       Spacer()
       
       AmountResultText(
-        numberText: $expression,
-        isUpdated: $isUpdated
-      )
+        numberText: $expression
+      ) {
+        self.isUpdated = false
+        self.isEnabled = false
+        
+        viewModel.send(.resetButtonTapped(beforeHarubee))
+        self.expression = beforeHarubee.decimal
+      }
         .padding(.horizontal, 40)
       
       MainColorButton(
         title: "저장하기",
         isEnabled: $isEnabled
       ) {
-        self.viewModel.send(.saveButtonTapped)
-        
-        self.dismiss()
+        self.isAlert = true
       }
       
       NumberKeypadView(expression: $expression) { isEnabled in
@@ -65,10 +70,24 @@ struct HarubeeAdjustView: View {
       }
     }
     .frame(maxWidth: .infinity)
-    .onChange(of: isUpdated) { _, _ in
-      if !isUpdated {
+    .alert(
+      "하루비 조정하기",
+      isPresented: $isAlert
+    ) {
+      Button(role: .cancel) {
         
+      } label: {
+        Text("취소")
       }
+
+      Button {
+        self.viewModel.send(.saveButtonTapped)
+        self.dismiss()
+      } label: {
+        Text("저장")
+      }
+    } message: {
+      Text("하루비를 \(expression)원으로 조정하시겠습니까?")
     }
   }
 }
