@@ -514,10 +514,14 @@ private struct StreakCell: View {
       .frame(width: 33, height: 14)
       
       if dailyStreak.isAfterToday {
-        Text(dailyStreak.harubee.decimal)
-          .font(.pretendardMedium_12)
+        ViewThatFits {
+          Text(dailyStreak.harubee.decimal)
+            .font(.pretendardMedium_12)
+            
+          Text(dailyStreak.harubee.decimal)
+            .font(.pretendardMedium_11)
+        }.padding(.vertical, 5)
           .foregroundStyle(Color.main)
-          .padding(.vertical, 5)
       } else {
         hexagonImage
           .resizable()
