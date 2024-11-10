@@ -83,11 +83,10 @@ final class SettingViewModel {
   private func updateFixedExpenses(_ fixedExpenses: [TransactionItem]) {
     do {
       if let salaryBudget = self.state.salaryBudget {
-        try budgetUseCase.updateFixedExpenses(
+        let updatedSalaryBudget = try budgetUseCase.updateFixedExpenses(
           salaryBudget: salaryBudget,
           expenses: fixedExpenses
         )
-        let updatedSalaryBudget = salaryBudget
         self.state.salaryBudget = updatedSalaryBudget
       }
     } catch {

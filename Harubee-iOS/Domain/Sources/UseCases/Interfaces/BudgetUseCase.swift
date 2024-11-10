@@ -96,7 +96,7 @@ public protocol BudgetUseCase {
   func updateFixedExpenses(
     salaryBudget: SalaryBudget,
     expenses: [TransactionItem]
-  ) throws
+  ) throws -> SalaryBudget
   
   
   /// 기본 하루비를 계산합니다.
