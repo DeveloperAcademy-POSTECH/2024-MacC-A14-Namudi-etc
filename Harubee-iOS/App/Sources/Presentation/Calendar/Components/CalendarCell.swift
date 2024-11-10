@@ -112,8 +112,8 @@ struct CalendarCell: View {
       // 오늘: hexagonNone 표시
       return .hexagonNone
     } else {
-      // 과거: 아이콘 표시하지 않음
-      return Image(uiImage: UIImage())
+      // 과거: hexagonNone 표시
+      return .hexagonNone
     }
   }
 }

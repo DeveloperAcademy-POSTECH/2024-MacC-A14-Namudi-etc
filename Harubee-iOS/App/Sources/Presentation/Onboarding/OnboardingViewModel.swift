@@ -86,7 +86,7 @@ final class OnboardingViewModel {
       self.state.previousExpense = previousExpense
       
     case .finishOnboardingSetting:
-      let _ = try? budgetUseCase.createSalaryBudget(
+      let _ = try? budgetUseCase.createSalaryBudgetFromOnboarding(
         startDate: self.state.incomeStartDate,
         endDate: self.state.incomeEndDate,
         previousExpense: self.state.previousExpense,

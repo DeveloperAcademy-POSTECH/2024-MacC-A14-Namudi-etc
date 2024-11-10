@@ -92,7 +92,6 @@ struct DailyCalendarView: View {
             salaryBudget: viewModel.state.currentBudget!, dailyBudget: viewModel.selectedDailyBudget!
           )
         )
-//        .presentationDetents([.fraction(0.75)])
         .presentationDetents([.height(623)])
       case .transactionIncome:
         TransactionInputView(
@@ -102,7 +101,6 @@ struct DailyCalendarView: View {
           ),
           isFocusedExpense: false
         )
-//        .presentationDetents([.fraction(0.75)])
         .presentationDetents([.height(623)])
       case .transactionExpense:
         TransactionInputView(
@@ -112,7 +110,6 @@ struct DailyCalendarView: View {
           ),
           isFocusedExpense: false
         )
-//        .presentationDetents([.fraction(0.75)])
         .presentationDetents([.height(623)])
       case .addMemo:
         DailyMemoView { memo in
@@ -210,11 +207,8 @@ private struct TransactionSection: View {
     }
     .padding(.horizontal, 16)
     .padding(.top, 16)
-    .background(Color.clear.infoBubble(isVisible: $infoBubbleVisible, alignment: .bottom) {
-      Text("실제 수입과 지출을 입력할 수 있어요")
-        .font(.pretendardMedium_12)
-        .foregroundStyle(Color.textBlack)
-    })
+    .transactionInfoBubble($infoBubbleVisible)
+    .disabled(!budget.date.isToday)
   }
   
   private var transactionStyle: TransactionStyle {
@@ -325,11 +319,7 @@ private struct MemoSection: View {
           HStack {
             Image(systemName: "plus")
               .frame(width: 30)
-              .infoBubble(isVisible: $infoBubbleVisible, alignment: .bottomTrailing) {
-                Text("하루비 조정 이유, 이 날의 일정, 지출 일기 등\n자유롭게 메모를 작성할 수 있어요")
-                  .font(.pretendardMedium_12)
-                  .foregroundStyle(Color.textBlack)
-              }
+              .memoInfoBubble($infoBubbleVisible)
           }
           .frame(width: 44, height: 21)
           .tapFeedback {
@@ -472,16 +462,18 @@ private extension View {
   
   func transactionInfoBubble(_ isVisible: Binding<Bool>) -> some View {
     self
-      .infoBubble(isVisible: isVisible, alignment: .bottom) {
+      .background(
+        Color.clear
+          .infoBubble(isVisible: isVisible, alignment: .bottom) {
         Text("실제 수입과 지출을 입력할 수 있어요")
           .font(.pretendardMedium_12)
           .foregroundStyle(Color.textBlack)
-      }
+      })
   }
   
   func memoInfoBubble(_ isVisible: Binding<Bool>) -> some View {
     self
-      .infoBubble(isVisible: isVisible, alignment: .top) {
+      .infoBubble(isVisible: isVisible, alignment: .bottomTrailing) {
         Text("하루비 조정 이유, 이 날의 일정, 지출 일기 등\n자유롭게 메모를 작성할 수 있어요")
           .font(.pretendardMedium_12)
           .foregroundStyle(Color.textBlack)
