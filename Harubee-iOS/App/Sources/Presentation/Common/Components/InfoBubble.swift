@@ -78,7 +78,7 @@ struct InfoBubble<Label: View>: ViewModifier {
           .animation(.spring(duration: 0.2), value: isVisible)
           .mask(
             Rectangle()
-              .frame(height: 12)
+              .frame(height: 13)
               .offset(y: [.bottom, .bottomLeading, .bottomTrailing].contains(alignment) ? contentSize.height / 2 + spacing - 6 : -contentSize.height / 2 - spacing + 6)
           )
       )

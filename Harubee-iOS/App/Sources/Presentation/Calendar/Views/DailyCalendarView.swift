@@ -42,18 +42,18 @@ struct DailyCalendarView: View {
             TransactionSection(
               budget: budget,
               defaultHarubee: Int(currentBudget.defaultHarubee),
+              infoBubbleVisible: $infoBubbleVisible,
               onIncomeEdit: { activeSheet = .transactionIncome },
               onExpenseEdit: { activeSheet = .transactionExpense }
-            )
-            .transactionInfoBubble($infoBubbleVisible)
+            ).zIndex(1)
             
             MemoSection(
               memos: budget.memo,
+              infoBubbleVisible: $infoBubbleVisible,
               onAdd: { activeSheet = .addMemo },
               onEdit: { activeSheet = .editMemo($0) },
               onDelete: { viewModel.send(.deleteMemo($0)) }
             )
-            .memoInfoBubble($infoBubbleVisible)
             
             let fixedExpenses = currentBudget.fixedExpenses.filter {
               return $0.date.isSameDay(as: budget.date)
@@ -162,6 +162,7 @@ private struct HarubeeSection: View {
 private struct TransactionSection: View {
   let budget: DailyBudget
   let defaultHarubee: Int
+  @Binding var infoBubbleVisible: Bool
   let onIncomeEdit: () -> Void
   let onExpenseEdit: () -> Void
   
@@ -193,6 +194,11 @@ private struct TransactionSection: View {
     }
     .padding(.horizontal, 16)
     .padding(.top, 16)
+    .background(Color.clear.infoBubble(isVisible: $infoBubbleVisible, alignment: .bottom) {
+      Text("실제 수입과 지출을 입력할 수 있어요")
+        .font(.pretendardMedium_12)
+        .foregroundStyle(Color.textBlack)
+    })
   }
   
   private var transactionStyle: TransactionStyle {
@@ -281,6 +287,7 @@ private struct ComparisonLabel: View {
 // MARK: - MemoSection
 private struct MemoSection: View {
   let memos: [String]
+  @Binding var infoBubbleVisible: Bool
   let onAdd: () -> Void
   let onEdit: (String) -> Void
   let onDelete: (String) -> Void
@@ -299,12 +306,21 @@ private struct MemoSection: View {
           
           Spacer()
           
-          Image(systemName: "plus")
-            .frame(width: 44, height: 21)
-            .tapFeedback {
-              onAdd()
-            }
+          HStack {
+            Image(systemName: "plus")
+              .frame(width: 30)
+              .infoBubble(isVisible: $infoBubbleVisible, alignment: .bottomTrailing) {
+                Text("하루비 조정 이유, 이 날의 일정, 지출 일기 등\n자유롭게 메모를 작성할 수 있어요")
+                  .font(.pretendardMedium_12)
+                  .foregroundStyle(Color.textBlack)
+              }
+          }
+          .frame(width: 44, height: 21)
+          .tapFeedback {
+            onAdd()
+          }
         }
+        .zIndex(1)
         .foregroundStyle(Color.textBlack)
         
         Group {
