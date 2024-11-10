@@ -176,8 +176,9 @@ public protocol BudgetUseCase {
   /// - Throws:
   ///   - `DomainError.dateOutOfRange`: 유효하지 않은 일자인 경우
   func setIncomeDay(
-    day: Int
-  ) throws
+    day: Int,
+    salaryBudget: SalaryBudget
+  ) throws -> SalaryBudget
   
   
   /// 저장된 고정 수입일을 조회합니다.

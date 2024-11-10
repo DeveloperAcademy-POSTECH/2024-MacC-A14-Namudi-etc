@@ -56,11 +56,14 @@ final class SettingViewModel {
   // MARK: - Private Methods (유즈케이스 호출 메소드)
   private func updateFixedIncomeDay(_ incomeDay: Int) {
     do {
-      try budgetUseCase.setIncomeDay(day: incomeDay)
-      let updatedSalaryBudget = try budgetUseCase.getSalaryBudget(startDate: Date())
-      self.state.salaryBudget = updatedSalaryBudget
+      let newSalaryBudget = try budgetUseCase.setIncomeDay(
+        day: incomeDay,
+        salaryBudget: self.state.salaryBudget!
+      )
+//      let updatedSalaryBudget = try budgetUseCase.getSalaryBudget(startDate: state.salaryBudget?.startDate)
+      self.state.salaryBudget = newSalaryBudget
     } catch {
-      print("error: \(error.localizedDescription)")
+      print(#function, "error: \(error.localizedDescription)")
     }
   }
   
@@ -70,11 +73,10 @@ final class SettingViewModel {
         try budgetUseCase.updateFixedIncome(salaryBudget: salaryBudget,
                                             newIncome: incomeAmount
         )
-        let updatedSalaryBudget = try budgetUseCase.getSalaryBudget(startDate: Date())
-        self.state.salaryBudget = updatedSalaryBudget
+        self.state.salaryBudget = salaryBudget
       }
     } catch {
-      print("error: \(error.localizedDescription)")
+      print(#function, "error: \(error.localizedDescription)")
     }
   }
   
@@ -85,7 +87,7 @@ final class SettingViewModel {
           salaryBudget: salaryBudget,
           expenses: fixedExpenses
         )
-        let updatedSalaryBudget = try budgetUseCase.getSalaryBudget(startDate: salaryBudget.startDate)
+        let updatedSalaryBudget = salaryBudget
         self.state.salaryBudget = updatedSalaryBudget
       }
     } catch {
