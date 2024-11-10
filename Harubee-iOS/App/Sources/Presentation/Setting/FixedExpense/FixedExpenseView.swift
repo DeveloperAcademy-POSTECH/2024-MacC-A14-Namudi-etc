@@ -11,7 +11,7 @@ import Shared
 import Domain
 
 struct FixedExpenseView: View {
-  @State private var settingViewModel: SettingViewModel
+  private var settingViewModel: SettingViewModel
   @State private var mode: Mode = .add
   @State private var isInfoBubbleVisible: Bool = false
   

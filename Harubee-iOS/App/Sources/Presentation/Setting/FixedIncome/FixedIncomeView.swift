@@ -13,9 +13,11 @@ import Domain
 struct FixedIncomeView: View {
   @Environment(\.dismiss) private var dismiss
   @State private var isUpdated: Bool = false
+  @State private var isDayUpdated: Bool = false
   @State private var selectedDay: Int
   @State private var fixedIncomeAmount: Int
   @State private var isInfoBubbleVisible: Bool = false
+  @State private var isAlertPresented: Bool = false
   
   private var settingViewModel: SettingViewModel
   
@@ -45,8 +47,12 @@ struct FixedIncomeView: View {
           title: "저장하기",
           isEnabled: $isUpdated
         ) {
-          settingViewModel.send(.fixedIncomeSaveButtonTapped(selectedDay, fixedIncomeAmount))
-          dismiss()
+          if isDayUpdated {
+            isAlertPresented = true
+          } else {
+            settingViewModel.send(.fixedIncomeSaveButtonTapped(selectedDay, fixedIncomeAmount))
+            dismiss()
+          }
         }
         .clipShape(RoundedRectangle(cornerRadius: 10))
         .padding(.bottom, 9)
@@ -54,6 +60,7 @@ struct FixedIncomeView: View {
       }
       .onChange(of: selectedDay) { _, newValue in
         if newValue != settingViewModel.state.salaryBudget?.startDate.day {
+          isDayUpdated = true
           isUpdated = true
         } else {
           isUpdated = false
@@ -90,6 +97,17 @@ struct FixedIncomeView: View {
             .foregroundStyle(Color.textBlack)
         }
       }
+    }
+    .alert(isPresented: $isAlertPresented) {
+      Alert(
+        title: Text("수입일을 \(selectedDay)일로 바꾸시겠어요?"),
+        message: Text("수입일을 바꾸면 모든 데이터가 초기화되며,\n\(selectedDay)일 기준으로 하루비가 다시 계산돼요."),
+        primaryButton: .default(Text("확인")) {
+          settingViewModel.send(.fixedIncomeSaveButtonTapped(selectedDay, fixedIncomeAmount))
+          dismiss()
+        },
+        secondaryButton: .cancel(Text("취소"))
+      )
     }
   }
 }
