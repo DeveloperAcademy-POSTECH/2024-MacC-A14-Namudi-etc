@@ -11,10 +11,10 @@ import Shared
 import Domain
 
 struct TransactionInputView: View {
+  @Environment(\.dismiss) private var dismiss
   @State private var viewModel: TransactionInputViewModel
   
   @State private var expression: String = ""
-  
   @State private var isUpdated: Bool = false
   @State private var isEnabled: Bool = false
   @State private var isFocusedExpense: Bool = true
@@ -32,6 +32,7 @@ struct TransactionInputView: View {
       BottomSheetHeaderView(title: "실제 지출 및 수입 입력")
       
       TransactionBodyItemView(
+        dailyBudget: viewModel.state.dailyBudget,
         isFocusedExpense: $isFocusedExpense
       )
       
@@ -47,6 +48,12 @@ struct TransactionInputView: View {
         title: "저장하기",
         isEnabled: $isEnabled
       ) {
+        self.viewModel.send(.saveButtonTapped)
+        
+        self.dismiss()
+      }
+      
+      NumberKeypadView(expression: $expression) { isEnabled in
         self.isEnabled = isEnabled
         if isEnabled {
           self.isUpdated = true
@@ -57,12 +64,15 @@ struct TransactionInputView: View {
           ))
         }
       }
-      
-      NumberKeypadView(expression: $expression) { isEnabled in
-        self.isUpdated = true
-      }
     }
     .frame(maxWidth: .infinity)
+    .onChange(of: isFocusedExpense) { _, _ in
+      if isFocusedExpense {
+        self.expression = self.viewModel.state.dailyBudget.expense?.decimal ?? ""
+      } else {
+        self.expression = self.viewModel.state.dailyBudget.income?.decimal ?? ""
+      }
+    }
   }
 }
 
@@ -71,34 +81,46 @@ struct TransactionInputView: View {
 private struct TransactionBodyItemView: View {
   @Binding private var isFocusedExpense: Bool
   
-  init(isFocusedExpense: Binding<Bool>) {
+  private let dailyBudget: DailyBudget
+  
+  init(
+    dailyBudget: DailyBudget,
+    isFocusedExpense: Binding<Bool>
+  ) {
+    self.dailyBudget = dailyBudget
     self._isFocusedExpense = isFocusedExpense
   }
   
   var body: some View {
     HStack(spacing: 9) {
-      TransactionItemButton(title: "수입", amount: 1000)
+      TransactionItemButton(
+        title: "수입",
+        amount: dailyBudget.income
+      )
         .overlay(
           RoundedRectangle(cornerRadius: 10)
             .stroke(
               Color.mainBright,
-              lineWidth: isFocusedExpense ? 1 : 0
-            )
-        )
-        .onTapGesture {
-          isFocusedExpense = true
-        }
-      
-      TransactionItemButton(title: "지출", amount: 10000)
-        .overlay(
-          RoundedRectangle(cornerRadius: 10)
-            .stroke(
-              Color.mainBright,
-              lineWidth: isFocusedExpense ? 0 : 1
+              lineWidth: isFocusedExpense ? 0 : 2
             )
         )
         .onTapGesture {
           isFocusedExpense = false
+        }
+      
+      TransactionItemButton(
+        title: "지출",
+        amount: dailyBudget.expense
+      )
+        .overlay(
+          RoundedRectangle(cornerRadius: 10)
+            .stroke(
+              Color.mainBright,
+              lineWidth: isFocusedExpense ? 2 : 0
+            )
+        )
+        .onTapGesture {
+          isFocusedExpense = true
         }
     }
     .padding(.top, 36)
