@@ -8,6 +8,7 @@
 
 import SwiftUI
 import Shared
+import Domain
 
 
 // MARK: - TodayView
@@ -67,7 +68,11 @@ struct TodayView: View {
       
       ToolbarItem(placement: .topBarTrailing) {
         NavigationLink {
-          SettingView()
+          SettingView(
+            settingViewModel: DIContainer.shared.makeSettingViewModel(
+              salaryBudget: todayViewModel.state.salaryBudget ?? SalaryBudget.default
+            )
+          )
         } label: {
           Image(systemName: "gearshape")
             .font(Font.system(size: 18, weight: .regular))

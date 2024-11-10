@@ -14,7 +14,7 @@ struct SettingView: View {
   @State private var navigateFixedExpense: Bool = false
   @State private var navigateFixedIncome: Bool = false
   
-  private var settingViewModel: SettingViewModel
+  @State private var settingViewModel: SettingViewModel
   
   init(settingViewModel: SettingViewModel) {
     self.settingViewModel = settingViewModel
@@ -25,22 +25,25 @@ struct SettingView: View {
       Color.textBlack5.edgesIgnoringSafeArea(.bottom)
       VStack(spacing: 6) {
         SectionContainer {
-          SettingItem(title: "고정지출 관리", previewText: "총 8건 / 120,000원")
+          SettingItem(title: "고정지출 관리",
+                      previewText:
+                        "총 \(settingViewModel.state.salaryBudget?.fixedExpenses.count ?? 0)건 / \(settingViewModel.state.salaryBudget?.fixedExpenses.reduce(0) { $0 + $1.price }.decimalWithWon ?? 0.decimalWithWon)"
+          )
           .onTapGesture {
             navigateFixedExpense = true
           }
           .navigationDestination(isPresented: $navigateFixedExpense) {
-            FixedExpenseView()
+            FixedExpenseView(settingViewModel: settingViewModel)
           }
           
           SettingItem(title: "고정수입 관리",
                       previewText: "매달 \(settingViewModel.state.salaryBudget?.startDate.formattedDateToString(.d) ?? "1일") / \(settingViewModel.state.salaryBudget?.fixedIncome.decimalWithWon ?? "")")
-            .onTapGesture {
-              navigateFixedIncome = true
-            }
-            .navigationDestination(isPresented: $navigateFixedIncome) {
-              FixedIncomeView(settingViewModel: settingViewModel)
-            }
+          .onTapGesture {
+            navigateFixedIncome = true
+          }
+          .navigationDestination(isPresented: $navigateFixedIncome) {
+            FixedIncomeView(settingViewModel: settingViewModel)
+          }
         }
         
         SettingFooterView()
@@ -126,16 +129,17 @@ private struct SectionContainer<Content: View>: View {
   }
 }
 
-#Preview {
-  NavigationStack {
-    SettingView(settingViewModel: SettingViewModel(salaryBudget: SalaryBudget(startDate: Date(),
-                                                                              endDate: Date(),
-                                                                              fixedIncome: 1_000_000,
-                                                                              fixedExpenses: [],
-                                                                              balance: 0,
-                                                                              defaultHarubee: 0,
-                                                                              dailyBudgets: []
-                                                                             )
-    ))
-  }
-}
+//#Preview {
+//  FixedIncomeView(settingViewModel: SettingViewModel(
+//    salaryBudget: SalaryBudget(
+//      startDate: Date(),
+//      endDate: Date(),
+//      fixedIncome: 1_000_000,
+//      fixedExpenses: [],
+//      balance: 0,
+//      defaultHarubee: 0,
+//      dailyBudgets: []
+//    ),
+//    budgetUseCase: DIContainer.shared.
+//  ))
+//}
