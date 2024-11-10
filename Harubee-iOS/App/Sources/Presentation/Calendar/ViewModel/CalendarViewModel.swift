@@ -26,11 +26,10 @@ final class CalendarViewModel {
   
   enum Action {
     case loadInitialData
+    case updateCurrentData
     case movePeriod(PeriodDirection)
     case moveToCurrent
     case selectDate(Date)
-    case updateTransaction(TransactionUpdate)
-    case updateHarubee(Int)
     case updateMemo(MemoUpdate)
     case deleteMemo(String)
   }
@@ -93,16 +92,14 @@ final class CalendarViewModel {
     switch action {
     case .loadInitialData:
       handleLoadInitialData()
+    case .updateCurrentData:
+      handleUpdateCurrentData()
     case .movePeriod(let direction):
       handleMovePeriod(direction)
     case .moveToCurrent:
       handleMoveToToday()
     case .selectDate(let date):
       handleSelectDate(date)
-    case .updateTransaction(let update):
-      handleUpdateTransaction(update)
-    case .updateHarubee(let amount):
-      handleUpdateHarubee(amount)
     case .updateMemo(let update):
       handleUpdateMemo(update)
     case .deleteMemo(let memo):
@@ -125,6 +122,14 @@ final class CalendarViewModel {
       state.selectedDate = today
       state.error = nil
       
+    } catch {
+      state.error = error
+    }
+  }
+  
+  private func handleUpdateCurrentData() {
+    do {
+      state.currentBudget = try budgetUseCase.getCurrentSalaryBudget(date: state.selectedDate)
     } catch {
       state.error = error
     }
@@ -153,42 +158,6 @@ final class CalendarViewModel {
   
   private func handleSelectDate(_ date: Date) {
     state.selectedDate = date.formattedDate
-  }
-  
-  private func handleUpdateTransaction(_ update: TransactionUpdate) {
-    guard let date = state.selectedDate,
-          let budget = state.currentBudget else { return }
-    
-    do {
-      let (_, updatedBudget) = try budgetUseCase.recordTransaction(
-        expense: update.expense,
-        income: update.income,
-        date: date,
-        salaryBudget: budget
-      )
-      updateBudget(updatedBudget)
-      
-    } catch {
-      state.error = error
-    }
-  }
-  
-  private func handleUpdateHarubee(_ amount: Int) {
-    guard let date = state.selectedDate,
-          let budget = state.currentBudget else { return }
-    
-    do {
-      let (dailyBudget, salaryBudget) = try budgetUseCase.adjustHarubee(
-        amount: amount,
-        date: date,
-        salaryBudget: budget
-      )
-      updateDailyBudget(dailyBudget)
-      updateBudget(salaryBudget)
-      
-    } catch {
-      state.error = error
-    }
   }
   
   private func handleUpdateMemo(_ update: MemoUpdate) {

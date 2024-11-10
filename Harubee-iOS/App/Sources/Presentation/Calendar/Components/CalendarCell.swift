@@ -10,68 +10,13 @@ import SwiftUI
 import Domain
 
 struct CalendarCell: View {
-  // MARK: - Types
-  private enum CellStatus {
-    case today(isAdjusted: Bool)
-    case overBudget
-    case underBudget
-    case noExpense
-    case past
-    
-    var icon: Image {
-      switch self {
-      case .overBudget: return .hexagonBad
-      case .underBudget: return .hexagonGood
-      case .today: return .hexagonNone
-      case .noExpense, .past: return Image(uiImage: UIImage())
-      }
-    }
-    
-    var amountColor: Color {
-      switch self {
-      case .past:
-        return .textBright
-      case .today(let hasCustomHarubee) where !hasCustomHarubee:
-        return .textBlack
-      default:
-        return .main
-      }
-    }
-  }
-  
   // MARK: - Properties
   let date: Date
   let defaultHarubee: Int
   let dailyBudget: DailyBudget?
   let onSelect: (Date) -> Void
   
-  // MARK: - Computed Properties
-  private var status: CellStatus {
-    if date.isToday {
-      return .today(isAdjusted: dailyBudget?.harubee != nil)
-    }
-    
-    if date <= Date() {
-      if let expense = dailyBudget?.expense {
-        if expense > (dailyBudget?.harubee ?? defaultHarubee) {
-          return .overBudget
-        }
-        return .underBudget
-      }
-      return .past
-    }
-    
-    return .noExpense
-  }
-  
-  private var amount: Int {
-    if date <= Date(), let expense = dailyBudget?.expense {
-      return expense
-    }
-    return dailyBudget?.harubee ?? defaultHarubee
-  }
-  
-  // MARK: - Body
+  // MARK: - UI Components
   var body: some View {
     VStack(spacing: 0) {
       dateLabel
@@ -87,7 +32,6 @@ struct CalendarCell: View {
     .padding(.vertical, 10)
   }
   
-  // MARK: - Subviews
   private var dateLabel: some View {
     Text(date.calendarDayText)
       .font(.pretendardSemibold_14)
@@ -96,7 +40,7 @@ struct CalendarCell: View {
   }
   
   private var iconSection: some View {
-    status.icon
+    cellIcon
       .resizable()
       .aspectRatio(contentMode: .fit)
       .frame(width: 23, height: 23)
@@ -104,9 +48,9 @@ struct CalendarCell: View {
   }
   
   private var amountLabel: some View {
-    Text(amount.formatted(.number))
+    Text(displayAmount.formatted(.number))
       .font(.pretendardMedium_11)
-      .foregroundStyle(status.amountColor)
+      .foregroundStyle(amountColor)
       .padding(.bottom, 5)
   }
   
@@ -115,6 +59,62 @@ struct CalendarCell: View {
       .fill(date.isToday ? Color.whiteDeep50 : .whiteDefault)
       .stroke(date.isToday ? Color.mainBright : Color.clear, lineWidth: 1)
       .padding(1)
+  }
+  
+  // MARK: - Helper Properties
+  private var displayAmount: Int {
+    if date > Date() {
+      // 미래: 하루비만 표시
+      return dailyBudget?.harubee ?? defaultHarubee
+    } else if date.isToday {
+      // 오늘: 실제 지출이 있으면 지출 표시, 없으면 하루비 표시
+      return dailyBudget?.expense ?? (dailyBudget?.harubee ?? defaultHarubee)
+    } else {
+      // 과거: 실제 지출만 표시 (지출이 없으면 0)
+      return dailyBudget?.expense ?? 0
+    }
+  }
+  
+  private var amountColor: Color {
+    if date > Date() {
+      // 미래: 하루비 조정 여부로 색상 결정
+      return dailyBudget?.harubee != nil ? .main : .textBlack
+    } else if date.isToday {
+      // 오늘: 실제 지출이 있으면 textBlack, 없으면 하루비 조정 여부로 색상 결정
+      if dailyBudget?.expense != nil {
+        return .textBlack
+      }
+      return dailyBudget?.harubee != nil ? .main : .textBlack
+    } else {
+      // 과거: 항상 연한 색상
+      return .textBright
+    }
+  }
+  
+  private var cellIcon: Image {
+    if date > Date() {
+      // 미래: 아이콘 표시하지 않음
+      return Image(uiImage: UIImage())
+    }
+    
+    // 지출이 있는 경우 예산 초과 여부에 따라 아이콘 결정
+    if let expense = dailyBudget?.expense {
+      let budget = dailyBudget?.harubee ?? defaultHarubee
+      if expense > budget {
+        return .hexagonBad
+      } else {
+        return .hexagonGood
+      }
+    }
+    
+    // 지출이 없는 경우
+    if date.isToday {
+      // 오늘: hexagonNone 표시
+      return .hexagonNone
+    } else {
+      // 과거: 아이콘 표시하지 않음
+      return Image(uiImage: UIImage())
+    }
   }
 }
 

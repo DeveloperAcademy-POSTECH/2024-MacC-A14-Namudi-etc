@@ -35,13 +35,13 @@ final class DIContainer {
   
   func makeOnboardingViewModel() -> OnboardingViewModel {
     OnboardingViewModel(
-      budgetUseCase: useCaseProvider.BudgetUseCase
+      budgetUseCase: useCaseProvider.budgetUseCase
     )
   }
   
   func makeCalendarViewModel() -> CalendarViewModel {
     CalendarViewModel(
-      budgetUseCase: useCaseProvider.BudgetUseCase
+      budgetUseCase: useCaseProvider.budgetUseCase
     )
   }
   

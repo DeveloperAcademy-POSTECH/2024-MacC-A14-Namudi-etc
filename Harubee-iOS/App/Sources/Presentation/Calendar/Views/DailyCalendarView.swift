@@ -84,20 +84,36 @@ struct DailyCalendarView: View {
         }
       }
     }
-    .sheet(item: $activeSheet) { type in
+    .sheet(item: $activeSheet, onDismiss: { viewModel.send(.updateCurrentData) }) { type in
       switch type {
       case .harubeeAdjust:
-        // TODO: - 하루비 조정 시트 연결 필요
-        HarubeeAdjustView()
-          .presentationDetents([.fraction(0.75)])
+        HarubeeAdjustView(
+          viewModel: DIContainer.shared.makeHarubeeAdjustViewModel(
+            salaryBudget: viewModel.state.currentBudget!, dailyBudget: viewModel.selectedDailyBudget!
+          )
+        )
+//        .presentationDetents([.fraction(0.75)])
+        .presentationDetents([.height(623)])
       case .transactionIncome:
-        // TODO: - 실제 수입 입력 로직 연결 필요
-        TransactionInputView(isFocusedExpense: false)
-          .presentationDetents([.fraction(0.75)])
+        TransactionInputView(
+          viewModel: DIContainer.shared.makeTransactionInputViewModel(
+            salaryBudget: viewModel.state.currentBudget!,
+            dailyBudget: viewModel.selectedDailyBudget!
+          ),
+          isFocusedExpense: false
+        )
+//        .presentationDetents([.fraction(0.75)])
+        .presentationDetents([.height(623)])
       case .transactionExpense:
-        // TODO: - 실제 지출 입력 로직 연결 필요
-        TransactionInputView(isFocusedExpense: true)
-          .presentationDetents([.fraction(0.75)])
+        TransactionInputView(
+          viewModel: DIContainer.shared.makeTransactionInputViewModel(
+            salaryBudget: viewModel.state.currentBudget!,
+            dailyBudget: viewModel.selectedDailyBudget!
+          ),
+          isFocusedExpense: false
+        )
+//        .presentationDetents([.fraction(0.75)])
+        .presentationDetents([.height(623)])
       case .addMemo:
         DailyMemoView { memo in
           viewModel.send(.updateMemo(.init(oldMemo: nil, newMemo: memo)))
@@ -153,7 +169,7 @@ private struct HarubeeSection: View {
     .tapFeedback {
       onEdit()
     }
-    .disabled(!budget.date.isToday)
+    .disabled(budget.date < Date().formattedDate)
     .padding(.horizontal, 16)
   }
 }

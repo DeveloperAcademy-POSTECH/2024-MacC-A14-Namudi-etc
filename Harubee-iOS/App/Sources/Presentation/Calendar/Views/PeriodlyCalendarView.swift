@@ -315,6 +315,7 @@ private extension View {
 // MARK: - Preview
 #Preview {
   NavigationStack {
-    PeriodlyCalendarView(viewModel: DIContainer.shared.makeCalendarViewModel())
+    PeriodlyCalendarView(viewModel: DIContainer.shared.makeCalendarViewModel()
+    )
   }
 }
