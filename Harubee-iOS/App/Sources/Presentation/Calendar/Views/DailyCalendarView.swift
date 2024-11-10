@@ -108,7 +108,7 @@ struct DailyCalendarView: View {
             salaryBudget: viewModel.state.currentBudget!,
             dailyBudget: viewModel.selectedDailyBudget!
           ),
-          isFocusedExpense: false
+          isFocusedExpense: true
         )
         .presentationDetents([.height(623)])
       case .addMemo:
