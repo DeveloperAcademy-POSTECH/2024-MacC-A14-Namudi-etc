@@ -495,10 +495,15 @@ private struct StreakCell: View {
   
   var body: some View {
     VStack(spacing: 15) {
-      Text(dailyStreak.date.koreanShortDateString)
-        .font(.pretendardSemibold_12)
-        .foregroundStyle(Color.textBright)
-        .frame(width: 33, height: 14)
+      ViewThatFits {
+        Text(dailyStreak.date.koreanShortDateString)
+          .font(.pretendardSemibold_12)
+          
+        Text(dailyStreak.date.koreanShortDateString)
+          .font(.customFont(weight: .semiBold, size: 11))
+      }
+      .foregroundStyle(Color.textBright)
+      .frame(width: 33, height: 14)
       
       if dailyStreak.isAfterToday {
         Text(dailyStreak.harubee.decimal)

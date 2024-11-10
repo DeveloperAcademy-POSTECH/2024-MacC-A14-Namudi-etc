@@ -166,7 +166,7 @@ extension TodayViewModel {
         let dailyBudget = try budgetUseCase.getDailyBudget(date: currentDate)
         
         let harubee = dailyBudget.harubee == nil ? Int(salaryBudget.defaultHarubee) : dailyBudget.harubee
-        let isOverHarubee = dailyBudget.expense == nil ? nil : (dailyBudget.expense! <= harubee!)
+        let isOverHarubee = dailyBudget.expense == nil ? nil : (dailyBudget.expense! >= harubee!)
         
         let newDailyStreak = DailyStreak(date: currentDate,
                                          isAfterToday: currentDate > today,
