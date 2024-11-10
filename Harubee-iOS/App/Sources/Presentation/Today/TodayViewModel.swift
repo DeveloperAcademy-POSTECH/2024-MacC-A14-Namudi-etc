@@ -178,10 +178,9 @@ extension TodayViewModel {
       } catch DomainError.dataNotFound {
         
         let nextStartDate = calendar.date(byAdding: .month, value: 1, to: salaryBudget.startDate)!
-        let nextEndDate = calendar.date(byAdding: .month, value: 1, to: nextStartDate)!
-        let nextSalaryBudgetDays = calendar.dateComponents([.year, .month, .day],
-                                                           from: nextStartDate,
-                                                           to: nextEndDate).day! - 1
+        let nextEndDate = calendar.date(byAdding: DateComponents(month: 1, day: -1), to: nextStartDate)!
+
+        let nextSalaryBudgetDays = calendar.dateComponents([.day], from: nextStartDate, to: nextEndDate).day!
         
         let harubee = salaryBudget.fixedIncome / nextSalaryBudgetDays
         
