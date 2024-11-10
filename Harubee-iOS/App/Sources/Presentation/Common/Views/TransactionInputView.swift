@@ -8,15 +8,22 @@
 
 import SwiftUI
 import Shared
+import Domain
 
 struct TransactionInputView: View {
+  @State private var viewModel: TransactionInputViewModel
   
   @State private var expression: String = ""
   
   @State private var isUpdated: Bool = false
+  @State private var isEnabled: Bool = false
   @State private var isFocusedExpense: Bool = true
   
-  init(isFocusedExpense: Bool) {
+  init(
+    viewModel: TransactionInputViewModel,
+    isFocusedExpense: Bool
+  ) {
+    self._viewModel = State(initialValue: viewModel)
     self._isFocusedExpense = State(initialValue: isFocusedExpense)
   }
   
@@ -38,9 +45,17 @@ struct TransactionInputView: View {
       
       MainColorButton(
         title: "저장하기",
-        isEnabled: $isUpdated
+        isEnabled: $isEnabled
       ) {
-        print("저장하기 Tap")
+        self.isEnabled = isEnabled
+        if isEnabled {
+          self.isUpdated = true
+          
+          viewModel.send(.doneButtonTapped(
+            expression.numberFormat ?? 0,
+            isFocusedExpense
+          ))
+        }
       }
       
       NumberKeypadView(expression: $expression) { isEnabled in
@@ -92,5 +107,11 @@ private struct TransactionBodyItemView: View {
 }
 
 #Preview {
-  TransactionInputView(isFocusedExpense: true)
+  TransactionInputView(
+    viewModel: DIContainer.shared.makeTransactionInputViewModel(
+      salaryBudget: SalaryBudget.default,
+      dailyBudget: DailyBudget.default
+    ),
+    isFocusedExpense: true
+  )
 }
