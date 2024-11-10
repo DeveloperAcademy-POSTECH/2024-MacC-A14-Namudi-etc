@@ -55,4 +55,15 @@ final class DIContainer {
       budgetUseCase: useCaseProvider.budgetUseCase
     )
   }
+  
+  func makeTransactionInputViewModel(
+    salaryBudget: SalaryBudget,
+    dailyBudget: DailyBudget
+  ) -> TransactionInputViewModel {
+    TransactionInputViewModel(
+      salaryBudget: salaryBudget,
+      dailyBudget: dailyBudget,
+      budgetUseCase: useCaseProvider.budgetUseCase
+    )
+  }
 }
