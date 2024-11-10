@@ -209,7 +209,7 @@ public final class BudgetUseCaseImpl: BudgetUseCase {
   public func updateFixedExpenses(
     salaryBudget: SalaryBudget,
     expenses: [TransactionItem]
-  ) throws {
+  ) throws -> SalaryBudget {
     
     let today = Date().formattedDate
     
@@ -242,7 +242,7 @@ public final class BudgetUseCaseImpl: BudgetUseCase {
     
     // 6. Repository 통해 저장하기
     do {
-      try salaryBudgetRepository.updateSalaryBudget(
+      return try salaryBudgetRepository.updateSalaryBudget(
         salaryBudget.id,
         fixedIncome: .keep,
         fixedExpenses: .set(expenses),
