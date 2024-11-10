@@ -8,13 +8,31 @@
 
 import SwiftUI
 import Shared
+import Domain
 
 struct FixedExpenseView: View {
+  @State private var settingViewModel: SettingViewModel
+  
   @State private var mode: Mode = .add
+  
+  init(settingViewModel: SettingViewModel) {
+    self.settingViewModel = settingViewModel
+  }
+  
   var body: some View {
     VStack(spacing: 0) {
-      HeaderView()
-      FixedExpenseListView()
+      HeaderView(
+        fixedExpenses: settingViewModel.state.salaryBudget?.fixedExpenses ?? []
+      )
+      FixedExpensesListView(
+        settingViewModel: settingViewModel,
+        fixedExpenses: .init(
+          get: {
+            settingViewModel.state.salaryBudget?.fixedExpenses ?? []
+        }, set: { items in
+          settingViewModel.send(.updateFixedExpenses(items))
+        })
+      )
         .padding(.top, 33)
     }
     .frame(maxHeight: .infinity, alignment: .top)
@@ -22,11 +40,17 @@ struct FixedExpenseView: View {
 }
 
 private struct HeaderView: View {
+  private var fixedExpenses: [TransactionItem]
+  
+  init(fixedExpenses: [TransactionItem]) {
+    self.fixedExpenses = fixedExpenses
+  }
+  
   var body: some View {
     VStack(spacing: 12) {
-      VStack(spacing: 10) {
-        Text("총 0건")
-        Text("총 0원")
+      VStack(alignment: .leading, spacing: 10) {
+        Text("총 \(fixedExpenses.count)건")
+        Text("총 \(fixedExpenses.reduce(0) { $0 + $1.price }.decimalWithWon)")
       }
       .font(.pretendardSemibold_24)
       .frame(maxWidth: .infinity, alignment: .leading)
@@ -41,8 +65,141 @@ private struct HeaderView: View {
   }
 }
 
-
-
-#Preview {
-  FixedExpenseView()
+private struct FixedExpensesListView: View {
+  private var settingViewModel: SettingViewModel
+  
+  @State private var isPresented: Bool = false
+  @Binding private var fixedExpenses: [TransactionItem]
+  
+  @State private var manageMode: Mode
+  @State private var selectedItem: TransactionItem?
+  
+  init(
+    settingViewModel: SettingViewModel,
+    fixedExpenses: Binding<[TransactionItem]>
+  ) {
+    self.settingViewModel = settingViewModel
+    self._fixedExpenses = fixedExpenses
+    self._manageMode = State(initialValue: .add)
+  }
+  
+  var body: some View {
+    VStack {
+      HStack(spacing: 0) {
+        Text("목록")
+          .font(.pretendardSemibold_16)
+        
+        Spacer()
+        
+        Button {
+          self.manageMode = .add
+          self.selectedItem = nil
+          self.isPresented = true
+        } label: {
+          Image(systemName: "plus")
+            .frame(width: 19, height: 21)
+        }
+      }
+      .padding(.horizontal, 20)
+      .foregroundStyle(Color.textBlack)
+      
+      if fixedExpenses.isEmpty {
+        Text("목록을 추가해주세요")
+          .font(.pretendardMedium_16)
+          .foregroundStyle(Color.textBlack30)
+          .padding(.top, 150)
+        
+      } else {
+        List {
+          ForEach(fixedExpenses, id: \.id) { item in
+            HStack(spacing: 0) {
+              Text("매달 \(item.date.formattedDateToString(.d))")
+                .font(.pretendardMedium_16)
+                .foregroundStyle(Color.textBlack)
+                .padding(.vertical, 6)
+                .padding(.horizontal, 11)
+                .background(
+                  RoundedRectangle(cornerRadius: 6)
+                    .foregroundStyle(Color.textBrighter30)
+                )
+              
+              Spacer()
+              
+              VStack(alignment: .trailing, spacing: 0) {
+                Text(item.name)
+                  .font(.pretendardMedium_12)
+                  .foregroundStyle(Color.textBlack)
+                Text(item.price.decimalWithWon)
+                  .font(.pretendardSemibold_18)
+                  .foregroundStyle(Color.textBlack)
+              }
+            }
+            .padding(.vertical, 1)
+            .contentShape(Rectangle())
+            .onTapGesture {
+              self.manageMode = .modify
+              self.selectedItem = item
+              self.isPresented = true
+            }
+          }
+          .onDelete(perform: removeList)
+        }
+        .listStyle(.plain)
+        .scrollBounceBehavior(.basedOnSize)
+      }
+    }
+    .sheet(isPresented: $isPresented) {
+      FixedExpenseManageView(
+        mode: self.manageMode,
+        selectedDay: selectedItem?.date.day ?? 1,
+        fixedExpenseName: selectedItem?.name ?? "",
+        fixedExpenseAmount: selectedItem?.price.decimal ?? ""
+      ) { day, name, price in
+        let date = day.convertDateBetweenStartAndEnd(
+          start: settingViewModel.state.salaryBudget?.startDate ?? Date(),
+          end: settingViewModel.state.salaryBudget?.endDate ?? Date()
+        )
+        
+        if let item = selectedItem {
+          if let index = fixedExpenses.firstIndex(where: { $0.id == item.id }) {
+            fixedExpenses[index].date = date
+            fixedExpenses[index].name = name
+            fixedExpenses[index].price = price.numberFormat ?? 0
+          }
+        } else {
+          fixedExpenses.append(.init(
+            date: date,
+            name: name,
+            price: price.numberFormat ?? 0)
+          )
+        }
+      }
+      .presentationDetents([.fraction(0.8)])
+      .presentationCornerRadius(20)
+    }
+    .onChange(of: selectedItem) { _, _ in }
+    .onChange(of: fixedExpenses) { _, _ in
+      fixedExpenses.sort(by: {
+        $0.date.day < $1.date.day
+      })
+    }
+  }
+  
+  func removeList(at offsets: IndexSet) {
+    fixedExpenses.remove(atOffsets: offsets)
+  }
 }
+
+
+
+//#Preview {
+//  FixedExpenseView(settingViewModel: DIContainer.shared.makeSettingViewModel(salaryBudget: SalaryBudget(
+//          startDate: Date(),
+//          endDate: Date(),
+//          fixedIncome: 1_000_000,
+//          fixedExpenses: [],
+//          balance: 0,
+//          defaultHarubee: 0,
+//          dailyBudgets: []
+//        )))
+//}

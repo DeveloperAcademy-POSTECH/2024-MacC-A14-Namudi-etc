@@ -17,7 +17,7 @@ struct FixedIncomeView: View {
   @State private var fixedIncomeAmount: Int
   
   private var settingViewModel: SettingViewModel
-    
+  
   init(
     settingViewModel: SettingViewModel
   ) {
@@ -42,12 +42,12 @@ struct FixedIncomeView: View {
         title: "저장하기",
         isEnabled: $isUpdated
       ) {
-          settingViewModel.send(.saveButtonTapped(selectedDay, fixedIncomeAmount))
-          dismiss()
-        }
-        .clipShape(RoundedRectangle(cornerRadius: 10))
-        .padding(.bottom, 9)
-        .padding(.horizontal, 16)
+        settingViewModel.send(.fixedIncomeSaveButtonTapped(selectedDay, fixedIncomeAmount))
+        dismiss()
+      }
+      .clipShape(RoundedRectangle(cornerRadius: 10))
+      .padding(.bottom, 9)
+      .padding(.horizontal, 16)
     }
     .onChange(of: selectedDay) { _, newValue in
       if newValue != settingViewModel.state.salaryBudget?.startDate.day {
@@ -136,8 +136,8 @@ private struct BodyView: View {
           ) { fixedIncomeString in
             fixedIncomeAmount = fixedIncomeString.numberFormat ?? 0
           }
-            .presentationDetents([.fraction(0.6)])
-            .presentationCornerRadius(20)
+          .presentationDetents([.fraction(0.6)])
+          .presentationCornerRadius(20)
         }
       }
       .padding(.horizontal, 20)
@@ -145,14 +145,17 @@ private struct BodyView: View {
   }
 }
 
-#Preview {
-  FixedIncomeView(settingViewModel: SettingViewModel(salaryBudget: SalaryBudget(startDate: Date(),
-                                                                                endDate: Date(),
-                                                                                fixedIncome: 1_000_000,
-                                                                                fixedExpenses: [],
-                                                                                balance: 0,
-                                                                                defaultHarubee: 0,
-                                                                                dailyBudgets: []
-                                                                               )
-  ))
-}
+//#Preview {
+//  FixedIncomeView(settingViewModel: SettingViewModel(
+//    salaryBudget: SalaryBudget(
+//      startDate: Date(),
+//      endDate: Date(),
+//      fixedIncome: 1_000_000,
+//      fixedExpenses: [],
+//      balance: 0,
+//      defaultHarubee: 0,
+//      dailyBudgets: []
+//    ),
+//    budgetUseCase: BUd
+//  ))
+//}
