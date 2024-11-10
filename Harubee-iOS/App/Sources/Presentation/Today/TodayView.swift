@@ -131,6 +131,7 @@ private struct Honeycomb: View {
   private let honeycombSpace: CGFloat
   
   @Binding private var isInfoBubbleVisible: Bool
+  @State private var isPresented: Bool = false
   
   private let hexGrid: [[Bool]] = [
     [true, false],
@@ -148,8 +149,6 @@ private struct Honeycomb: View {
     self._isInfoBubbleVisible = isInfoBubbleVisible
   }
   
-  
-  
   var body: some View {
     VStack(spacing: honeycombSpace - (hexgonSize/(4 * sqrt(3)))) {
       ForEach(hexGrid.indices, id: \.self) { row in
@@ -161,6 +160,9 @@ private struct Honeycomb: View {
                              hexgonSize: hexgonSize,
                              isInfoBubbleVisible: $isInfoBubbleVisible
               )
+              .tapFeedback(tappedBackgroundColor: .clear) {
+                self.isPresented = true
+              }
             } else if row == 2 && col == 1 {
               HarubeeHexagon(todayViewModel: todayViewModel,
                              isTodayHarubee: false,
@@ -174,7 +176,18 @@ private struct Honeycomb: View {
           }
         }
       }
-    }.offset(x: honeycombSpace - hexgonSize/5, y: -hexgonSize/5)
+    }
+    .offset(x: honeycombSpace - hexgonSize/5, y: -hexgonSize/5)
+    .sheet(isPresented: $isPresented) {
+      print("On Dismiss")
+    } content: {
+      HarubeeAdjustView(
+        viewModel: DIContainer.shared.makeHarubeeAdjustViewModel(
+          salaryBudget: todayViewModel.state.salaryBudget!,
+          dailyBudget: todayViewModel.state.todayDailyBudget!
+        )
+      )
+    }
   }
 }
 
@@ -329,6 +342,7 @@ private struct TodayFooterView: View {
   
   private let todayViewModel: TodayViewModel
   @Binding private var isInfoBubbleVisible: Bool
+  @State private var isPresented: Bool = false
   
   init(todayViewModel: TodayViewModel, isInfoBubbleVisible: Binding<Bool>) {
     self.todayViewModel = todayViewModel
@@ -341,7 +355,7 @@ private struct TodayFooterView: View {
       CalendarStreakView(todayViewModel: todayViewModel, isInfoBubbleVisible: $isInfoBubbleVisible)
       
       MainColorButton(title: "실제 지출 및 수입 입력하기") {
-        print("실제 지출 및 수입 입력하기 버튼 Tapped")
+        self.isPresented = true
       }
       .clipShape(RoundedRectangle(cornerRadius: 10))
       .infoBubble(isVisible: $isInfoBubbleVisible) {
@@ -356,6 +370,17 @@ private struct TodayFooterView: View {
     .frame(maxWidth: .infinity, maxHeight: 196, alignment: .top)
     .padding(.horizontal, 16)
     .background(Color.whiteDefault)
+    .sheet(isPresented: $isPresented) {
+      print("On Dismiss")
+    } content: {
+      TransactionInputView(
+        viewModel: DIContainer.shared.makeTransactionInputViewModel(
+          salaryBudget: todayViewModel.state.salaryBudget!,
+          dailyBudget: todayViewModel.state.todayDailyBudget!
+        ),
+        isFocusedExpense: true
+      )
+    }
   }
 }
 
