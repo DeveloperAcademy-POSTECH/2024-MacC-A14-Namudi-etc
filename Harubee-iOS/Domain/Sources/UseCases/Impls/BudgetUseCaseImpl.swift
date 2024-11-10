@@ -28,14 +28,81 @@ public final class BudgetUseCaseImpl: BudgetUseCase {
   }
   
   @discardableResult
-  public func createSalaryBudget(
+  public func createSalaryBudgetFromOnboarding(
     startDate: Date,
     endDate: Date,
     previousExpense: Int?,
     fixedIncome: Int,
     fixedExpenses: [TransactionItem]
   ) throws -> SalaryBudget {
+    // 1. date 포멧 변경
+    let startDate = startDate.formattedDate
+    let endDate = endDate.formattedDate
+    let today = Date().formattedDate
     
+    // 2. 총 고정 지출 금액 계산하기
+    let totalFixedExpenses = fixedExpenses.reduce(0) { $0 + $1.price }
+    
+    // 3. 고정 수입에서 고정 지출을 뺀 금액 잔액으로 설정하기
+    var initialBalance = fixedIncome - totalFixedExpenses
+    
+    // 3-1. 만약 이전 지출 금액을 받은 경우 잔액 다시 계산하기
+    if let previousExpense {
+      initialBalance -= previousExpense
+    }
+    
+    // 4. 남은 기간의 일자 개수 구하기 (오늘부터 endDate까지)
+    let calendar = Calendar.current
+    let remainingDays = calendar.dateComponents([.day], from: today, to: endDate).day ?? 0
+    
+    // 5. 잔액을 남은 기간의 일자 개수로 나누어 기본 하루비 설정하기
+    let defaultHarubee = Double(initialBalance) / Double(remainingDays + 1)
+    
+    // 6. 각 날짜별로 DailyBudget 생성하기
+    let days = calendar.dateComponents([.day], from: startDate, to: endDate).day ?? 0
+    
+    let dailyBudgets = (0...days).compactMap { day -> DailyBudget? in
+      guard let date = calendar.date(
+        byAdding: .day,
+        value: day,
+        to: startDate
+      ) else { return nil }
+      
+      return DailyBudget(
+        id: UUID().uuidString,
+        date: date,
+        harubee: date < today ? 0 : nil,
+        memo: [],
+        expense: nil,
+        income: nil
+      )
+    }
+    
+    // 7. SalaryBudget 생성하기
+    let salaryBudget = SalaryBudget(
+      id: UUID().uuidString,
+      startDate: startDate,
+      endDate: endDate,
+      fixedIncome: fixedIncome,
+      fixedExpenses: fixedExpenses,
+      balance: initialBalance,
+      defaultHarubee: defaultHarubee,
+      dailyBudgets: dailyBudgets
+    )
+    
+    // 8. Repository에 저장하기
+    salaryBudgetRepository.create(salaryBudget)
+    
+    return salaryBudget
+  }
+  
+  @discardableResult
+  public func createSalaryBudget(
+    startDate: Date,
+    endDate: Date,
+    fixedIncome: Int,
+    fixedExpenses: [TransactionItem]
+  ) throws -> SalaryBudget {
     // 1. date 포멧 변경
     let startDate = startDate.formattedDate
     let endDate = endDate.formattedDate
@@ -44,19 +111,14 @@ public final class BudgetUseCaseImpl: BudgetUseCase {
     let totalFixedExpenses = fixedExpenses.reduce(0) { $0 + $1.price }
     
     // 3. 고정 수입에서 고정 지출을 뺀 금액 잔액으로 설정하기
-    var initialBalance = fixedIncome - totalFixedExpenses
+    let initialBalance = fixedIncome - totalFixedExpenses
     
-    // 3-1. 만약 온보딩에서 이전 지출 금액을 받은 경우 잔액 다시 계산하기
-    if let previousExpense {
-      initialBalance -= previousExpense
-    }
-    
-    // 4. 예산 기간의 일자 개수 구하기
+    // 4. 남은 기간의 일자 개수 구하기
     let calendar = Calendar.current
     let days = calendar.dateComponents([.day], from: startDate, to: endDate).day ?? 0
     
     // 5. 잔액을 예산 기간의 일자 개수로 나누어 기본 하루비 설정하기
-    let defaultHarubee = Double(initialBalance) / Double(days)
+    let defaultHarubee = Double(initialBalance) / Double(days + 1)
     
     // 6. 각 날짜별로 DailyBudget 생성하기
     let dailyBudgets = (0...days).compactMap { day -> DailyBudget? in
@@ -103,11 +165,7 @@ public final class BudgetUseCaseImpl: BudgetUseCase {
   }
   
   public func getAllSalaryBudget() throws -> [SalaryBudget] {
-    let budgets = try salaryBudgetRepository.readAll()
-    if budgets.isEmpty {
-      throw DomainError.dataNotFound
-    }
-    return budgets
+    return try salaryBudgetRepository.readAll()
   }
   
   public func getCurrentSalaryBudget(
@@ -170,7 +228,7 @@ public final class BudgetUseCaseImpl: BudgetUseCase {
     )
   }
   
-
+  
   public func updateFixedIncome(
     salaryBudget: SalaryBudget,
     newIncome: Int
@@ -219,14 +277,14 @@ public final class BudgetUseCaseImpl: BudgetUseCase {
     
     // 1. 기존 오늘 날짜 이후의 고정 지출의 합계
     let oldPostTodayTotalExpenses = salaryBudget.fixedExpenses.filter{ $0.date > today }
-                                                              .reduce(0) { $0 + $1.price }
+      .reduce(0) { $0 + $1.price }
     // 2. 오늘 날짜 이후의 고정지출들의 차이(new - old)
     let postTodayDifference = expenses.filter { $0.date > today }
-                                      .reduce(0) { $0 + $1.price } - oldPostTodayTotalExpenses
+      .reduce(0) { $0 + $1.price } - oldPostTodayTotalExpenses
     
     // 3. 잔액에 반영
     let newBalance = salaryBudget.balance - postTodayDifference
-
+    
     // 4. 잔액이 음수가 되는지 체크하기
     guard newBalance >= 0 else {
       throw DomainError.invalidAmount
@@ -332,7 +390,7 @@ public final class BudgetUseCaseImpl: BudgetUseCase {
       salaryBudget.dailyBudgets[index].id,
       harubee: amount
     )
-
+    
     // 4. SalaryBudget의 기본하루비 업데이트
     let newSalaryBudget = try self.updateDefaultHarubee(salaryBudget: salaryBudget)
     
@@ -448,10 +506,9 @@ public final class BudgetUseCaseImpl: BudgetUseCase {
     
     // 5. 새로운 SalaryBudget 생성
     return try self.createSalaryBudget(startDate: incomeStartDate,
-                                endDate: incomeEndDate,
-                                previousExpense: 0,
-                                fixedIncome: salaryBudget.fixedIncome,
-                                fixedExpenses: salaryBudget.fixedExpenses)
+                                       endDate: incomeEndDate,
+                                       fixedIncome: salaryBudget.fixedIncome,
+                                       fixedExpenses: salaryBudget.fixedExpenses)
   }
   
   
@@ -467,4 +524,3 @@ public final class BudgetUseCaseImpl: BudgetUseCase {
     return incomeDay
   }
 }
-

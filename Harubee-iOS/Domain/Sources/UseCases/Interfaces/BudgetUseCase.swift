@@ -10,6 +10,14 @@ import Foundation
 
 public protocol BudgetUseCase {
   
+  func createSalaryBudgetFromOnboarding(
+    startDate: Date,
+    endDate: Date,
+    previousExpense: Int?,
+    fixedIncome: Int,
+    fixedExpenses: [TransactionItem]
+  ) throws -> SalaryBudget
+  
   /// 새로운 SalaryBudget을 생성합니다.
   /// - Parameters:
   ///   - startDate: SalaryBudget 시작일
@@ -23,7 +31,6 @@ public protocol BudgetUseCase {
   func createSalaryBudget(
     startDate: Date,
     endDate: Date,
-    previousExpense: Int?,
     fixedIncome: Int,
     fixedExpenses: [TransactionItem]
   ) throws -> SalaryBudget
@@ -158,7 +165,7 @@ public protocol BudgetUseCase {
     date: Date,
     salaryBudget: SalaryBudget
   ) throws -> (DailyBudget, SalaryBudget)
-   
+  
   
   /// 메모 리스트를 업데이트합니다.
   /// - Parameters:
