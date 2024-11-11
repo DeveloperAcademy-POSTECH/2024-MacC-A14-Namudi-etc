@@ -50,9 +50,8 @@ struct Onboarding4View: View {
         
         self.isEnabled = isEnabled
       }
-      .padding(.top, 26)
-      .padding(.horizontal, 16)
     }
+    .ignoresSafeArea(edges: .bottom)
     .navigationDestination(isPresented: $isPresented) {
       Onboarding5View(viewModel: viewModel)
         .navigationBarBackButtonHidden()

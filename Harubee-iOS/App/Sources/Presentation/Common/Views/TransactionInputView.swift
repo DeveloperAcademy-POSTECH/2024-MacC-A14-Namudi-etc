@@ -18,7 +18,9 @@ struct TransactionInputView: View {
   @State private var isUpdated: Bool = false
   @State private var isEnabled: Bool = false
   @State private var isFocusedExpense: Bool = true
+  
   @State private var isAlert: Bool = false
+  @State private var alertTitle: String = ""
   
   private let beforeExpense: Int?
   private let beforeIncome: Int?
@@ -76,7 +78,18 @@ struct TransactionInputView: View {
         isEnabled: $isEnabled,
         cornerRadius: 0
       ) {
-        self.isAlert = true
+        let dailyBudget = viewModel.state.dailyBudget
+        
+        if let _ = dailyBudget.expense,
+           let _ = dailyBudget.income {
+          self.viewModel.send(.saveButtonTapped)
+          self.dismiss()
+        } else {
+          self.isAlert = true
+          self.alertTitle = dailyBudget.expense == nil 
+          ? "지출"
+          : "수입"
+        }
       }
       
       NumberKeypadView(expression: $expression) { isEnabled in
@@ -101,7 +114,7 @@ struct TransactionInputView: View {
       }
     }
     .alert(
-      "실제 지출 및 수입 저장하기",
+      "\(alertTitle)이 입력되지 않았어요",
       isPresented: $isAlert
     ) {
       Button(role: .cancel) {
@@ -114,11 +127,10 @@ struct TransactionInputView: View {
         self.viewModel.send(.saveButtonTapped)
         self.dismiss()
       } label: {
-        Text("저장")
+        Text("확인")
       }
     } message: {
-      let dailyBudget = self.viewModel.state.dailyBudget
-      Text("수입 \((dailyBudget.income ?? 0).decimalWithWon), 지출 \((dailyBudget.expense ?? 0).decimalWithWon)으로 저장하시겠습니까?")
+      Text("\(alertTitle)을 0원으로 저장하시겠습니까?")
     }
   }
 }
