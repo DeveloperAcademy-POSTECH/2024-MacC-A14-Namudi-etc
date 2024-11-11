@@ -34,10 +34,7 @@ let project = Project(
             "UIInterfaceOrientationPortrait"
           ],
           "LSApplicationCategoryType": "public.app-category.finance",
-          "UILaunchScreen": [
-            "UIColorName": "",
-            "UIImageName": "",
-          ],
+          "UILaunchStoryboardName": "LaunchScreen",
         ]
       ),
       sources: ["Harubee-iOS/App/Sources/**"],
