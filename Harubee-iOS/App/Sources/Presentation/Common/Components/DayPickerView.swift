@@ -81,6 +81,11 @@ struct DayPickerView: View {
         .transition(.opacity.combined(with: .scale(scale: 0.9, anchor: .top)))
       }
     }
+    .onChange(of: showDayPicker) { _, _ in
+      if showDayPicker {
+        UIApplication.shared.endEditing()
+      }
+    }
   }
 }
 
