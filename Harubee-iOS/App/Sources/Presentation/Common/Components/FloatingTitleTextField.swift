@@ -30,11 +30,13 @@ struct FloatingTitleTextField: View {
         .foregroundStyle(!text.isEmpty ? Color.main : .clear)
         .offset(y: !text.isEmpty ? -4 : 0)
         .animation(.easeOut(duration: 0.2), value: !text.isEmpty)
+        .padding(.leading, 4)
       
       TextField(title, text: $text)
         .frame(maxWidth: .infinity)
         .font(.pretendardMedium_18)
         .focused($isTextfieldFocused)
+        .padding(.leading, 4)
       
       Rectangle()
         .frame(height: 1)
