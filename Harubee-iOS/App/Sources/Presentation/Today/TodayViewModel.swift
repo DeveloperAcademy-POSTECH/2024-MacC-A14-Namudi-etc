@@ -133,7 +133,7 @@ extension TodayViewModel {
                                                                          balance: currentBalance))
     let weeklyStreaks = getWeeklyStreaks(salaryBudget: salaryBudget)
     let todayHarubeePercentage = (todayDailyBudget?.expense == nil || todayDailyBudget?.expense == 0) ? 1.0 :
-    Double(remainTodayHarubee / todayHarubee)
+    Double(remainTodayHarubee) / Double(todayHarubee)
     
     let originalAverageHarubee = Double(salaryBudget.fixedIncome / 30)
     let todayAverageHarubeePercentage = Double(averageHarubee) / originalAverageHarubee
