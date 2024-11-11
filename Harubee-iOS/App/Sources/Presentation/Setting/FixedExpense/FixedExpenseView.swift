@@ -125,7 +125,7 @@ private struct FixedExpensesListView: View {
           self.isPresented = true
         } label: {
           Image(systemName: "plus")
-            .frame(width: 19, height: 21)
+            .frame(width: 30, height: 21)
         }
         .infoBubble(isVisible: $isInfoBubbleVisible, alignment: .topTrailing) {
           VStack(alignment: .leading, spacing: 2) {
@@ -135,8 +135,10 @@ private struct FixedExpensesListView: View {
           .font(.pretendardSemibold_12)
           .foregroundStyle(Color.textBlack)
         }
+        .padding(.trailing, 10)
+
       }
-      .padding(.horizontal, 20)
+      .padding(.leading, 20)
       .foregroundStyle(Color.textBlack)
       
       if fixedExpenses.isEmpty {

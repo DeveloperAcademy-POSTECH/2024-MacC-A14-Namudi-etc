@@ -16,7 +16,7 @@ struct HelpButton: View {
     Image(systemName: "questionmark.circle")
       .foregroundStyle(Color.whiteDefault)
       .tapFeedback {
-        infoBubbleVisible = true
+        infoBubbleVisible.toggle()
       }
   }
 }
