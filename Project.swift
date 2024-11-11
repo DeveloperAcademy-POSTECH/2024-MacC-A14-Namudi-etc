@@ -24,7 +24,7 @@ let project = Project(
       name: "Harubee-iOS",
       destinations: [.iPhone],
       product: .app,
-      bundleId: "etc.namudi.harubee-app",
+      bundleId: "etc.namudi.harubee.ios.app",
       deploymentTargets: .iOS("17.0"),
       infoPlist: .extendingDefault(
         with: [
