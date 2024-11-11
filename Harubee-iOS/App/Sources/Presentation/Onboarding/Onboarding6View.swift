@@ -153,7 +153,8 @@ private struct UserInfoView: View {
       
       UserInfoItemView(
         title: "고정 지출 (총 \(fixedExpenses.count)건)",
-        content: "\(fixedExpenses.reduce(0) { $0 + $1.price }.decimalWithWon)"
+        content: "\(fixedExpenses.reduce(0) { $0 + $1.price }.decimalWithWon)",
+        contentColor: .whiteDeep50
       )
       
       UserInfoItemView(
@@ -173,10 +174,16 @@ private struct UserInfoView: View {
 private struct UserInfoItemView: View {
   private var title: String
   private var content: String
+  private var contentColor: Color
   
-  init(title: String, content: String) {
+  init(
+    title: String,
+    content: String,
+    contentColor: Color = .whiteDefault
+  ) {
     self.title = title
     self.content = content
+    self.contentColor = contentColor
   }
   
   var body: some View {
@@ -187,7 +194,7 @@ private struct UserInfoItemView: View {
         .foregroundStyle(Color.whiteDeep50)
       Text(content)
         .font(.pretendardSemibold_14)
-        .foregroundStyle(Color.whiteDefault)
+        .foregroundStyle(contentColor)
     }
   }
 }
@@ -228,4 +235,5 @@ private struct OnboardingFooterView: View {
 
 #Preview {
   Onboarding6View(viewModel: DIContainer.shared.makeOnboardingViewModel())
+    .environment(AppRootManager())
 }
