@@ -39,7 +39,6 @@ struct TransactionItemButton: View {
         .font(.pretendardSemibold_18)
         .foregroundStyle(textColor)
         .frame(maxWidth: .infinity, alignment: .trailing)
-        .padding(.top, 16)
     }
     .padding(14)
     .background(backgroundColor)

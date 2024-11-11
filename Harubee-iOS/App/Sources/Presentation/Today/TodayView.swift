@@ -190,6 +190,7 @@ private struct Honeycomb: View {
           dailyBudget: todayViewModel.state.todayDailyBudget!
         )
       )
+      .presentationDetents([.height(623)])
     }
   }
 }
@@ -381,6 +382,7 @@ private struct TodayFooterView: View {
         ),
         isFocusedExpense: true
       )
+      .presentationDetents([.height(623)])
     }
   }
 }

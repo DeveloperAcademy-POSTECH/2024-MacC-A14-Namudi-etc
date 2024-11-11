@@ -71,6 +71,7 @@ struct HarubeeAdjustView: View {
       }
     }
     .frame(maxWidth: .infinity)
+    .ignoresSafeArea(edges: .bottom)
     .alert(
       "하루비 조정하기",
       isPresented: $isAlert
@@ -123,7 +124,7 @@ private struct HarubeeAdjustBodyView: View {
       if !isUpdated {
         VStack(alignment: .leading, spacing: 2) {
           Text("기본 하루비는 하루비 조정을 하지 않은 날짜에")
-          Text("자동으로 분배되는 하루비를 의미해요.")
+          Text("자동으로 분배되는 하루비를 의미해요")
         }
         .padding(.top, 14)
         .font(.pretendardMedium_14)
