@@ -38,8 +38,7 @@ struct FixedExpenseView: View {
         .padding(.top, 33)
       }
       .frame(maxHeight: .infinity, alignment: .top)
-      .navigationTitle("고정지출 관리")
-      .navigationBarTitleDisplayMode(.inline)
+      .navigationBarStyle(.white(title: "고정지출 관리", backTitle: "뒤로"))
       
       if isInfoBubbleVisible {
         Color.clear
