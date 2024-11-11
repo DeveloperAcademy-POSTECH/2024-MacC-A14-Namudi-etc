@@ -31,6 +31,7 @@ struct FixedIncomeModifyView: View {
         .padding(.top, 20)
       
       FloatingTitleTextField(title: "금액", text: $fixedIncomeAmount)
+        .disabled(true)
         .padding(.top, 38)
         .padding(.horizontal, 16)
       
