@@ -50,6 +50,7 @@ struct OnboardingNavigationHeaderView: View {
         .foregroundStyle(Color.whiteDeep50)
 //        .frame(maxWidth: .infinity, alignment: .trailing)
     }
+    .padding(.top, 30)
   }
 }
 
