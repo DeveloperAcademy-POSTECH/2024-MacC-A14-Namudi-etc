@@ -103,7 +103,7 @@ private struct OnboardingBodyView: View {
   }
   
   var body: some View {
-    VStack(spacing: 30) {
+    VStack(spacing: 14) {
       VStack(alignment: .leading, spacing: 6) {
         Text("\(startDate)부터 오늘까지")
         Text("얼마를 사용하셨나요?")
