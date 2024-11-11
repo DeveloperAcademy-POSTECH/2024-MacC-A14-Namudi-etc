@@ -70,6 +70,13 @@ struct FixedExpenseManageView: View {
       .padding(.horizontal, 16)
       .padding(.bottom, 9)
     }
+    .onChange(of: selectedDay) { oldValue, newValue in
+      if oldValue != newValue {
+        isEnabled = true
+      } else {
+        isEnabled = false
+      }
+    }
     .onChange(of: fixedExpenseName) { _, _ in
       if (fixedExpenseName.isEmpty
           || fixedExpenseAmount.isEmpty
