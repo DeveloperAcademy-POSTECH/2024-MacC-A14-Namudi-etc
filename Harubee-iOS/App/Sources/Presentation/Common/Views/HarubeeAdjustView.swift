@@ -18,7 +18,6 @@ struct HarubeeAdjustView: View {
   @State private var expression: String
   @State private var isUpdated: Bool = false
   @State private var isEnabled: Bool = false
-  @State private var isAlert: Bool = false
   
   private let beforeHarubee: Int
   
@@ -58,7 +57,8 @@ struct HarubeeAdjustView: View {
         isEnabled: $isEnabled,
         cornerRadius: 0
       ) {
-        self.isAlert = true
+        self.viewModel.send(.saveButtonTapped)
+        self.dismiss()
       }
       
       NumberKeypadView(expression: $expression) { isEnabled in
@@ -72,25 +72,6 @@ struct HarubeeAdjustView: View {
     }
     .frame(maxWidth: .infinity)
     .ignoresSafeArea(edges: .bottom)
-    .alert(
-      "하루비 조정하기",
-      isPresented: $isAlert
-    ) {
-      Button(role: .cancel) {
-        
-      } label: {
-        Text("취소")
-      }
-
-      Button {
-        self.viewModel.send(.saveButtonTapped)
-        self.dismiss()
-      } label: {
-        Text("저장")
-      }
-    } message: {
-      Text("하루비를 \(expression)원으로 조정하시겠습니까?")
-    }
   }
 }
 
