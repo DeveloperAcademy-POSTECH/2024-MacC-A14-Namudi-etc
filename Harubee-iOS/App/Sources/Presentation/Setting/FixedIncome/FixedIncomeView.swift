@@ -19,7 +19,7 @@ struct FixedIncomeView: View {
   @State private var isInfoBubbleVisible: Bool = false
   @State private var isAlertPresented: Bool = false
   
-  @StateObject private var keyboardObserver = KeyboardObserver()
+  @State private var keyboardObserver = KeyboardObserver()
   
   private var settingViewModel: SettingViewModel
   
