@@ -149,7 +149,7 @@ private struct OnboardingBodyView: View {
           .font(.pretendardMedium_20)
           .foregroundStyle(Color.textBlack)
         
-        Text("*입력하신 정보는 수입 기간동안의 하루비를 계산할 때만 사용됩니다")
+        Text("*입력하신 정보는 수입 기간 동안의 하루비를 계산할 때만 사용됩니다")
           .font(.pretendardMedium_12)
           .foregroundStyle(Color.textBlack30)
           .padding(.top, 6)
