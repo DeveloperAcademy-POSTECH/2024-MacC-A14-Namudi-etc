@@ -32,6 +32,12 @@ struct TransactionInputView: View {
     
     self.beforeExpense = viewModel.state.dailyBudget.expense
     self.beforeIncome = viewModel.state.dailyBudget.income
+    
+    self._expression = State(
+      initialValue: isFocusedExpense
+      ? beforeExpense?.decimal ?? ""
+      : beforeIncome?.decimal ?? ""
+    )
   }
   
   var body: some View {
@@ -42,6 +48,8 @@ struct TransactionInputView: View {
         dailyBudget: viewModel.state.dailyBudget,
         isFocusedExpense: $isFocusedExpense
       )
+      .padding(.top, 42)
+      .padding(.horizontal, 16)
       
       Spacer()
       
@@ -84,6 +92,7 @@ struct TransactionInputView: View {
       }
     }
     .frame(maxWidth: .infinity)
+    .ignoresSafeArea(edges: .bottom)
     .onChange(of: isFocusedExpense) { _, _ in
       if isFocusedExpense {
         self.expression = self.viewModel.state.dailyBudget.expense?.decimal ?? ""
@@ -135,34 +144,32 @@ private struct TransactionBodyItemView: View {
         title: "수입",
         amount: dailyBudget.income
       )
-        .overlay(
-          RoundedRectangle(cornerRadius: 10)
-            .stroke(
-              Color.mainBright,
-              lineWidth: isFocusedExpense ? 0 : 2
-            )
-        )
-        .onTapGesture {
-          isFocusedExpense = false
-        }
+      .overlay(
+        RoundedRectangle(cornerRadius: 5)
+          .stroke(
+            Color.mainBright,
+            lineWidth: isFocusedExpense ? 0 : 2
+          )
+      )
+      .onTapGesture {
+        isFocusedExpense = false
+      }
       
       TransactionItemButton(
         title: "지출",
         amount: dailyBudget.expense
       )
-        .overlay(
-          RoundedRectangle(cornerRadius: 10)
-            .stroke(
-              Color.mainBright,
-              lineWidth: isFocusedExpense ? 2 : 0
-            )
-        )
-        .onTapGesture {
-          isFocusedExpense = true
-        }
+      .overlay(
+        RoundedRectangle(cornerRadius: 5)
+          .stroke(
+            Color.mainBright,
+            lineWidth: isFocusedExpense ? 2 : 0
+          )
+      )
+      .onTapGesture {
+        isFocusedExpense = true
+      }
     }
-    .padding(.top, 36)
-    .padding(.horizontal, 16)
   }
 }
 

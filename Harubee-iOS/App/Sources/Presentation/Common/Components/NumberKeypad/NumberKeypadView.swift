@@ -44,6 +44,9 @@ struct NumberKeypadView: View {
       }
     }
     .frame(maxWidth: .infinity)
+    .padding(.top, 26)
+    .padding(.horizontal, 16)
+    .padding(.bottom, 31)
   }
 }
 
