@@ -31,7 +31,7 @@ struct FixedExpenseManageView: View {
   
   @State private var isEnabled: Bool = false
   
-  @StateObject private var keyboardObserver = KeyboardObserver()
+  @State private var keyboardObserver = KeyboardObserver()
 
   private let mode: Mode
   private let action: ((Int, String, String) -> Void)

@@ -16,8 +16,9 @@ extension UIApplication {
   }
 }
 
-class KeyboardObserver: ObservableObject {
-    @Published var isKeyboardVisible: Bool = false
+@Observable
+final class KeyboardObserver {
+    var isKeyboardVisible: Bool = false
 
     init() {
         // 키보드가 나타나는 경우
@@ -47,7 +48,7 @@ struct Onboarding3View: View {
   @State private var incomeDay: Int
   @State private var incomeAmount: String
   
-  @StateObject private var keyboardObserver = KeyboardObserver()
+  @State private var keyboardObserver = KeyboardObserver()
   
   init(viewModel: OnboardingViewModel) {
     self.viewModel = viewModel
