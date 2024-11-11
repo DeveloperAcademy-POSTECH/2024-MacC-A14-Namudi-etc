@@ -100,12 +100,12 @@ struct FixedIncomeView: View {
     .alert(isPresented: $isAlertPresented) {
       Alert(
         title: Text("수입일을 \(selectedDay)일로 바꾸시겠어요?"),
-        message: Text("수입일을 바꾸면 모든 데이터가 초기화되며,\n\(selectedDay)일 기준으로 하루비가 다시 계산돼요."),
-        primaryButton: .default(Text("확인")) {
+        message: Text("수입일을 바꾸면 모든 데이터가 초기화되며,\n\(selectedDay)일 기준으로 하루비가 다시 계산돼요"),
+        primaryButton: .default(Text("취소")),
+        secondaryButton: .destructive(Text("확인")) {
           settingViewModel.send(.fixedIncomeSaveButtonTapped(selectedDay, fixedIncomeAmount))
           dismiss()
-        },
-        secondaryButton: .cancel(Text("취소"))
+        }
       )
     }
   }
