@@ -153,8 +153,8 @@ private struct UserInfoView: View {
       )
       
       UserInfoItemView(
-        title: "앞으로 나갈 고정 지출 (총 \(fixedExpenses.filter { $0.date < .now.formattedDate }.count)건)",
-        content: "- \(fixedExpenses.filter { $0.date < .now.formattedDate }.reduce(0) { $0 + $1.price }.decimalWithWon)"
+        title: "앞으로 나갈 고정 지출 (총 \(fixedExpenses.filter { $0.date > .now.formattedDate }.count)건)",
+        content: "- \(fixedExpenses.filter { $0.date > .now.formattedDate }.reduce(0) { $0 + $1.price }.decimalWithWon)"
       )
       .padding(.leading, 14)
       

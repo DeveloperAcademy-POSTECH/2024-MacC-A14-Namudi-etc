@@ -427,17 +427,28 @@ public final class BudgetUseCaseImpl: BudgetUseCase {
     let currentIncome = income ?? 0
     let diffIncome = currentIncome - previousIncome
     
-    // 5. DailyBudget 업데이트 (실제 지출, 수입 기록)
-    let newDailyBudget = try dailyBudgetRepository.updateTransaction(
+    // 5. 지출, 수입 입력 시점에 DailyBudget의 하루비가 nil인 경우, 기본 하루비로 저장
+    let harubee = salaryBudget.dailyBudgets[index].harubee ?? Int(salaryBudget.defaultHarubee)
+      
+    
+    // 6. DailyBudget 업데이트 (실제 지출, 수입 기록)
+//    let newDailyBudget = try dailyBudgetRepository.updateTransaction(
+//      salaryBudget.dailyBudgets[index].id,
+//      expense: currentExpense,
+//      income: currentIncome
+//    )
+    let newDailyBudget = try dailyBudgetRepository.updateDailyBudget(
       salaryBudget.dailyBudgets[index].id,
-      expense: currentExpense,
-      income: currentIncome
+      harubee: .set(harubee),
+      expence: .set(currentExpense),
+      income: .set(currentIncome),
+      memo: .keep
     )
     
-    // 6. 잔액 업데이트
+    // 7. 잔액 업데이트
     let newBalance = salaryBudget.balance - diffExpense + diffIncome
     
-    // 7. SalaryBudget 업데이트
+    // 8. SalaryBudget 업데이트
     let newSalaryBudget = try self.updateBalance(
       salaryBudget: salaryBudget,
       newBalance: newBalance

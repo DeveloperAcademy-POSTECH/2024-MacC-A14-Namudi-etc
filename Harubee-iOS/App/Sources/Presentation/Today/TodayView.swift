@@ -179,7 +179,7 @@ private struct Honeycomb: View {
     }
     .offset(x: honeycombSpace - hexgonSize/5, y: -hexgonSize/5)
     .sheet(isPresented: $isPresented) {
-      print("On Dismiss")
+      todayViewModel.send(.viewDidLoad)
     } content: {
       HarubeeAdjustView(
         viewModel: DIContainer.shared.makeHarubeeAdjustViewModel(
@@ -371,7 +371,7 @@ private struct TodayFooterView: View {
     .padding(.horizontal, 16)
     .background(Color.whiteDefault)
     .sheet(isPresented: $isPresented) {
-      print("On Dismiss")
+      todayViewModel.send(.viewDidLoad)
     } content: {
       TransactionInputView(
         viewModel: DIContainer.shared.makeTransactionInputViewModel(
