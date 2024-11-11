@@ -37,6 +37,7 @@ struct DailyCalendarView: View {
             ) {
               activeSheet = .harubeeAdjust
             }
+            .zIndex(2)
             .harubeeInfoBubble($infoBubbleVisible)
             
             TransactionSection(

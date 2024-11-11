@@ -31,8 +31,10 @@ struct PeriodlyCalendarView: View {
             year: budget.startDate.yearString,
             period: viewModel.periodTitle,
             periodDirectionState: viewModel.periodDirectionState,
-            onNavigate: handlePeriodDirection, infoBubbleVisible: $infoBubbleVisible
+            onNavigate: handlePeriodDirection,
+            infoBubbleVisible: $infoBubbleVisible
           )
+          .zIndex(1)
           
           CalendarContent(
             budget: budget,
