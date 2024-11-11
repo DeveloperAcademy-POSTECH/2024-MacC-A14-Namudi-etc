@@ -30,6 +30,8 @@ struct FixedExpenseManageView: View {
   @State private var fixedExpenseAmount: String
   
   @State private var isEnabled: Bool = false
+  
+  @StateObject private var keyboardObserver = KeyboardObserver()
 
   private let mode: Mode
   private let action: ((Int, String, String) -> Void)
@@ -54,7 +56,12 @@ struct FixedExpenseManageView: View {
         .font(.pretendardMedium_18)
         .padding(.top, 20)
       
-      BodyView(fixedExpenseName: $fixedExpenseName, fixedExpenseAmount: $fixedExpenseAmount, selectedDay: $selectedDay)
+      BodyView(
+        fixedExpenseName: $fixedExpenseName,
+        fixedExpenseAmount: $fixedExpenseAmount,
+        selectedDay: $selectedDay,
+        isKeyboardVisible: $keyboardObserver.isKeyboardVisible
+      )
         .padding(.top, 37)
       
       Spacer()
@@ -100,17 +107,42 @@ struct FixedExpenseManageView: View {
 
 private struct BodyView: View {
   
-  @Binding var fixedExpenseName: String
-  @Binding var fixedExpenseAmount: String
-  @Binding var selectedDay: Int
+  @Binding private var fixedExpenseName: String
+  @Binding private var fixedExpenseAmount: String
+  @Binding private var selectedDay: Int
+  @Binding private var isKeyboardVisible: Bool
+  
+  init(
+    fixedExpenseName: Binding<String>,
+    fixedExpenseAmount: Binding<String>,
+    selectedDay: Binding<Int>,
+    isKeyboardVisible: Binding<Bool>
+  ) {
+    self._fixedExpenseName = fixedExpenseName
+    self._fixedExpenseAmount = fixedExpenseAmount
+    self._selectedDay = selectedDay
+    self._isKeyboardVisible = isKeyboardVisible
+  }
   
   var body: some View {
     VStack(spacing: 20) {
-      DayPickerView(title: "날짜", titleFont: .view, selectedDay: $selectedDay)
+      DayPickerView(
+        title: "날짜",
+        titleFont: .view,
+        selectedDay: $selectedDay,
+        isKeyboardVisible: $isKeyboardVisible
+      )
       
-      FloatingTitleTextField(title: "이름", text: $fixedExpenseName)
+      FloatingTitleTextField(
+        title: "이름",
+        text: $fixedExpenseName
+      )
         .padding(.horizontal, 16)
-      FloatingTitleTextField(title: "금액", text: $fixedExpenseAmount)
+      
+      FloatingTitleTextField(
+        title: "금액",
+        text: $fixedExpenseAmount
+      )
         .padding(.horizontal, 16)
         .keyboardType(.numberPad)
     }

@@ -35,8 +35,11 @@ struct Onboarding4View: View {
         expenseAmount: $previousExpenseAmount
       )
       
-      
-      MainColorButton(title: "다음으로", isEnabled: $isEnabled, cornerRadius: 0) {
+      MainColorButton(
+        title: "다음으로",
+        isEnabled: $isEnabled,
+        cornerRadius: 0
+      ) {
         self.isPresented = true
       }
       
