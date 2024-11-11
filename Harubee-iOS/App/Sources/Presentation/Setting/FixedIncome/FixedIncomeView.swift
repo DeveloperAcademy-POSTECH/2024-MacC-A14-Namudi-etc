@@ -19,6 +19,8 @@ struct FixedIncomeView: View {
   @State private var isInfoBubbleVisible: Bool = false
   @State private var isAlertPresented: Bool = false
   
+  @StateObject private var keyboardObserver = KeyboardObserver()
+  
   private var settingViewModel: SettingViewModel
   
   init(
@@ -38,7 +40,8 @@ struct FixedIncomeView: View {
         BodyView(
           settingViewModel: settingViewModel,
           selectedDay: $selectedDay,
-          fixedIncomeAmount: $fixedIncomeAmount
+          fixedIncomeAmount: $fixedIncomeAmount,
+          isKeyboardVisible: $keyboardObserver.isKeyboardVisible
         )
         
         Spacer()
@@ -150,24 +153,29 @@ private struct BodyView: View {
   @State private var showingSheet: Bool = false
   @Binding private var selectedDay: Int
   @Binding private var fixedIncomeAmount: Int
+  @Binding private var isKeyboardVisible: Bool
   
   private var settingViewModel: SettingViewModel
   
   init(
     settingViewModel: SettingViewModel,
     selectedDay: Binding<Int>,
-    fixedIncomeAmount: Binding<Int>
+    fixedIncomeAmount: Binding<Int>,
+    isKeyboardVisible: Binding<Bool>
   ) {
     self.settingViewModel = settingViewModel
     self._selectedDay = selectedDay
     self._fixedIncomeAmount = fixedIncomeAmount
+    self._isKeyboardVisible = isKeyboardVisible
   }
   
   var body: some View {
     VStack(spacing: 30) {
-      DayPickerView(title: "주요 고정수입 날짜",
-                    titleFont: .view,
-                    selectedDay: $selectedDay
+      DayPickerView(
+        title: "주요 고정수입 날짜",
+        titleFont: .view,
+        selectedDay: $selectedDay,
+        isKeyboardVisible: $isKeyboardVisible
       )
       
       HStack(spacing: 0) {

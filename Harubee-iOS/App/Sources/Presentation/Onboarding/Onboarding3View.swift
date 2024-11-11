@@ -7,12 +7,36 @@
 //
 
 import SwiftUI
+import UIKit
 import Shared
 
 extension UIApplication {
   func endEditing() {
     sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
   }
+}
+
+class KeyboardObserver: ObservableObject {
+    @Published var isKeyboardVisible: Bool = false
+
+    init() {
+        // 키보드가 나타나는 경우
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
+        // 키보드가 사라지는 경우
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
+    }
+
+    @objc private func keyboardWillShow() {
+        isKeyboardVisible = true
+    }
+
+    @objc private func keyboardWillHide() {
+        isKeyboardVisible = false
+    }
+
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
 }
 
 struct Onboarding3View: View {
@@ -22,6 +46,8 @@ struct Onboarding3View: View {
   @State private var isEnabled: Bool
   @State private var incomeDay: Int
   @State private var incomeAmount: String
+  
+  @StateObject private var keyboardObserver = KeyboardObserver()
   
   init(viewModel: OnboardingViewModel) {
     self.viewModel = viewModel
@@ -35,11 +61,19 @@ struct Onboarding3View: View {
     VStack(spacing: 0) {
       OnboardingHeaderView()
       
-      OnboardingBodyView(incomeDay: $incomeDay, incomeAmount: $incomeAmount)
+      OnboardingBodyView(
+        incomeDay: $incomeDay,
+        incomeAmount: $incomeAmount,
+        isKeyboardVisible: $keyboardObserver.isKeyboardVisible
+      )
       
       Spacer()
       
-      MainColorButton(title: "다음으로", isEnabled: $isEnabled, cornerRadius: 10) {
+      MainColorButton(
+        title: "다음으로",
+        isEnabled: $isEnabled,
+        cornerRadius: 10
+      ) {
         self.isPresented = true
       }
       .padding(.horizontal, 16)
@@ -88,10 +122,16 @@ private struct OnboardingBodyView: View {
   
   @Binding private var incomeDay: Int
   @Binding private var incomeAmount: String
+  @Binding private var isKeyboardVisible: Bool
   
-  init(incomeDay: Binding<Int>, incomeAmount: Binding<String>) {
+  init(
+    incomeDay: Binding<Int>,
+    incomeAmount: Binding<String>,
+    isKeyboardVisible: Binding<Bool>
+  ) {
     self._incomeDay = incomeDay
     self._incomeAmount = incomeAmount
+    self._isKeyboardVisible = isKeyboardVisible
   }
   
   var body: some View {
@@ -99,7 +139,8 @@ private struct OnboardingBodyView: View {
       DayPickerView(
         title: "주요 수입일은 언제인가요?",
         titleFont: .onboarding,
-        selectedDay: $incomeDay
+        selectedDay: $incomeDay,
+        isKeyboardVisible: $isKeyboardVisible
       )
       .padding(.top, 34)
       

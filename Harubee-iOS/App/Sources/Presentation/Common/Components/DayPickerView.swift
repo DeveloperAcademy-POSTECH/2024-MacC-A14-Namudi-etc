@@ -26,14 +26,21 @@ enum TitleFont {
 struct DayPickerView: View {
   @State private var showDayPicker: Bool = false
   @Binding private var selectedDay: Int
+  @Binding private var isKeyboardVisible: Bool
   
   private let title: String
   private let titleFont: TitleFont
   
-  init(title: String, titleFont: TitleFont, selectedDay: Binding<Int>) {
+  init(
+    title: String,
+    titleFont: TitleFont,
+    selectedDay: Binding<Int>,
+    isKeyboardVisible: Binding<Bool>
+  ) {
     self.title = title
     self.titleFont = titleFont
     self._selectedDay = selectedDay
+    self._isKeyboardVisible = isKeyboardVisible
   }
   
   var body: some View {
@@ -43,9 +50,17 @@ struct DayPickerView: View {
           .font(titleFont.font)
           .foregroundStyle(Color.textBlack)
         Spacer()
-        DayPickerButton(showDayPicker: $showDayPicker, selectedDay: $selectedDay)
+        DayPickerButton(
+          showDayPicker: $showDayPicker,
+          selectedDay: $selectedDay
+        )
       }
       .padding(.horizontal, 20)
+      .onChange(of: isKeyboardVisible) { _, newValue in
+        if newValue {
+          showDayPicker = false
+        }
+      }
       
       if showDayPicker {
         Rectangle()
