@@ -93,8 +93,6 @@ final class OnboardingViewModel {
         fixedIncome: self.state.incomeAmount ?? 0,
         fixedExpenses: self.state.fixedExpenses
       )
-      
-      UserDefaults.standard.set(false, forKey: "isOnboarding")
     }
     
     self.state.averageHarubee = self.calculateAverageHarubee()

@@ -10,8 +10,12 @@ import SwiftUI
 import Shared
 
 struct Onboarding2View: View {
-  @Environment(OnboardingViewModel.self) private var viewModel
+  private var viewModel: OnboardingViewModel
   @State private var isPresented: Bool = false
+  
+  init(viewModel: OnboardingViewModel) {
+    self.viewModel = viewModel
+  }
   
   var body: some View {
     ZStack {
@@ -137,6 +141,5 @@ private struct CalculateContentView: View {
 }
 
 #Preview {
-  Onboarding2View()
-    .environment(DIContainer.shared.makeOnboardingViewModel())
+  Onboarding2View(viewModel: DIContainer.shared.makeOnboardingViewModel())
 }
