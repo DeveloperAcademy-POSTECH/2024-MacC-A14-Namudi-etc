@@ -11,7 +11,12 @@ import Shared
 import Lottie
 
 struct Onboarding1View: View {
+  @State private var viewModel: OnboardingViewModel
   @State var isPresented: Bool = false
+  
+  init(viewModel: OnboardingViewModel) {
+    self.viewModel = viewModel
+  }
   
   var body: some View {
     ZStack {
@@ -38,12 +43,12 @@ struct Onboarding1View: View {
       }
     }
     .navigationDestination(isPresented: $isPresented) {
-      Onboarding2View()
+      Onboarding2View(viewModel: viewModel)
         .navigationBarBackButtonHidden()
     }
   }
 }
 
 #Preview {
-  Onboarding1View()
+  Onboarding1View(viewModel: DIContainer.shared.makeOnboardingViewModel())
 }

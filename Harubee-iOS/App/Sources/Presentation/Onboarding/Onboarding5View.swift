@@ -49,7 +49,7 @@ struct Onboarding5View: View {
       viewModel.send(.updateFixedExpenses(fixedExpenses))
     })
     .navigationDestination(isPresented: $isPresented) {
-      Onboarding6View()
+      Onboarding6View(viewModel: viewModel)
         .navigationBarBackButtonHidden()
     }
   }

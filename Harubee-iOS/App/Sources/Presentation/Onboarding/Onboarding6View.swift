@@ -11,7 +11,11 @@ import Shared
 import Domain
 
 struct Onboarding6View: View {
-  @Environment(OnboardingViewModel.self) private var viewModel
+  private var viewModel: OnboardingViewModel
+  
+  init(viewModel: OnboardingViewModel) {
+    self.viewModel = viewModel
+  }
   
   var body: some View {
     ZStack {
@@ -149,7 +153,7 @@ private struct UserInfoView: View {
       
       UserInfoItemView(
         title: "고정 지출 (총 \(fixedExpenses.count)건)",
-        content: "- \(fixedExpenses.reduce(0) { $0 + $1.price }.decimalWithWon)"
+        content: "\(fixedExpenses.reduce(0) { $0 + $1.price }.decimalWithWon)"
       )
       
       UserInfoItemView(
@@ -189,6 +193,7 @@ private struct UserInfoItemView: View {
 }
 
 private struct OnboardingFooterView: View {
+  @Environment(AppRootManager.self) private var appRootManager
   let viewModel: OnboardingViewModel
   
   var body: some View {
@@ -199,6 +204,8 @@ private struct OnboardingFooterView: View {
       
       Button {
         viewModel.send(.finishOnboardingSetting)
+        
+        appRootManager.changeRootViewToToday()
       } label: {
         HStack {
           Text("하루비 시작하기")
@@ -220,6 +227,5 @@ private struct OnboardingFooterView: View {
 }
 
 #Preview {
-  Onboarding6View()
-    .environment(DIContainer.shared.makeOnboardingViewModel())
+  Onboarding6View(viewModel: DIContainer.shared.makeOnboardingViewModel())
 }

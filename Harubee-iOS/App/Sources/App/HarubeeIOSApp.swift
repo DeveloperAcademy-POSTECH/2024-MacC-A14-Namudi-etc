@@ -12,7 +12,7 @@ import Shared
 @main
 struct HarubeeIOSApp: App {
   
-  @AppStorage("isOnboarding") private var isOnboarding: Bool = true
+  @State private var appRootManager = AppRootManager()
   
   init() {
     Font.registerFont()
@@ -20,16 +20,16 @@ struct HarubeeIOSApp: App {
   
   var body: some Scene {
     WindowGroup {
-      if isOnboarding {
-        NavigationStack {
-          Onboarding1View()
-        }
-        .environment(DIContainer.shared.makeOnboardingViewModel())
-      } else {
-        NavigationStack {
+      NavigationStack {
+        switch appRootManager.root {
+        case .onboarding:
+          Onboarding1View(viewModel: DIContainer.shared.makeOnboardingViewModel())
+        case .today:
           TodayView(todayViewModel: DIContainer.shared.makeTodayViewModel())
         }
       }
+      .id(appRootManager.root)
+      .environment(appRootManager)
     }
   }
 }
