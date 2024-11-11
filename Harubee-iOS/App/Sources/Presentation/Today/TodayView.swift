@@ -16,6 +16,7 @@ struct TodayView: View {
   
   @State private var todayViewModel: TodayViewModel
   @State private var isInfoBubbleVisible = false
+  @State private var navigateToSettingView = false
   private var screenSize: CGRect
   
   init(todayViewModel: TodayViewModel) {
@@ -55,27 +56,29 @@ struct TodayView: View {
     }
     .toolbar {
       ToolbarItem(placement: .topBarTrailing) {
-        Button(action: {
-          isInfoBubbleVisible.toggle()
-        }, label: {
-          Image(systemName: "questionmark.circle")
-            .font(Font.system(size: 18, weight: .regular))
-            .foregroundStyle(Color.whiteDefault)
-        })
+        Image(systemName: "questionmark.circle")
+          .font(Font.system(size: 18, weight: .regular))
+          .foregroundStyle(Color.whiteDefault)
+          .tapFeedback {
+            isInfoBubbleVisible.toggle()
+          }
+          .padding(.trailing, 8)
       }
       
       ToolbarItem(placement: .topBarTrailing) {
-        NavigationLink {
-          SettingView(
-            settingViewModel: DIContainer.shared.makeSettingViewModel(
-              salaryBudget: todayViewModel.state.salaryBudget ?? SalaryBudget.default
+        Image(systemName: "gearshape")
+          .font(Font.system(size: 18, weight: .regular))
+          .foregroundStyle(Color.whiteDefault)
+          .navigationDestination(isPresented: $navigateToSettingView) {
+            SettingView(
+              settingViewModel: DIContainer.shared.makeSettingViewModel(
+                salaryBudget: todayViewModel.state.salaryBudget ?? SalaryBudget.default
+              )
             )
-          )
-        } label: {
-          Image(systemName: "gearshape")
-            .font(Font.system(size: 18, weight: .regular))
-            .foregroundStyle(Color.whiteDefault)
-        }
+          }
+          .tapFeedback {
+            navigateToSettingView = true
+          }
       }
     }
     .navigationBarStyle(.clear(title: "", backTitle: ""))
@@ -353,10 +356,9 @@ private struct TodayFooterView: View {
       
       CalendarStreakView(todayViewModel: todayViewModel, isInfoBubbleVisible: $isInfoBubbleVisible)
       
-      MainColorButton(title: "실제 지출 및 수입 입력하기") {
+      MainColorButton(title: "실제 지출 및 수입 입력하기", cornerRadius: 10) {
         self.isPresented = true
       }
-      .clipShape(RoundedRectangle(cornerRadius: 10))
       .infoBubble(isVisible: $isInfoBubbleVisible) {
         VStack(alignment: .leading, spacing: 2) {
           Text("실제 지출 및 수입을 매일 입력해야")
@@ -530,7 +532,7 @@ private struct StreakCell: View {
       ViewThatFits {
         Text(dailyStreak.date.koreanShortDateString)
           .font(.pretendardSemibold_12)
-          
+        
         Text(dailyStreak.date.koreanShortDateString)
           .font(.customFont(weight: .semiBold, size: 11))
       }
@@ -541,7 +543,7 @@ private struct StreakCell: View {
         ViewThatFits {
           Text(dailyStreak.harubee.decimal)
             .font(.pretendardMedium_12)
-            
+          
           Text(dailyStreak.harubee.decimal)
             .font(.pretendardMedium_11)
         }.padding(.vertical, 5)

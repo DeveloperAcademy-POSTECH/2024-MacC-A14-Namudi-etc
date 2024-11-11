@@ -37,7 +37,8 @@ struct FixedIncomeModifyView: View {
       
       MainColorButton(
         title: "완료하기",
-        isEnabled: .constant(true)
+        isEnabled: .constant(true),
+        cornerRadius: 0
       ) {
         action(fixedIncomeAmount)
         dismiss()
