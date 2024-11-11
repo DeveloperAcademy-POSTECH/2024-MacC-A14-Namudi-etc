@@ -52,9 +52,7 @@ struct FixedExpenseManageView: View {
   
   var body: some View {
     VStack(spacing: 0) {
-      Text("고정지출 내역 \(mode.title)")
-        .font(.pretendardMedium_18)
-        .padding(.top, 20)
+      BottomSheetHeaderView(title: "고정지출 내역 \(mode.title)")
       
       BodyView(
         fixedExpenseName: $fixedExpenseName,
