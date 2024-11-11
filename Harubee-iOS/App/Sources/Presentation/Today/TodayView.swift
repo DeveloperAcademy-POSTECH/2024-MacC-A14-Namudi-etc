@@ -445,7 +445,7 @@ private struct CalendarStreakView: View {
         StreakGroupView(streaks: firstStreakGroup)
         
         ZStack {
-          RoundedRectangle(cornerRadius: 10)
+          RoundedRectangle(cornerRadius: 8)
             .fill(Color.whiteDeep50)
             .stroke(Color.mainBright, lineWidth: 2)
             .foregroundStyle(Color.whiteDeep50)
@@ -491,7 +491,7 @@ private struct StreakGroupView: View {
   
   var body: some View {
     ZStack {
-      RoundedRectangle(cornerRadius: 10)
+      RoundedRectangle(cornerRadius: 8)
         .foregroundStyle(Color.whiteDeep50)
         .frame(maxWidth: .infinity, maxHeight: 72)
       HStack {
