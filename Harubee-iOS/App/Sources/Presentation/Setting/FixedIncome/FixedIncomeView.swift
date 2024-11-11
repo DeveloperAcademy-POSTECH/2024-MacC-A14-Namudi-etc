@@ -190,10 +190,11 @@ private struct BodyView: View {
           HStack(spacing: 2) {
             Text(fixedIncomeAmount.decimalWithWon)
               .font(.pretendardMedium_20)
+              .foregroundStyle(Color.textBlack)
             Image(systemName: "pencil")
               .frame(width: 21, height: 24)
+              .foregroundStyle(Color.textBlack30)
           }
-          .foregroundStyle(Color.textBlack)
         }
         .sheet(isPresented: $showingSheet) {
           FixedIncomeModifyView(
