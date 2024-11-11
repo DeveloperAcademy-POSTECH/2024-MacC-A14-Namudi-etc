@@ -14,4 +14,5 @@ public extension Image {
   static let hexagonNone = Image(.hexagonNone)
   static let hexagonGood = Image(.hexagonGood)
   static let hexagonBad = Image(.hexagonBad)
+  static let reset = Image(.reset)
 }

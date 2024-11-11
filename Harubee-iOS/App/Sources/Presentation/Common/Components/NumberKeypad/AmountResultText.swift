@@ -46,7 +46,10 @@ struct AmountResultText: View {
       Button {
         self.resetAction()
       } label: {
-        Image(systemName: "arrow.trianglehead.counterclockwise")
+//        Image(systemName: "arrow.trianglehead.counterclockwise")
+        Image.reset
+          .resizable()
+          .frame(width: 40, height: 40)
           .font(.system(size: 32, weight: .bold))
       }
     }
