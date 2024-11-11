@@ -213,8 +213,7 @@ private struct HarubeeHexagon: View {
     
     self.isTodayHarubee = isTodayHarubee
     self.hexgonSize = hexgonSize
-    self.fillPercentage = todayViewModel.state.todayAverageHarubeePercentage
-    
+    self.fillPercentage = isTodayHarubee ? todayViewModel.state.todayHarubeePercentage : todayViewModel.state.todayAverageHarubeePercentage
     self._isInfoBubbleVisible = isInfoBubbleVisible
   }
   
