@@ -74,8 +74,7 @@ struct FixedIncomeView: View {
         }
       }
       .frame(maxHeight: .infinity, alignment: .top)
-      .navigationTitle("고정수입 관리")
-      .navigationBarTitleDisplayMode(.inline)
+      .navigationBarStyle(.white(title: "고정수입 관리", backTitle: "뒤로"))
       
       if isInfoBubbleVisible {
         Color.clear

@@ -49,8 +49,7 @@ struct SettingView: View {
         SettingFooterView()
       }
     }
-    .navigationBarTitle("설정")
-    .navigationBarTitleDisplayMode(.inline)
+    .navigationBarStyle(.white(title: "설정", backTitle: "뒤로"))
     .font(.pretendardMedium_18)
     .foregroundStyle(Color.textBlack)
   }
