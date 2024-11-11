@@ -46,7 +46,8 @@ struct DailyCalendarView: View {
               infoBubbleVisible: $infoBubbleVisible,
               onIncomeEdit: { activeSheet = .transactionIncome },
               onExpenseEdit: { activeSheet = .transactionExpense }
-            ).zIndex(1)
+            )
+            .zIndex(1)
             
             MemoSection(
               memos: budget.memo,
@@ -153,7 +154,7 @@ private struct HarubeeSection: View {
         .frame(height: 53)
       
       HStack {
-        Text("하루비")
+        Text(budget.date.isToday ? "오늘의 하루비" : "이 날의 하루비")
           .font(.pretendardSemibold_16)
           .foregroundStyle(Color.textBlack)
         
@@ -181,35 +182,36 @@ private struct TransactionSection: View {
   let onExpenseEdit: () -> Void
   
   var body: some View {
-    VStack(spacing: 6) {
-      HStack(spacing: 9) {
-        TransactionCard(
-          title: "수입",
-          amount: budget.income,
-          style: .constant,
-          action: onIncomeEdit
-        )
+    if budget.date <= Date().formattedDate {
+      VStack(spacing: 0) {
+        HStack(spacing: 9) {
+          TransactionCard(
+            title: "수입",
+            amount: budget.income,
+            style: .constant,
+            action: onIncomeEdit
+          )
+          
+          TransactionCard(
+            title: "지출",
+            amount: budget.expense,
+            style: transactionStyle,
+            action: onExpenseEdit
+          )
+        }
+        .frame(height: 84)
         
-        TransactionCard(
-          title: "지출",
-          amount: budget.expense,
-          style: transactionStyle,
-          action: onExpenseEdit
-        )
+        if let expense = budget.expense {
+          ComparisonLabel(
+            expense: expense,
+            harubee: budget.harubee ?? defaultHarubee
+          )
+        }
       }
-      .frame(height: 84)
-      
-      if let expense = budget.expense {
-        ComparisonLabel(
-          expense: expense,
-          harubee: budget.harubee ?? defaultHarubee
-        )
-      }
+      .padding(.horizontal, 16)
+      .padding(.bottom, 6)
+      .transactionInfoBubble($infoBubbleVisible)
     }
-    .padding(.horizontal, 16)
-    .padding(.top, 16)
-    .transactionInfoBubble($infoBubbleVisible)
-    .disabled(!budget.date.isToday)
   }
   
   private var transactionStyle: TransactionStyle {
@@ -308,7 +310,6 @@ private struct MemoSection: View {
       Rectangle()
         .fill(Color.textBlack5)
         .frame(height: 6)
-        .padding(.top, 26)
       
       VStack(alignment: .leading, spacing: 16) {
         HStack {
@@ -334,7 +335,7 @@ private struct MemoSection: View {
           if memos.isEmpty {
             Text("입력된 메모가 없어요")
               .font(.pretendardMedium_16)
-              .foregroundStyle(Color.textBright)
+              .foregroundStyle(Color.textBlack30)
               .padding(.vertical, 8)
           } else {
             MemoList(
@@ -466,10 +467,10 @@ private extension View {
       .background(
         Color.clear
           .infoBubble(isVisible: isVisible, alignment: .bottom) {
-        Text("실제 수입과 지출을 입력할 수 있어요")
-          .font(.pretendardMedium_12)
-          .foregroundStyle(Color.textBlack)
-      })
+            Text("실제 수입과 지출을 입력할 수 있어요")
+              .font(.pretendardMedium_12)
+              .foregroundStyle(Color.textBlack)
+          })
   }
   
   func memoInfoBubble(_ isVisible: Binding<Bool>) -> some View {

@@ -45,7 +45,8 @@ struct FixedIncomeView: View {
         
         MainColorButton(
           title: "저장하기",
-          isEnabled: $isUpdated
+          isEnabled: $isUpdated,
+          cornerRadius: 10
         ) {
           if isDayUpdated {
             isAlertPresented = true
@@ -54,7 +55,6 @@ struct FixedIncomeView: View {
             dismiss()
           }
         }
-        .clipShape(RoundedRectangle(cornerRadius: 10))
         .padding(.bottom, 9)
         .padding(.horizontal, 16)
       }

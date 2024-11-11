@@ -31,7 +31,7 @@ struct Onboarding1View: View {
         
         Spacer()
         
-        MainColorButton(title: "시작하기") {
+        MainColorButton(title: "시작하기", cornerRadius: 0) {
           self.isPresented = true
         }
         .padding(.bottom, 9)

@@ -61,12 +61,12 @@ struct FixedExpenseManageView: View {
       
       MainColorButton(
         title: "저장하기",
-        isEnabled: $isEnabled
+        isEnabled: $isEnabled,
+        cornerRadius: 10
       ) {
         self.action(selectedDay, fixedExpenseName, fixedExpenseAmount)
         self.dismiss()
       }
-      .clipShape(RoundedRectangle(cornerRadius: 10))
       .padding(.horizontal, 16)
       .padding(.bottom, 9)
     }

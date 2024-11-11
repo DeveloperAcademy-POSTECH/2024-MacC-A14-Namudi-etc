@@ -32,11 +32,6 @@ struct ReturnToTodayButton: View {
         .background(
           Capsule()
             .fill(Color.mainBright)
-            .shadow(
-              color: .black.opacity(0.15),
-              radius: 4,
-              y: 2
-            )
         )
       }
       .padding(.bottom, 14)

@@ -39,12 +39,9 @@ struct Onboarding5View: View {
       
       Spacer()
       
-      MainColorButton(title: "다음으로") {
+      MainColorButton(title: "다음으로", cornerRadius: 10) {
         self.isPresented = true
       }
-      .clipShape(
-        RoundedRectangle(cornerRadius: 10)
-      )
       .padding(.horizontal, 16)
       .padding(.bottom, 9)
     }

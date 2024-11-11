@@ -55,7 +55,8 @@ struct HarubeeAdjustView: View {
       
       MainColorButton(
         title: "저장하기",
-        isEnabled: $isEnabled
+        isEnabled: $isEnabled,
+        cornerRadius: 0
       ) {
         self.isAlert = true
       }
