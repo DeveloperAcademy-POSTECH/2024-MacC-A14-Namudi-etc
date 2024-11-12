@@ -534,7 +534,7 @@ private struct StreakCell: View {
           .font(.pretendardSemibold_12)
         
         Text(dailyStreak.date.koreanShortDateString)
-          .font(.customFont(weight: .semiBold, size: 11))
+          .font(.pretendardSemibold_11)
       }
       .foregroundStyle(Color.textBright)
       .frame(width: 33, height: 14)
