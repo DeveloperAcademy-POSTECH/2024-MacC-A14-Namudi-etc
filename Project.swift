@@ -37,53 +37,11 @@ let project = Project(
           "UILaunchStoryboardName": "LaunchScreen",
         ]
       ),
-      sources: ["Harubee-iOS/App/Sources/**"],
-      resources: ["Harubee-iOS/App/Resources/**"],
+      sources: ["Harubee-iOS/Sources/**"],
+      resources: ["Harubee-iOS/Resources/**"],
       dependencies: [
-        .target(name: "Domain"),
-        .target(name: "Data"),
-        .target(name: "Shared"),
         .external(name: "Lottie")
       ]
-    ),
-    
-      .target(
-        name: "Shared",
-        destinations: [.iPhone],
-        product: .framework,
-        bundleId: "etc.namudi.harubee-shared",
-        deploymentTargets: .iOS("17.0"),
-        infoPlist: .default,
-        sources: ["Harubee-iOS/Shared/Sources/**"],
-        resources: ["Harubee-iOS/Shared/Resources/**"],
-        dependencies: []
-      ),
-    
-      .target(
-        name: "Domain",
-        destinations: [.iPhone],
-        product: .framework,
-        bundleId: "etc.namudi.harubee-domain",
-        deploymentTargets: .iOS("17.0"),
-        infoPlist: .default,
-        sources: ["Harubee-iOS/Domain/Sources/**"],
-        dependencies: [
-          .target(name: "Shared")
-        ]
-      ),
-    
-      .target(
-        name: "Data",
-        destinations: [.iPhone],
-        product: .framework,
-        bundleId: "etc.namudi.harubee-data",
-        deploymentTargets: .iOS("17.0"),
-        infoPlist: .default,
-        sources: ["Harubee-iOS/Data/Sources/**"],
-        dependencies: [
-          .target(name: "Domain"),
-          .target(name: "Shared")
-        ]
-      )
+    )
   ]
 )
