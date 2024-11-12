@@ -48,9 +48,6 @@ struct FixedIncomeModifyView: View {
       NumberKeypadView(expression: $fixedIncomeAmount) { isEnabled in
         print("Done")
       }
-        .padding(.top, 26)
-        .padding(.horizontal, 16)
-        .padding(.bottom, 31)
     }
     .ignoresSafeArea()
   }

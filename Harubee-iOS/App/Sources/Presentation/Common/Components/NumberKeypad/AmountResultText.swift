@@ -24,9 +24,9 @@ struct AmountResultText: View {
   
   var body: some View {
     
-    HStack(spacing: 6) {
+    HStack(alignment: .center, spacing: 6) {
       
-      HStack(alignment: .firstTextBaseline, spacing: 0) {
+      HStack(alignment: .lastTextBaseline, spacing: 0) {
         ViewThatFits {
           Text(numberText.isEmpty ? "-" : numberText)
             .font(.pretendardSemibold_40)
@@ -50,7 +50,6 @@ struct AmountResultText: View {
         Image.reset
           .resizable()
           .frame(width: 40, height: 40)
-          .font(.system(size: 32, weight: .bold))
       }
     }
     .frame(maxWidth: .infinity, alignment: .trailing)
@@ -59,7 +58,7 @@ struct AmountResultText: View {
 }
 
 #Preview {
-  AmountResultText(numberText: .constant("1234567890")) {
+  AmountResultText(numberText: .constant("999999999999999")) {
     
   }
 }

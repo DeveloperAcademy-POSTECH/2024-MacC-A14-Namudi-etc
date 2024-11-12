@@ -9,6 +9,10 @@
 import Foundation
 
 struct CalculatorLogic {
+  
+  private let expressionMaxLength = 15
+  private let maxNumber = 99_999_999
+  
   // MARK: - func processKeypad
   func processKeypad(
     _ keypadType: KeypadButtonType,
@@ -46,24 +50,19 @@ struct CalculatorLogic {
     expression: String
   ) -> String {
     
+    // 기존 연산식의 길이가 최대치에 달했을 경우
+    if expression.count + keypadType.title.count >= expressionMaxLength {
+      return expression
+    }
+    
     let operators = KeypadButtonType.operators.map { $0.title }
     let zeros = KeypadButtonType.zeros.map { $0.title }
     
     var newExpression = expression
     let lastText = String(newExpression.last ?? Character(" "))
   
-    // Case 1. 연산자가 눌린 경우
-    if operators.contains(keypadType.title) {
-    
-      // 마지막 텍스트가 빈 문자열, 0, 연산자가 모두 아닐 경우에 추가
-      if !(newExpression.isEmpty
-           || zeros.contains(lastText)
-           || operators.contains(lastText)) {
-        newExpression += keypadType.title
-      }
-      
-    // Case 2. 0이 눌린 경우
-    } else if zeros.contains(keypadType.title) {
+    // Case 1. 0이 눌린 경우
+    if zeros.contains(keypadType.title) {
       
       // 현재 표현식이 0이 아니고, 마지막 텍스트가 연산자가 아닐 경우에 0 추가
       if !(newExpression == KeypadButtonType.zero.title
@@ -71,7 +70,7 @@ struct CalculatorLogic {
         newExpression += keypadType.title
       }
       
-    // Case 3. 숫자가 눌린 경우
+    // Case 2. 숫자가 눌린 경우
     } else {
       
       // 현재 표현식이 0인 경우 입력된 키패드 숫자로 표시
@@ -96,6 +95,11 @@ struct CalculatorLogic {
     
     // 기존 표현식이 빈 문자열이면 리턴
     if expression.isEmpty { return "" }
+    
+    // 기존 연산식의 길이가 최대치에 달했을 경우
+    if expression.count >= expressionMaxLength {
+      return expression
+    }
     
     // 표현식의 마지막 텍스트
     let lastText = expression[expression.count - 1]
@@ -182,7 +186,7 @@ struct CalculatorLogic {
       )
     }
     
-    return before.decimal
+    return before < maxNumber ? before.decimal : maxNumber.decimal
   }
   
   // MARK: - processExpression
