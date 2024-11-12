@@ -16,18 +16,18 @@
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="HarubeeLaunch" translatesAutoresizingMaskIntoConstraints="NO" id="gbm-f8-kXg">
-                                <rect key="frame" x="161.66666666666666" y="383" width="70" height="70"/>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Harubeelaunch" translatesAutoresizingMaskIntoConstraints="NO" id="gbm-f8-kXg">
+                                <rect key="frame" x="161.66666666666666" y="376" width="70" height="100"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="70" id="JeV-qh-b7Y"/>
-                                    <constraint firstAttribute="height" constant="70" id="uDK-Pu-uF4"/>
+                                    <constraint firstAttribute="height" constant="100" id="uDK-Pu-uF4"/>
                                 </constraints>
                             </imageView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="Bcu-3y-fUS"/>
                         <color key="backgroundColor" name="Main"/>
                         <constraints>
-                            <constraint firstItem="gbm-f8-kXg" firstAttribute="top" secondItem="Bcu-3y-fUS" secondAttribute="top" constant="324" id="rCE-k2-Nte"/>
+                            <constraint firstItem="gbm-f8-kXg" firstAttribute="centerY" secondItem="Ze5-6b-2t3" secondAttribute="centerY" id="ZyO-MR-TFs"/>
                             <constraint firstItem="gbm-f8-kXg" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="zT4-r3-OsE"/>
                         </constraints>
                     </view>
@@ -38,7 +38,7 @@
         </scene>
     </scenes>
     <resources>
-        <image name="HarubeeLaunch" width="210" height="210"/>
+        <image name="Harubeelaunch" width="105" height="150"/>
         <namedColor name="Main">
             <color red="0.34509803921568627" green="0.28627450980392155" blue="0.89411764705882357" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
         </namedColor>
