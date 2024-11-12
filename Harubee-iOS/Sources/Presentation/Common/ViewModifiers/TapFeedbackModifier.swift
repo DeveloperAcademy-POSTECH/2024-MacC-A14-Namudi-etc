@@ -57,6 +57,33 @@ struct TapFeedbackModifier: ViewModifier {
   }
 }
 
+// MARK: - View Extension
+extension View {
+  func tapFeedback(
+    scale: CGFloat = 0.95,
+    duration: TimeInterval = 0.1,
+    animation: Animation = .spring(response: 0.2, dampingFraction: 0.6),
+    backgroundColor: Color = .clear,
+    tappedBackgroundColor: Color = Color.textBright.opacity(0.1),
+    haptic: HapticType = .tap,
+    action: @escaping () -> Void
+  ) -> some View {
+    modifier(
+      TapFeedbackModifier(
+        config: TapConfig(
+          scale: scale,
+          duration: duration,
+          animation: animation,
+          backgroundColor: backgroundColor,
+          tappedBackgroundColor: tappedBackgroundColor,
+          haptic: haptic
+        ),
+        action: action
+      )
+    )
+  }
+}
+
 // MARK: - Tap Configuration
 struct TapConfig {
   let scale: CGFloat
@@ -83,32 +110,5 @@ struct TapConfig {
     self.tappedBackgroundColor = tappedBackgroundColor
     self.rectangleRadius = rectangleRadius
     self.haptic = haptic
-  }
-}
-
-// MARK: - View Extension
-extension View {
-  func tapFeedback(
-    scale: CGFloat = 0.95,
-    duration: TimeInterval = 0.1,
-    animation: Animation = .spring(response: 0.2, dampingFraction: 0.6),
-    backgroundColor: Color = .clear,
-    tappedBackgroundColor: Color = Color.textBright.opacity(0.1),
-    haptic: HapticType = .tap,
-    action: @escaping () -> Void
-  ) -> some View {
-    modifier(
-      TapFeedbackModifier(
-        config: TapConfig(
-          scale: scale,
-          duration: duration,
-          animation: animation,
-          backgroundColor: backgroundColor,
-          tappedBackgroundColor: tappedBackgroundColor,
-          haptic: haptic
-        ),
-        action: action
-      )
-    )
   }
 }

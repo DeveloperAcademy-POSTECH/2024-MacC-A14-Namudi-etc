@@ -27,7 +27,7 @@ struct PeriodlyCalendarView: View {
       VStack(spacing: 0) {
         if let budget = viewModel.state.currentBudget {
           CalendarHeader(
-            year: budget.startDate.yearString,
+            year: budget.startDate.formattedDateToString(.year_kr),
             period: viewModel.periodTitle,
             periodDirectionState: viewModel.periodDirectionState,
             onNavigate: handlePeriodDirection,

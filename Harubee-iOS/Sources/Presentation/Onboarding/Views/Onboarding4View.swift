@@ -96,7 +96,7 @@ private struct OnboardingBodyView: View {
   private let startDate: String
   
   init(startDate: Date, expenseAmount: Binding<String>) {
-    self.startDate = startDate.formattedDateToString(.Md)
+    self.startDate = startDate.formattedDateToString(.monthDay_kr)
     self._expenseAmount = expenseAmount
   }
   

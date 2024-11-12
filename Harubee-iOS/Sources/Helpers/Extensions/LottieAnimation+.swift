@@ -15,3 +15,7 @@ extension LottieAnimation {
     bundle: Bundle.main
   )
 }
+
+struct LottieName {
+  static let onboarding = "onboarding"
+}

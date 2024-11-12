@@ -152,7 +152,7 @@ private struct FixedExpensesListView: View {
         List {
           ForEach(fixedExpenses, id: \.id) { item in
             HStack(spacing: 0) {
-              Text("매달 \(item.date.formattedDateToString(.d))")
+              Text("매달 \(item.date.formattedDateToString(.day_kr))")
                 .font(.pretendardMedium_16)
                 .foregroundStyle(Color.textBlack)
                 .padding(.vertical, 6)

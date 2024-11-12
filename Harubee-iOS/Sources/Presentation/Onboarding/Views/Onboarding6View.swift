@@ -145,7 +145,7 @@ private struct UserInfoView: View {
       )
       
       UserInfoItemView(
-        title: "수입일(\(startDate.formattedDateToString(.Md))) 이후 지출한 금액",
+        title: "수입일(\(startDate.formattedDateToString(.monthDay_kr))) 이후 지출한 금액",
         content: "- \(previousExpense.decimalWithWon)"
       )
       
