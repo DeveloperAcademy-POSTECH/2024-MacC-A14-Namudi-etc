@@ -12,6 +12,6 @@ import Lottie
 extension LottieAnimation {
   static let onboarding = LottieAnimation.named(
     LottieName.onboarding,
-    bundle: .shared!
+    bundle: Bundle.main
   )
 }
