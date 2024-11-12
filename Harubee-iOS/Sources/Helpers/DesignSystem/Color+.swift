@@ -9,7 +9,7 @@
 import Foundation
 import SwiftUI
 
-public extension Color {
+extension Color {
   static let main = Color(.main)
   static let main10 = Color(.main10)
   static let main30 = Color(.main30)

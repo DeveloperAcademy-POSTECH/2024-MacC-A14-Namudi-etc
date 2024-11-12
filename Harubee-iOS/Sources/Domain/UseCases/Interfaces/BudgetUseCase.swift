@@ -8,12 +8,12 @@
 
 import Foundation
 
-public enum FromDate {
+enum FromDate {
   case now
   case tomorrow
 }
 
-public protocol BudgetUseCase {
+protocol BudgetUseCase {
   
   func createSalaryBudgetFromOnboarding(
     startDate: Date,

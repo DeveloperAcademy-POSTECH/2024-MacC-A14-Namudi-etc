@@ -22,7 +22,7 @@ struct NumberKeypadView: View {
     [.zero, .doubleZero, .tripleZero, .done]
   ]
   
-  public init(
+  init(
     expression: Binding<String>,
     buttonAction: @escaping (Bool) -> Void
   ) {
@@ -30,7 +30,7 @@ struct NumberKeypadView: View {
     self.buttonAction = buttonAction
   }
   
-  public var body: some View {
+  var body: some View {
     VStack(spacing: 2) {
       ForEach(keypads, id: \.self) { rowKeypads in
         NumberKeypadRowView(

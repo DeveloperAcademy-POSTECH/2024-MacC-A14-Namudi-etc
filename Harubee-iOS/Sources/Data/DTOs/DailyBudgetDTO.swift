@@ -10,7 +10,7 @@ import Foundation
 import SwiftData
 
 @Model
-public final class DailyBudgetDTO {
+final class DailyBudgetDTO {
   @Attribute(.unique) var identifier: String
   var date: Date
   var harubee: Int?
@@ -18,7 +18,7 @@ public final class DailyBudgetDTO {
   var expense: Int?
   var income: Int?
   
-  public init(
+  init(
     id: String,
     date: Date,
     harubee: Int? = nil,
@@ -34,7 +34,7 @@ public final class DailyBudgetDTO {
     self.income = income
   }
   
-  public convenience init(_ data: DailyBudget) {
+  convenience init(_ data: DailyBudget) {
     self.init(
       id: data.id,
       date: data.date,
@@ -47,7 +47,7 @@ public final class DailyBudgetDTO {
 }
 
 extension DailyBudgetDTO {
-  public func toEntity() -> DailyBudget {
+  func toEntity() -> DailyBudget {
     return DailyBudget(
       id: self.identifier,
       date: self.date,

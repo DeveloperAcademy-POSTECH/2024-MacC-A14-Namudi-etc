@@ -8,7 +8,7 @@
 
 import Foundation
 
-public protocol DailyBudgetRepository {
+protocol DailyBudgetRepository {
   
   /// DB에서 특정 날짜에 해당하는 DailyBudget을 가져옵니다.
   /// - Parameter date: 날짜

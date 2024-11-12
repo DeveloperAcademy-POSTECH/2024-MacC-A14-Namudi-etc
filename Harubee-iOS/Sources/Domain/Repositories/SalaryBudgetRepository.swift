@@ -8,7 +8,7 @@
 
 import Foundation
 
-public protocol SalaryBudgetRepository {
+protocol SalaryBudgetRepository {
   
   /// SalaryBudget을 DB에 저장합니다.
   /// - Parameter salaryBudget: 저장할 SalaryBudget

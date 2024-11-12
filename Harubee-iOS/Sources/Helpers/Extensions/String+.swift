@@ -8,7 +8,7 @@
 
 import Foundation
 
-public extension String {
+extension String {
   subscript(index: Int) -> Self {
     get {
       let index = self.index(self.startIndex, offsetBy: index)

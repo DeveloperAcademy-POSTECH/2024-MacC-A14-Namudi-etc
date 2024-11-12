@@ -7,7 +7,8 @@
 //
 
 import Foundation
-public extension Date {
+
+extension Date {
   private var configuredCalendar: Calendar {
     var calendar = Calendar.current
     calendar.locale = .current
@@ -54,7 +55,7 @@ public extension Date {
 }
 
 // MARK: - Date Operations
-public extension Date {
+extension Date {
   /// 년, 월, 일 값만 사용하기 위한 Date 형식 - [Ex. 2024-10-31 15:00:00 +0000]
   var formattedDate: Date {
     let dateComponent = configuredCalendar.dateComponents([.year, .month, .day], from: self)
@@ -108,7 +109,7 @@ public extension Date {
   }
 }
 
-public enum DateFormatType: String {
+enum DateFormatType: String {
   case yyyyMMddE = "yyyy년 MM월 dd일 (E)"
   case Md = "M월 d일"
   case d = "d일"
