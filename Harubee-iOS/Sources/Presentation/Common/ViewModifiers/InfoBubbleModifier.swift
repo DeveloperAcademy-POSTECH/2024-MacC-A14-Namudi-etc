@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-struct InfoBubble<Label: View>: ViewModifier {
+struct InfoBubbleModifier<Label: View>: ViewModifier {
 
   @State private var contentSize: CGSize = .zero
   @State private var labelSize: CGSize = .zero
@@ -31,9 +31,12 @@ struct InfoBubble<Label: View>: ViewModifier {
     content
       .background(
         GeometryReader { contentProxy in
-          Color.clear.preference(key: ContentSizeKey.self,
-                                 value: CGSize(width: contentProxy.size.width,
-                                               height: contentProxy.size.height))
+          Color.clear.preference(
+            key: ContentSizeKey.self,
+            value: CGSize(
+              width: contentProxy.size.width,
+              height: contentProxy.size.height)
+          )
         }
       )
       .onPreferenceChange(ContentSizeKey.self) { newSize in
@@ -46,9 +49,12 @@ struct InfoBubble<Label: View>: ViewModifier {
             .padding(10)
             .background(
               GeometryReader { labelProxy in
-                Color.clear.preference(key: LabelSizeKey.self,
-                                       value: CGSize(width: labelProxy.size.width,
-                                                     height: labelProxy.size.height))
+                Color.clear.preference(
+                  key: LabelSizeKey.self,
+                  value: CGSize(
+                    width: labelProxy.size.width,
+                    height: labelProxy.size.height)
+                )
               }
             )
             .background(
@@ -69,16 +75,28 @@ struct InfoBubble<Label: View>: ViewModifier {
         Image(systemName: "triangle.fill")
           .resizable()
           .frame(width: 20, height: 14)
-          .rotationEffect(.degrees([.bottom, .bottomLeading, .bottomTrailing].contains(alignment) ? 0 : 180))
+          .rotationEffect(
+            .degrees(
+              [.bottom, .bottomLeading, .bottomTrailing].contains(alignment) ? 0 : 180
+            )
+          )
           .foregroundStyle(Color.whiteDefault)
-          .offset(y: [.bottom, .bottomLeading, .bottomTrailing].contains(alignment) ? contentSize.height / 2 + spacing : -contentSize.height / 2 - spacing)
+          .offset(
+            y: [.bottom, .bottomLeading, .bottomTrailing].contains(alignment)
+            ? contentSize.height / 2 + spacing
+            : -contentSize.height / 2 - spacing
+          )
           .opacity(isVisible ? 1 : 0)
           .scaleEffect(isVisible ? 1 : 0)
           .animation(.spring(duration: 0.2), value: isVisible)
           .mask(
             Rectangle()
               .frame(height: 13)
-              .offset(y: [.bottom, .bottomLeading, .bottomTrailing].contains(alignment) ? contentSize.height / 2 + spacing - 6 : -contentSize.height / 2 - spacing + 6)
+              .offset(
+                y: [.bottom, .bottomLeading, .bottomTrailing].contains(alignment)
+                ? contentSize.height / 2 + spacing - 6
+                : -contentSize.height / 2 - spacing + 6
+              )
           )
       )
   }
@@ -110,23 +128,12 @@ struct InfoBubble<Label: View>: ViewModifier {
 
 
 extension View {
-  func infoBubble<Label: View>(isVisible: Binding<Bool>,
-                                      alignment: Alignment = .center,
-                                      @ViewBuilder label: @escaping () -> Label) -> some View {
-    modifier(InfoBubble(isVisible: isVisible, alignment: alignment, label: label))
+  func infoBubble<Label: View>(
+    isVisible: Binding<Bool>,
+    alignment: Alignment = .center,
+    @ViewBuilder label: @escaping () -> Label
+  ) -> some View {
+    modifier(InfoBubbleModifier(isVisible: isVisible, alignment: alignment, label: label))
   }
 }
 
-struct LabelSizeKey: PreferenceKey {
-  static var defaultValue: CGSize { .zero }
-  static func reduce(value: inout CGSize, nextValue: () -> CGSize) {
-    value = nextValue()
-  }
-}
-
-struct ContentSizeKey: PreferenceKey {
-  static var defaultValue: CGSize { .zero }
-  static func reduce(value: inout CGSize, nextValue: () -> CGSize) {
-    value = nextValue()
-  }
-}

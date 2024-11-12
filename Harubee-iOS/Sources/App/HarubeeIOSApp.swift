@@ -13,10 +13,6 @@ struct HarubeeIOSApp: App {
   
   @State private var appRootManager = AppRootManager()
   
-  init() {
-//    Font.registerFont()
-  }
-  
   var body: some Scene {
     WindowGroup {
       NavigationStack {
