@@ -8,7 +8,7 @@
 
 import Foundation
 
-public final class BudgetUseCaseImpl: BudgetUseCase {
+final class BudgetUseCaseImpl: BudgetUseCase {
   
   private let salaryBudgetRepository: SalaryBudgetRepository
   private let dailyBudgetRepository: DailyBudgetRepository
@@ -16,7 +16,7 @@ public final class BudgetUseCaseImpl: BudgetUseCase {
   
   private let calendar: Calendar = .current
   
-  public init(
+  init(
     salaryBudgetRepository: SalaryBudgetRepository,
     dailyBudgetRepository: DailyBudgetRepository,
     userDefaultsRepository: UserDefaultsRepository
@@ -27,7 +27,7 @@ public final class BudgetUseCaseImpl: BudgetUseCase {
   }
   
   @discardableResult
-  public func createSalaryBudgetFromOnboarding(
+  func createSalaryBudgetFromOnboarding(
     startDate: Date,
     endDate: Date,
     previousExpense: Int?,
@@ -96,7 +96,7 @@ public final class BudgetUseCaseImpl: BudgetUseCase {
   }
   
   @discardableResult
-  public func createSalaryBudget(
+  func createSalaryBudget(
     startDate: Date,
     endDate: Date,
     fixedIncome: Int,
@@ -163,11 +163,11 @@ public final class BudgetUseCaseImpl: BudgetUseCase {
     return salaryBudget
   }
   
-  public func getAllSalaryBudget() throws -> [SalaryBudget] {
+  func getAllSalaryBudget() throws -> [SalaryBudget] {
     return try salaryBudgetRepository.readAll()
   }
   
-  public func getCurrentSalaryBudget(
+  func getCurrentSalaryBudget(
     date: Date?
   ) throws -> SalaryBudget {
     let targetDate = (date ?? Date()).formattedDate
@@ -178,7 +178,7 @@ public final class BudgetUseCaseImpl: BudgetUseCase {
     return salaryBudget
   }
   
-  public func getSalaryBudget(
+  func getSalaryBudget(
     startDate: Date?
   ) throws -> SalaryBudget {
     // 1. date 포멧 변경
@@ -194,7 +194,7 @@ public final class BudgetUseCaseImpl: BudgetUseCase {
   
   
   // TODO: updateBalance와 updateDefaultHarubee 분리 필요
-  public func updateBalance(
+  func updateBalance(
     salaryBudget: SalaryBudget,
     newBalance: Int,
     from date: FromDate = .now
@@ -218,7 +218,7 @@ public final class BudgetUseCaseImpl: BudgetUseCase {
     )
   }
   
-  public func updateDefaultHarubee(
+  func updateDefaultHarubee(
     salaryBudget: SalaryBudget
   ) throws -> SalaryBudget {
     let newDefaultHarubee = self.calculateDefaultHarubee(
@@ -232,7 +232,7 @@ public final class BudgetUseCaseImpl: BudgetUseCase {
   }
   
   
-  public func updateFixedIncome(
+  func updateFixedIncome(
     salaryBudget: SalaryBudget,
     newIncome: Int
   ) throws -> SalaryBudget {
@@ -271,7 +271,7 @@ public final class BudgetUseCaseImpl: BudgetUseCase {
     }
   }
   
-  public func updateFixedExpenses(
+  func updateFixedExpenses(
     salaryBudget: SalaryBudget,
     expenses: [TransactionItem]
   ) throws -> SalaryBudget {
@@ -319,7 +319,7 @@ public final class BudgetUseCaseImpl: BudgetUseCase {
     }
   }
   
-  public func calculateDefaultHarubee(
+  func calculateDefaultHarubee(
     salaryBudget: SalaryBudget,
     from date: FromDate = .now
   ) -> Double {
@@ -343,7 +343,7 @@ public final class BudgetUseCaseImpl: BudgetUseCase {
     return nilCount == 0.0 ? newBalance : newBalance / nilCount
   }
   
-  public func calculateAverageHarubee(endDate: Date, balance: Int) -> Double {
+  func calculateAverageHarubee(endDate: Date, balance: Int) -> Double {
     let currentDate = calendar.date(
       from:calendar.dateComponents(
         [.year, .month, .day],
@@ -357,7 +357,7 @@ public final class BudgetUseCaseImpl: BudgetUseCase {
   }
   
   
-  public func getDailyBudget(
+  func getDailyBudget(
     date: Date
   ) throws -> DailyBudget {
     // 1. 오늘에 해당하는 DailyBudget 찾기
@@ -369,7 +369,7 @@ public final class BudgetUseCaseImpl: BudgetUseCase {
     return budget
   }
   
-  public func adjustHarubee(
+  func adjustHarubee(
     amount: Int?,
     date: Date,
     salaryBudget: SalaryBudget
@@ -404,7 +404,7 @@ public final class BudgetUseCaseImpl: BudgetUseCase {
   }
   
   
-  public func recordTransaction(
+  func recordTransaction(
     expense: Int?,
     income: Int?,
     date: Date,
@@ -467,7 +467,7 @@ public final class BudgetUseCaseImpl: BudgetUseCase {
   }
   
   
-  public func updateMemoList(
+  func updateMemoList(
     memoList: [String],
     dailyBudget: DailyBudget
   ) throws -> DailyBudget {
@@ -479,7 +479,7 @@ public final class BudgetUseCaseImpl: BudgetUseCase {
   }
   
   
-  public func setIncomeDay(
+  func setIncomeDay(
     day: Int,
     salaryBudget: SalaryBudget
   ) throws -> SalaryBudget {
@@ -532,8 +532,7 @@ public final class BudgetUseCaseImpl: BudgetUseCase {
   }
   
   
-  public func getIncomeDay(
-  ) throws -> Int {
+  func getIncomeDay() throws -> Int {
     
     // 1. 월급일을 가져오고 저장된 월급일이 없으면 기본값 1로 설정하기
     guard let incomeDay = userDefaultsRepository.readIncomeDay() else {

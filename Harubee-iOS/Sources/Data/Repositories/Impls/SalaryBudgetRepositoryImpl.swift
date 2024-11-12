@@ -9,22 +9,22 @@
 import Foundation
 import SwiftData
 
-public final class SalaryBudgetRepositoryImpl: SalaryBudgetRepository {
+final class SalaryBudgetRepositoryImpl: SalaryBudgetRepository {
   
   private let modelContext: ModelContext
   
-  public init(modelContext: ModelContext) {
+  init(modelContext: ModelContext) {
     self.modelContext = modelContext
   }
   
-  public func create(_ salaryBudget: SalaryBudget) {
+  func create(_ salaryBudget: SalaryBudget) {
     print("Impl:", #function)
     
     let model = SalaryBudgetDTO(salaryBudget)
     modelContext.insert(model)
   }
   
-  public func readAll() throws -> [SalaryBudget] {
+  func readAll() throws -> [SalaryBudget] {
     print("Impl:", #function)
     
     let sort = SortDescriptor(\SalaryBudgetDTO.startDate, order: .forward)
@@ -38,7 +38,7 @@ public final class SalaryBudgetRepositoryImpl: SalaryBudgetRepository {
     }
   }
   
-  public func readByTargetDateContaining(_ targetDate: Date) throws -> SalaryBudget? {
+  func readByTargetDateContaining(_ targetDate: Date) throws -> SalaryBudget? {
     print("Impl:", #function)
     
     let predicate = #Predicate<SalaryBudgetDTO> { $0.startDate <= targetDate && $0.endDate >= targetDate }
@@ -52,7 +52,7 @@ public final class SalaryBudgetRepositoryImpl: SalaryBudgetRepository {
     }
   }
   
-  public func readByStartDate(_ startDate: Date) throws -> SalaryBudget? {
+  func readByStartDate(_ startDate: Date) throws -> SalaryBudget? {
     print("Impl:", #function)
     
     let predicate = #Predicate<SalaryBudgetDTO> { $0.startDate == startDate }
@@ -67,7 +67,7 @@ public final class SalaryBudgetRepositoryImpl: SalaryBudgetRepository {
   }
   
   @discardableResult
-  public func updateSalaryBudget(
+  func updateSalaryBudget(
     _ id: String,
     fixedIncome: UpdateValue<Int> = .keep,
     fixedExpenses: UpdateValue<[TransactionItem]> = .keep,
@@ -92,7 +92,7 @@ public final class SalaryBudgetRepositoryImpl: SalaryBudgetRepository {
   }
   
   @discardableResult
-  public func updateFixedIncome(
+  func updateFixedIncome(
     _ id: String,
     fixedIncome: Int
   ) throws -> SalaryBudget{
@@ -105,7 +105,7 @@ public final class SalaryBudgetRepositoryImpl: SalaryBudgetRepository {
   }
   
   @discardableResult
-  public func updateFixedExpenses(
+  func updateFixedExpenses(
     _ id: String,
     fixedExpenses: [TransactionItem]
   ) throws -> SalaryBudget{
@@ -119,7 +119,7 @@ public final class SalaryBudgetRepositoryImpl: SalaryBudgetRepository {
   }
   
   @discardableResult
-  public func updateBalance(_ id: String, balance: Int) throws -> SalaryBudget{
+  func updateBalance(_ id: String, balance: Int) throws -> SalaryBudget{
     print("Impl:", #function)
     
     guard let model = try readById(id) else { throw SwiftDataError.modelNotFound }
@@ -129,7 +129,7 @@ public final class SalaryBudgetRepositoryImpl: SalaryBudgetRepository {
   }
   
   @discardableResult
-  public func updateDefaultHarubee(
+  func updateDefaultHarubee(
     _ id: String,
     defaultHarubee: Double
   ) throws -> SalaryBudget{
@@ -141,7 +141,7 @@ public final class SalaryBudgetRepositoryImpl: SalaryBudgetRepository {
     return model.toEntity()
   }
   
-  public func deleteById(_ id: String) throws {
+  func deleteById(_ id: String) throws {
     print("Impl:", #function)
 
     guard let model = try readById(id) else { return }

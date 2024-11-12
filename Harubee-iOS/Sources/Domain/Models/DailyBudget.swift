@@ -8,15 +8,15 @@
 
 import Foundation
 
-public struct DailyBudget: Identifiable {
-  public let id: String
-  public let date: Date
-  public var harubee: Int?
-  public var memo: [String]
-  public var expense: Int?
-  public var income: Int?
+struct DailyBudget: Identifiable {
+  let id: String
+  let date: Date
+  var harubee: Int?
+  var memo: [String]
+  var expense: Int?
+  var income: Int?
   
-  public init(
+  init(
     id: String = UUID().uuidString,
     date: Date,
     harubee: Int? = nil,
@@ -32,7 +32,7 @@ public struct DailyBudget: Identifiable {
     self.income = income
   }
   
-  public static var `default`: DailyBudget {
+  static var `default`: DailyBudget {
     .init(
       date: .init(),
       harubee: nil,

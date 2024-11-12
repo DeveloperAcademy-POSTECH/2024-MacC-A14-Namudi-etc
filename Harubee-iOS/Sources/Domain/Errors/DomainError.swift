@@ -9,14 +9,14 @@
 import Foundation
 
 /// 도메인 계층에서 발생할 수 있는 오류들을 정의합니다.
-public enum DomainError: LocalizedError {
+enum DomainError: LocalizedError {
   case invalidDateRange
   case dateOutOfRange
   case invalidAmount
   case duplicateData
   case dataNotFound
   
-  public var errorDescription: String? {
+  var errorDescription: String? {
     switch self {
     case .invalidDateRange:
       return "시작일이 종료일보다 늦을 수 없습니다"
@@ -31,7 +31,7 @@ public enum DomainError: LocalizedError {
     }
   }
   
-  public var failureReason: String? {
+  var failureReason: String? {
     switch self {
     case .invalidDateRange:
       return "예산 기간의 시작일은 종료일보다 이전이어야 합니다"
@@ -46,7 +46,7 @@ public enum DomainError: LocalizedError {
     }
   }
   
-  public var recoverySuggestion: String? {
+  var recoverySuggestion: String? {
     switch self {
     case .invalidDateRange:
       return "시작일과 종료일을 다시 확인해주세요"

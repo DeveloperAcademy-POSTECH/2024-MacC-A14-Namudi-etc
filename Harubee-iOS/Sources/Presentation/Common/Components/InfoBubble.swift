@@ -110,7 +110,7 @@ struct InfoBubble<Label: View>: ViewModifier {
 
 
 extension View {
-  public func infoBubble<Label: View>(isVisible: Binding<Bool>,
+  func infoBubble<Label: View>(isVisible: Binding<Bool>,
                                       alignment: Alignment = .center,
                                       @ViewBuilder label: @escaping () -> Label) -> some View {
     modifier(InfoBubble(isVisible: isVisible, alignment: alignment, label: label))

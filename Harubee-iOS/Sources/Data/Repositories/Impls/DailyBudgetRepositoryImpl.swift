@@ -10,15 +10,15 @@ import Foundation
 import SwiftData
 
 
-public final class DailyBudgetRepositoryImpl: DailyBudgetRepository {
+final class DailyBudgetRepositoryImpl: DailyBudgetRepository {
   
   private let modelContext: ModelContext
   
-  public init(modelContext: ModelContext) {
+  init(modelContext: ModelContext) {
     self.modelContext = modelContext
   }
   
-  public func readByDate(_ date: Date) throws -> DailyBudget? {
+  func readByDate(_ date: Date) throws -> DailyBudget? {
     print("Impl:", #function)
     
     let predicate = #Predicate<DailyBudgetDTO> { $0.date == date }
@@ -32,7 +32,7 @@ public final class DailyBudgetRepositoryImpl: DailyBudgetRepository {
   }
   
   @discardableResult
-  public func updateDailyBudget(
+  func updateDailyBudget(
     _ id: String,
     harubee: UpdateValue<Int?> = .keep,
     expence: UpdateValue<Int?> = .keep,
@@ -52,7 +52,7 @@ public final class DailyBudgetRepositoryImpl: DailyBudgetRepository {
   }
   
   @discardableResult
-  public func updateHarubee(_ id: String, harubee: Int?) throws -> DailyBudget {
+  func updateHarubee(_ id: String, harubee: Int?) throws -> DailyBudget {
     print("Impl:", #function)
     
     guard let model = try readById(id) else { throw SwiftDataError.modelNotFound }
@@ -62,7 +62,7 @@ public final class DailyBudgetRepositoryImpl: DailyBudgetRepository {
   }
   
   @discardableResult
-  public func updateTransaction(
+  func updateTransaction(
     _ id: String,
     expense: Int?,
     income: Int?
@@ -77,7 +77,7 @@ public final class DailyBudgetRepositoryImpl: DailyBudgetRepository {
   }
   
   @discardableResult
-  public func updateMemo(_ id: String, memo: [String]) throws -> DailyBudget {
+  func updateMemo(_ id: String, memo: [String]) throws -> DailyBudget {
     print("Impl:", #function)
     
     guard let model = try readById(id) else { throw SwiftDataError.modelNotFound }

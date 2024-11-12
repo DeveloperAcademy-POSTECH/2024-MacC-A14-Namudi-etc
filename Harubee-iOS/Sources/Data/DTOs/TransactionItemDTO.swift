@@ -10,13 +10,13 @@ import Foundation
 import SwiftData
 
 @Model
-public final class TransactionItemDTO {
+final class TransactionItemDTO {
   @Attribute(.unique) var identifier: String
   var date: Date
   var name: String
   var price: Int
   
-  public init(
+  init(
     id: String,
     date: Date,
     name: String,
@@ -28,7 +28,7 @@ public final class TransactionItemDTO {
     self.price = price
   }
   
-  public convenience init(_ data: TransactionItem) {
+  convenience init(_ data: TransactionItem) {
     self.init(
       id: data.id,
       date: data.date,
@@ -39,7 +39,7 @@ public final class TransactionItemDTO {
 }
 
 extension TransactionItemDTO {
-  public func toEntity() -> TransactionItem {
+  func toEntity() -> TransactionItem {
     return TransactionItem(
       id: self.identifier,
       date: self.date,

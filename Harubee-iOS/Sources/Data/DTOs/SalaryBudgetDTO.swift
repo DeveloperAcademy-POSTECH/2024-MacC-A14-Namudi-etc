@@ -10,7 +10,7 @@ import Foundation
 import SwiftData
 
 @Model
-public final class SalaryBudgetDTO {
+final class SalaryBudgetDTO {
   @Attribute(.unique) var identifier: String
   var startDate: Date
   var endDate: Date
@@ -20,7 +20,7 @@ public final class SalaryBudgetDTO {
   var defaultHarubee: Double
   @Relationship(deleteRule: .cascade) var dailyBudgets: [DailyBudgetDTO]
   
-  public init(
+  init(
     id: String,
     startDate: Date,
     endDate: Date,
@@ -40,7 +40,7 @@ public final class SalaryBudgetDTO {
     self.dailyBudgets = dailyBudgets.map { DailyBudgetDTO($0) }
   }
   
-  public convenience init(_ data: SalaryBudget) {
+  convenience init(_ data: SalaryBudget) {
     self.init(
       id: data.id,
       startDate: data.startDate,
@@ -55,7 +55,7 @@ public final class SalaryBudgetDTO {
 }
 
 extension SalaryBudgetDTO {
-  public func toEntity() -> SalaryBudget {
+  func toEntity() -> SalaryBudget {
     return SalaryBudget(
       id: self.identifier,
       startDate: self.startDate,

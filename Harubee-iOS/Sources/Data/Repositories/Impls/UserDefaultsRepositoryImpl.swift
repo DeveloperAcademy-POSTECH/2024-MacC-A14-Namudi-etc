@@ -8,22 +8,22 @@
 
 import Foundation
 
-public final class UserDefaultsRepositoryImpl: UserDefaultsRepository {
+final class UserDefaultsRepositoryImpl: UserDefaultsRepository {
   private enum Keys {
     static let incomeDay = "income_day"
   }
   
   private let userDefaults: UserDefaults
   
-  public init(userDefaults: UserDefaults = .standard) {
+  init(userDefaults: UserDefaults = .standard) {
     self.userDefaults = userDefaults
   }
   
-  public func saveIncomeDay(_ day: Int) throws {
+  func saveIncomeDay(_ day: Int) throws {
     userDefaults.set(day, forKey: Keys.incomeDay)
   }
   
-  public func readIncomeDay() -> Int? {
+  func readIncomeDay() -> Int? {
     userDefaults.object(forKey: Keys.incomeDay) as? Int
   }
 }

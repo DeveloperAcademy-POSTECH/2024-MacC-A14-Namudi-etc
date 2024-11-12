@@ -8,7 +8,7 @@
 
 import Foundation
 
-public enum UpdateValue<T> {
+enum UpdateValue<T> {
   case set(T)
   case keep
 }

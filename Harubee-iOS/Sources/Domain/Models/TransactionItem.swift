@@ -8,13 +8,13 @@
 
 import Foundation
 
-public struct TransactionItem: Identifiable, Equatable {
-  public let id: String
-  public var date: Date
-  public var name: String
-  public var price: Int
+struct TransactionItem: Identifiable, Equatable {
+  let id: String
+  var date: Date
+  var name: String
+  var price: Int
   
-  public init(
+  init(
     id: String = UUID().uuidString,
     date: Date,
     name: String,

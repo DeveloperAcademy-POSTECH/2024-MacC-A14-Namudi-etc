@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-public extension Image {
+extension Image {
   static let harubeeMain = Image(.harubeeMain)
   static let harubeeWhite = Image(.harubeeWhite)
   static let hexagonNone = Image(.hexagonNone)

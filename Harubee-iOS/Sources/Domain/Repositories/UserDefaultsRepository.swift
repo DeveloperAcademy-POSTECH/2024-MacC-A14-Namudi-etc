@@ -8,7 +8,7 @@
 
 import Foundation
 
-public protocol UserDefaultsRepository {
+protocol UserDefaultsRepository {
   
   /// UserDefaults에 월급일을 저장합니다.
   /// - Parameter day: 저장할 월급일(1-31)

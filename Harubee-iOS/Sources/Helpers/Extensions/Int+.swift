@@ -8,7 +8,7 @@
 
 import Foundation
 
-public extension Int {
+extension Int {
   
   /// 정수를 decimal 형태로 변환해줍니다 - [Ex. 12,300]
   var decimal: String {
