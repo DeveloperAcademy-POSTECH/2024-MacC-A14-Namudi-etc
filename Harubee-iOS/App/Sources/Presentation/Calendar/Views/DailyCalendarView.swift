@@ -215,10 +215,10 @@ private struct TransactionSection: View {
             expense: expense,
             harubee: budget.harubee ?? defaultHarubee
           )
+          .padding(.top, 6)
         }
       }
       .padding(.horizontal, 16)
-      .padding(.bottom, 6)
       .transactionInfoBubble($infoBubbleVisible)
     }
   }
