@@ -90,7 +90,7 @@ private struct CurrentHarubeeView: View {
         .padding(.horizontal, 4)
       
       HStack(alignment: .bottom, spacing: 4) {
-        Image.harubeeWhite
+        Image(.harubeeWhite)
           .resizable()
           .frame(width: 24, height: 24)
           .padding(.bottom, 5)

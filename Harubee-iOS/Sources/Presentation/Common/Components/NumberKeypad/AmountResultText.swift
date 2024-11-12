@@ -45,7 +45,7 @@ struct AmountResultText: View {
       Button {
         self.resetAction()
       } label: {
-        Image.reset
+        Image(.reset)
           .resizable()
           .frame(width: 40, height: 40)
       }
