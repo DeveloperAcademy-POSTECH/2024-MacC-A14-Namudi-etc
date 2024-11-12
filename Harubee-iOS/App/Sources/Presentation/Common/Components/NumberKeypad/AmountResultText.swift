@@ -24,7 +24,7 @@ struct AmountResultText: View {
   
   var body: some View {
     
-    HStack(alignment: .center, spacing: 6) {
+    HStack(alignment: .bottom, spacing: 6) {
       
       HStack(alignment: .lastTextBaseline, spacing: 0) {
         ViewThatFits {
@@ -46,11 +46,11 @@ struct AmountResultText: View {
       Button {
         self.resetAction()
       } label: {
-//        Image(systemName: "arrow.trianglehead.counterclockwise")
         Image.reset
           .resizable()
           .frame(width: 40, height: 40)
       }
+      .padding(.bottom, 4)
     }
     .frame(maxWidth: .infinity, alignment: .trailing)
     .foregroundStyle(Color.main)
