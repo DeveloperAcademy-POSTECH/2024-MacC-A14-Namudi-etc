@@ -150,7 +150,10 @@ private struct HarubeeSection: View {
   var body: some View {
     ZStack {
       RoundedRectangle(cornerRadius: 5)
-        .stroke(Color.mainBright, lineWidth: 1)
+        .stroke(
+          budget.date >= Date().formattedDate ? Color.mainBright : Color.textBrighter,
+          lineWidth: 1
+        )
         .frame(height: 53)
       
       HStack {
@@ -160,8 +163,14 @@ private struct HarubeeSection: View {
         
         Text("\(budget.harubee ?? defaultHarubee)원")
           .font(.pretendardSemibold_18)
-          .foregroundStyle(Color.main)
+          .foregroundStyle(budget.date >= Date().formattedDate ? Color.main : Color.textBlack)
           .frame(maxWidth: .infinity, alignment: .trailing)
+        
+        if budget.date >= Date().formattedDate {
+          Image(systemName: "pencil")
+            .font(.custom("SF Pro", size: 16))
+            .foregroundStyle(Color.mainBright)
+        }
       }
       .padding(.horizontal, 14)
     }
