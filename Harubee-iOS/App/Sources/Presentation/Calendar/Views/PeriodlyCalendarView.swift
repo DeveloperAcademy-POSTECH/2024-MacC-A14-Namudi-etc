@@ -104,7 +104,6 @@ private struct CalendarHeader: View {
     }
     .frame(maxWidth: .infinity)
     .frame(height: 82)
-    .padding(.horizontal, 30)
     .background(Color.main)
     .foregroundStyle(Color.whiteDefault)
     
@@ -117,7 +116,7 @@ private struct CalendarHeader: View {
   }
   
   private var periodDirection: some View {
-    HStack(alignment: .center, spacing: 38) {
+    HStack(alignment: .center, spacing: 8) {
       PeriodDirectionButton(
         direction: .previous,
         isEnabled: periodDirectionState.canMovePrevious,
@@ -125,6 +124,7 @@ private struct CalendarHeader: View {
       )
       
       periodLabel
+        .frame(width: 160)
       
       PeriodDirectionButton(
         direction: .next,
