@@ -110,7 +110,7 @@ final class CalendarViewModel {
   // MARK: - Private Methods
   private func handleLoadInitialData() {
     do {
-      allSalaryBudgets = try loadTestBudgets()
+      allSalaryBudgets = try loadBudgets()
       let today = Date().formattedDate
       
       guard let currentBudget = allSalaryBudgets.first(where: { $0.contains(date: today) })
