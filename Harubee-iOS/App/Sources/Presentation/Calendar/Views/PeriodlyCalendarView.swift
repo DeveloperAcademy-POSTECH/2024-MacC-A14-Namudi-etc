@@ -150,7 +150,7 @@ private struct PeriodDirectionButton: View {
   var body: some View {
     Image(systemName: direction.imageName)
       .font(.system(size: 16))
-      .opacity(isEnabled ? 1 : 0)
+      .foregroundStyle(isEnabled ? Color.whiteDefault : Color.textBrighter30)
       .frame(width: 44, height: 44)
       .contentShape(Rectangle())
       .tapFeedback {
