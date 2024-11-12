@@ -1,0 +1,175 @@
+//
+//  Onboarding3View.swift
+//  Harubee-iOS
+//
+//  Created by Seo-Jooyoung on 11/1/24.
+//  Copyright © 2024 namudiEtc. All rights reserved.
+//
+
+import SwiftUI
+import UIKit
+
+extension UIApplication {
+  func endEditing() {
+    sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+  }
+}
+
+@Observable
+final class KeyboardObserver {
+    var isKeyboardVisible: Bool = false
+
+    init() {
+        // 키보드가 나타나는 경우
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
+        // 키보드가 사라지는 경우
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
+    }
+
+    @objc private func keyboardWillShow() {
+        isKeyboardVisible = true
+    }
+
+    @objc private func keyboardWillHide() {
+        isKeyboardVisible = false
+    }
+
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
+}
+
+struct Onboarding3View: View {
+  private var viewModel: OnboardingViewModel
+  
+  @State private var isPresented: Bool = false
+  @State private var isEnabled: Bool
+  @State private var incomeDay: Int
+  @State private var incomeAmount: String
+  
+  @State private var keyboardObserver = KeyboardObserver()
+  
+  init(viewModel: OnboardingViewModel) {
+    self.viewModel = viewModel
+    self._incomeDay = .init(initialValue: viewModel.state.incomeDay)
+    self._incomeAmount = .init(initialValue: viewModel.state.incomeAmount?.decimal ?? "")
+    
+    self._isEnabled = .init(initialValue: viewModel.state.incomeAmount == nil ? false : true)
+  }
+  
+  var body: some View {
+    VStack(spacing: 0) {
+      OnboardingHeaderView()
+      
+      OnboardingBodyView(
+        incomeDay: $incomeDay,
+        incomeAmount: $incomeAmount,
+        isKeyboardVisible: $keyboardObserver.isKeyboardVisible
+      )
+      
+      Spacer()
+      
+      MainColorButton(
+        title: "다음으로",
+        isEnabled: $isEnabled,
+        cornerRadius: 10
+      ) {
+        self.isPresented = true
+      }
+      .padding(.horizontal, 16)
+      .padding(.bottom, 9)
+    }
+    .contentShape(Rectangle())
+    .onTapGesture {
+      UIApplication.shared.endEditing()
+    }
+    .onChange(of: incomeAmount, { _, _ in
+      viewModel.send(.updateFixedIncomeAmount(incomeAmount.numberFormat ?? 0))
+      self.isEnabled = true
+    })
+    .onChange(of: incomeDay, { _, _ in
+      viewModel.send(.updateFixedIncomeDay(incomeDay))
+    })
+    .navigationDestination(isPresented: $isPresented) {
+      Onboarding4View(viewModel: viewModel)
+        .navigationBarBackButtonHidden()
+    }
+  }
+}
+
+private struct OnboardingHeaderView: View {
+  var body: some View {
+    VStack(spacing: 28) {
+      OnboardingNavigationHeaderView(onboardingPage: .first)
+      
+      VStack(alignment: .leading, spacing: 6) {
+        Text("먼저, 하루비를 계산하기 위한")
+        Text("기본 정보를 입력해주세요")
+      }
+      .frame(maxWidth: .infinity, alignment: .leading)
+      .font(.pretendardSemibold_24)
+      .foregroundStyle(Color.whiteDefault)
+    }
+    .padding(.horizontal, 20)
+    .padding(.bottom, 30)
+    .background(
+      Rectangle().fill(Color.main).ignoresSafeArea()
+    )
+  }
+}
+
+private struct OnboardingBodyView: View {
+  
+  @Binding private var incomeDay: Int
+  @Binding private var incomeAmount: String
+  @Binding private var isKeyboardVisible: Bool
+  
+  init(
+    incomeDay: Binding<Int>,
+    incomeAmount: Binding<String>,
+    isKeyboardVisible: Binding<Bool>
+  ) {
+    self._incomeDay = incomeDay
+    self._incomeAmount = incomeAmount
+    self._isKeyboardVisible = isKeyboardVisible
+  }
+  
+  var body: some View {
+    VStack(spacing: 30) {
+      DayPickerView(
+        title: "주요 수입일은 언제인가요?",
+        titleFont: .onboarding,
+        selectedDay: $incomeDay,
+        isKeyboardVisible: $isKeyboardVisible
+      )
+      .padding(.top, 34)
+      
+      VStack(alignment: .leading, spacing: 0) {
+        Text("한 달의 수입금은 얼마인가요?")
+          .font(.pretendardMedium_20)
+          .foregroundStyle(Color.textBlack)
+        
+        Text("*입력하신 정보는 수입 기간 동안의 하루비를 계산할 때만 사용됩니다")
+          .font(.pretendardMedium_12)
+          .foregroundStyle(Color.textBlack30)
+          .padding(.top, 6)
+        
+        FloatingTitleTextField(
+          title: "금액",
+          text: $incomeAmount
+        )
+        .padding(.top, 14)
+        .keyboardType(.numberPad)
+      }
+      .padding(.horizontal, 20)
+      
+    }
+    .onChange(of: incomeAmount) { oldValue, newValue in
+      incomeAmount = (incomeAmount.numberFormat ?? 0).decimal
+    }
+  }
+}
+
+#Preview {
+  Onboarding3View(viewModel: DIContainer.shared.makeOnboardingViewModel())
+}

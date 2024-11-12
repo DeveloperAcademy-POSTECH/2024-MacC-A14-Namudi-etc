@@ -1,0 +1,60 @@
+//
+//  DailyBudgetDTO.swift
+//  Harubee-iOS
+//
+//
+//  Copyright © 2024 namudiEtc. All rights reserved.
+//
+
+import Foundation
+import SwiftData
+
+@Model
+public final class DailyBudgetDTO {
+  @Attribute(.unique) var identifier: String
+  var date: Date
+  var harubee: Int?
+  var memo: [String]
+  var expense: Int?
+  var income: Int?
+  
+  public init(
+    id: String,
+    date: Date,
+    harubee: Int? = nil,
+    memo: [String],
+    expense: Int? = nil,
+    income: Int? = nil
+  ) {
+    self.identifier = id
+    self.date = date
+    self.harubee = harubee
+    self.memo = memo
+    self.expense = expense
+    self.income = income
+  }
+  
+  public convenience init(_ data: DailyBudget) {
+    self.init(
+      id: data.id,
+      date: data.date,
+      harubee: data.harubee,
+      memo: data.memo,
+      expense: data.expense,
+      income: data.income
+    )
+  }
+}
+
+extension DailyBudgetDTO {
+  public func toEntity() -> DailyBudget {
+    return DailyBudget(
+      id: self.identifier,
+      date: self.date,
+      harubee: self.harubee,
+      memo: self.memo,
+      expense: self.expense,
+      income: self.income
+    )
+  }
+}
