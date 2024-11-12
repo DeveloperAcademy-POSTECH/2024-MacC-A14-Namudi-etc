@@ -35,7 +35,7 @@ struct SettingView: View {
           }
           
           SettingItem(title: "고정수입 관리",
-                      previewText: "매달 \(settingViewModel.state.salaryBudget?.startDate.formattedDateToString(.d) ?? "1일") / \(settingViewModel.state.salaryBudget?.fixedIncome.decimalWithWon ?? "")")
+                      previewText: "매달 \(settingViewModel.state.salaryBudget?.startDate.formattedDateToString(.day_kr) ?? "1일") / \(settingViewModel.state.salaryBudget?.fixedIncome.decimalWithWon ?? "")")
           .onTapGesture {
             navigateFixedIncome = true
           }

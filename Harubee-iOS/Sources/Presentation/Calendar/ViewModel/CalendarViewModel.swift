@@ -67,7 +67,7 @@ final class CalendarViewModel {
   
   var periodTitle: String {
     state.currentBudget.map { budget in
-      "\(budget.startDate.monthDayString) - \(budget.endDate.monthDayString)"
+      "\(budget.startDate.formattedDateToString(.monthDay_dot)) - \(budget.endDate.formattedDateToString(.monthDay_dot))"
     } ?? ""
   }
   
@@ -204,11 +204,6 @@ final class CalendarViewModel {
   // MARK: - Helper Methods
   private func loadBudgets() throws -> [SalaryBudget] {
     let budgets = try budgetUseCase.getAllSalaryBudget()
-    return budgets.sorted { $0.startDate < $1.startDate }
-  }
-  
-  private func loadTestBudgets() throws -> [SalaryBudget] {
-    let budgets = try SampleDataGenerator.createMultipleSampleBudgets(withError: false)
     return budgets.sorted { $0.startDate < $1.startDate }
   }
   

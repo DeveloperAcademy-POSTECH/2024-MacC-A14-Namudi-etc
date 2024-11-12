@@ -8,12 +8,6 @@
 
 import SwiftUI
 
-extension View {
-  func navigationBarStyle(_ style: NavigationBarStyle) -> some View {
-    modifier(NavigationBarStyleModifier(style: style))
-  }
-}
-
 struct NavigationBarStyleModifier: ViewModifier {
   let style: NavigationBarStyle
   @Environment(\.dismiss) private var dismiss
@@ -48,6 +42,12 @@ struct NavigationBarStyleModifier: ViewModifier {
           }
         }
       }
+  }
+}
+
+extension View {
+  func navigationBarStyle(_ style: NavigationBarStyle) -> some View {
+    modifier(NavigationBarStyleModifier(style: style))
   }
 }
 

@@ -329,7 +329,7 @@ private struct TodayHeaderView: View {
   
   var body: some View {
     HStack {
-      Text(todayViewModel.state.todayDate.koreanFullDateString)
+      Text(todayViewModel.state.todayDate.formattedDateToString(.fullDate_kr))
         .font(.pretendardSemibold_14)
         .foregroundStyle(Color.whiteDefault)
     }.frame(maxWidth: .infinity, alignment: .trailing)
@@ -530,10 +530,10 @@ private struct StreakCell: View {
   var body: some View {
     VStack(spacing: 15) {
       ViewThatFits {
-        Text(dailyStreak.date.koreanShortDateString)
+        Text(dailyStreak.date.formattedDateToString(.dayWeekday))
           .font(.pretendardSemibold_12)
         
-        Text(dailyStreak.date.koreanShortDateString)
+        Text(dailyStreak.date.formattedDateToString(.dayWeekday))
           .font(.pretendardSemibold_11)
       }
       .foregroundStyle(Color.textBright)

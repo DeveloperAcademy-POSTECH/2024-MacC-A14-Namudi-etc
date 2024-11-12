@@ -16,34 +16,34 @@ extension Date {
     return calendar
   }
   
-  /// 날짜의 연도를 "2024년" 형태로 반환
-  var yearString: String {
-    formatted(.dateTime.year().locale(Locale(identifier: "ko_KR")))
-      .replacingOccurrences(of: "년", with: "년")
-  }
+//  /// 날짜의 연도를 "2024년" 형태로 반환
+//  var yearString: String {
+//    formatted(.dateTime.year().locale(Locale(identifier: "ko_KR")))
+//      .replacingOccurrences(of: "년", with: "년")
+//  }
   
-  /// 날짜를 "M.d" 형태로 반환 (예: "10.15")
-  var monthDayString: String {
-    let formatter = DateFormatter()
-    formatter.dateFormat = "M.d"
-    return formatter.string(from: self)
-  }
+//  /// 날짜를 "M.d" 형태로 반환 (예: "10.15")
+//  var monthDayString: String {
+//    let formatter = DateFormatter()
+//    formatter.dateFormat = "M.d"
+//    return formatter.string(from: self)
+//  }
   
-  /// 년도 월 일 (요일) 표기 - [Ex. 2024년 10월 31일 (목)]
-  var koreanFullDateString: String {
-    let formatter = DateFormatter()
-    formatter.dateFormat = "yyyy년 MM월 dd일 (E)"
-    formatter.locale = Locale(identifier: "ko_KR")
-    return formatter.string(from: self)
-  }
+//  /// 년도 월 일 (요일) 표기 - [Ex. 2024년 10월 31일 (목)]
+//  var koreanFullDateString: String {
+//    let formatter = DateFormatter()
+//    formatter.dateFormat = "yyyy년 MM월 dd일 (E)"
+//    formatter.locale = Locale(identifier: "ko_KR")
+//    return formatter.string(from: self)
+//  }
   
-  /// 일(요일) 표기 - [Ex. 31일 (목)]
-  var koreanShortDateString: String {
-    let dayFormatter = DateFormatter()
-    dayFormatter.dateFormat = "d(EEE)"
-    dayFormatter.locale = Locale(identifier: "ko_KR")
-    return dayFormatter.string(from: self)
-  }
+//  /// 일(요일) 표기 - [Ex. 31일 (목)]
+//  var koreanShortDateString: String {
+//    let dayFormatter = DateFormatter()
+//    dayFormatter.dateFormat = "d(EEE)"
+//    dayFormatter.locale = Locale(identifier: "ko_KR")
+//    return dayFormatter.string(from: self)
+//  }
   
   /// 캘린더 셀에 표시되는 날짜 텍스트
   /// 1일인 경우 "M/d" 형태로, 나머지는 "d" 형태로 반환
@@ -109,8 +109,13 @@ extension Date {
   }
 }
 
+
+// MARK: - Types
 enum DateFormatType: String {
-  case yyyyMMddE = "yyyy년 MM월 dd일 (E)"
-  case Md = "M월 d일"
-  case d = "d일"
+  case fullDate_kr = "yyyy년 MM월 dd일 (E)"
+  case year_kr = "yyyy년"
+  case monthDay_kr = "M월 d일"
+  case monthDay_dot = "M.d"
+  case day_kr = "d일"
+  case dayWeekday = "d(EEE)"
 }
