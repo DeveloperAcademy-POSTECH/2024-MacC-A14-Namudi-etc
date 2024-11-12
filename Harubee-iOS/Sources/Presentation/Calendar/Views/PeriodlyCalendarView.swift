@@ -254,7 +254,7 @@ private extension View {
                 Text("빨간색 체크")
                   .font(.pretendardSemibold_12)
                   .foregroundStyle(Color.redDefault)
-                Image.hexagonBad
+                Image(.hexagonBad)
                   .resizable()
                   .frame(width: 12, height: 12)
                   .scaledToFit()
@@ -265,7 +265,7 @@ private extension View {
                 Text("파란색 체크")
                   .font(.pretendardSemibold_12)
                   .foregroundStyle(Color.main)
-                Image.hexagonGood
+                Image(.hexagonGood)
                   .resizable()
                   .frame(width: 12, height: 12)
                   .scaledToFit()

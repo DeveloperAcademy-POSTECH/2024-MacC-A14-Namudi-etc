@@ -267,7 +267,7 @@ private struct HarubeeHexagon: View {
           }
         if isTodayHarubee {
           HStack {
-            (fillPercentage <= 0.33 ? Image.harubeeWhite : Image.harubeeMain)
+            (fillPercentage <= 0.33 ? Image(.harubeeWhite) : Image(.harubeeMain))
               .resizable()
               .frame(width: 20, height: 20)
             Text((todayViewModel.state.todayHarubee.decimalWithWon))
@@ -408,11 +408,11 @@ private struct CalendarStreakView: View {
   var hexagonImage: Image {
     switch(todayStreak?.isOverHarubee) {
     case .none:
-      return Image.hexagonNone
+      return Image(.hexagonNone)
     case .some(true):
-      return Image.hexagonBad
+      return Image(.hexagonBad)
     case .some(false):
-      return Image.hexagonGood
+      return Image(.hexagonGood)
     }
   }
   
@@ -519,11 +519,11 @@ private struct StreakCell: View {
   var hexagonImage: Image {
     switch(dailyStreak.isOverHarubee) {
     case .none:
-      return Image.hexagonNone
+      return Image(.hexagonNone)
     case .some(true):
-      return Image.hexagonBad
+      return Image(.hexagonBad)
     case .some(false):
-      return Image.hexagonGood
+      return Image(.hexagonGood)
     }
   }
   

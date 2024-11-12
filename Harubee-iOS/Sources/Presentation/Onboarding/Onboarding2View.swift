@@ -63,7 +63,7 @@ private struct TitleView: View {
   var body: some View {
     VStack(alignment: .leading, spacing: 6) {
       HStack(spacing: 4) {
-        Image.harubeeWhite
+        Image(.harubeeWhite)
           .resizable()
           .frame(width: 26, height: 26)
         Text("내가 하루에 얼마를")
@@ -127,12 +127,12 @@ private struct CalculateContentView: View {
       
       Text("(나의 수입 - 고정지출) ÷ 다음 주요 수입일까지 남은 일수")
         .font(.pretendardSemibold_14)
-        .foregroundStyle(Color.whiteDefault)
+        .foregroundStyle(.whiteDefault)
         .frame(maxWidth: .infinity)
         .padding(.vertical, 16)
         .background(
           RoundedRectangle(cornerRadius: 10)
-            .fill(Color.mainBrighter10)
+            .fill(.mainBrighter10)
         )
         .padding(.top, 12)
     }

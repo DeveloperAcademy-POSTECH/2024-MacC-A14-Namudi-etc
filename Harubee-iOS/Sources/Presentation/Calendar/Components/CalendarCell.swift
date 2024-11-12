@@ -100,19 +100,19 @@ struct CalendarCell: View {
     if let expense = dailyBudget?.expense {
       let budget = dailyBudget?.harubee ?? defaultHarubee
       if expense > budget {
-        return .hexagonBad
+        return Image(.hexagonBad)
       } else {
-        return .hexagonGood
+        return Image(.hexagonGood)
       }
     }
     
     // 지출이 없는 경우
     if date.isToday {
       // 오늘: hexagonNone 표시
-      return .hexagonNone
+      return Image(.hexagonNone)
     } else {
       // 과거: hexagonNone 표시
-      return .hexagonNone
+      return Image(.hexagonNone)
     }
   }
 }
