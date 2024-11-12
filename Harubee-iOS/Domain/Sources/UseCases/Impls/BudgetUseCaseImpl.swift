@@ -193,9 +193,12 @@ public final class BudgetUseCaseImpl: BudgetUseCase {
     return salaryBudget
   }
   
+  
+  // TODO: updateBalance와 updateDefaultHarubee 분리 필요
   public func updateBalance(
     salaryBudget: SalaryBudget,
-    newBalance: Int
+    newBalance: Int,
+    from date: FromDate = .now
   ) throws -> SalaryBudget {
     // 1. 새로운 잔액으로 업데이트하기
     let newSalaryBudget = try salaryBudgetRepository.updateBalance(
@@ -205,7 +208,8 @@ public final class BudgetUseCaseImpl: BudgetUseCase {
     
     // 2. 새로 업데이트된 SalaryBudget의 잔액으로 기본 하루비 다시 계산하기
     let newDefaultHarubee = self.calculateDefaultHarubee(
-      salaryBudget: newSalaryBudget
+      salaryBudget: newSalaryBudget,
+      from: date
     )
     
     // 3. SalaryBudget에 기본 하루비 업데이트하기
@@ -316,12 +320,15 @@ public final class BudgetUseCaseImpl: BudgetUseCase {
     }
   }
   
-  public func calculateDefaultHarubee(salaryBudget: SalaryBudget) -> Double {
+  public func calculateDefaultHarubee(
+    salaryBudget: SalaryBudget,
+    from date: FromDate = .now
+  ) -> Double {
     
     let currentDate = calendar.date(
       from:calendar.dateComponents(
         [.year, .month, .day],
-        from: Date()
+        from: date == .now ? Date() : Date().addingTimeInterval(86400)
       )
     )!
     var nilCount = 0.0
@@ -448,10 +455,13 @@ public final class BudgetUseCaseImpl: BudgetUseCase {
     // 7. 잔액 업데이트
     let newBalance = salaryBudget.balance - diffExpense + diffIncome
     
+    
+    // TODO: 수정 필요
     // 8. SalaryBudget 업데이트
     let newSalaryBudget = try self.updateBalance(
       salaryBudget: salaryBudget,
-      newBalance: newBalance
+      newBalance: newBalance,
+      from: currentExpense == 0 ? .now : .tomorrow
     )
     
     return (newDailyBudget, newSalaryBudget)

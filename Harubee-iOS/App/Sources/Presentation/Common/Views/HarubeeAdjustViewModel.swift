@@ -66,7 +66,8 @@ extension HarubeeAdjustViewModel {
     }
     
     let defaultHarubee = self.budgetUseCase.calculateDefaultHarubee(
-      salaryBudget: self.state.salaryBudget
+      salaryBudget: self.state.salaryBudget,
+      from: .now
     )
     
     self.state.salaryBudget.defaultHarubee = defaultHarubee
