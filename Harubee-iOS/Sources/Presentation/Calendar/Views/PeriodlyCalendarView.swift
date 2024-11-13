@@ -243,7 +243,9 @@ private extension View {
           ) {
             VStack(spacing: 0) {
               HStack(spacing: 0) {
-                Text("실제 지출을 입력하면 하루비 대신\n실제 지출이 표시되고, 체크 표시가 나타나요")
+                Text(
+                  "실제 지출을 입력하면 하루비 대신\n실제 지출이 표시되고, 체크 표시가 나타나요"
+                )
                 Spacer()
               }
               .padding(.bottom, 8)
