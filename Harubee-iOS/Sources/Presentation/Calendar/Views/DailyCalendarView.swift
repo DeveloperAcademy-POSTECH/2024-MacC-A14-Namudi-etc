@@ -85,7 +85,10 @@ struct DailyCalendarView: View {
         }
       }
     }
-    .sheet(item: $activeSheet, onDismiss: { viewModel.send(.updateCurrentData) }) { type in
+    .sheet(
+      item: $activeSheet,
+      onDismiss: { viewModel.send(.updateCurrentData) }
+    ) { type in
       switch type {
       case .harubeeAdjust:
         HarubeeAdjustView(
@@ -120,7 +123,9 @@ struct DailyCalendarView: View {
         .presentationDetents([.fraction(0.25)])
       case .editMemo(let oldMemo):
         DailyMemoView(existingMemo: oldMemo) { newMemo in
-          viewModel.send(.updateMemo(.init(oldMemo: oldMemo, newMemo: newMemo)))
+          viewModel.send(.updateMemo(
+            .init(oldMemo: oldMemo, newMemo: newMemo))
+          )
           activeSheet = nil
         }
         .presentationDetents([.fraction(0.25)])
@@ -162,7 +167,11 @@ private struct HarubeeSection: View {
         
         Text("\(budget.harubee ?? defaultHarubee)원")
           .font(.pretendardSemibold_18)
-          .foregroundStyle(budget.date >= Date().formattedDate ? Color.main : Color.textBlack)
+          .foregroundStyle(
+            budget.date >= Date().formattedDate
+            ? Color.main
+            : Color.textBlack
+          )
           .frame(maxWidth: .infinity, alignment: .trailing)
         
         if budget.date >= Date().formattedDate {
@@ -224,7 +233,9 @@ private struct TransactionSection: View {
   
   private var transactionStyle: TransactionStyle {
     guard let expense = budget.expense else { return .constant }
-    return expense > (budget.harubee ?? defaultHarubee) ? .warning : .saving
+    return expense > (budget.harubee ?? defaultHarubee)
+    ? .warning
+    : .saving
   }
 }
 
@@ -286,7 +297,11 @@ private struct ComparisonLabel: View {
       Spacer()
       Text("하루비보다")
       
-      Image(systemName: isOverBudget ? "arrowtriangle.up.fill" : "arrowtriangle.down.fill")
+      Image(
+        systemName: isOverBudget 
+        ? "arrowtriangle.up.fill"
+        : "arrowtriangle.down.fill"
+      )
         .font(.custom("SF Pro", size: 10))
         .foregroundStyle(isOverBudget ? Color.redDefault : Color.main)
         .padding(.trailing, -1)
@@ -371,7 +386,9 @@ private struct MemoList: View {
         Text(memo)
           .font(.pretendardMedium_16)
           .foregroundStyle(Color.textBlack)
-          .listRowInsets(EdgeInsets(top: 8, leading: 0, bottom: 8, trailing: 0))
+          .listRowInsets(
+            EdgeInsets(top: 8, leading: 0, bottom: 8, trailing: 0)
+          )
           .swipeActions(edge: .trailing, allowsFullSwipe: true) {
             Button(role: .destructive) {
               onDelete(memo)
