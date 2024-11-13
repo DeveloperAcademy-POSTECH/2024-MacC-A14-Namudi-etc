@@ -23,9 +23,9 @@ enum TitleFont {
 }
 
 struct DayPickerView: View {
+  @State private var keyboardObserver = KeyboardObserverManager()
   @State private var showDayPicker: Bool = false
   @Binding private var selectedDay: Int
-  @Binding private var isKeyboardVisible: Bool
   
   private let title: String
   private let titleFont: TitleFont
@@ -33,13 +33,11 @@ struct DayPickerView: View {
   init(
     title: String,
     titleFont: TitleFont,
-    selectedDay: Binding<Int>,
-    isKeyboardVisible: Binding<Bool>
+    selectedDay: Binding<Int>
   ) {
     self.title = title
     self.titleFont = titleFont
     self._selectedDay = selectedDay
-    self._isKeyboardVisible = isKeyboardVisible
   }
   
   var body: some View {
@@ -55,7 +53,9 @@ struct DayPickerView: View {
         )
       }
       .padding(.horizontal, 20)
-      .onChange(of: isKeyboardVisible) { _, newValue in
+      .onChange(
+        of: keyboardObserver.isKeyboardVisible
+      ) { _, newValue in
         if newValue {
           showDayPicker = false
         }
