@@ -29,8 +29,6 @@ struct FixedExpenseManageView: View {
   @State private var fixedExpenseAmount: String
   
   @State private var isEnabled: Bool = false
-  
-  @State private var keyboardObserver = KeyboardObserver()
 
   private let mode: Mode
   private let action: ((Int, String, String) -> Void)
@@ -56,8 +54,7 @@ struct FixedExpenseManageView: View {
       BodyView(
         fixedExpenseName: $fixedExpenseName,
         fixedExpenseAmount: $fixedExpenseAmount,
-        selectedDay: $selectedDay,
-        isKeyboardVisible: $keyboardObserver.isKeyboardVisible
+        selectedDay: $selectedDay
       )
         .padding(.top, 37)
       
@@ -107,18 +104,15 @@ private struct BodyView: View {
   @Binding private var fixedExpenseName: String
   @Binding private var fixedExpenseAmount: String
   @Binding private var selectedDay: Int
-  @Binding private var isKeyboardVisible: Bool
   
   init(
     fixedExpenseName: Binding<String>,
     fixedExpenseAmount: Binding<String>,
-    selectedDay: Binding<Int>,
-    isKeyboardVisible: Binding<Bool>
+    selectedDay: Binding<Int>
   ) {
     self._fixedExpenseName = fixedExpenseName
     self._fixedExpenseAmount = fixedExpenseAmount
     self._selectedDay = selectedDay
-    self._isKeyboardVisible = isKeyboardVisible
   }
   
   var body: some View {
@@ -126,8 +120,7 @@ private struct BodyView: View {
       DayPickerView(
         title: "날짜",
         titleFont: .view,
-        selectedDay: $selectedDay,
-        isKeyboardVisible: $isKeyboardVisible
+        selectedDay: $selectedDay
       )
       
       FloatingTitleTextField(
