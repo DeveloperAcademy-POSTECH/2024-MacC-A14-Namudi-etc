@@ -59,7 +59,9 @@ extension TodayViewModel {
 
     do {
       // 1. 오늘날짜가 포함되는 SalaryBudget을 가져오기
-      let salaryBudget = try budgetUseCase.getCurrentSalaryBudget(date: state.todayDate)
+      let salaryBudget = try budgetUseCase.getCurrentSalaryBudget(
+        date: state.todayDate
+      )
       
       initializeState(salaryBudget: salaryBudget)
       
@@ -68,12 +70,20 @@ extension TodayViewModel {
       // 2. 없다면 가장 최근 SalaryBudget을 기반으로 새 SalaryBudget 생성
       let salaryBudgets = try? budgetUseCase.getAllSalaryBudget()
 
-      guard let recentSalaryBudget = salaryBudgets?.max(by: { $0.endDate < $1.endDate }) else { return }
+      guard let recentSalaryBudget = salaryBudgets?.max(
+        by: { $0.endDate < $1.endDate }
+      ) else { return }
       
       // 3. 새로운 시작일과 종료일 계산
       let (newStartDate, newEndDate) = calculateNewSalaryBudgetDates(
-        referenceStartDay: Calendar.current.component(.day, from: recentSalaryBudget.startDate),
-        today: Calendar.current.component(.day, from: state.todayDate)
+        referenceStartDay: Calendar.current.component(
+          .day,
+          from: recentSalaryBudget.startDate
+        ),
+        today: Calendar.current.component(
+          .day,
+          from: state.todayDate
+        )
       )
       
       // 4. 새로운 SalaryBudget 생성
@@ -90,30 +100,58 @@ extension TodayViewModel {
     }
   }
   
-  private func calculateNewSalaryBudgetDates(referenceStartDay: Int, today: Int) -> (Date, Date) {
+  private func calculateNewSalaryBudgetDates(
+    referenceStartDay: Int, today: Int
+  ) -> (Date, Date) {
     let calendar = Calendar.current
     
     if today < referenceStartDay {
-      let previousMonthDate = calendar.date(byAdding: .month, value: -1, to: state.todayDate)!
-      let newStartDate = calendar.date(from: DateComponents(year: calendar.component(.year, from: previousMonthDate),
-                                                            month: calendar.component(.month, from: previousMonthDate),
-                                                            day: referenceStartDay))!
+      let previousMonthDate = calendar.date(
+        byAdding: .month,
+        value: -1,
+        to: state.todayDate
+      )!
       
-      let newEndDate = calendar.date(from: DateComponents(year: calendar.component(.year, from: state.todayDate),
-                                                          month: calendar.component(.month, from: state.todayDate),
-                                                          day: referenceStartDay - 1))!
+      let newStartDate = calendar.date(
+        from: DateComponents(
+          year: calendar.component(.year, from: previousMonthDate),
+          month: calendar.component(.month, from: previousMonthDate),
+          day: referenceStartDay
+        )
+      )!
+      
+      let newEndDate = calendar.date(
+        from: DateComponents(
+          year: calendar.component(.year, from: state.todayDate),
+          month: calendar.component(.month, from: state.todayDate),
+          day: referenceStartDay - 1
+        )
+      )!
       
       return (newStartDate, newEndDate)
       
     } else {
-      let nextMonthDate = calendar.date(byAdding: .month, value: 1, to: state.todayDate)!
-      let newStartDate = calendar.date(from: DateComponents(year: calendar.component(.year, from: state.todayDate),
-                                                            month: calendar.component(.month, from: state.todayDate),
-                                                            day: referenceStartDay))!
+      let nextMonthDate = calendar.date(
+        byAdding: .month,
+        value: 1,
+        to: state.todayDate
+      )!
       
-      let newEndDate = calendar.date(from: DateComponents(year: calendar.component(.year, from: nextMonthDate),
-                                                          month: calendar.component(.month, from: nextMonthDate),
-                                                          day: referenceStartDay - 1))!
+      let newStartDate = calendar.date(
+        from: DateComponents(
+          year: calendar.component(.year, from: state.todayDate),
+          month: calendar.component(.month, from: state.todayDate),
+          day: referenceStartDay
+        )
+      )!
+      
+      let newEndDate = calendar.date(
+        from: DateComponents(
+          year: calendar.component(.year, from: nextMonthDate),
+          month: calendar.component(.month, from: nextMonthDate),
+          day: referenceStartDay - 1
+        )
+      )!
       
       return (newStartDate, newEndDate)
     }
@@ -124,13 +162,18 @@ extension TodayViewModel {
     
     let currentEndDate = salaryBudget.endDate
     let currentBalance = salaryBudget.balance
-    let todayDailyBudget = salaryBudget.dailyBudgets.first(where: { $0.date == state.todayDate.formattedDate })
+    let todayDailyBudget = salaryBudget.dailyBudgets.first(
+      where: { $0.date == state.todayDate.formattedDate }
+    )
     
     let todayHarubee = (todayDailyBudget?.harubee ?? Int(salaryBudget.defaultHarubee))
     let remainTodayHarubee = todayHarubee - (todayDailyBudget?.expense ?? 0)
-    let averageHarubee = Int(budgetUseCase.calculateAverageHarubee(endDate: currentEndDate,
-                                                                         balance: currentBalance))
+    let averageHarubee = Int(budgetUseCase.calculateAverageHarubee(
+      endDate: currentEndDate,
+      balance: currentBalance)
+    )
     let weeklyStreaks = getWeeklyStreaks(salaryBudget: salaryBudget)
+    // TODO: 리팩토링
     let todayHarubeePercentage = (todayDailyBudget?.expense == nil || todayDailyBudget?.expense == 0) ? 1.0 :
     Double(remainTodayHarubee) / Double(todayHarubee)
     
@@ -165,30 +208,46 @@ extension TodayViewModel {
       do {
         
         let dailyBudget = try budgetUseCase.getDailyBudget(date: currentDate)
-        
+        // TODO: 리팩토링
         let harubee = dailyBudget.harubee == nil ? Int(salaryBudget.defaultHarubee) : dailyBudget.harubee
         let isOverHarubee = dailyBudget.expense == nil ? nil : (dailyBudget.expense! > harubee!)
         
-        let newDailyStreak = DailyStreak(date: currentDate,
-                                         isAfterToday: currentDate > today,
-                                         harubee: harubee!,
-                                         isOverHarubee: isOverHarubee)
+        let newDailyStreak = DailyStreak(
+          date: currentDate,
+          isAfterToday: currentDate > today,
+          harubee: harubee!,
+          isOverHarubee: isOverHarubee
+        )
         
         weeklyStreaks.append(newDailyStreak)
         
       } catch DomainError.dataNotFound {
         
-        let nextStartDate = calendar.date(byAdding: .month, value: 1, to: salaryBudget.startDate)!
-        let nextEndDate = calendar.date(byAdding: DateComponents(month: 1, day: -1), to: nextStartDate)!
+        let nextStartDate = calendar.date(
+          byAdding: .month,
+          value: 1,
+          to: salaryBudget.startDate
+        )!
+        
+        let nextEndDate = calendar.date(
+          byAdding: DateComponents(month: 1, day: -1),
+          to: nextStartDate
+        )!
 
-        let nextSalaryBudgetDays = calendar.dateComponents([.day], from: nextStartDate, to: nextEndDate).day!
+        let nextSalaryBudgetDays = calendar.dateComponents(
+          [.day],
+          from: nextStartDate,
+          to: nextEndDate
+        ).day!
         
         let harubee = salaryBudget.fixedIncome / nextSalaryBudgetDays
         
-        let newDailyStreak = DailyStreak(date: currentDate,
-                                         isAfterToday: currentDate > today,
-                                         harubee: harubee,
-                                         isOverHarubee: nil)
+        let newDailyStreak = DailyStreak(
+          date: currentDate,
+          isAfterToday: currentDate > today,
+          harubee: harubee,
+          isOverHarubee: nil
+        )
         
         weeklyStreaks.append(newDailyStreak)
         
