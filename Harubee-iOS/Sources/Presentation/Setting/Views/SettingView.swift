@@ -43,11 +43,7 @@ struct SettingView: View {
       VStack(spacing: 6) {
         SectionContainer {
           SettingItem(title: "고정지출 관리",
-                      previewText:"""
-                      총 \(salaryBudget?.fixedExpenses.count ?? 0)건 / \
-                      \(salaryBudget?.fixedExpenses.reduce(0) { $0 + $1.price }
-                        .decimalWithWon ?? 0.decimalWithWon)
-                      """
+                      previewText: "총 \(salaryBudget?.fixedExpenses.count ?? 0)건 / \(salaryBudget?.fixedExpenses.reduce(0) { $0 + $1.price }.decimalWithWon ?? 0.decimalWithWon)"
           )
           .onTapGesture {
             navigateFixedExpense = true
@@ -57,10 +53,7 @@ struct SettingView: View {
           }
           
           SettingItem(title: "고정수입 관리",
-                      previewText: """
-                      매달 \(salaryBudget?.startDate.formattedDateToString(.day_kr) ?? "1일") / \
-                      \(salaryBudget?.fixedIncome.decimalWithWon ?? "")
-                      """
+                      previewText: "매달 \(salaryBudget?.startDate.formattedDateToString(.day_kr) ?? "1일") / \(salaryBudget?.fixedIncome.decimalWithWon ?? "")"
           )
           .onTapGesture {
             navigateFixedIncome = true
