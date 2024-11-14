@@ -14,7 +14,6 @@ struct NumberKeypadView: View {
   
   @State private var expression: String
   @Binding private var amount: Int
-  private let buttonAction: (Bool) -> Void
   
   private let keypads: [[KeypadButtonType]] = [
     [.one, .two, .three, .clear],
@@ -24,27 +23,24 @@ struct NumberKeypadView: View {
   ]
   
   init(
-    amount: Binding<Int>,
-    buttonAction: @escaping (Bool) -> Void
+    amount: Binding<Int>
   ) {
     self._amount = amount
-    self.buttonAction = buttonAction
     self._expression = State(wrappedValue: amount.wrappedValue.decimal)
   }
   
   var body: some View {
     VStack(spacing: 0) {
-      ExpressionView(expression: $expression)
+      
+      expressionView
       
       VStack(spacing: 2) {
         ForEach(keypads, id: \.self) { rowKeypads in
           NumberKeypadRowView(
+            keypads: rowKeypads,
             expression: $expression,
-            keypads: rowKeypads
+            amount: $amount
           )
-          .environment(\.buttonAction) { bool in
-            buttonAction(bool)
-          }
         }
       }
       .padding(.top, 26)
@@ -53,12 +49,8 @@ struct NumberKeypadView: View {
     }
     .frame(maxWidth: .infinity)
   }
-}
-
-private struct ExpressionView: View {
-  @Binding var expression: String
   
-  var body: some View {
+  private var expressionView: some View {
     HStack(spacing: 20) {
       Text(expression)
       
@@ -78,27 +70,21 @@ private struct ExpressionView: View {
   }
 }
 
+
 // MARK: - NumberKeypadRowView
 private struct NumberKeypadRowView: View {
+  let keypads: [KeypadButtonType]
   
-  @Binding private var expression: String
-  
-  private let keypads: [KeypadButtonType]
-  
-  init(
-    expression: Binding<String>,
-    keypads: [KeypadButtonType]
-  ) {
-    self._expression = expression
-    self.keypads = keypads
-  }
+  @Binding var expression: String
+  @Binding var amount: Int
   
   var body: some View {
     HStack(spacing: 2) {
       ForEach(keypads, id: \.self) { columnKeypads in
         NumberKeypadButton(
+          keypad: columnKeypads,
           expression: $expression,
-          keypad: columnKeypads
+          amount: $amount
         )
       }
     }
@@ -107,20 +93,12 @@ private struct NumberKeypadRowView: View {
 
 // MARK: - NumberKeypadButton
 private struct NumberKeypadButton: View {
-  @Environment(\.buttonAction) private var buttonAction
-  @Binding private var expression: String
+  let keypad: KeypadButtonType
   
-  private let keypad: KeypadButtonType
+  @Binding var expression: String
+  @Binding var amount: Int
   
   private let calculator = CalculatorLogic()
-  
-  init(
-    expression: Binding<String>,
-    keypad: KeypadButtonType
-  ) {
-    self._expression = expression
-    self.keypad = keypad
-  }
   
   var body: some View {
     Group {
@@ -136,17 +114,12 @@ private struct NumberKeypadButton: View {
     .clipShape(RoundedRectangle(cornerRadius: 10))
     .contentShape(Rectangle())
     .tapFeedback {
-      self.expression = calculator.processKeypad(
+      let (newExpression, newAmount) = calculator.processKeypad(
         keypad,
         expression: expression
       )
-      
-      //      switch keypad {
-      //      case .clear:
-      //        buttonAction(true)
-      //      default:
-      //        buttonAction(false)
-      //      }
+      self.expression = newExpression
+      self.amount = newAmount
     }
   }
 }
@@ -154,7 +127,17 @@ private struct NumberKeypadButton: View {
 // MARK: - Preview
 #Preview {
   @Previewable @State var amount: Int = 10000000
-  return NumberKeypadView(amount: $amount) { bool in
-    print("\(bool)")
+  @Previewable @State var isVisible: Bool = false
+  
+  VStack {
+    Button {
+      isVisible.toggle()
+    } label: {
+      Text("Button")
+    }
+    
+    NumberKeypadView(
+      amount: $amount
+    )
   }
 }
