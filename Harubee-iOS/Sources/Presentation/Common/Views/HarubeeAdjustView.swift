@@ -39,21 +39,9 @@ struct HarubeeAdjustView: View {
       
       Spacer()
       
-      AmountResultText(
-        numberText: $expression
-      ) {
-        self.isUpdated = false
-        self.isEnabled = false
-        
-        viewModel.send(.resetButtonTapped(beforeHarubee))
-        self.expression = beforeHarubee.decimal
-      }
-        .padding(.horizontal, 40)
-      
-      MainColorButton(
+      MainColorBottomButton(
         title: "저장하기",
-        isEnabled: $isEnabled,
-        cornerRadius: 0
+        isEnabled: $isEnabled
       ) {
         self.viewModel.send(.saveButtonTapped)
         self.dismiss()
@@ -69,7 +57,6 @@ struct HarubeeAdjustView: View {
 //      }
     }
     .frame(maxWidth: .infinity)
-    .ignoresSafeArea(edges: .bottom)
   }
 }
 

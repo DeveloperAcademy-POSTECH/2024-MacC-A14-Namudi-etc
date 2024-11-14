@@ -53,28 +53,9 @@ struct TransactionInputView: View {
       
       Spacer()
       
-      AmountResultText(
-        numberText: $expression
-      ) {
-        self.isUpdated = false
-        self.isEnabled = false
-        
-        let before = isFocusedExpense
-        ? self.beforeExpense
-        : self.beforeIncome
-        
-        viewModel.send(.resetButtonTapped(
-          before,
-          isFocusedExpense
-        ))
-        self.expression = before?.decimal ?? ""
-      }
-      .padding(.horizontal, 40)
-      
-      MainColorButton(
+      MainColorBottomButton(
         title: "저장하기",
-        isEnabled: $isEnabled,
-        cornerRadius: 0
+        isEnabled: $isEnabled
       ) {
         let dailyBudget = viewModel.state.dailyBudget
         
@@ -103,7 +84,6 @@ struct TransactionInputView: View {
 //      }
     }
     .frame(maxWidth: .infinity)
-    .ignoresSafeArea(edges: .bottom)
     .onChange(of: isFocusedExpense) { _, _ in
       if isFocusedExpense {
         self.expression = self.viewModel.state.dailyBudget.expense?.decimal ?? ""

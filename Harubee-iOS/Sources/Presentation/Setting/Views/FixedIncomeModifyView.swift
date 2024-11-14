@@ -34,10 +34,9 @@ struct FixedIncomeModifyView: View {
         .padding(.top, 38)
         .padding(.horizontal, 16)
       
-      MainColorButton(
+      MainColorBottomButton(
         title: "완료하기",
-        isEnabled: .constant(true),
-        cornerRadius: 0
+        isEnabled: .constant(true)
       ) {
         action(fixedIncomeAmount)
         dismiss()

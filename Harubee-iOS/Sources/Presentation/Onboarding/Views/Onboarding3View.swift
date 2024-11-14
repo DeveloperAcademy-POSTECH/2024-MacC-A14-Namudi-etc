@@ -35,15 +35,12 @@ struct Onboarding3View: View {
       
       Spacer()
       
-      MainColorButton(
+      MainColorBottomButton(
         title: "다음으로",
-        isEnabled: $isEnabled,
-        cornerRadius: 10
+        isEnabled: $isEnabled
       ) {
         self.isPresented = true
       }
-      .padding(.horizontal, 16)
-      .padding(.bottom, 9)
     }
     .contentShape(Rectangle())
     .onTapGesture {

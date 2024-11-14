@@ -34,10 +34,9 @@ struct Onboarding4View: View {
         expenseAmount: $previousExpenseAmount
       )
       
-      MainColorButton(
+      MainColorBottomButton(
         title: "다음으로",
-        isEnabled: $isEnabled,
-        cornerRadius: 0
+        isEnabled: $isEnabled
       ) {
         self.isPresented = true
       }
@@ -50,7 +49,6 @@ struct Onboarding4View: View {
 //        self.isEnabled = isEnabled
 //      }
     }
-    .ignoresSafeArea(edges: .bottom)
     .navigationDestination(isPresented: $isPresented) {
       Onboarding5View(viewModel: viewModel)
         .navigationBarBackButtonHidden()

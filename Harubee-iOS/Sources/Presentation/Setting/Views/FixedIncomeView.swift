@@ -41,10 +41,9 @@ struct FixedIncomeView: View {
         
         Spacer()
         
-        MainColorButton(
+        MainColorBottomButton(
           title: "저장하기",
-          isEnabled: $isUpdated,
-          cornerRadius: 10
+          isEnabled: $isUpdated
         ) {
           if isDayUpdated {
             isAlertPresented = true
@@ -53,8 +52,6 @@ struct FixedIncomeView: View {
             dismiss()
           }
         }
-        .padding(.bottom, 9)
-        .padding(.horizontal, 16)
       }
       .onChange(of: selectedDay) { _, newValue in
         if newValue != settingViewModel.state.salaryBudget?.startDate.day {
@@ -202,17 +199,6 @@ private struct BodyView: View {
   }
 }
 
-//#Preview {
-//  FixedIncomeView(settingViewModel: SettingViewModel(
-//    salaryBudget: SalaryBudget(
-//      startDate: Date(),
-//      endDate: Date(),
-//      fixedIncome: 1_000_000,
-//      fixedExpenses: [],
-//      balance: 0,
-//      defaultHarubee: 0,
-//      dailyBudgets: []
-//    ),
-//    budgetUseCase: BUd
-//  ))
-//}
+#Preview {
+  FixedIncomeView(settingViewModel: DIContainer.shared.makeSettingViewModel(salaryBudget: SalaryBudget.default))
+}

@@ -8,23 +8,20 @@
 
 import SwiftUI
 
-struct MainColorButton: View {
+struct MainColorBottomButton: View {
   
   @Binding private var isEnabled: Bool
   
   private let title: String
-  private let cornerRadius: CGFloat
   private let action: () -> Void
   
   init(
     title: String,
     isEnabled: Binding<Bool> = .constant(true),
-    cornerRadius: CGFloat,
     action: @escaping () -> Void
   ) {
     self.title = title
     self._isEnabled = isEnabled
-    self.cornerRadius = cornerRadius
     self.action = action
   }
   
@@ -37,16 +34,18 @@ struct MainColorButton: View {
     }
     .frame(maxWidth: .infinity)
     .background(isEnabled ? Color.main : Color.main30)
-    .clipShape(RoundedRectangle(cornerRadius: cornerRadius))
-    .tapFeedback(scale: cornerRadius == 0 ? 1 : 0.95, haptic: .none) {
+    .clipShape(RoundedRectangle(cornerRadius: 10))
+    .tapFeedback(haptic: .none) {
       action()
     }
     .disabled(!isEnabled)
+    .padding(.horizontal, 16)
+    .padding(.bottom, 9)
   }
 }
 
 #Preview {
-  MainColorButton(title: "X", cornerRadius: 0) {
+  MainColorBottomButton(title: "X") {
     print("Tapped")
   }
 }
