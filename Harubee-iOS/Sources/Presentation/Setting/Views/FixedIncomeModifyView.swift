@@ -9,11 +9,11 @@
 import SwiftUI
 
 struct FixedIncomeModifyView: View {
+  private var editFixedIncomeAmount: (String) -> Void
+  
   @Environment(\.dismiss) private var dismiss
   @State private var fixedIncomeAmount: String
   @State private var isFocused: Bool = false
-  
-  private var editFixedIncomeAmount: (String) -> Void
   
   init(
     fixedIncomeAmount: String,
@@ -24,6 +24,7 @@ struct FixedIncomeModifyView: View {
   }
   
   var body: some View {
+
     ZStack(alignment: .bottom) {
       VStack(spacing: 0) {
         BottomSheetHeaderView(title: "고정수입 금액 입력")

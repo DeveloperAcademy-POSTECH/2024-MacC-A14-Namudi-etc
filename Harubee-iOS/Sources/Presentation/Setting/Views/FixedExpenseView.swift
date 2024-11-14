@@ -52,11 +52,7 @@ struct FixedExpenseView: View {
 }
 
 private struct FixedExpenseHeaderView: View {
-  private var fixedExpenses: [TransactionItem]
-  
-  init(fixedExpenses: [TransactionItem]) {
-    self.fixedExpenses = fixedExpenses
-  }
+  let fixedExpenses: [TransactionItem]
   
   var body: some View {
     VStack(spacing: 12) {
@@ -78,7 +74,8 @@ private struct FixedExpenseHeaderView: View {
 }
 
 private struct FixedExpensesListView: View {
-  private var settingViewModel: SettingViewModel
+  let settingViewModel: SettingViewModel
+  
   private var listHeaderView: some View {
     HStack(spacing: 0) {
       Text("목록")
@@ -99,23 +96,11 @@ private struct FixedExpensesListView: View {
     }
   }
   
-  
-  @State private var manageMode: Mode
+  @State private var manageMode: Mode = .add
   @State private var selectedItem: TransactionItem?
   @State private var isPresented: Bool = false
-  @Binding private var fixedExpenses: [TransactionItem]
-  @Binding private var isInfoBubbleVisible: Bool
-  
-  init(
-    settingViewModel: SettingViewModel,
-    fixedExpenses: Binding<[TransactionItem]>,
-    isInfoBubbleVisible: Binding<Bool>
-  ) {
-    self.settingViewModel = settingViewModel
-    self._fixedExpenses = fixedExpenses
-    self._manageMode = State(initialValue: .add)
-    self._isInfoBubbleVisible = isInfoBubbleVisible
-  }
+  @Binding var fixedExpenses: [TransactionItem]
+  @Binding var isInfoBubbleVisible: Bool
   
   var body: some View {
     VStack(spacing: 0) {

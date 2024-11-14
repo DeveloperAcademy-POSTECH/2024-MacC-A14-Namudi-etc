@@ -23,15 +23,15 @@ enum Mode {
 }
 
 struct FixedExpenseManageView: View {
+  private let mode: Mode
+  private let action: ((Int, String, String) -> Void)
+  
   @Environment(\.dismiss) private var dismiss
   @State private var selectedDay: Int
   @State private var fixedExpenseName: String
   @State private var fixedExpenseAmount: String
   
   @State private var isEnabled: Bool = false
-
-  private let mode: Mode
-  private let action: ((Int, String, String) -> Void)
   
   init(
     mode: Mode,

@@ -42,23 +42,25 @@ struct SettingView: View {
       Color.textBlack5.edgesIgnoringSafeArea(.bottom)
       VStack(spacing: 6) {
         SectionContainer {
-          SettingItem(title: "고정지출 관리",
-                      previewText: "총 \(salaryBudget?.fixedExpenses.count ?? 0)건 / \(salaryBudget?.fixedExpenses.reduce(0) { $0 + $1.price }.decimalWithWon ?? 0.decimalWithWon)"
+          SettingItem(
+            title: "고정지출 관리",
+            previewText: "총 \(salaryBudget?.fixedExpenses.count ?? 0)건 / \(salaryBudget?.fixedExpenses.reduce(0) { $0 + $1.price }.decimalWithWon ?? 0.decimalWithWon)"
           )
-          .onTapGesture {
-            navigateFixedExpense = true
-          }
-          .navigationDestination(isPresented: $navigateFixedExpense) {
+          .onTapGesture { navigateFixedExpense = true }
+          .navigationDestination(
+            isPresented: $navigateFixedExpense
+          ) {
             FixedExpenseView(settingViewModel: settingViewModel)
           }
           
-          SettingItem(title: "고정수입 관리",
-                      previewText: "매달 \(salaryBudget?.startDate.formattedDateToString(.day_kr) ?? "1일") / \(salaryBudget?.fixedIncome.decimalWithWon ?? "")"
+          SettingItem(
+            title: "고정수입 관리",
+            previewText: "매달 \(salaryBudget?.startDate.formattedDateToString(.day_kr) ?? "1일") / \(salaryBudget?.fixedIncome.decimalWithWon ?? "")"
           )
-          .onTapGesture {
-            navigateFixedIncome = true
-          }
-          .navigationDestination(isPresented: $navigateFixedIncome) {
+          .onTapGesture { navigateFixedIncome = true }
+          .navigationDestination(
+            isPresented: $navigateFixedIncome
+          ) {
             FixedIncomeView(settingViewModel: settingViewModel)
           }
         }
@@ -74,14 +76,8 @@ struct SettingView: View {
 
 // MARK: - SettingItem
 private struct SettingItem: View {
-  
-  private let title: String
-  private let previewText: String
-  
-  init(title: String, previewText: String) {
-    self.title = title
-    self.previewText = previewText
-  }
+  let title: String
+  let previewText: String
   
   var body: some View {
     HStack(alignment: .center, spacing: 8) {
