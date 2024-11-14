@@ -23,22 +23,33 @@ enum TitleFont {
 }
 
 struct DayPickerView: View {
+  let title: String
+  let titleFont: TitleFont
+  
+  private var dayPicker: some View {
+    VStack(spacing: 0) {
+      Rectangle()
+        .frame(height: 1)
+        .foregroundStyle(Color.textBrighter30)
+        .padding(.top, 14)
+        .padding(.horizontal, 16)
+      
+      Picker("날짜 선택", selection: $selectedDay) {
+        ForEach(1..<32) { day in
+          Text("\(day)일").tag(day)
+        }
+      }
+      .pickerStyle(.wheel)
+      .frame(maxWidth: .infinity, maxHeight: 150)
+      .padding(.horizontal, 10)
+      .padding(.top, 21)
+      .transition(.opacity.combined(with: .scale(scale: 0.9, anchor: .top)))
+    }
+  }
+  
   @State private var keyboardObserver = KeyboardObserverManager()
   @State private var showDayPicker: Bool = false
-  @Binding private var selectedDay: Int
-  
-  private let title: String
-  private let titleFont: TitleFont
-  
-  init(
-    title: String,
-    titleFont: TitleFont,
-    selectedDay: Binding<Int>
-  ) {
-    self.title = title
-    self.titleFont = titleFont
-    self._selectedDay = selectedDay
-  }
+  @Binding var selectedDay: Int
   
   var body: some View {
     VStack(spacing: 0) {
@@ -61,24 +72,7 @@ struct DayPickerView: View {
         }
       }
       
-      if showDayPicker {
-        Rectangle()
-          .frame(height: 1)
-          .foregroundStyle(Color.textBrighter30)
-          .padding(.top, 14)
-          .padding(.horizontal, 16)
-        
-        Picker("날짜 선택", selection: $selectedDay) {
-          ForEach(1..<32) { day in
-            Text("\(day)일").tag(day)
-          }
-        }
-        .pickerStyle(.wheel)
-        .frame(maxWidth: .infinity, maxHeight: 150)
-        .padding(.horizontal, 10)
-        .padding(.top, 21)
-        .transition(.opacity.combined(with: .scale(scale: 0.9, anchor: .top)))
-      }
+      if showDayPicker { dayPicker }
     }
     .onChange(of: showDayPicker) { _, _ in
       if showDayPicker {
@@ -91,6 +85,7 @@ struct DayPickerView: View {
 private struct DayPickerButton: View {
   @Binding var showDayPicker: Bool
   @Binding var selectedDay: Int
+  
   var body: some View {
     Button {
       withAnimation(.bouncy) {
