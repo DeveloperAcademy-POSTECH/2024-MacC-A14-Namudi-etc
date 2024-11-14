@@ -215,19 +215,17 @@ private struct HarubeeHexagon: View {
     
     self.isTodayHarubee = isTodayHarubee
     self.hexgonSize = hexgonSize
-    self.fillPercentage = isTodayHarubee ? todayViewModel.state.todayHarubeePercentage : todayViewModel.state.todayAverageHarubeePercentage
+    self.fillPercentage = isTodayHarubee ? todayViewModel.state.todayHarubeePercentage : todayViewModel.state.todayBalancePercentage
     self._isInfoBubbleVisible = isInfoBubbleVisible
   }
   
   var body: some View {
     ZStack {
       
-      if isTodayHarubee {
-        RoundedHexagon()
-          .fill(Color.main)
-          .frame(width: hexgonSize, height: hexgonSize)
-          .shadow(color: Color.textBlack.opacity(0.3), radius: 7, x: 1, y: 4)
-      }
+      RoundedHexagon()
+        .fill(Color.main)
+        .frame(width: hexgonSize, height: hexgonSize)
+        .shadow(color: Color.textBlack.opacity(0.3), radius: 7, x: 1, y: 4)
       
       Wave(xOffset: firstWaveOffset, fillPercentage: fillPercentage)
         .fill(isTodayHarubee ? Color.textBrighter : Color.textBlack30)
@@ -254,7 +252,7 @@ private struct HarubeeHexagon: View {
         .frame(width: hexgonSize, height: hexgonSize)
       
       VStack(spacing: isTodayHarubee ? 9 : 2) {
-        Text(isTodayHarubee ? "오늘의 남은 하루비" : "평균 하루비")
+        Text(isTodayHarubee ? "오늘의 남은 하루비" : "쓸 수 있는 돈")
           .font(isTodayHarubee ? .pretendardSemibold_20 : .pretendardSemibold_16)
           .foregroundStyle(isTodayHarubee ? (fillPercentage <= 0.5 ? Color.whiteDefault : Color.textBlack) :  Color.whiteDeep50)
           .infoBubble(isVisible: $isInfoBubbleVisible) {
@@ -284,7 +282,7 @@ private struct HarubeeHexagon: View {
               .foregroundStyle(Color.mainBrighter60)
           )
         } else {
-          Text(todayViewModel.state.averageHarubee.decimalWithWon)
+          Text(todayViewModel.state.todayBalance.decimalWithWon)
             .font(.pretendardSemibold_20)
             .foregroundStyle(Color.whiteDefault)
         }
