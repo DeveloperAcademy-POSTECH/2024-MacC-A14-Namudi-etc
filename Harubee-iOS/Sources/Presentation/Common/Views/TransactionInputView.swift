@@ -90,17 +90,17 @@ struct TransactionInputView: View {
         }
       }
       
-      NumberKeypadView(expression: $expression) { isEnabled in
-        self.isEnabled = isEnabled
-        if isEnabled {
-          self.isUpdated = true
-          
-          viewModel.send(.doneButtonTapped(
-            expression.numberFormat ?? 0,
-            isFocusedExpense
-          ))
-        }
-      }
+//      NumberKeypadView(expression: $expression) { isEnabled in
+//        self.isEnabled = isEnabled
+//        if isEnabled {
+//          self.isUpdated = true
+//          
+//          viewModel.send(.doneButtonTapped(
+//            expression.numberFormat ?? 0,
+//            isFocusedExpense
+//          ))
+//        }
+//      }
     }
     .frame(maxWidth: .infinity)
     .ignoresSafeArea(edges: .bottom)

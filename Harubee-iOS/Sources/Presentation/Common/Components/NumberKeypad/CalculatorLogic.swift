@@ -21,8 +21,9 @@ struct CalculatorLogic {
     var newExpression = expression
     
     switch keypadType {
-    case .delete:
+    case .delete, .clear:
       newExpression = processDeleteType(
+        keypadType,
         expression: expression
       )
     case .plus, .minus:
@@ -30,10 +31,10 @@ struct CalculatorLogic {
         keypadType,
         expression: expression
       )
-    case .done:
-      newExpression = processDoneType(
-        expression: expression
-      )
+      //    case .done:
+      //      newExpression = processDoneType(
+      //        expression: expression
+      //      )
     default:
       newExpression = processNumberType(
         keypadType,
@@ -60,7 +61,7 @@ struct CalculatorLogic {
     
     var newExpression = expression
     let lastText = String(newExpression.last ?? Character(" "))
-  
+    
     // Case 1. 0이 눌린 경우
     if zeros.contains(keypadType.title) {
       
@@ -70,7 +71,7 @@ struct CalculatorLogic {
         newExpression += keypadType.title
       }
       
-    // Case 2. 숫자가 눌린 경우
+      // Case 2. 숫자가 눌린 경우
     } else {
       
       // 현재 표현식이 0인 경우 입력된 키패드 숫자로 표시
@@ -116,11 +117,14 @@ struct CalculatorLogic {
   
   // MARK: - processDeleteType
   private func processDeleteType(
+    _ keypadType: KeypadButtonType,
     expression: String
   ) -> String {
     
     // 기존 표현식이 빈 문자열인 경우 리턴
     if expression.isEmpty { return "" }
+    
+    if keypadType == .clear { return KeypadButtonType.zero.title }
     
     // 표현식의 마지막 텍스트를 제거
     var newExpression = expression

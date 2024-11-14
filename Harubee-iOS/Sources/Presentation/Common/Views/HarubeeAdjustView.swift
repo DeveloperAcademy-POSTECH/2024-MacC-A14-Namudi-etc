@@ -59,14 +59,14 @@ struct HarubeeAdjustView: View {
         self.dismiss()
       }
       
-      NumberKeypadView(expression: $expression) { isEnabled in
-        self.isEnabled = isEnabled
-        if isEnabled {
-          self.isUpdated = true
-          
-          viewModel.send(.doneButtonTapped(expression.numberFormat ?? 0))
-        }
-      }
+//      NumberKeypadView(expression: $expression) { isEnabled in
+//        self.isEnabled = isEnabled
+//        if isEnabled {
+//          self.isUpdated = true
+//          
+//          viewModel.send(.doneButtonTapped(expression.numberFormat ?? 0))
+//        }
+//      }
     }
     .frame(maxWidth: .infinity)
     .ignoresSafeArea(edges: .bottom)
