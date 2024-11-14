@@ -15,13 +15,6 @@ struct NumberKeypadView: View {
   @State private var expression: String
   @Binding private var amount: Int
   
-  private let keypads: [[KeypadButtonType]] = [
-    [.one, .two, .three, .clear],
-    [.four, .five, .six, .plus],
-    [.seven, .eight, .nine, .minus],
-    [.zero, .doubleZero, .tripleZero, .delete]
-  ]
-  
   init(
     amount: Binding<Int>
   ) {
@@ -34,20 +27,15 @@ struct NumberKeypadView: View {
       
       expressionView
       
-      VStack(spacing: 2) {
-        ForEach(keypads, id: \.self) { rowKeypads in
-          NumberKeypadRowView(
-            keypads: rowKeypads,
-            expression: $expression,
-            amount: $amount
-          )
-        }
-      }
-      .padding(.top, 26)
-      .padding(.horizontal, 16)
-      .padding(.bottom, 31)
+      NumberKeypadButton(
+        expression: $expression,
+        amount: $amount
+      )
     }
     .frame(maxWidth: .infinity)
+    .onChange(of: amount) { oldValue, newValue in
+      print(amount)
+    }
   }
   
   private var expressionView: some View {
@@ -70,37 +58,42 @@ struct NumberKeypadView: View {
   }
 }
 
-
-// MARK: - NumberKeypadRowView
-private struct NumberKeypadRowView: View {
-  let keypads: [KeypadButtonType]
-  
-  @Binding var expression: String
-  @Binding var amount: Int
-  
-  var body: some View {
-    HStack(spacing: 2) {
-      ForEach(keypads, id: \.self) { columnKeypads in
-        NumberKeypadButton(
-          keypad: columnKeypads,
-          expression: $expression,
-          amount: $amount
-        )
-      }
-    }
-  }
-}
-
 // MARK: - NumberKeypadButton
 private struct NumberKeypadButton: View {
-  let keypad: KeypadButtonType
   
-  @Binding var expression: String
-  @Binding var amount: Int
+  private let keypads: [[KeypadButtonType]] = [
+    [.one, .two, .three, .clear],
+    [.four, .five, .six, .plus],
+    [.seven, .eight, .nine, .minus],
+    [.zero, .doubleZero, .tripleZero, .delete]
+  ]
   
   private let calculator = CalculatorLogic()
   
+  @Binding var expression: String
+  @Binding var amount: Int
+  
   var body: some View {
+    VStack(spacing: 2) {
+      ForEach(keypads, id: \.self) { rowKeypads in
+        
+        // rows
+        HStack(spacing: 2) {
+          ForEach(rowKeypads, id: \.self) { keypad in
+            
+            // columns
+            keypadButton(keypad)
+          }
+        }
+      }
+    }
+    .padding(.top, 26)
+    .padding(.horizontal, 16)
+    .padding(.bottom, 31)
+  }
+  
+  @ViewBuilder
+  private func keypadButton(_ keypad: KeypadButtonType) -> some View {
     Group {
       if keypad.style == .text {
         Text(keypad.title)
@@ -123,6 +116,7 @@ private struct NumberKeypadButton: View {
     }
   }
 }
+
 
 // MARK: - Preview
 #Preview {
