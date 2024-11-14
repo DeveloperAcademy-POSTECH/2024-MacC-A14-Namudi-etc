@@ -61,7 +61,6 @@ final class SettingViewModel {
         day: incomeDay,
         salaryBudget: self.state.salaryBudget
       )
-//      let updatedSalaryBudget = try budgetUseCase.getSalaryBudget(startDate: state.salaryBudget?.startDate)
       self.state.salaryBudget = newSalaryBudget
     } catch {
       print(#function, "error: \(error.localizedDescription)")
