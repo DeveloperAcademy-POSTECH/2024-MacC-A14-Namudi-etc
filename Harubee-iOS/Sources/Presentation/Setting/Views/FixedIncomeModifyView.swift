@@ -13,14 +13,14 @@ struct FixedIncomeModifyView: View {
   @State private var fixedIncomeAmount: String
   @State private var isFocused: Bool = false
   
-  private var action: (String) -> Void
+  private var editFixedIncomeAmount: (String) -> Void
   
   init(
     fixedIncomeAmount: String,
-    action: @escaping (String) -> Void
+    editFixedIncomeAmount: @escaping (String) -> Void
   ) {
     self._fixedIncomeAmount = State(initialValue: fixedIncomeAmount)
-    self.action = action
+    self.editFixedIncomeAmount = editFixedIncomeAmount
   }
   
   var body: some View {
@@ -43,7 +43,7 @@ struct FixedIncomeModifyView: View {
           title: "완료하기",
           isEnabled: .constant(true)
         ) {
-          action(fixedIncomeAmount)
+          editFixedIncomeAmount(fixedIncomeAmount)
           dismiss()
         }
       }
