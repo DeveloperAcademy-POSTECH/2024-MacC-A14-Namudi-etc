@@ -11,10 +11,19 @@ import SwiftUI
 // MARK: - Help Button
 struct HelpButton: View {
   @Binding var infoBubbleVisible: Bool
+  private var buttonColor: Color
+  
+  init(
+    infoBubbleVisible: Binding<Bool>,
+    buttonColor: Color
+  ) {
+    self._infoBubbleVisible = infoBubbleVisible
+    self.buttonColor = buttonColor
+  }
   
   var body: some View {
     Image(systemName: "questionmark.circle")
-      .foregroundStyle(Color.whiteDefault)
+      .foregroundStyle(buttonColor)
       .tapFeedback {
         infoBubbleVisible.toggle()
       }

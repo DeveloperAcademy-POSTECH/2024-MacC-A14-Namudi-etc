@@ -188,7 +188,10 @@ private extension View {
       .navigationBarStyle(.white(title: "고정수입 관리", backTitle: "뒤로"))
       .toolbar {
         ToolbarItem(placement: .topBarTrailing) {
-          HelpButton(infoBubbleVisible: isInfoBubbleVisible)
+          HelpButton(
+            infoBubbleVisible: isInfoBubbleVisible,
+            buttonColor: .textBlack
+          )
         }
       }
   }

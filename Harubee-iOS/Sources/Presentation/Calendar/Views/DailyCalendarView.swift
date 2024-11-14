@@ -460,7 +460,10 @@ private extension View {
     self.navigationBarStyle(.main(title: "", backTitle: "뒤로"))
       .toolbar {
         ToolbarItem(placement: .topBarTrailing) {
-          HelpButton(infoBubbleVisible: infoBubbleVisible)
+          HelpButton(
+            infoBubbleVisible: infoBubbleVisible,
+            buttonColor: .whiteDefault
+          )
         }
       }
   }
