@@ -11,51 +11,13 @@ import SwiftUI
 struct SettingView: View {
   @State private var navigateFixedExpense: Bool = false
   @State private var navigateFixedIncome: Bool = false
-  
   @State private var settingViewModel: SettingViewModel
   
-  init(settingViewModel: SettingViewModel) {
-    self.settingViewModel = settingViewModel
+  private var salaryBudget: SalaryBudget? {
+    settingViewModel.state.salaryBudget
   }
   
-  var body: some View {
-    ZStack(alignment: .top) {
-      Color.textBlack5.edgesIgnoringSafeArea(.bottom)
-      VStack(spacing: 6) {
-        SectionContainer {
-          SettingItem(title: "고정지출 관리",
-                      previewText:
-                        "총 \(settingViewModel.state.salaryBudget?.fixedExpenses.count ?? 0)건 / \(settingViewModel.state.salaryBudget?.fixedExpenses.reduce(0) { $0 + $1.price }.decimalWithWon ?? 0.decimalWithWon)"
-          )
-          .onTapGesture {
-            navigateFixedExpense = true
-          }
-          .navigationDestination(isPresented: $navigateFixedExpense) {
-            FixedExpenseView(settingViewModel: settingViewModel)
-          }
-          
-          SettingItem(title: "고정수입 관리",
-                      previewText: "매달 \(settingViewModel.state.salaryBudget?.startDate.formattedDateToString(.day_kr) ?? "1일") / \(settingViewModel.state.salaryBudget?.fixedIncome.decimalWithWon ?? "")")
-          .onTapGesture {
-            navigateFixedIncome = true
-          }
-          .navigationDestination(isPresented: $navigateFixedIncome) {
-            FixedIncomeView(settingViewModel: settingViewModel)
-          }
-        }
-        
-        SettingFooterView()
-      }
-    }
-    .navigationBarStyle(.white(title: "설정", backTitle: "뒤로"))
-    .font(.pretendardMedium_18)
-    .foregroundStyle(Color.textBlack)
-  }
-}
-
-// MARK: - SettingFooterView
-private struct SettingFooterView: View {
-  var body: some View {
+  private var settingFooterView: some View {
     SectionContainer {
       VStack(alignment: .leading, spacing: 6) {
         Text("앱 버전")
@@ -69,6 +31,51 @@ private struct SettingFooterView: View {
       
 //      SettingItem(title: "개발자 정보", previewText: "")
     }
+  }
+  
+  init(settingViewModel: SettingViewModel) {
+    self.settingViewModel = settingViewModel
+  }
+  
+  var body: some View {
+    ZStack(alignment: .top) {
+      Color.textBlack5.edgesIgnoringSafeArea(.bottom)
+      VStack(spacing: 6) {
+        SectionContainer {
+          SettingItem(title: "고정지출 관리",
+                      previewText:"""
+                      총 \(salaryBudget?.fixedExpenses.count ?? 0)건 / \
+                      \(salaryBudget?.fixedExpenses.reduce(0) { $0 + $1.price }
+                        .decimalWithWon ?? 0.decimalWithWon)
+                      """
+          )
+          .onTapGesture {
+            navigateFixedExpense = true
+          }
+          .navigationDestination(isPresented: $navigateFixedExpense) {
+            FixedExpenseView(settingViewModel: settingViewModel)
+          }
+          
+          SettingItem(title: "고정수입 관리",
+                      previewText: """
+                      매달 \(salaryBudget?.startDate.formattedDateToString(.day_kr) ?? "1일") / \
+                      \(salaryBudget?.fixedIncome.decimalWithWon ?? "")
+                      """
+          )
+          .onTapGesture {
+            navigateFixedIncome = true
+          }
+          .navigationDestination(isPresented: $navigateFixedIncome) {
+            FixedIncomeView(settingViewModel: settingViewModel)
+          }
+        }
+        
+        settingFooterView
+      }
+    }
+    .navigationBarStyle(.white(title: "설정", backTitle: "뒤로"))
+    .font(.pretendardMedium_18)
+    .foregroundStyle(Color.textBlack)
   }
 }
 
@@ -126,17 +133,10 @@ private struct SectionContainer<Content: View>: View {
   }
 }
 
-//#Preview {
-//  FixedIncomeView(settingViewModel: SettingViewModel(
-//    salaryBudget: SalaryBudget(
-//      startDate: Date(),
-//      endDate: Date(),
-//      fixedIncome: 1_000_000,
-//      fixedExpenses: [],
-//      balance: 0,
-//      defaultHarubee: 0,
-//      dailyBudgets: []
-//    ),
-//    budgetUseCase: DIContainer.shared.
-//  ))
-//}
+#Preview {
+  SettingView(
+    settingViewModel: DIContainer.shared.makeSettingViewModel(
+      salaryBudget: SalaryBudget.default
+    )
+  )
+}
