@@ -60,16 +60,13 @@ struct FixedExpenseManageView: View {
       
       Spacer()
       
-      MainColorButton(
+      MainColorBottomButton(
         title: "저장하기",
-        isEnabled: $isEnabled,
-        cornerRadius: 10
+        isEnabled: $isEnabled
       ) {
         self.action(selectedDay, fixedExpenseName, fixedExpenseAmount)
         self.dismiss()
       }
-      .padding(.horizontal, 16)
-      .padding(.bottom, 9)
     }
     .onChange(of: selectedDay) { oldValue, newValue in
       if oldValue != newValue {

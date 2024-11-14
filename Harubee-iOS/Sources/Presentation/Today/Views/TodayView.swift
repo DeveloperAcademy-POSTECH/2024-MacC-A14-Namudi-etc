@@ -395,8 +395,9 @@ private struct TodayFooterView: View {
         todayViewModel: todayViewModel,
         isInfoBubbleVisible: $isInfoBubbleVisible
       )
+      .padding(.horizontal, 16)
       
-      MainColorButton(title: "실제 지출 및 수입 입력하기", cornerRadius: 10) {
+      MainColorBottomButton(title: "실제 지출 및 수입 입력하기") {
         self.isPresented = true
       }
       .infoBubble(isVisible: $isInfoBubbleVisible) {
@@ -409,7 +410,6 @@ private struct TodayFooterView: View {
       }
     }
     .frame(maxWidth: .infinity, maxHeight: 196, alignment: .top)
-    .padding(.horizontal, 16)
     .background(Color.whiteDefault)
     .sheet(isPresented: $isPresented) {
       todayViewModel.send(.viewDidLoad)

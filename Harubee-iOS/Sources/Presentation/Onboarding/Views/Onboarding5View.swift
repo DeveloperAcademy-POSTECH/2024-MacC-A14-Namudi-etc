@@ -37,11 +37,9 @@ struct Onboarding5View: View {
       
       Spacer()
       
-      MainColorButton(title: "다음으로", cornerRadius: 10) {
+      MainColorBottomButton(title: "다음으로") {
         self.isPresented = true
       }
-      .padding(.horizontal, 16)
-      .padding(.bottom, 9)
     }
     .onChange(of: fixedExpenses, { _, _ in
       viewModel.send(.updateFixedExpenses(fixedExpenses))
