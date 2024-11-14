@@ -118,7 +118,6 @@ final class CalendarViewModel {
       }
       
       state.currentBudget = currentBudget
-      state.selectedDate = today
       state.error = nil
       
     } catch {
