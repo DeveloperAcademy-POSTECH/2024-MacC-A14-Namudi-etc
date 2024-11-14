@@ -21,13 +21,13 @@ struct FixedExpenseView: View {
     ZStack {
       VStack(spacing: 0) {
         HeaderView(
-          fixedExpenses: settingViewModel.state.salaryBudget?.fixedExpenses ?? []
+          fixedExpenses: settingViewModel.state.salaryBudget.fixedExpenses
         )
         FixedExpensesListView(
           settingViewModel: settingViewModel,
           fixedExpenses: .init(
             get: {
-              settingViewModel.state.salaryBudget?.fixedExpenses ?? []
+              settingViewModel.state.salaryBudget.fixedExpenses
             }, set: { items in
               settingViewModel.send(.updateFixedExpenses(items))
             }),
@@ -139,50 +139,50 @@ private struct FixedExpensesListView: View {
       .padding(.leading, 20)
       .foregroundStyle(Color.textBlack)
       
-      if fixedExpenses.isEmpty {
-        Text("목록을 추가해주세요")
-          .font(.pretendardMedium_16)
-          .foregroundStyle(Color.textBlack30)
-          .padding(.top, 150)
-        
-      } else {
-        List {
-          ForEach(fixedExpenses, id: \.id) { item in
-            HStack(spacing: 0) {
-              Text("매달 \(item.date.formattedDateToString(.day_kr))")
-                .font(.pretendardMedium_16)
-                .foregroundStyle(Color.textBlack)
-                .padding(.vertical, 6)
-                .padding(.horizontal, 11)
-                .background(
-                  RoundedRectangle(cornerRadius: 6)
-                    .foregroundStyle(Color.textBrighter30)
-                )
-              
-              Spacer()
-              
-              VStack(alignment: .trailing, spacing: 0) {
-                Text(item.name)
-                  .font(.pretendardMedium_12)
-                  .foregroundStyle(Color.textBlack)
-                Text(item.price.decimalWithWon)
-                  .font(.pretendardSemibold_18)
-                  .foregroundStyle(Color.textBlack)
-              }
-            }
-            .padding(.vertical, 1)
-            .contentShape(Rectangle())
-            .onTapGesture {
-              self.manageMode = .modify
-              self.selectedItem = item
-              self.isPresented = true
-            }
-          }
-          .onDelete(perform: removeList)
-        }
-        .listStyle(.plain)
-        .scrollBounceBehavior(.basedOnSize)
-      }
+//      if fixedExpenses.isEmpty {
+//        Text("목록을 추가해주세요")
+//          .font(.pretendardMedium_16)
+//          .foregroundStyle(Color.textBlack30)
+//          .padding(.top, 150)
+//        
+//      } else {
+//        List {
+//          ForEach(fixedExpenses, id: \.id) { item in
+//            HStack(spacing: 0) {
+//              Text("매달 \(item.date.formattedDateToString(.day_kr))")
+//                .font(.pretendardMedium_16)
+//                .foregroundStyle(Color.textBlack)
+//                .padding(.vertical, 6)
+//                .padding(.horizontal, 11)
+//                .background(
+//                  RoundedRectangle(cornerRadius: 6)
+//                    .foregroundStyle(Color.textBrighter30)
+//                )
+//              
+//              Spacer()
+//              
+//              VStack(alignment: .trailing, spacing: 0) {
+//                Text(item.name)
+//                  .font(.pretendardMedium_12)
+//                  .foregroundStyle(Color.textBlack)
+//                Text(item.price.decimalWithWon)
+//                  .font(.pretendardSemibold_18)
+//                  .foregroundStyle(Color.textBlack)
+//              }
+//            }
+//            .padding(.vertical, 1)
+//            .contentShape(Rectangle())
+//            .onTapGesture {
+//              self.manageMode = .modify
+//              self.selectedItem = item
+//              self.isPresented = true
+//            }
+//          }
+//          .onDelete(perform: removeList)
+//        }
+//        .listStyle(.plain)
+//        .scrollBounceBehavior(.basedOnSize)
+//      }
     }
     .sheet(isPresented: $isPresented) {
       FixedExpenseManageView(
@@ -192,8 +192,8 @@ private struct FixedExpensesListView: View {
         fixedExpenseAmount: selectedItem?.price.decimal ?? ""
       ) { day, name, price in
         let date = day.convertDateBetweenStartAndEnd(
-          start: settingViewModel.state.salaryBudget?.startDate ?? Date(),
-          end: settingViewModel.state.salaryBudget?.endDate ?? Date()
+          start: settingViewModel.state.salaryBudget.startDate,
+          end: settingViewModel.state.salaryBudget.endDate
         )
         
         if let item = selectedItem {

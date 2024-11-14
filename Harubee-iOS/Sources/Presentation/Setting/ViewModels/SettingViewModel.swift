@@ -12,7 +12,7 @@ import Foundation
 final class SettingViewModel {
   struct State {
     // MARK: FixedIncomeView
-    var salaryBudget: SalaryBudget?
+    var salaryBudget: SalaryBudget
   }
   
   enum Action {
@@ -23,7 +23,7 @@ final class SettingViewModel {
     case updateFixedExpenses([TransactionItem])
   }
   
-  private(set) var state = State()
+  private(set) var state: State
   
   private let budgetUseCase: BudgetUseCase
   
@@ -32,7 +32,9 @@ final class SettingViewModel {
     salaryBudget: SalaryBudget
   ) {
     self.budgetUseCase = budgetUseCase
-    self.state.salaryBudget = salaryBudget
+    self.state = State(
+      salaryBudget: salaryBudget
+    )
   }
   
   // MARK: - Public Methods (유저 액션 핸들러)
@@ -57,7 +59,7 @@ final class SettingViewModel {
     do {
       let newSalaryBudget = try budgetUseCase.setIncomeDay(
         day: incomeDay,
-        salaryBudget: self.state.salaryBudget!
+        salaryBudget: self.state.salaryBudget
       )
 //      let updatedSalaryBudget = try budgetUseCase.getSalaryBudget(startDate: state.salaryBudget?.startDate)
       self.state.salaryBudget = newSalaryBudget
@@ -68,12 +70,11 @@ final class SettingViewModel {
   
   private func updateFixedIncomeAmount(_ incomeAmount: Int) {
     do {
-      if let salaryBudget = self.state.salaryBudget {
-        let newSalaryBudget = try budgetUseCase.updateFixedIncome(salaryBudget: salaryBudget,
-                                            newIncome: incomeAmount
-        )
-        self.state.salaryBudget = newSalaryBudget
-      }
+      let newSalaryBudget = try budgetUseCase.updateFixedIncome(
+        salaryBudget: self.state.salaryBudget,
+        newIncome: incomeAmount
+      )
+      self.state.salaryBudget = newSalaryBudget
     } catch {
       print(#function, "error: \(error.localizedDescription)")
     }
@@ -81,15 +82,13 @@ final class SettingViewModel {
   
   private func updateFixedExpenses(_ fixedExpenses: [TransactionItem]) {
     do {
-      if let salaryBudget = self.state.salaryBudget {
-        let updatedSalaryBudget = try budgetUseCase.updateFixedExpenses(
-          salaryBudget: salaryBudget,
-          expenses: fixedExpenses
-        )
-        self.state.salaryBudget = updatedSalaryBudget
-      }
+      let updatedSalaryBudget = try budgetUseCase.updateFixedExpenses(
+        salaryBudget: self.state.salaryBudget,
+        expenses: fixedExpenses
+      )
+      self.state.salaryBudget = updatedSalaryBudget
     } catch {
-      print("Error: \(error.localizedDescription) in \(#function)")
+      print("Error: \(error.localizedDescription)")
     }
   }
 }

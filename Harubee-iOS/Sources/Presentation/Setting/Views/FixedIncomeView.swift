@@ -11,29 +11,50 @@ import SwiftUI
 struct FixedIncomeView: View {
   @Environment(\.dismiss) private var dismiss
   @State private var isUpdated: Bool = false
-  @State private var isDayUpdated: Bool = false
   @State private var selectedDay: Int
   @State private var fixedIncomeAmount: Int
   @State private var isInfoBubbleVisible: Bool = false
   @State private var isAlertPresented: Bool = false
   
   private var settingViewModel: SettingViewModel
+  private var salaryBudget: SalaryBudget {
+    settingViewModel.state.salaryBudget
+  }
+  private var fixedIncomeHeaderView: some View {
+    VStack(spacing: 4) {
+      VStack(alignment: .leading, spacing: 10) {
+        Text("고정수입 날짜를 기준으로")
+        Text("하루비를 알려드릴게요.")
+      }
+      .foregroundStyle(Color.textBlack)
+      .frame(maxWidth: .infinity, alignment: .leading)
+      .padding(.horizontal, 4)
+      .infoBubble($isInfoBubbleVisible)
+      
+      Rectangle()
+        .frame(height: 1)
+        .foregroundStyle(Color.textBrighter30)
+    }
+    .font(.pretendardSemibold_22)
+    .padding(.horizontal, 16)
+    .padding(.top, 44)
+  }
   
   init(
     settingViewModel: SettingViewModel
   ) {
     self.settingViewModel = settingViewModel
-    self.selectedDay = settingViewModel.state.salaryBudget?.startDate.day ?? 1
-    self.fixedIncomeAmount = settingViewModel.state.salaryBudget?.fixedIncome ?? 0
+    self.selectedDay = settingViewModel.state.salaryBudget.startDate.day
+    self.fixedIncomeAmount = settingViewModel.state.salaryBudget.fixedIncome
   }
   
   var body: some View {
     ZStack {
       VStack(spacing: 48) {
-        HeaderView(isInfoBubbleVisible: $isInfoBubbleVisible)
+        fixedIncomeHeaderView
         .zIndex(1)
         
-        BodyView(
+        FixedIncomeBodyView(
           settingViewModel: settingViewModel,
           selectedDay: $selectedDay,
           fixedIncomeAmount: $fixedIncomeAmount
@@ -45,60 +66,54 @@ struct FixedIncomeView: View {
           title: "저장하기",
           isEnabled: $isUpdated
         ) {
-          if isDayUpdated {
+          if selectedDay != salaryBudget.startDate.day {
             isAlertPresented = true
           } else {
-            settingViewModel.send(.fixedIncomeSaveButtonTapped(selectedDay, fixedIncomeAmount))
+            settingViewModel.send(.fixedIncomeSaveButtonTapped(
+              selectedDay,
+              fixedIncomeAmount
+            ))
             dismiss()
           }
         }
       }
-      .onChange(of: selectedDay) { _, newValue in
-        if newValue != settingViewModel.state.salaryBudget?.startDate.day {
-          isDayUpdated = true
-          isUpdated = true
-        } else {
-          isUpdated = false
-        }
+      .onChange(of: selectedDay) { _, _ in
+        isUpdated = (
+          selectedDay != salaryBudget.startDate.day
+          || fixedIncomeAmount != salaryBudget.fixedIncome
+        )
+
       }
-      .onChange(of: fixedIncomeAmount) { _, newValue in
-        if newValue != settingViewModel.state.salaryBudget?.fixedIncome {
-          isUpdated = true
-        } else {
-          isUpdated = false
-        }
+      .onChange(of: fixedIncomeAmount) { _, _ in
+        isUpdated = (
+          selectedDay != salaryBudget.startDate.day
+          || fixedIncomeAmount != salaryBudget.fixedIncome
+        )
+
       }
       .frame(maxHeight: .infinity, alignment: .top)
-      .navigationBarStyle(.white(title: "고정수입 관리", backTitle: "뒤로"))
       
       if isInfoBubbleVisible {
         Color.clear
           .contentShape(Rectangle())
           .ignoresSafeArea()
-          .onTapGesture {
-            
-            isInfoBubbleVisible.toggle()
-          }
+          .onTapGesture { isInfoBubbleVisible.toggle() }
       }
     }
-    .toolbar {
-      ToolbarItem(placement: .topBarTrailing) {
-        Button {
-          isInfoBubbleVisible.toggle()
-        } label: {
-          Image(systemName: "questionmark.circle")
-            .font(Font.system(size: 18, weight: .regular))
-            .foregroundStyle(Color.textBlack)
-        }
-      }
-    }
+    .applyNavigationBarStyle(isInfoBubbleVisible: $isInfoBubbleVisible)
     .alert(isPresented: $isAlertPresented) {
       Alert(
         title: Text("수입일을 \(selectedDay)일로 바꾸시겠어요?"),
-        message: Text("수입일을 바꾸면 모든 데이터가 초기화되며,\n\(selectedDay)일 기준으로 하루비가 다시 계산돼요"),
+        message: Text("""
+        수입일을 바꾸면 모든 데이터가 초기화되며,
+        \(selectedDay)일 기준으로 하루비가 다시 계산돼요
+        """),
         primaryButton: .default(Text("취소")),
         secondaryButton: .destructive(Text("확인")) {
-          settingViewModel.send(.fixedIncomeSaveButtonTapped(selectedDay, fixedIncomeAmount))
+          settingViewModel.send(.fixedIncomeSaveButtonTapped(
+            selectedDay,
+            fixedIncomeAmount
+          ))
           dismiss()
         }
       )
@@ -106,42 +121,7 @@ struct FixedIncomeView: View {
   }
 }
 
-private struct HeaderView: View {
-  @Binding private var isInfoBubbleVisible: Bool
-  
-  init(isInfoBubbleVisible: Binding<Bool>) {
-    self._isInfoBubbleVisible = isInfoBubbleVisible
-  }
-  
-  var body: some View {
-    VStack(spacing: 4) {
-      VStack(alignment: .leading, spacing: 10) {
-        Text("고정수입 날짜를 기준으로")
-        Text("하루비를 알려드릴게요.")
-      }
-      .foregroundStyle(Color.textBlack)
-      .frame(maxWidth: .infinity, alignment: .leading)
-      .padding(.horizontal, 4)
-      .infoBubble(isVisible: $isInfoBubbleVisible, alignment: .bottomLeading) {
-        VStack(alignment: .leading, spacing: 2) {
-          Text("하루비는 고정수입 날짜와 금액을 기준으로 계산돼요")
-          Text("원활한 서비스 사용을 위해, 정확한 정보를 입력해주세요")
-        }
-        .font(.pretendardSemibold_12)
-        .foregroundStyle(Color.textBlack)
-      }
-      
-      Rectangle()
-        .frame(height: 1)
-        .foregroundStyle(Color.textBrighter30)
-    }
-    .font(.pretendardSemibold_22)
-    .padding(.horizontal, 16)
-    .padding(.top, 44)
-  }
-}
-
-private struct BodyView: View {
+private struct FixedIncomeBodyView: View {
   @State private var showingSheet: Bool = false
   @Binding private var selectedDay: Int
   @Binding private var fixedIncomeAmount: Int
@@ -186,7 +166,7 @@ private struct BodyView: View {
         }
         .sheet(isPresented: $showingSheet) {
           FixedIncomeModifyView(
-            fixedIncomeAmount: settingViewModel.state.salaryBudget?.fixedIncome.decimalWithWon ?? ""
+            fixedIncomeAmount: settingViewModel.state.salaryBudget.fixedIncome.decimalWithWon
           ) { fixedIncomeString in
             fixedIncomeAmount = fixedIncomeString.numberFormat ?? 0
           }
@@ -199,6 +179,41 @@ private struct BodyView: View {
   }
 }
 
+// MARK: - View Modifiers
+private extension View {
+  func applyNavigationBarStyle(
+    isInfoBubbleVisible: Binding<Bool>
+  ) -> some View {
+    self
+      .navigationBarStyle(.white(title: "고정수입 관리", backTitle: "뒤로"))
+      .toolbar {
+        ToolbarItem(placement: .topBarTrailing) {
+          HelpButton(infoBubbleVisible: isInfoBubbleVisible)
+        }
+      }
+  }
+}
+
+// MARK: - InfoBubbles Modifiers
+private extension View {
+  func infoBubble(_ isVisible: Binding<Bool>) -> some View {
+    self
+      .infoBubble(isVisible: isVisible, alignment: .bottomLeading) {
+        VStack(alignment: .leading, spacing: 2) {
+          Text("하루비는 고정수입 날짜와 금액을 기준으로 계산돼요")
+          Text("원활한 서비스 사용을 위해, 정확한 정보를 입력해주세요")
+        }
+        .font(.pretendardSemibold_12)
+        .foregroundStyle(Color.textBlack)
+      }
+  }
+}
+
+
 #Preview {
-  FixedIncomeView(settingViewModel: DIContainer.shared.makeSettingViewModel(salaryBudget: SalaryBudget.default))
+  FixedIncomeView(
+    settingViewModel: DIContainer.shared.makeSettingViewModel(
+      salaryBudget: SalaryBudget.default
+    )
+  )
 }
