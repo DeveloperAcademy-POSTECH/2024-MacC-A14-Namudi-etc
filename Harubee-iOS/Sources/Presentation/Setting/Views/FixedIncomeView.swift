@@ -145,7 +145,7 @@ private struct FixedIncomeBodyView: View {
         Button {
           showingSheet.toggle()
         } label: {
-          HStack(spacing: 2) {
+          HStack(spacing: 3) {
             Text(fixedIncomeAmount.decimalWithWon)
               .font(.pretendardMedium_20)
               .foregroundStyle(Color.textBlack)
