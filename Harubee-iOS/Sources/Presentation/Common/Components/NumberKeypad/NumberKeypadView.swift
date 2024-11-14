@@ -13,13 +13,19 @@ import SwiftUI
 struct NumberKeypadView: View {
   
   @State private var expression: String
-  @Binding private var amount: Int
+  @Binding private var amount: String
+  
+  private let doneAction: () -> Void
   
   init(
-    amount: Binding<Int>
+    amount: Binding<String>,
+    doneAction: @escaping () -> Void
   ) {
     self._amount = amount
-    self._expression = State(wrappedValue: amount.wrappedValue.decimal)
+    
+    let exp = amount.wrappedValue.replacingOccurrences(of: "원", with: "")
+    self._expression = State(wrappedValue: exp)
+    self.doneAction = doneAction
   }
   
   var body: some View {
@@ -46,7 +52,7 @@ struct NumberKeypadView: View {
       
       Text("완료")
         .tapFeedback {
-          
+          self.doneAction()
         }
     }
     .frame(maxWidth: .infinity)
@@ -71,7 +77,7 @@ private struct NumberKeypadButton: View {
   private let calculator = CalculatorLogic()
   
   @Binding var expression: String
-  @Binding var amount: Int
+  @Binding var amount: String
   
   var body: some View {
     VStack(spacing: 2) {
@@ -120,7 +126,7 @@ private struct NumberKeypadButton: View {
 
 // MARK: - Preview
 #Preview {
-  @Previewable @State var amount: Int = 10000000
+  @Previewable @State var amount: String = "10000000"
   @Previewable @State var isVisible: Bool = false
   
   VStack {
@@ -132,6 +138,8 @@ private struct NumberKeypadButton: View {
     
     NumberKeypadView(
       amount: $amount
-    )
+    ) {
+      print("Tap")
+    }
   }
 }

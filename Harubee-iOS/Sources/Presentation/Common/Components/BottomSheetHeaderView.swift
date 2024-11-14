@@ -28,7 +28,7 @@ struct BottomSheetHeaderView: View {
         Button {
           dismiss()
         } label: {
-          Text("닫기")
+          Text("취소")
             .font(.pretendardMedium_18)
             .foregroundStyle(Color.main)
         }
