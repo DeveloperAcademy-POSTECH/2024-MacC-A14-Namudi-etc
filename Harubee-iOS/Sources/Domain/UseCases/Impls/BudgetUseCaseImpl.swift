@@ -52,13 +52,21 @@ final class BudgetUseCaseImpl: BudgetUseCase {
     
     // 4. 남은 기간의 일자 개수 구하기 (오늘부터 endDate까지)
     let calendar = Calendar.current
-    let remainingDays = calendar.dateComponents([.day], from: today, to: endDate).day ?? 0
+    let remainingDays = calendar.dateComponents(
+      [.day],
+      from: today,
+      to: endDate
+    ).day ?? 0
     
     // 5. 잔액을 남은 기간의 일자 개수로 나누어 기본 하루비 설정하기
     let defaultHarubee = Double(initialBalance) / Double(remainingDays + 1)
     
     // 6. 각 날짜별로 DailyBudget 생성하기
-    let days = calendar.dateComponents([.day], from: startDate, to: endDate).day ?? 0
+    let days = calendar.dateComponents(
+      [.day],
+      from: startDate,
+      to: endDate
+    ).day ?? 0
     
     let dailyBudgets = (0...days).compactMap { day -> DailyBudget? in
       guard let date = calendar.date(
@@ -114,7 +122,11 @@ final class BudgetUseCaseImpl: BudgetUseCase {
     
     // 4. 남은 기간의 일자 개수 구하기
     let calendar = Calendar.current
-    let days = calendar.dateComponents([.day], from: startDate, to: endDate).day ?? 0
+    let days = calendar.dateComponents(
+      [.day],
+      from: startDate,
+      to: endDate
+    ).day ?? 0
     
     // 5. 잔액을 예산 기간의 일자 개수로 나누어 기본 하루비 설정하기
     let defaultHarubee = Double(initialBalance) / Double(days + 1)
@@ -172,7 +184,9 @@ final class BudgetUseCaseImpl: BudgetUseCase {
   ) throws -> SalaryBudget {
     let targetDate = (date ?? Date()).formattedDate
     
-    guard let salaryBudget = try salaryBudgetRepository.readByTargetDateContaining(targetDate) else {
+    guard let salaryBudget = try salaryBudgetRepository.readByTargetDateContaining(
+      targetDate
+    ) else {
       throw DomainError.dataNotFound
     }
     return salaryBudget
@@ -185,7 +199,9 @@ final class BudgetUseCaseImpl: BudgetUseCase {
     let targetDate = (startDate ?? Date()).formattedDate
     
     // 2. 특정 날짜에 해당하는 SalaryBudget 가져오기
-    guard let salaryBudget = try salaryBudgetRepository.readByStartDate(targetDate) else {
+    guard let salaryBudget = try salaryBudgetRepository.readByStartDate(
+      targetDate
+    ) else {
       throw DomainError.dataNotFound
     }
     
@@ -196,8 +212,7 @@ final class BudgetUseCaseImpl: BudgetUseCase {
   // TODO: updateBalance와 updateDefaultHarubee 분리 필요
   func updateBalance(
     salaryBudget: SalaryBudget,
-    newBalance: Int,
-    from date: FromDate = .now
+    newBalance: Int
   ) throws -> SalaryBudget {
     // 1. 새로운 잔액으로 업데이트하기
     let newSalaryBudget = try salaryBudgetRepository.updateBalance(
@@ -207,8 +222,7 @@ final class BudgetUseCaseImpl: BudgetUseCase {
     
     // 2. 새로 업데이트된 SalaryBudget의 잔액으로 기본 하루비 다시 계산하기
     let newDefaultHarubee = self.calculateDefaultHarubee(
-      salaryBudget: newSalaryBudget,
-      from: date
+      salaryBudget: newSalaryBudget
     )
     
     // 3. SalaryBudget에 기본 하루비 업데이트하기
@@ -247,15 +261,16 @@ final class BudgetUseCaseImpl: BudgetUseCase {
     
     // 5. 기본 하루비 다시 계산하기
     let defaultHarubee = self.calculateDefaultHarubee(
-      salaryBudget: SalaryBudget(startDate: salaryBudget.startDate,
-                                 endDate: salaryBudget.endDate,
-                                 fixedIncome: newIncome,
-                                 fixedExpenses: salaryBudget.fixedExpenses,
-                                 balance: newBalance,
-                                 defaultHarubee: salaryBudget.defaultHarubee,
-                                 dailyBudgets: salaryBudget.dailyBudgets)
+      salaryBudget: SalaryBudget(
+        startDate: salaryBudget.startDate,
+        endDate: salaryBudget.endDate,
+        fixedIncome: newIncome,
+        fixedExpenses: salaryBudget.fixedExpenses,
+        balance: newBalance,
+        defaultHarubee: salaryBudget.defaultHarubee,
+        dailyBudgets: salaryBudget.dailyBudgets
+      )
     )
-    
     
     // 6. Repository 통해 저장하기
     do {
@@ -279,8 +294,10 @@ final class BudgetUseCaseImpl: BudgetUseCase {
     let today = Date().formattedDate
     
     // 1. 기존 오늘 날짜 이후의 고정 지출의 합계
-    let oldPostTodayTotalExpenses = salaryBudget.fixedExpenses.filter{ $0.date > today }
+    let oldPostTodayTotalExpenses = salaryBudget.fixedExpenses
+      .filter{ $0.date > today }
       .reduce(0) { $0 + $1.price }
+    
     // 2. 오늘 날짜 이후의 고정지출들의 차이(new - old)
     let postTodayDifference = expenses.filter { $0.date > today }
       .reduce(0) { $0 + $1.price } - oldPostTodayTotalExpenses
@@ -293,16 +310,17 @@ final class BudgetUseCaseImpl: BudgetUseCase {
       throw DomainError.invalidAmount
     }
     
-    
     // 5. 기본 하루비 다시 계산하기
     let defaultHarubee = self.calculateDefaultHarubee(
-      salaryBudget: SalaryBudget(startDate: salaryBudget.startDate,
-                                 endDate: salaryBudget.endDate,
-                                 fixedIncome: salaryBudget.fixedIncome,
-                                 fixedExpenses: expenses,
-                                 balance: newBalance,
-                                 defaultHarubee: salaryBudget.defaultHarubee,
-                                 dailyBudgets: salaryBudget.dailyBudgets)
+      salaryBudget: SalaryBudget(
+        startDate: salaryBudget.startDate,
+        endDate: salaryBudget.endDate,
+        fixedIncome: salaryBudget.fixedIncome,
+        fixedExpenses: expenses,
+        balance: newBalance,
+        defaultHarubee: salaryBudget.defaultHarubee,
+        dailyBudgets: salaryBudget.dailyBudgets
+      )
     )
     
     // 6. Repository 통해 저장하기
@@ -320,21 +338,18 @@ final class BudgetUseCaseImpl: BudgetUseCase {
   }
   
   func calculateDefaultHarubee(
-    salaryBudget: SalaryBudget,
-    from date: FromDate = .now
+    salaryBudget: SalaryBudget
   ) -> Double {
     
-    let currentDate = calendar.date(
-      from:calendar.dateComponents(
-        [.year, .month, .day],
-        from: date == .now ? Date() : Date().addingTimeInterval(86400)
-      )
-    )!
+    let currentDate = Date().formattedDate
+    
     var nilCount = 0.0
     var newBalance = Double(salaryBudget.balance)
     
     for dailyBudget in salaryBudget.dailyBudgets {
-      if dailyBudget.date < currentDate { continue }
+      if dailyBudget.date < currentDate || dailyBudget.expense != nil {
+        continue
+      }
       
       if let harubee = dailyBudget.harubee { newBalance -= Double(harubee) }
       else { nilCount += 1 }
@@ -361,7 +376,9 @@ final class BudgetUseCaseImpl: BudgetUseCase {
     date: Date
   ) throws -> DailyBudget {
     // 1. 오늘에 해당하는 DailyBudget 찾기
-    guard let budget = try dailyBudgetRepository.readByDate(date.formattedDate) else {
+    guard let budget = try dailyBudgetRepository.readByDate(
+      date.formattedDate
+    ) else {
       throw DomainError.dataNotFound
     }
     
@@ -436,13 +453,6 @@ final class BudgetUseCaseImpl: BudgetUseCase {
     // 5. 지출, 수입 입력 시점에 DailyBudget의 하루비가 nil인 경우, 기본 하루비로 저장
     let harubee = salaryBudget.dailyBudgets[index].harubee ?? Int(salaryBudget.defaultHarubee)
       
-    
-    // 6. DailyBudget 업데이트 (실제 지출, 수입 기록)
-//    let newDailyBudget = try dailyBudgetRepository.updateTransaction(
-//      salaryBudget.dailyBudgets[index].id,
-//      expense: currentExpense,
-//      income: currentIncome
-//    )
     let newDailyBudget = try dailyBudgetRepository.updateDailyBudget(
       salaryBudget.dailyBudgets[index].id,
       harubee: .set(harubee),
@@ -454,13 +464,10 @@ final class BudgetUseCaseImpl: BudgetUseCase {
     // 7. 잔액 업데이트
     let newBalance = salaryBudget.balance - diffExpense + diffIncome
     
-    
-    // TODO: 수정 필요
     // 8. SalaryBudget 업데이트
     let newSalaryBudget = try self.updateBalance(
       salaryBudget: salaryBudget,
-      newBalance: newBalance,
-      from: currentExpense == 0 ? .now : .tomorrow
+      newBalance: newBalance
     )
     
     return (newDailyBudget, newSalaryBudget)
@@ -495,28 +502,47 @@ final class BudgetUseCaseImpl: BudgetUseCase {
     
     // 3. 새로운 SalaryBudget을 위한 데이트 계산하기
     var incomeStartDate: Date {
-      var components = calendar.dateComponents([.year, .month, .day], from: today)
+      var components = calendar.dateComponents(
+        [.year, .month, .day],
+        from: today
+      )
+      
       if components.day! < day {
         components.month! -= 1
       }
+      
       components.day! = day
+      
       let startDate = calendar.date(from: components)!
+      
       return startDate
     }
     
     var incomeEndDate: Date {
       // startDate가 한 달의 시작 날짜가 됩니다.
       let startDate = incomeStartDate
+      
       // startDate의 일자(day)를 기준으로 한 달 후의 날짜를 구함
-      var components = calendar.dateComponents([.year, .month, .day], from: startDate)
+      var components = calendar.dateComponents(
+        [.year, .month, .day],
+        from: startDate
+      )
+      
       components.month! += 1 // 한 달 뒤로 설정
+      
       // 다음 달에 동일한 일자가 있는지 확인하여 날짜를 생성
       if let calculatedEndDate = calendar.date(from: components) {
         return calculatedEndDate.addingTimeInterval(-86400)
       } else {
         // 동일 일자가 없는 경우(예: 30일이나 31일이 없는 달) 해당 월의 마지막 날로 조정
         var fallbackComponents = components
-        fallbackComponents.day = calendar.range(of: .day, in: .month, for: calendar.date(from: components)!)?.last
+        
+        fallbackComponents.day = calendar.range(
+          of: .day,
+          in: .month,
+          for: calendar.date(from: components)!
+        )?.last
+        
         return calendar.date(from: fallbackComponents)!
       }
     }
@@ -525,10 +551,12 @@ final class BudgetUseCaseImpl: BudgetUseCase {
     try salaryBudgetRepository.deleteById(salaryBudget.id)
     
     // 5. 새로운 SalaryBudget 생성
-    return try self.createSalaryBudget(startDate: incomeStartDate,
-                                       endDate: incomeEndDate,
-                                       fixedIncome: salaryBudget.fixedIncome,
-                                       fixedExpenses: salaryBudget.fixedExpenses)
+    return try self.createSalaryBudget(
+      startDate: incomeStartDate,
+      endDate: incomeEndDate,
+      fixedIncome: salaryBudget.fixedIncome,
+      fixedExpenses: salaryBudget.fixedExpenses
+    )
   }
   
   
