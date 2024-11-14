@@ -17,7 +17,7 @@ struct CalculatorLogic {
   func processKeypad(
     _ keypadType: KeypadButtonType,
     expression: String
-  ) -> String {
+  ) -> (String, Int) {
     var newExpression = expression
     
     switch keypadType {
@@ -31,10 +31,6 @@ struct CalculatorLogic {
         keypadType,
         expression: expression
       )
-      //    case .done:
-      //      newExpression = processDoneType(
-      //        expression: expression
-      //      )
     default:
       newExpression = processNumberType(
         keypadType,
@@ -42,7 +38,9 @@ struct CalculatorLogic {
       )
     }
     
-    return newExpression
+    let newAmount = processExpression(expression: newExpression)
+    
+    return (newExpression, newAmount)
   }
   
   // MARK: - func processNumberType
@@ -142,12 +140,12 @@ struct CalculatorLogic {
   }
   
   // MARK: - processDoneType
-  private func processDoneType(
+  private func processExpression(
     expression: String
-  ) -> String {
+  ) -> Int {
     
     // 표현식이 비어있으면 0으로 리턴
-    if expression.isEmpty { return KeypadButtonType.zero.title }
+    if expression.isEmpty { return 0 }
     
     var before = 0 // 피연산자 1
     var current = "" // 피연산자 2
@@ -168,7 +166,7 @@ struct CalculatorLogic {
       
       // 현재 문자가 연산자인 경우
       if operators.contains(char) {
-        before = processExpression(
+        before = calculate(
           before: before,
           current: current.numberFormat!,
           op: op
@@ -183,18 +181,18 @@ struct CalculatorLogic {
     }
     
     if !current.isEmpty {
-      before = processExpression(
+      before = calculate(
         before: before,
         current: current.numberFormat!,
         op: op
       )
     }
     
-    return before < maxNumber ? before.decimal : maxNumber.decimal
+    return before < maxNumber ? before : maxNumber
   }
   
   // MARK: - processExpression
-  private func processExpression(
+  private func calculate(
     before: Int,
     current: Int,
     op: String
