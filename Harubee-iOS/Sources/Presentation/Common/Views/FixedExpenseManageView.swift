@@ -30,7 +30,6 @@ struct FixedExpenseManageView: View {
   @State private var selectedDay: Int
   @State private var fixedExpenseName: String
   @State private var fixedExpenseAmount: String
-  
   @State private var isEnabled: Bool = false
   
   init(
@@ -97,23 +96,12 @@ struct FixedExpenseManageView: View {
 }
 
 private struct BodyView: View {
-  
-  @Binding private var fixedExpenseName: String
-  @Binding private var fixedExpenseAmount: String
-  @Binding private var selectedDay: Int
-  
-  init(
-    fixedExpenseName: Binding<String>,
-    fixedExpenseAmount: Binding<String>,
-    selectedDay: Binding<Int>
-  ) {
-    self._fixedExpenseName = fixedExpenseName
-    self._fixedExpenseAmount = fixedExpenseAmount
-    self._selectedDay = selectedDay
-  }
+  @Binding var fixedExpenseName: String
+  @Binding var fixedExpenseAmount: String
+  @Binding var selectedDay: Int
   
   var body: some View {
-    VStack(spacing: 20) {
+    VStack(spacing: 0) {
       DayPickerView(
         title: "날짜",
         titleFont: .view,
@@ -125,12 +113,14 @@ private struct BodyView: View {
         text: $fixedExpenseName
       )
         .padding(.horizontal, 16)
+        .padding(.top, 20)
       
       FloatingTitleTextField(
         title: "금액",
         text: $fixedExpenseAmount
       )
         .padding(.horizontal, 16)
+        .padding(.top, 22)
         .keyboardType(.numberPad)
     }
     .onChange(of: fixedExpenseAmount) { _, _ in

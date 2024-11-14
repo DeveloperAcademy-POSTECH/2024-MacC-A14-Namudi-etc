@@ -94,12 +94,16 @@ private struct DayPickerButton: View {
     } label: {
       Text("매달 \(selectedDay)일")
         .font(.pretendardMedium_16)
-        .foregroundStyle(showDayPicker ? Color.main : Color.textBlack)
+        .foregroundStyle(
+          showDayPicker ? Color.main : Color.textBlack
+        )
         .padding(.vertical, 6)
         .padding(.horizontal, 11)
         .background(
           RoundedRectangle(cornerRadius: 6)
-            .foregroundStyle(Color.textBrighter30)
+            .foregroundStyle(
+              showDayPicker ? Color.whiteDeep : Color.textBrighter30
+            )
         )
     }
   }

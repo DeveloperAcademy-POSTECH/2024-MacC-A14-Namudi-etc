@@ -96,6 +96,13 @@ private struct FixedExpensesListView: View {
     }
   }
   
+  private var emptyListAnnounce: some View {
+    Text("목록을 추가해주세요")
+      .font(.pretendardMedium_16)
+      .foregroundStyle(Color.textBlack30)
+      .padding(.top, 150)
+  }
+  
   @State private var manageMode: Mode = .add
   @State private var selectedItem: TransactionItem?
   @State private var isPresented: Bool = false
@@ -109,11 +116,7 @@ private struct FixedExpensesListView: View {
       .foregroundStyle(Color.textBlack)
       
       if fixedExpenses.isEmpty {
-        Text("목록을 추가해주세요")
-          .font(.pretendardMedium_16)
-          .foregroundStyle(Color.textBlack30)
-          .padding(.top, 150)
-        
+        emptyListAnnounce
       } else {
         List {
           ForEach(fixedExpenses, id: \.id) { item in
