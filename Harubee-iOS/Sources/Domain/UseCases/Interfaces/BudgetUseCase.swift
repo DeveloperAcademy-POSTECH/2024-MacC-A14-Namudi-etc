@@ -8,11 +8,6 @@
 
 import Foundation
 
-enum FromDate {
-  case now
-  case tomorrow
-}
-
 protocol BudgetUseCase {
   
   func createSalaryBudgetFromOnboarding(
@@ -74,8 +69,7 @@ protocol BudgetUseCase {
   ///   - `DomainError.dataNotFound`: SalaryBudget을 찾을 수 없는 경우
   func updateBalance(
     salaryBudget: SalaryBudget,
-    newBalance: Int,
-    from date: FromDate
+    newBalance: Int
   ) throws -> SalaryBudget
   
   
@@ -117,8 +111,7 @@ protocol BudgetUseCase {
   ///   - salaryBudget: 조정된 하루비들을 확인하기 위한 SalaryBudget
   /// - Returns: 계산된 기본 하루비
   func calculateDefaultHarubee(
-    salaryBudget: SalaryBudget,
-    from date: FromDate
+    salaryBudget: SalaryBudget
   ) -> Double
   
   
