@@ -21,9 +21,9 @@ final class TodayViewModel {
   struct State {
     var todayDate = Date()
     var todayHarubee = 0
-    var averageHarubee = 0
     var todayHarubeePercentage: Double = 0.0
-    var todayAverageHarubeePercentage: Double = 0.0
+    var todayBalance: Int = 0
+    var todayBalancePercentage: Double = 0.0
     var weeklyStreaks: [DailyStreak]?
     
     var salaryBudget: SalaryBudget?
@@ -158,42 +158,34 @@ extension TodayViewModel {
   }
   
   private func initializeState(salaryBudget: SalaryBudget) {
-    state.salaryBudget = salaryBudget
-    
     let currentEndDate = salaryBudget.endDate
     let currentBalance = salaryBudget.balance
+    let currentFixedIncome = salaryBudget.fixedIncome
     let todayDailyBudget = salaryBudget.dailyBudgets.first(
       where: { $0.date == state.todayDate.formattedDate }
     )
     
     let todayHarubee = (todayDailyBudget?.harubee ?? Int(salaryBudget.defaultHarubee))
     let remainTodayHarubee = todayHarubee - (todayDailyBudget?.expense ?? 0)
-    let averageHarubee = Int(budgetUseCase.calculateAverageHarubee(
-      endDate: currentEndDate,
-      balance: currentBalance)
-    )
     let weeklyStreaks = getWeeklyStreaks(salaryBudget: salaryBudget)
     // TODO: 리팩토링
     let todayHarubeePercentage = (todayDailyBudget?.expense == nil || todayDailyBudget?.expense == 0) ? 1.0 :
     Double(remainTodayHarubee) / Double(todayHarubee)
     
-    let originalAverageHarubee = Double(salaryBudget.fixedIncome / 30)
-    let todayAverageHarubeePercentage = Double(averageHarubee) / originalAverageHarubee
-    
+    state.salaryBudget = salaryBudget
     state.todayHarubee = remainTodayHarubee
-    state.averageHarubee = averageHarubee
+    state.todayBalance = currentBalance
     state.weeklyStreaks = weeklyStreaks
     
     state.todayDailyBudget = todayDailyBudget
     state.todayHarubeePercentage = todayHarubeePercentage
-    state.todayAverageHarubeePercentage = todayAverageHarubeePercentage / 2
+    state.todayBalancePercentage = Double(currentBalance) / Double(currentFixedIncome)
   }
   
   private func getWeeklyStreaks(salaryBudget: SalaryBudget) -> [DailyStreak] {
     let calendar = Calendar.current
     let today = state.todayDate
     
-    // 오늘 기준 7일 범위 설정 (앞 3일, 오늘, 뒤 3일)
     guard let startDate = calendar.date(byAdding: .day, value: -3, to: today),
           let endDate = calendar.date(byAdding: .day, value: 3, to: today)
     else {
@@ -203,7 +195,6 @@ extension TodayViewModel {
     var weeklyStreaks = [DailyStreak]()
     var currentDate = startDate
     
-    // 각 날짜에 대해 DailyBudget을 가져오거나, 없으면 임의로 생성하여 추가
     while currentDate <= endDate {
       do {
         
@@ -255,12 +246,9 @@ extension TodayViewModel {
         print("other error: \(error)")
       }
       
-      // 다음 날로 이동
       currentDate = calendar.date(byAdding: .day, value: 1, to: currentDate)!
     }
     
-    // 최종적으로 정렬하여 반환
     return weeklyStreaks
   }
-  
 }
