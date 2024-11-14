@@ -23,7 +23,7 @@ enum KeypadButtonType: Int {
   enum Symbol: String {
     case doubleZero = "00"
     case tripleZero = "000"
-    case done = "계산"
+    case clear = "C"
     case plus = "+"
     case minus = "-"
     case delete = "삭제"
@@ -32,7 +32,7 @@ enum KeypadButtonType: Int {
   // rawValue 0 ~ 11
   case zero, one, two, three, four, five, six, seven, eight, nine, doubleZero, tripleZero
   // rawValue 12
-  case done
+  case clear
   // rawValue 13 ~ 14
   case plus, minus
   // rawValue 15
@@ -59,8 +59,8 @@ enum KeypadButtonType: Int {
       return Self.Symbol.plus.rawValue
     case .minus:
       return Self.Symbol.minus.rawValue
-    case .done:
-      return Self.Symbol.done.rawValue
+    case .clear:
+      return Self.Symbol.clear.rawValue
     }
   }
   
@@ -81,7 +81,7 @@ enum KeypadButtonType: Int {
     switch self {
     case .one, .two, .three, .four, .five, .six, .seven, .eight, .nine, .zero, .doubleZero, .tripleZero:
       return .textBlack
-    case .delete, .plus, .minus, .done:
+    case .delete, .plus, .minus, .clear:
       return .main
     }
   }
@@ -91,11 +91,11 @@ enum KeypadButtonType: Int {
     case .one, .two, .three, .four, .five, .six, .seven, .eight, .nine, .zero, .doubleZero, .tripleZero:
       return .pretendardMedium_24
     case .delete:
-      return .system(size: 22, weight: .regular)
+      return .custom("SF Pro", size: 22)
     case .plus, .minus:
       return .pretendardMedium_20
-    case .done:
-      return .pretendardSemibold_18
+    case .clear:
+      return .pretendardRegular_22
     }
   }
   

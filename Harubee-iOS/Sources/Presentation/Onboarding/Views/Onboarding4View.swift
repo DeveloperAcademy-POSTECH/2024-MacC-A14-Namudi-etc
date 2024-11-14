@@ -42,13 +42,13 @@ struct Onboarding4View: View {
         self.isPresented = true
       }
       
-      NumberKeypadView(expression: $previousExpenseAmount) { isEnabled in
-        if isEnabled {
-          viewModel.send(.updatePreviousExpense(previousExpenseAmount.numberFormat ?? 0))
-        }
-        
-        self.isEnabled = isEnabled
-      }
+//      NumberKeypadView(expression: $previousExpenseAmount) { isEnabled in
+//        if isEnabled {
+//          viewModel.send(.updatePreviousExpense(previousExpenseAmount.numberFormat ?? 0))
+//        }
+//        
+//        self.isEnabled = isEnabled
+//      }
     }
     .ignoresSafeArea(edges: .bottom)
     .navigationDestination(isPresented: $isPresented) {

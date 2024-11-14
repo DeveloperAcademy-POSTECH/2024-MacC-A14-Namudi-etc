@@ -12,40 +12,69 @@ import SwiftUI
 // MARK: - NumberKeypadView
 struct NumberKeypadView: View {
   
-  @Binding private var expression: String
+  @State private var expression: String
+  @Binding private var amount: Int
   private let buttonAction: (Bool) -> Void
   
   private let keypads: [[KeypadButtonType]] = [
-    [.one, .two, .three, .delete],
+    [.one, .two, .three, .clear],
     [.four, .five, .six, .plus],
     [.seven, .eight, .nine, .minus],
-    [.zero, .doubleZero, .tripleZero, .done]
+    [.zero, .doubleZero, .tripleZero, .delete]
   ]
   
   init(
-    expression: Binding<String>,
+    amount: Binding<Int>,
     buttonAction: @escaping (Bool) -> Void
   ) {
-    self._expression = expression
+    self._amount = amount
     self.buttonAction = buttonAction
+    self._expression = State(wrappedValue: amount.wrappedValue.decimal)
   }
   
   var body: some View {
-    VStack(spacing: 2) {
-      ForEach(keypads, id: \.self) { rowKeypads in
-        NumberKeypadRowView(
-          expression: $expression,
-          keypads: rowKeypads
-        )
-        .environment(\.buttonAction) { bool in
-          buttonAction(bool)
+    VStack(spacing: 0) {
+      ExpressionView(expression: $expression)
+      
+      VStack(spacing: 2) {
+        ForEach(keypads, id: \.self) { rowKeypads in
+          NumberKeypadRowView(
+            expression: $expression,
+            keypads: rowKeypads
+          )
+          .environment(\.buttonAction) { bool in
+            buttonAction(bool)
+          }
         }
       }
+      .padding(.top, 26)
+      .padding(.horizontal, 16)
+      .padding(.bottom, 31)
     }
     .frame(maxWidth: .infinity)
-    .padding(.top, 26)
-    .padding(.horizontal, 16)
-    .padding(.bottom, 31)
+  }
+}
+
+private struct ExpressionView: View {
+  @Binding var expression: String
+  
+  var body: some View {
+    HStack(spacing: 20) {
+      Text(expression)
+      
+      Spacer()
+      
+      Text("완료")
+        .tapFeedback {
+          
+        }
+    }
+    .frame(maxWidth: .infinity)
+    .padding(.horizontal, 22)
+    .padding(.vertical, 16)
+    .background(.whiteDeep)
+    .font(.pretendardMedium_16)
+    .foregroundStyle(.textBlack)
   }
 }
 
@@ -79,7 +108,6 @@ private struct NumberKeypadRowView: View {
 // MARK: - NumberKeypadButton
 private struct NumberKeypadButton: View {
   @Environment(\.buttonAction) private var buttonAction
-  @State private var isPressed = false
   @Binding private var expression: String
   
   private let keypad: KeypadButtonType
@@ -103,41 +131,30 @@ private struct NumberKeypadButton: View {
       }
     }
     .frame(maxWidth: .infinity, maxHeight: 60)
-    .background(keypad.highlightBackgroundColor.opacity(isPressed ? 1 : 0))
     .foregroundStyle(keypad.foregroundColor)
     .font(keypad.font)
     .clipShape(RoundedRectangle(cornerRadius: 10))
     .contentShape(Rectangle())
-    .scaleEffect(isPressed ? 0.9 : 1.0)
-    .onTapGesture {
-      
+    .tapFeedback {
       self.expression = calculator.processKeypad(
         keypad,
         expression: expression
       )
       
-      switch keypad {
-      case .done:
-        buttonAction(true)
-      default:
-        buttonAction(false)
-      }
-      
-      self.isPressed = true
-      DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-        withAnimation {
-          self.isPressed = false
-        }
-      }
-      UIImpactFeedbackGenerator(style: .soft).impactOccurred()
+      //      switch keypad {
+      //      case .clear:
+      //        buttonAction(true)
+      //      default:
+      //        buttonAction(false)
+      //      }
     }
   }
 }
 
 // MARK: - Preview
 #Preview {
-  @Previewable @State var expression: String = ""
-  return NumberKeypadView(expression: $expression) { bool in
+  @Previewable @State var amount: Int = 10000000
+  return NumberKeypadView(amount: $amount) { bool in
     print("\(bool)")
   }
 }

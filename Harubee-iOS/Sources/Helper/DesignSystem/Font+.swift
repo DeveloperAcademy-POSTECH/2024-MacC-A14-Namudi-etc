@@ -35,21 +35,6 @@ extension Font {
   static let pretendardMedium_20 = Pretendard.medium.swiftUIFont(size: 20)
   static let pretendardMedium_24 = Pretendard.medium.swiftUIFont(size: 24)
   
-  
-  //  static func registerFont() {
-  //    let bundleIdentifier = "etc.namudi.harubee-shared"
-  //
-  //    guard let bundle = Bundle(identifier: bundleIdentifier) else {
-  //      print("Failed to find bundle with identifier: \(bundleIdentifier)")
-  //      return
-  //    }
-  //
-  //    Font.PretendardWeight.allCases.forEach {
-  //      guard let url = bundle.url(forResource: "\($0.rawValue)", withExtension: ".ttf"),
-  //            CTFontManagerRegisterFontsForURL(url as CFURL, .process, nil) else {
-  //        print("fail register font")
-  //        return
-  //      }
-  //    }
-  //  }
+  // MARK: - Pretendard Regular
+  static let pretendardRegular_22 = Pretendard.regular.swiftUIFont(size: 22)
 }
