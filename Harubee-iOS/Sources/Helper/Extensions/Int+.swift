@@ -28,6 +28,12 @@ extension Int {
     return number + "원"
   }
   
+  /// 정수를 "만원" 단위로 변환해줍니다 - [Ex. 1.2만원]
+   var formattedAsManWon: String {
+     let amountInTenThousands = Double(self) / 10000
+     return String(format: "%.1f만원", amountInTenThousands)
+   }
+  
   
   func convertDateBetweenStartAndEnd(start: Date, end: Date) -> Date {
     let calendar = Calendar.current
