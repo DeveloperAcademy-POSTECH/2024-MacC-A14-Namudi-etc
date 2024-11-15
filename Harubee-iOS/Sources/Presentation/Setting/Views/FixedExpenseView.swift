@@ -75,7 +75,6 @@ private struct FixedExpenseHeaderView: View {
 
 private struct FixedExpensesListView: View {
   let settingViewModel: SettingViewModel
-  
   private var listHeaderView: some View {
     HStack(spacing: 0) {
       Text("목록")
