@@ -17,7 +17,7 @@ final class HarubeeAdjustViewModel {
   
   enum Action {
     case doneButtonTapped(Int)
-    case resetButtonTapped(Int)
+    case resetButtonTapped
     case saveButtonTapped
   }
   
@@ -38,8 +38,8 @@ final class HarubeeAdjustViewModel {
     switch action {
     case let .doneButtonTapped(harubee):
       updateHarubee(harubee)
-    case let .resetButtonTapped(harubee):
-      updateHarubee(harubee)
+    case .resetButtonTapped:
+      updateHarubee(nil)
     case .saveButtonTapped:
       do {
         let (salary, daily) = try self.budgetUseCase.adjustHarubee(
@@ -55,19 +55,24 @@ final class HarubeeAdjustViewModel {
 }
 
 extension HarubeeAdjustViewModel {
-  private func updateHarubee(_ harubee: Int) {
+  private func updateHarubee(_ harubee: Int?) {
+    
+    // DailyBudget의 하루비 업데이트
     self.state.dailyBudget.harubee = harubee
     
+    // SalaryBudget.dailyBudgets 업데이트
     if let index = self.state.salaryBudget.dailyBudgets.firstIndex(where: {
       $0.id == self.state.dailyBudget.id
     }) {
       self.state.salaryBudget.dailyBudgets[index].harubee = harubee
     }
     
+    // 기본 하루비 계산
     let defaultHarubee = self.budgetUseCase.calculateDefaultHarubee(
       salaryBudget: self.state.salaryBudget
     )
     
+    // SalaryBudget에 새로운 기본 하루비 저장
     self.state.salaryBudget.defaultHarubee = defaultHarubee
   }
 }

@@ -16,7 +16,9 @@ struct HarubeeAdjustView: View {
   @State private var harubee: String // 변경할 하루비
   @State private var isUpdated: Bool = false // 하루비가 변경되었는지 여부 확인
   
-  private let beforeHarubee: Int // 저장버튼 활성화 여부
+  @State private var isFocused: Bool = false
+  
+  private let beforeHarubee: Int // 변경 전 하루비
   
   init(viewModel: HarubeeAdjustViewModel) {
     
@@ -29,50 +31,55 @@ struct HarubeeAdjustView: View {
   }
   
   var body: some View {
-    VStack(spacing: 0) {
-      BottomSheetHeaderView(title: "하루비 조정")
-      
-      HarubeeAdjustBodyView(
-        isUpdated: $isUpdated,
-        defaultHarubee: viewModel.state.salaryBudget.defaultHarubee
-      )
-      .padding(.horizontal, 22)
-      .padding(.top, 36)
-      
-      FloatingTitleNumberField(
-        title: "이 날의 하루비",
-        text: $harubee,
-        isFocused: .constant(true)
-      )
-      .padding(.top, 56)
-      .padding(.horizontal, 20)
-      
-      Spacer()
-      
-      MainColorBottomButton(
-        title: "저장하기",
-        isEnabled: $isUpdated
-      ) {
-        self.viewModel.send(.saveButtonTapped)
-        self.dismiss()
-      }
-      
-      NumberKeypadView(amount: $harubee) {
-//        self.isUpdated = beforeHarubee == harubee ? false : true
+    ZStack(alignment: .bottom) {
+      VStack(spacing: 0) {
+        BottomSheetHeaderView(title: "하루비 조정")
         
-//        if isEnabled {
-//          self.isUpdated = true
-//          
-//          viewModel.send(.doneButtonTapped(expression.numberFormat ?? 0))
-//        }
+        ZStack(alignment: .top) {
+          DefaultHarubeeContentView(
+            isUpdated: $isUpdated,
+            defaultHarubee: viewModel.state.salaryBudget.defaultHarubee
+          )
+          .padding(.horizontal, 22)
+          .padding(.top, 36)
+          
+          HarubeeAdjustField(
+            viewModel: viewModel,
+            harubee: $harubee,
+            isFocused: $isFocused
+          )
+          .padding(.top, 147)
+          .padding(.horizontal, 20)
+        }
+        
+        Spacer()
+        
+        MainColorBottomButton(
+          title: "저장하기",
+          isEnabled: $isUpdated
+        ) {
+          self.viewModel.send(.saveButtonTapped)
+          self.dismiss()
+        }
+      }
+      .frame(maxWidth: .infinity)
+      
+      if isFocused {
+        NumberKeypadView(amount: $harubee) {
+          self.isFocused = false
+          
+          viewModel.send(.doneButtonTapped(harubee.numberFormat ?? 0))
+        }
       }
     }
-    .frame(maxWidth: .infinity)
+    .onChange(of: harubee) { _, _ in
+      self.isUpdated = beforeHarubee == harubee.numberFormat ? false : true
+    }
   }
 }
 
 // MARK: - HarubeeAdjustBodyView
-private struct HarubeeAdjustBodyView: View {
+private struct DefaultHarubeeContentView: View {
   
   @Binding private var isUpdated: Bool
   private var defaultHarubee: Double
@@ -92,11 +99,8 @@ private struct HarubeeAdjustBodyView: View {
           .padding(.top, 3)
       }
       
-      HighlightDefaultHarubeeLabel(
-        title: isUpdated ? "기본 하루비는" : "현재 기본 하루비는",
-        amount: Int(defaultHarubee)
-      )
-      .padding(.top, isUpdated ? 6 : 0)
+      highlightDefaultHarubeeLabel
+        .padding(.top, isUpdated ? 6 : 0)
       
       if !isUpdated {
         VStack(alignment: .leading, spacing: 3) {
@@ -109,28 +113,14 @@ private struct HarubeeAdjustBodyView: View {
       }
     }
     .frame(maxWidth: .infinity, alignment: .leading)
-    
-  }
-}
-
-
-// MARK: - HighlightDefaultHarubeeLabel
-private struct HighlightDefaultHarubeeLabel: View {
-  
-  private let title: String
-  private let amount: Int
-  
-  init(title: String, amount: Int) {
-    self.title = title
-    self.amount = amount
   }
   
-  var body: some View {
+  private var highlightDefaultHarubeeLabel: some View {
     HStack(alignment: .bottom, spacing: 0) {
-      Text(title)
+      Text(isUpdated ? "기본 하루비는" : "현재 기본 하루비는")
         .font(.pretendardMedium_18)
       
-      Text(amount.decimalWithWon)
+      Text(Int(defaultHarubee).decimalWithWon)
         .font(.pretendardSemibold_22)
         .foregroundStyle(.main)
         .padding(.leading, 6)
@@ -139,6 +129,50 @@ private struct HighlightDefaultHarubeeLabel: View {
         .font(.pretendardMedium_18)
     }
     .foregroundStyle(Color.textBlack)
+  }
+}
+
+// MARK: - HarubeeAdjustField
+private struct HarubeeAdjustField: View {
+  
+  let viewModel: HarubeeAdjustViewModel
+  @Binding var harubee: String
+  @Binding var isFocused: Bool
+  
+  var body: some View {
+    VStack {
+      FloatingTitleNumberField(
+        title: "이 날의 하루비",
+        text: $harubee,
+        isFocused: $isFocused
+      )
+      .overlay(alignment: .trailing, content: {
+        resetHarubeeButton
+      })
+      
+      .onTapGesture {
+        isFocused = true
+      }
+    }
+  }
+  
+  private var resetHarubeeButton: some View {
+    HStack(spacing: 3) {
+      Image(systemName: "arrow.clockwise")
+      Text("기본 하루비 초기화")
+    }
+    .font(.pretendardMedium_14)
+    .foregroundStyle(.main)
+    .padding(.horizontal, 8)
+    .padding(.vertical, 6)
+    .background(.whiteDeep)
+    .clipShape(RoundedRectangle(cornerRadius: 5))
+    .tapFeedback {
+      viewModel.send(.resetButtonTapped)
+      
+      let defaultHarubee = viewModel.state.salaryBudget.defaultHarubee
+      self.harubee = Int(defaultHarubee).decimalWithWon
+    }
   }
 }
 
