@@ -47,7 +47,6 @@ struct WeeklyCalendar: View {
       }
       .scrollTargetBehavior(.paging)
     }
-    .frame(height: 82)
     .background(Color.main)
   }
   
