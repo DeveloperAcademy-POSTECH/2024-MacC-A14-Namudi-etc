@@ -47,7 +47,6 @@ final class TodayViewModel {
   func send(_ action: Action) {
     switch action {
     case .viewDidLoad:
-      print(#function)
       fetchSalaryBudget()
     }
   }
@@ -158,28 +157,32 @@ extension TodayViewModel {
   }
   
   private func initializeState(salaryBudget: SalaryBudget) {
-    let currentEndDate = salaryBudget.endDate
     let currentBalance = salaryBudget.balance
     let currentFixedIncome = salaryBudget.fixedIncome
     let todayDailyBudget = salaryBudget.dailyBudgets.first(
       where: { $0.date == state.todayDate.formattedDate }
     )
+    let todayExpense = todayDailyBudget?.expense ?? .zero
+    let todayHarubee = (
+      todayDailyBudget?.harubee ?? Int(salaryBudget.defaultHarubee)
+    )
     
-    let todayHarubee = (todayDailyBudget?.harubee ?? Int(salaryBudget.defaultHarubee))
-    let remainTodayHarubee = todayHarubee - (todayDailyBudget?.expense ?? 0)
+    let remainTodayHarubee = todayHarubee - todayExpense
     let weeklyStreaks = getWeeklyStreaks(salaryBudget: salaryBudget)
-    // TODO: 리팩토링
-    let todayHarubeePercentage = (todayDailyBudget?.expense == nil || todayDailyBudget?.expense == 0) ? 1.0 :
-    Double(remainTodayHarubee) / Double(todayHarubee)
+    let todayHarubeePercentage = todayExpense == .zero
+        ? 1.0
+        : Double(remainTodayHarubee) / Double(todayHarubee)
+
     
     state.salaryBudget = salaryBudget
+    state.todayDailyBudget = todayDailyBudget
     state.todayHarubee = remainTodayHarubee
     state.todayBalance = currentBalance
     state.weeklyStreaks = weeklyStreaks
-    
-    state.todayDailyBudget = todayDailyBudget
     state.todayHarubeePercentage = todayHarubeePercentage
-    state.todayBalancePercentage = Double(currentBalance) / Double(currentFixedIncome)
+    state.todayBalancePercentage = (
+      Double(currentBalance) / Double(currentFixedIncome)
+    )
   }
   
   private func getWeeklyStreaks(salaryBudget: SalaryBudget) -> [DailyStreak] {
@@ -199,9 +202,13 @@ extension TodayViewModel {
       do {
         
         let dailyBudget = try budgetUseCase.getDailyBudget(date: currentDate)
-        // TODO: 리팩토링
-        let harubee = dailyBudget.harubee == nil ? Int(salaryBudget.defaultHarubee) : dailyBudget.harubee
-        let isOverHarubee = dailyBudget.expense == nil ? nil : (dailyBudget.expense! > harubee!)
+        let harubee = dailyBudget.harubee == nil
+            ? Int(salaryBudget.defaultHarubee)
+            : dailyBudget.harubee
+        
+        let isOverHarubee = dailyBudget.expense == nil
+            ? nil
+            : (dailyBudget.expense! > harubee!)
         
         let newDailyStreak = DailyStreak(
           date: currentDate,
