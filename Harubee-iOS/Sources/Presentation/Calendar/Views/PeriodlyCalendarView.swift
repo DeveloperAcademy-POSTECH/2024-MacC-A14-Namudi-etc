@@ -98,14 +98,31 @@ private struct CalendarHeader: View {
   var body: some View {
     VStack(spacing: 0) {
       yearLabel
+        .padding(.bottom, 1)
       periodDirection
         .titleInfoBubble($infoBubbleVisible)
+        .padding(.bottom, 6)
+      weekdayHeaderRow
+        .padding(.horizontal, 14)
+        .padding(.bottom, 4)
     }
-    .frame(maxWidth: .infinity)
-    .frame(height: 82)
+    .frame(maxWidth: .infinity, alignment: .bottom)
+    .frame(height: 98, alignment: .bottom)
     .background(Color.main)
     .foregroundStyle(Color.whiteDefault)
     
+  }
+  
+  private var weekdayHeaderRow: some View {
+    HStack(spacing: 0) {
+      let weekDays = ["일", "월", "화", "수", "목", "금", "토"]
+      ForEach(weekDays, id: \.self) { day in
+        Text(day)
+          .font(.pretendardSemibold_12)
+          .foregroundStyle(Color.whiteDefault)
+          .frame(maxWidth: .infinity)
+      }
+    }
   }
   
   private var yearLabel: some View {
@@ -166,25 +183,22 @@ private struct CalendarContent: View {
   @Binding var infoBubbleVisible: Bool
   
   var body: some View {
-    ScrollView(showsIndicators: false) {
-      VStack(spacing: 25) {
-        PeriodlyCalendar(
-          startDate: budget.startDate,
-          endDate: budget.endDate
-        ) { date in
-          CalendarCell(
-            date: date,
-            defaultHarubee: Int(budget.defaultHarubee),
-            dailyBudget: budget.dailyBudgets.first {
-              $0.date.isSameDay(as: date)
-            },
-            onSelect: onDateSelect
-          )
-        }
-        .padding(.top, 18)
-        .hexagonInfoBubble($infoBubbleVisible)
-        .harubeeInfoBubble($infoBubbleVisible)
+    VStack(spacing: 25) {
+      PeriodlyCalendar(
+        startDate: budget.startDate,
+        endDate: budget.endDate
+      ) { date in
+        CalendarCell(
+          date: date,
+          defaultHarubee: Int(budget.defaultHarubee),
+          dailyBudget: budget.dailyBudgets.first {
+            $0.date.isSameDay(as: date)
+          },
+          onSelect: onDateSelect
+        )
       }
+      .hexagonInfoBubble($infoBubbleVisible)
+      .harubeeInfoBubble($infoBubbleVisible)
     }
   }
 }

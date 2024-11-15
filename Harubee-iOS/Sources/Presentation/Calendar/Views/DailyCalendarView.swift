@@ -23,7 +23,7 @@ struct DailyCalendarView: View {
         budget: viewModel.state.currentBudget!,
         onSelect: { date in viewModel.send(.selectDate(date)) }
       )
-      .frame(height: 82)
+      .frame(height: 98)
       .background(Color.main)
       
       if let budget = viewModel.selectedDailyBudget,

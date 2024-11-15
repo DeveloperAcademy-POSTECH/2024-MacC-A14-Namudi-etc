@@ -14,22 +14,27 @@ struct PeriodlyCalendar<CellContent: View>: View {
   let endDate: Date
   let cellContent: (Date) -> CellContent
   
+  @State private var isScrollDisabled: Bool = true
+  
   var body: some View {
-    VStack(spacing: 0) {
-      WeekdayHeaderRow()
-        .padding(.bottom, 8)
-      
-      LazyVStack(spacing: 0) {
-        ForEach(weeks.indices, id: \.self) { weekIndex in
-          WeekRow(
-            week: weeks[weekIndex],
-            isLastRow: weekIndex == weeks.count - 1,
-            cellContent: cellContent
-          )
+    ScrollView {
+      VStack(spacing: 0) {
+        LazyVStack(spacing: 0) {
+          ForEach(weeks.indices, id: \.self) { weekIndex in
+            WeekRow(
+              week: weeks[weekIndex],
+              isLastRow: weekIndex == weeks.count - 1,
+              cellContent: cellContent
+            )
+          }
         }
       }
+      .padding(.horizontal, 14)
     }
-    .padding(.horizontal, 14)
+    .scrollDisabled(isScrollDisabled)
+    .onAppear {
+      updateScrollState()
+    }
   }
   
   // MARK: - Computed Properties
@@ -60,28 +65,9 @@ struct PeriodlyCalendar<CellContent: View>: View {
     
     return dates
   }
-}
-
-// MARK: - Weekday Header Row
-private struct WeekdayHeaderRow: View {
-  private let weekDays = ["일", "월", "화", "수", "목", "금", "토"]
   
-  var body: some View {
-    HStack(spacing: 0) {
-      ForEach(weekDays, id: \.self) { day in
-        Text(day)
-          .font(.pretendardMedium_16)
-          .foregroundStyle(Color.textBlack)
-          .frame(maxWidth: .infinity)
-      }
-    }
-    .overlay(alignment: .bottom) {
-      Divider()
-        .background(Color.textBlack10)
-        .padding(.top, 20)
-        .padding(.horizontal, -14)
-        .frame(height: 1)
-    }
+  private func updateScrollState() {
+    isScrollDisabled = weeks.count < 6
   }
 }
 
