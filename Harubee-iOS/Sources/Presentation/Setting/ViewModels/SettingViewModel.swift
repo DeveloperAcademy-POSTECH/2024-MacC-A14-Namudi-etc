@@ -11,15 +11,11 @@ import Foundation
 @Observable
 final class SettingViewModel {
   struct State {
-    // MARK: FixedIncomeView
     var salaryBudget: SalaryBudget
   }
   
   enum Action {
-    // MARK: FixedIncomeView
     case fixedIncomeSaveButtonTapped(Int?, Int?)
-    
-    // MARK: FixedExpenses
     case updateFixedExpenses([TransactionItem])
   }
   

@@ -34,9 +34,10 @@ struct FixedIncomeView: View {
   }
   
   @Environment(\.dismiss) private var dismiss
-  @State private var isUpdated: Bool = false
   @State private var selectedDay: Int
   @State private var fixedIncomeAmount: Int
+  
+  @State private var isUpdated: Bool = false
   @State private var isInfoBubbleVisible: Bool = false
   @State private var isAlertPresented: Bool = false
   
