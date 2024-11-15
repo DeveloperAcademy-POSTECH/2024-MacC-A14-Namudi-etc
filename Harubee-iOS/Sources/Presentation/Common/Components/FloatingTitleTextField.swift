@@ -59,24 +59,25 @@ struct FloatingTitleNumberField: View {
       Text(title)
         .font(.pretendardMedium_12)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .foregroundStyle(!text.isEmpty ? Color.main : .clear)
+        .foregroundStyle(!text.isEmpty ? .main : .clear)
         .offset(y: !text.isEmpty ? -2 : 0)
         .animation(.easeOut(duration: 0.2), value: !text.isEmpty)
         .padding(.leading, 4)
       
       Text(text.isEmpty ? title : text)
-        .foregroundStyle(!text.isEmpty ? Color.textBlack : Color.textBrighter)
+        .foregroundStyle(!text.isEmpty ? .textBlack : .textBrighter)
         .font(.pretendardSemibold_28)
         .padding(.leading, 4)
       
       Rectangle()
-        .frame(height: 1)
+        .frame(height: isFocused ? 2 : 1)
         .foregroundStyle(
-          (!text.isEmpty || isFocused) ? Color.main : Color.textBrighter
+          isFocused ? .main : .textBrighter
         )
         .padding(.top, 8)
     }
     .frame(maxWidth: .infinity)
+    .contentShape(Rectangle())
   }
 }
 
