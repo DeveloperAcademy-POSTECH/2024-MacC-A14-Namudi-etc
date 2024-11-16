@@ -203,9 +203,14 @@ private struct HarubeeHexagon: View {
   // MARK: Internal Properties
   @State private var firstWaveOffset: CGFloat
   @State private var secondWaveOffset: CGFloat
+  @State private var animatedFillPercentage: CGFloat
+
   private let fillPercentage: Double
   private let isTodayExpenseEntered: Bool
-  
+  private let waveTimer = Timer.publish(
+    every: 0.03, on: .main, in: .common
+  ).autoconnect()
+
   
   init(
     isInfoBubbleVisible: Binding<Bool>,
@@ -223,6 +228,7 @@ private struct HarubeeHexagon: View {
     self.fillPercentage = isTodayHarubee
     ? todayViewModel.state.todayHarubeePercentage
     : todayViewModel.state.todayBalancePercentage
+    self.animatedFillPercentage = fillPercentage
     self.isTodayExpenseEntered = (
       todayViewModel.state.todayDailyBudget?.expense != nil
     )
@@ -236,7 +242,7 @@ private struct HarubeeHexagon: View {
             : "쓸 수 있는 돈"
         
         let textColor = isTodayHarubee
-            ? (fillPercentage <= 0.5 ? Color.whiteDefault : Color.textBlack)
+            ? (animatedFillPercentage <= 0.5 ? Color.whiteDefault : Color.textBlack)
             : Color.whiteDeep50
         
         return Text(hexagonText)
@@ -256,7 +262,7 @@ private struct HarubeeHexagon: View {
     
     let harubeeNumberContainer: some View = {
       
-      let isIncludedInWave = fillPercentage <= 0.33
+      let isIncludedInWave = animatedFillPercentage <= 0.33
       
       return HStack {
         (isIncludedInWave ? Image(.harubeeWhite) : Image(.harubeeMain))
@@ -282,33 +288,15 @@ private struct HarubeeHexagon: View {
         .frame(width: hexgonSize, height: hexgonSize)
         .shadow(color: Color.textBlack.opacity(0.3), radius: 7, x: 1, y: 4)
       
-      Wave(xOffset: firstWaveOffset, fillPercentage: fillPercentage)
+      Wave(xOffset: firstWaveOffset, fillPercentage: animatedFillPercentage)
         .fill(isTodayHarubee ? Color.textBrighter : Color.textBlack30)
         .frame(width: hexgonSize, height: hexgonSize)
         .clipShape(RoundedHexagon())
-        .onAppear {
-          withAnimation(
-            Animation.spring(duration: 6).repeatForever(autoreverses: false)
-          ) {
-            firstWaveOffset = isTodayHarubee
-            ? hexgonSize
-            : hexgonSize / 2 * 3
-          }
-        }
       
-      Wave(xOffset: secondWaveOffset, fillPercentage: fillPercentage)
+      Wave(xOffset: secondWaveOffset, fillPercentage: animatedFillPercentage)
         .fill(isTodayHarubee ? Color.whiteDefault :  Color.mainBright)
         .frame(width: hexgonSize, height: hexgonSize)
         .clipShape(RoundedHexagon())
-        .onAppear {
-          withAnimation(
-            Animation.linear(duration: 5).repeatForever(autoreverses: false)
-          ) {
-            secondWaveOffset = isTodayHarubee
-            ? hexgonSize
-            : hexgonSize / 2 * 3
-          }
-        }
       
       RoundedHexagon()
         .stroke(Color.whiteDefault, lineWidth: 1.5)
@@ -330,6 +318,22 @@ private struct HarubeeHexagon: View {
             .font(.pretendardSemibold_20)
             .foregroundStyle(Color.whiteDefault)
         }
+      }
+    }
+    .onReceive(waveTimer) { _ in
+      firstWaveOffset += 1
+      if firstWaveOffset > hexgonSize {
+        firstWaveOffset = 0
+      }
+      
+      secondWaveOffset += 0.8
+      if secondWaveOffset > hexgonSize {
+        secondWaveOffset = 0
+      }
+    }
+    .onChange(of: fillPercentage) { _, newPercentage in
+      withAnimation(.easeInOut(duration: 1.5)) {
+        animatedFillPercentage = CGFloat(newPercentage)
       }
     }
   }
