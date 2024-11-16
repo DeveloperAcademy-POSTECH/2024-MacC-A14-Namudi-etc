@@ -152,7 +152,7 @@ private struct Honeycomb: View {
             if row == 1 && col == 1 {
               HarubeeHexagon(
                 isInfoBubbleVisible: $isInfoBubbleVisible,
-                todayViewModel: todayViewModel,
+                 todayViewModel: todayViewModel,
                  isTodayHarubee: true,
                  hexgonSize: hexgonSize
               )
@@ -231,17 +231,19 @@ private struct HarubeeHexagon: View {
   var body: some View {
     
     let hexagonLabel: Text = {
-      
-      var hexagonText: String
-      if isTodayHarubee {
-        hexagonText = isTodayExpenseEntered ? "오늘의 남은 하루비" : "오늘의 하루비"
-      } else {
-        hexagonText = "쓸 수 있는 돈"
-      }
-      
-      return Text(hexagonText)
-        .font(isTodayHarubee ? .pretendardSemibold_20 : .pretendardSemibold_16)
-        .foregroundStyle(isTodayHarubee ? (fillPercentage <= 0.5 ? Color.whiteDefault : Color.textBlack) :  Color.whiteDeep50)
+        let hexagonText = isTodayHarubee
+            ? (isTodayExpenseEntered ? "오늘의 남은 하루비" : "오늘의 하루비")
+            : "쓸 수 있는 돈"
+        
+        let textColor = isTodayHarubee
+            ? (fillPercentage <= 0.5 ? Color.whiteDefault : Color.textBlack)
+            : Color.whiteDeep50
+        
+        return Text(hexagonText)
+            .font(isTodayHarubee
+                  ? .pretendardSemibold_20
+                  : .pretendardSemibold_16)
+            .foregroundStyle(textColor)
     }()
     
     let infoBubbleText: Text = {
@@ -575,7 +577,7 @@ private struct StreakCell: View {
           Text(dailyStreak.harubee.decimal)
             .font(.pretendardMedium_11)
           
-          Text(dailyStreak.harubee.formattedAsManWon)
+          Text(dailyStreak.harubee.formattedAsTenThousandWon)
             .font(.pretendardMedium_11)
         }.padding(.vertical, 5)
           .foregroundStyle(Color.main)
