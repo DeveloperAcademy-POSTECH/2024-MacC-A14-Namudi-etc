@@ -41,13 +41,17 @@ struct Onboarding4View: View {
         self.isPresented = true
       }
       
-//      NumberKeypadView(expression: $previousExpenseAmount) { isEnabled in
-//        if isEnabled {
-//          viewModel.send(.updatePreviousExpense(previousExpenseAmount.numberFormat ?? 0))
-//        }
-//        
-//        self.isEnabled = isEnabled
-//      }
+      NumberKeypadView(amount: $previousExpenseAmount) {
+        
+        if !previousExpenseAmount.isEmpty {
+          
+          viewModel.send(.updatePreviousExpense(
+            previousExpenseAmount.numberFormat ?? 0
+          ))
+          
+          self.isEnabled = true
+        }
+      }
     }
     .navigationDestination(isPresented: $isPresented) {
       Onboarding5View(viewModel: viewModel)

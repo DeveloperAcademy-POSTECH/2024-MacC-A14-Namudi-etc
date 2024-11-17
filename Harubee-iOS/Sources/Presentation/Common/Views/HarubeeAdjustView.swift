@@ -24,7 +24,7 @@ struct HarubeeAdjustView: View {
     
     self._viewModel = State(initialValue: viewModel)
     
-    let initialHarubee = viewModel.state.dailyBudget.harubee ?? Int(viewModel.state.salaryBudget.defaultHarubee)
+    let initialHarubee = viewModel.state.updatedHarubee
     
     self._harubee = State(initialValue: initialHarubee.decimalWithWon)
     self.beforeHarubee = initialHarubee
@@ -38,7 +38,7 @@ struct HarubeeAdjustView: View {
         ZStack(alignment: .top) {
           DefaultHarubeeContentView(
             isUpdated: $isUpdated,
-            defaultHarubee: viewModel.state.salaryBudget.defaultHarubee
+            defaultHarubee: viewModel.state.defaultHarubee
           )
           .padding(.horizontal, 22)
           .padding(.top, 36)
@@ -82,9 +82,9 @@ struct HarubeeAdjustView: View {
 private struct DefaultHarubeeContentView: View {
   
   @Binding private var isUpdated: Bool
-  private var defaultHarubee: Double
+  private var defaultHarubee: Int
   
-  init(isUpdated: Binding<Bool>, defaultHarubee: Double) {
+  init(isUpdated: Binding<Bool>, defaultHarubee: Int) {
     self._isUpdated = isUpdated
     self.defaultHarubee = defaultHarubee
   }
@@ -120,7 +120,7 @@ private struct DefaultHarubeeContentView: View {
       Text(isUpdated ? "기본 하루비는" : "현재 기본 하루비는")
         .font(.pretendardMedium_18)
       
-      Text(Int(defaultHarubee).decimalWithWon)
+      Text(defaultHarubee.decimalWithWon)
         .font(.pretendardSemibold_22)
         .foregroundStyle(.main)
         .padding(.leading, 6)
