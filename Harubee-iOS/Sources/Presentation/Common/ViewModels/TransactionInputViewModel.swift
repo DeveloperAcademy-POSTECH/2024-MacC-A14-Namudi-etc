@@ -13,11 +13,13 @@ final class TransactionInputViewModel {
   struct State {
     var salaryBudget: SalaryBudget
     var dailyBudget: DailyBudget
+    
+    var updatedExpense: Int?
+    var updatedIncome: Int?
   }
   
   enum Action {
-    case doneButtonTapped(Int, Bool)
-    case resetButtonTapped(Int?, Bool)
+    case doneButtonTapped(String, String)
     case saveButtonTapped
   }
   
@@ -36,31 +38,20 @@ final class TransactionInputViewModel {
   
   func send(_ action: Action) {
     switch action {
-    case .doneButtonTapped(let amount, let isExpense):
-      self.updateTransaction(amount: amount, isExpense: isExpense)
-    case .resetButtonTapped(let amount, let isExpense):
-      self.updateTransaction(amount: amount, isExpense: isExpense)
+    case .doneButtonTapped(let income, let expense):
+      self.state.updatedIncome = income.numberFormat
+      self.state.updatedExpense = expense.numberFormat
     case .saveButtonTapped:
       do {
-        let (salary, daily) = try self.budgetUseCase.recordTransaction(
-          expense: self.state.dailyBudget.expense,
-          income: self.state.dailyBudget.income,
+        let _ = try self.budgetUseCase.recordTransaction(
+          expense: self.state.updatedExpense,
+          income: self.state.updatedIncome,
           date: self.state.dailyBudget.date,
           salaryBudget: self.state.salaryBudget
         )
       } catch {
         print(error.localizedDescription)
       }
-    }
-  }
-}
-
-extension TransactionInputViewModel {
-  private func updateTransaction(amount: Int?, isExpense: Bool) {
-    if isExpense {
-      self.state.dailyBudget.expense = amount
-    } else {
-      self.state.dailyBudget.income = amount
     }
   }
 }

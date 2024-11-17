@@ -8,87 +8,103 @@
 
 import SwiftUI
 
+enum TransactionFocusType {
+  case expense
+  case income
+  case none
+}
+
 struct TransactionInputView: View {
   @Environment(\.dismiss) private var dismiss
   @State private var viewModel: TransactionInputViewModel
+  @State private var transactionFocusType: TransactionFocusType
   
-  @State private var expression: String = ""
   @State private var isUpdated: Bool = false
-  @State private var isEnabled: Bool = false
-  @State private var isFocusedExpense: Bool = true
-  
   @State private var isAlert: Bool = false
+  @State private var isFocused: Bool = false
   @State private var alertTitle: String = ""
+  
+  @State private var expense: String
+  @State private var income: String
   
   private let beforeExpense: Int?
   private let beforeIncome: Int?
   
   init(
     viewModel: TransactionInputViewModel,
-    isFocusedExpense: Bool
+    transactionFocusType: TransactionFocusType
   ) {
     self._viewModel = State(initialValue: viewModel)
-    self._isFocusedExpense = State(initialValue: isFocusedExpense)
+    self._transactionFocusType = State(initialValue: transactionFocusType)
     
-    self.beforeExpense = viewModel.state.dailyBudget.expense
-    self.beforeIncome = viewModel.state.dailyBudget.income
+    let expense = viewModel.state.dailyBudget.expense
+    let income = viewModel.state.dailyBudget.income
     
-    self._expression = State(
-      initialValue: isFocusedExpense
-      ? beforeExpense?.decimal ?? ""
-      : beforeIncome?.decimal ?? ""
+    self.beforeExpense = expense
+    self.beforeIncome = income
+    
+    self._expense = State(
+      initialValue: expense?.decimal ?? ""
+    )
+    self._income = State(
+      initialValue: income?.decimal ?? ""
     )
   }
   
   var body: some View {
-    VStack {
-      BottomSheetHeaderView(title: "실제 지출 및 수입 입력")
-      
-      TransactionBodyItemView(
-        dailyBudget: viewModel.state.dailyBudget,
-        isFocusedExpense: $isFocusedExpense
-      )
-      .padding(.top, 42)
-      .padding(.horizontal, 16)
-      
-      Spacer()
-      
-      MainColorBottomButton(
-        title: "저장하기",
-        isEnabled: $isEnabled
-      ) {
-        let dailyBudget = viewModel.state.dailyBudget
+    ZStack(alignment: .bottom) {
+      VStack {
+        BottomSheetHeaderView(title: "실제 지출 및 수입 입력")
         
-        if let _ = dailyBudget.expense,
-           let _ = dailyBudget.income {
-          self.viewModel.send(.saveButtonTapped)
-          self.dismiss()
-        } else {
-          self.isAlert = true
-          self.alertTitle = dailyBudget.expense == nil 
-          ? "지출"
-          : "수입"
+        TransactionBodyItemView(
+          expense: $expense,
+          income: $income,
+          transactionFocusType: $transactionFocusType
+        )
+        .padding(.top, 42)
+        .padding(.horizontal, 16)
+        
+        Spacer()
+        
+        MainColorBottomButton(
+          title: "저장하기",
+          isEnabled: $isUpdated
+        ) {
+          self.saveButtonTapped()
         }
       }
+      .frame(maxWidth: .infinity)
       
-//      NumberKeypadView(expression: $expression) { isEnabled in
-//        self.isEnabled = isEnabled
-//        if isEnabled {
-//          self.isUpdated = true
-//          
-//          viewModel.send(.doneButtonTapped(
-//            expression.numberFormat ?? 0,
-//            isFocusedExpense
-//          ))
-//        }
-//      }
+      if isFocused {
+        NumberKeypadView(
+          amount: transactionFocusType == .expense
+          ? $expense : $income
+        ) {
+          transactionFocusType = .none
+          
+          viewModel.send(.doneButtonTapped(
+            income, expense
+          ))
+        }
+      }
     }
-    .frame(maxWidth: .infinity)
-    .onChange(of: isFocusedExpense) { _, _ in
-      if isFocusedExpense {
-        self.expression = self.viewModel.state.dailyBudget.expense?.decimal ?? ""
-      } else {
-        self.expression = self.viewModel.state.dailyBudget.income?.decimal ?? ""
+    .id(transactionFocusType)
+    .onChange(
+      of: transactionFocusType,
+      initial: true
+    ) { _, _ in
+      switch transactionFocusType {
+      case .income, .expense:
+        self.isFocused = true
+      case .none:
+        self.isFocused = false
+        
+        if expense.numberFormat == beforeExpense
+            && income.numberFormat == beforeIncome {
+          isUpdated = false
+        } else {
+          isUpdated = true
+        }
       }
     }
     .alert(
@@ -111,53 +127,56 @@ struct TransactionInputView: View {
       Text("\(alertTitle)을 0원으로 저장하시겠습니까?")
     }
   }
+  
+  private func saveButtonTapped() {
+    if expense.isEmpty || income.isEmpty {
+      self.isAlert = true
+      self.alertTitle = expense.isEmpty ? "지출" : "수입"
+    } else {
+      self.viewModel.send(.saveButtonTapped)
+      self.dismiss()
+    }
+  }
 }
 
-
-
 private struct TransactionBodyItemView: View {
-  @Binding private var isFocusedExpense: Bool
   
-  private let dailyBudget: DailyBudget
-  
-  init(
-    dailyBudget: DailyBudget,
-    isFocusedExpense: Binding<Bool>
-  ) {
-    self.dailyBudget = dailyBudget
-    self._isFocusedExpense = isFocusedExpense
-  }
+  @Binding var expense: String
+  @Binding var income: String
+  @Binding var transactionFocusType: TransactionFocusType
   
   var body: some View {
     HStack(spacing: 9) {
       TransactionItemButton(
         title: "수입",
-        amount: dailyBudget.income
+        amount: income.numberFormat
       )
       .overlay(
         RoundedRectangle(cornerRadius: 5)
           .stroke(
             Color.mainBright,
-            lineWidth: isFocusedExpense ? 0 : 2
+            lineWidth: transactionFocusType == .income
+            ? 2 : 0
           )
       )
       .onTapGesture {
-        isFocusedExpense = false
+        transactionFocusType = .income
       }
       
       TransactionItemButton(
         title: "지출",
-        amount: dailyBudget.expense
+        amount: expense.numberFormat
       )
       .overlay(
         RoundedRectangle(cornerRadius: 5)
           .stroke(
             Color.mainBright,
-            lineWidth: isFocusedExpense ? 2 : 0
+            lineWidth: transactionFocusType == .expense
+            ? 2 : 0
           )
       )
       .onTapGesture {
-        isFocusedExpense = true
+        transactionFocusType = .expense
       }
     }
   }
@@ -169,6 +188,6 @@ private struct TransactionBodyItemView: View {
       salaryBudget: SalaryBudget.default,
       dailyBudget: DailyBudget.default
     ),
-    isFocusedExpense: true
+    transactionFocusType: .none
   )
 }

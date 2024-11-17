@@ -419,7 +419,7 @@ private struct TodayFooterView: View {
           salaryBudget: todayViewModel.state.salaryBudget!,
           dailyBudget: todayViewModel.state.todayDailyBudget!
         ),
-        isFocusedExpense: true
+        transactionFocusType: .expense
       )
       .presentationDetents([.height(623)])
     }
