@@ -146,6 +146,7 @@ private struct HarubeeAdjustField: View {
     VStack {
       FloatingTitleNumberField(
         title: "이 날의 하루비",
+        textSize: .large,
         text: $harubee,
         isFocused: $isFocused
       )

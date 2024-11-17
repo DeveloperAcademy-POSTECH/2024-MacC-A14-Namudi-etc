@@ -50,23 +50,43 @@ struct FloatingTitleTextField: View {
 
 struct FloatingTitleNumberField: View {
   
+  enum TextSize {
+    case large
+    case medium
+  }
+  
   let title: String
+  let textSize: TextSize
   @Binding var text: String
   @Binding var isFocused: Bool
+  
+  private var textFont: Font {
+    if textSize == .large {
+      .pretendardSemibold_28
+    } else {
+      .pretendardMedium_18
+    }
+  }
   
   var body: some View {
     VStack(alignment: .leading, spacing: 0) {
       Text(title)
         .font(.pretendardMedium_12)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .foregroundStyle(!text.isEmpty ? .main : .clear)
+        .foregroundStyle(
+          text.isEmpty
+          ? .clear
+          : (isFocused ? .main : .textBright)
+        )
         .offset(y: !text.isEmpty ? -2 : 0)
         .animation(.easeOut(duration: 0.2), value: !text.isEmpty)
         .padding(.leading, 4)
       
       Text(text.isEmpty ? title : text)
-        .foregroundStyle(!text.isEmpty ? .textBlack : .textBrighter)
-        .font(.pretendardSemibold_28)
+        .foregroundStyle(
+          !text.isEmpty ? .textBlack : .textBrighter
+        )
+        .font(textFont)
         .padding(.leading, 4)
       
       Rectangle()
@@ -74,7 +94,7 @@ struct FloatingTitleNumberField: View {
         .foregroundStyle(
           isFocused ? .main : .textBrighter
         )
-        .padding(.top, 8)
+        .padding(.top, isFocused ? 7 : 8)
     }
     .frame(maxWidth: .infinity)
     .contentShape(Rectangle())
@@ -88,7 +108,12 @@ struct FloatingTitleNumberField: View {
   VStack {
     Spacer()
     FloatingTitleTextField(title: "Title", text: $text)
-    FloatingTitleNumberField(title: "Test", text: $text, isFocused: $isFocused)
+    FloatingTitleNumberField(
+      title: "Test",
+      textSize: .medium,
+      text: $text,
+      isFocused: $isFocused
+    )
       .onTapGesture {
         isFocused = true
       }

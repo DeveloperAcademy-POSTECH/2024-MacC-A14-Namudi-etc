@@ -40,9 +40,6 @@ struct NumberKeypadView: View {
     }
     .frame(maxWidth: .infinity)
     .background(.whiteDefault)
-    .onChange(of: amount) { oldValue, newValue in
-      print(amount)
-    }
   }
   
   private var expressionView: some View {
