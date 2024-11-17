@@ -10,14 +10,22 @@ import Foundation
 
 @Observable
 final class HarubeeAdjustViewModel {
+  
   struct State {
     var salaryBudget: SalaryBudget
     var dailyBudget: DailyBudget
+    
+    var defaultHarubee: Int = 0
+    var updatedHarubee: Int = 0
+    
+    // alert
+    var defaultHarubeeForAlert: Int = 0
   }
   
   enum Action {
-    case doneButtonTapped(Int)
+    case doneButtonTapped(Int?)
     case resetButtonTapped
+    case resetDoneButtonTapped
     case saveButtonTapped
   }
   
@@ -32,17 +40,35 @@ final class HarubeeAdjustViewModel {
   ) {
     self.state = .init(salaryBudget: salaryBudget, dailyBudget: dailyBudget)
     self.budgetUseCase = budgetUseCase
+    
+    self.state.defaultHarubee = Int(salaryBudget.defaultHarubee)
+    self.state.updatedHarubee = dailyBudget.harubee ?? self.state.defaultHarubee
   }
   
   func send(_ action: Action) {
     switch action {
     case let .doneButtonTapped(harubee):
       updateHarubee(harubee)
+      
     case .resetButtonTapped:
+      self.state.defaultHarubeeForAlert = calculateDefaultHarubee()
+      
+    case .resetDoneButtonTapped:
       updateHarubee(nil)
+      
+      do {
+        let _ = try self.budgetUseCase.adjustHarubee(
+          amount: self.state.dailyBudget.harubee,
+          date: self.state.dailyBudget.date,
+          salaryBudget: self.state.salaryBudget
+        )
+      } catch {
+        print(error.localizedDescription)
+      }
+      
     case .saveButtonTapped:
       do {
-        let (salary, daily) = try self.budgetUseCase.adjustHarubee(
+        let _ = try self.budgetUseCase.adjustHarubee(
           amount: self.state.dailyBudget.harubee,
           date: self.state.dailyBudget.date,
           salaryBudget: self.state.salaryBudget
@@ -74,5 +100,22 @@ extension HarubeeAdjustViewModel {
     
     // SalaryBudget에 새로운 기본 하루비 저장
     self.state.salaryBudget.defaultHarubee = defaultHarubee
+  }
+  
+  private func calculateDefaultHarubee() -> Int {
+    var salaryBudget = self.state.salaryBudget
+    
+    if let index = salaryBudget.dailyBudgets.firstIndex(where: {
+      $0.id == self.state.dailyBudget.id
+    }) {
+      salaryBudget.dailyBudgets[index].harubee = nil
+    }
+    
+    // 기본 하루비 계산
+    let defaultHarubee = self.budgetUseCase.calculateDefaultHarubee(
+      salaryBudget: salaryBudget
+    )
+    
+    return Int(defaultHarubee)
   }
 }
