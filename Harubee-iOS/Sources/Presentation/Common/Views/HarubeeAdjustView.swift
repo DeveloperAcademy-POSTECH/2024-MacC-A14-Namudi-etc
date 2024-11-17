@@ -72,13 +72,13 @@ struct HarubeeAdjustView: View {
         }
       }
     }
-    .onChange(of: harubee) { _, _ in
+    .onChange(of: isFocused) { _, _ in
       self.isUpdated = beforeHarubee == harubee.numberFormat ? false : true
     }
   }
 }
 
-// MARK: - HarubeeAdjustBodyView
+// MARK: - DefaultHarubeeContentView
 private struct DefaultHarubeeContentView: View {
   
   @Binding private var isUpdated: Bool
@@ -134,10 +134,13 @@ private struct DefaultHarubeeContentView: View {
 
 // MARK: - HarubeeAdjustField
 private struct HarubeeAdjustField: View {
+  @Environment(\.dismiss) private var dismiss
   
   let viewModel: HarubeeAdjustViewModel
   @Binding var harubee: String
   @Binding var isFocused: Bool
+  
+  @State private var isAlert: Bool = false
   
   var body: some View {
     VStack {
@@ -154,6 +157,29 @@ private struct HarubeeAdjustField: View {
         isFocused = true
       }
     }
+    .alert(
+      "기본 하루비로 변경하시겠습니까?",
+      isPresented: $isAlert) {
+        Button {
+          viewModel.send(.resetDoneButtonTapped)
+          self.dismiss()
+        } label: {
+          Text("확인")
+        }
+
+        Button(role: .cancel) {
+        } label: {
+          Text("취소")
+        }
+      } message: {
+        let defaultHarubee = viewModel.state.defaultHarubeeForAlert.decimalWithWon
+        Text(
+          """
+          기본 하루비는 \(defaultHarubee)으로 저장됩니다.
+          """
+        )
+      }
+
   }
   
   private var resetHarubeeButton: some View {
@@ -169,9 +195,7 @@ private struct HarubeeAdjustField: View {
     .clipShape(RoundedRectangle(cornerRadius: 5))
     .tapFeedback {
       viewModel.send(.resetButtonTapped)
-      
-      let defaultHarubee = viewModel.state.salaryBudget.defaultHarubee
-      self.harubee = Int(defaultHarubee).decimalWithWon
+      self.isAlert = true
     }
   }
 }
