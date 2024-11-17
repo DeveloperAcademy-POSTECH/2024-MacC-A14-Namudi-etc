@@ -14,6 +14,7 @@ struct Onboarding4View: View {
   @State private var previousExpenseAmount: String
   
   @State private var isEnabled: Bool
+  @State private var isFocused: Bool = false
   @State private var isPresented: Bool = false
   
   init(viewModel: OnboardingViewModel) {
@@ -24,32 +25,37 @@ struct Onboarding4View: View {
   }
   
   var body: some View {
-    VStack(spacing: 0) {
-      OnboardingHeaderView(
-        averageHarubee: viewModel.state.averageHarubee
-      )
-      
-      OnboardingBodyView(
-        startDate: viewModel.state.incomeStartDate,
-        expenseAmount: $previousExpenseAmount
-      )
-      
-      MainColorBottomButton(
-        title: "다음으로",
-        isEnabled: $isEnabled
-      ) {
-        self.isPresented = true
+    ZStack(alignment: .bottom) {
+      VStack(spacing: 0) {
+        OnboardingHeaderView(
+          averageHarubee: viewModel.state.averageHarubee
+        )
+        
+        OnboardingBodyView(
+          startDate: viewModel.state.incomeStartDate,
+          expenseAmount: $previousExpenseAmount,
+          isFocused: $isFocused
+        )
+        
+        MainColorBottomButton(
+          title: "다음으로",
+          isEnabled: $isEnabled
+        ) {
+          self.isPresented = true
+        }
       }
       
-      NumberKeypadView(amount: $previousExpenseAmount) {
-        
-        if !previousExpenseAmount.isEmpty {
-          
-          viewModel.send(.updatePreviousExpense(
-            previousExpenseAmount.numberFormat ?? 0
-          ))
-          
-          self.isEnabled = true
+      if isFocused {
+        NumberKeypadView(amount: $previousExpenseAmount) {
+          self.isFocused = false
+          if !previousExpenseAmount.isEmpty {
+            
+            viewModel.send(.updatePreviousExpense(
+              previousExpenseAmount.numberFormat ?? 0
+            ))
+            
+            self.isEnabled = true
+          }
         }
       }
     }
@@ -93,19 +99,20 @@ private struct OnboardingHeaderView: View {
 }
 
 private struct OnboardingBodyView: View {
-  @Binding private var expenseAmount: String
   
-  private let startDate: String
   
-  init(startDate: Date, expenseAmount: Binding<String>) {
-    self.startDate = startDate.formattedDateToString(.monthDay_kr)
-    self._expenseAmount = expenseAmount
+  let startDate: Date
+  @Binding var expenseAmount: String
+  @Binding var isFocused: Bool
+  
+  private var dateString: String {
+    startDate.formattedDateToString(.monthDay_kr)
   }
   
   var body: some View {
     VStack(spacing: 14) {
       VStack(alignment: .leading, spacing: 6) {
-        Text("\(startDate)부터 오늘까지")
+        Text("\(dateString)부터 오늘까지")
         Text("얼마를 사용하셨나요?")
       }
       .frame(maxWidth: .infinity, alignment: .leading)
@@ -115,24 +122,15 @@ private struct OnboardingBodyView: View {
       
       VStack(alignment: .leading, spacing: 0) {
         
-        Text("지출 금액")
-          .font(.pretendardMedium_12)
-          .foregroundStyle(expenseAmount.isEmpty ? .clear : Color.main)
-          .frame(maxWidth: .infinity, alignment: .leading)
-          .padding(.leading, 4)
-          .offset(y: !expenseAmount.isEmpty ? -4 : 0)
-          .animation(.easeOut(duration: 0.2), value: !expenseAmount.isEmpty)
-        
-        Text(expenseAmount.isEmpty ? "지출 금액" : expenseAmount)
-          .font(.pretendardMedium_18)
-          .foregroundStyle(expenseAmount.isEmpty ? Color.textBrighter : Color.textBlack)
-          .frame(maxWidth: .infinity, alignment: .leading)
-          .padding(.leading, 4)
-        
-        Rectangle()
-          .frame(height: 1)
-          .foregroundStyle(expenseAmount.isEmpty ? Color.textBrighter : Color.main)
-          .padding(.top, 8)
+        FloatingTitleNumberField(
+          title: "금액",
+          textSize: .medium,
+          text: $expenseAmount,
+          isFocused: $isFocused
+        )
+        .onTapGesture {
+          isFocused = true
+        }
         
         Text("*계산이 어렵다면 수입금에서 잔액을 빼서 계산하는 방법도 있어요!")
           .foregroundStyle(Color.textBlack30)
