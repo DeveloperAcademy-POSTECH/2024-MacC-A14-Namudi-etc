@@ -34,6 +34,8 @@ extension Color {
   
   static let redDefault = Color(.redDefault)
   static let red10 = Color(.red10)
+  
+  static let placeholder = Color(.placeholder)
 }
 
 extension ShapeStyle where Self == Color {
@@ -61,6 +63,8 @@ extension ShapeStyle where Self == Color {
 
   static var redDefault: Color { Color(.redDefault) }
   static var red10: Color { Color(.red10) }
+  
+  static var placeholder: Color { Color(.placeholder) }
 }
 
 extension FillStyle {
@@ -88,4 +92,6 @@ extension FillStyle {
   
   static let redDefault = Color(.redDefault)
   static let red10 = Color(.red10)
+  
+  static let placeholder = Color(.placeholder)
 }

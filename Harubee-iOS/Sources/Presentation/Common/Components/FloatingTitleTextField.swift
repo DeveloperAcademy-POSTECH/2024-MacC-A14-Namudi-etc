@@ -45,6 +45,7 @@ struct FloatingTitleTextField: View {
     .onAppear {
         self.isTextfieldFocused = shouldShowKeyboard
     }
+    .contentShape(Rectangle())
   }
 }
 
@@ -84,7 +85,7 @@ struct FloatingTitleNumberField: View {
       
       Text(text.isEmpty ? title : text)
         .foregroundStyle(
-          !text.isEmpty ? .textBlack : .textBrighter
+          !text.isEmpty ? .textBlack : .placeholder
         )
         .font(textFont)
         .padding(.leading, 4)
