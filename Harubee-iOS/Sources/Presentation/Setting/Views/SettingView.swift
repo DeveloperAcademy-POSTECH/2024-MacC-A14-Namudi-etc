@@ -9,9 +9,10 @@
 import SwiftUI
 
 struct SettingView: View {
+  let settingViewModel: SettingViewModel
+  
   @State private var navigateFixedExpense: Bool = false
   @State private var navigateFixedIncome: Bool = false
-  @State private var settingViewModel: SettingViewModel
   
   private var salaryBudget: SalaryBudget? {
     settingViewModel.state.salaryBudget

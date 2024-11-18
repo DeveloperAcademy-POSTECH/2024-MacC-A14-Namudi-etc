@@ -9,21 +9,11 @@
 import SwiftUI
 
 struct FloatingTitleTextField: View {
-  private var title: String
-  private var shouldShowKeyboard: Bool
+  var title: String
+  var shouldShowKeyboard: Bool = false
   
   @Binding var text: String
   @FocusState private var isTextfieldFocused: Bool
-  
-  init(
-    title: String,
-    text: Binding<String>,
-    shouldShowKeyboard: Bool = false
-  ) {
-    self.title = title
-    self._text = text
-    self.shouldShowKeyboard = shouldShowKeyboard
-  }
   
   var body: some View {
     VStack(spacing: 0) {

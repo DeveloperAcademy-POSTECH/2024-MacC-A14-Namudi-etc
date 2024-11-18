@@ -9,11 +9,13 @@
 import SwiftUI
 
 struct FixedExpenseView: View {
-  private var settingViewModel: SettingViewModel
+  let settingViewModel: SettingViewModel
+  
+  @State private var isInfoBubbleVisible: Bool = false
+  
   private var salaryBudget: SalaryBudget {
     settingViewModel.state.salaryBudget
   }
-  @State private var isInfoBubbleVisible: Bool = false
   
   init(settingViewModel: SettingViewModel) {
     self.settingViewModel = settingViewModel
@@ -75,6 +77,7 @@ private struct FixedExpenseHeaderView: View {
 
 private struct FixedExpensesListView: View {
   let settingViewModel: SettingViewModel
+  
   private var listHeaderView: some View {
     HStack(spacing: 0) {
       Text("목록")
@@ -119,35 +122,12 @@ private struct FixedExpensesListView: View {
       } else {
         List {
           ForEach(fixedExpenses, id: \.id) { item in
-            HStack(spacing: 0) {
-              Text("매달 \(item.date.formattedDateToString(.day_kr))")
-                .font(.pretendardMedium_16)
-                .foregroundStyle(Color.textBlack)
-                .padding(.vertical, 6)
-                .padding(.horizontal, 11)
-                .background(
-                  RoundedRectangle(cornerRadius: 6)
-                    .foregroundStyle(Color.textBrighter30)
-                )
-              
-              Spacer()
-              
-              VStack(alignment: .trailing, spacing: 0) {
-                Text(item.name)
-                  .font(.pretendardMedium_12)
-                  .foregroundStyle(Color.textBlack)
-                Text(item.price.decimalWithWon)
-                  .font(.pretendardSemibold_18)
-                  .foregroundStyle(Color.textBlack)
+            fixedExpensesRow(for: item)
+              .onTapGesture {
+                self.manageMode = .modify
+                self.selectedItem = item
+                self.isPresented = true
               }
-            }
-            .padding(.vertical, 1)
-            .contentShape(Rectangle())
-            .onTapGesture {
-              self.manageMode = .modify
-              self.selectedItem = item
-              self.isPresented = true
-            }
           }
           .onDelete(perform: removeList)
         }
@@ -157,29 +137,13 @@ private struct FixedExpensesListView: View {
     }
     .sheet(isPresented: $isPresented) {
       FixedExpenseManageView(
-        mode: self.manageMode,
-        selectedDay: selectedItem?.date.day ?? 1,
-        fixedExpenseName: selectedItem?.name ?? "",
-        fixedExpenseAmount: selectedItem?.price.decimal ?? ""
+        mode: self.manageMode
       ) { day, name, price in
-        let date = day.convertDateBetweenStartAndEnd(
-          start: settingViewModel.state.salaryBudget.startDate,
-          end: settingViewModel.state.salaryBudget.endDate
+        saveFixedExpense(
+          day: day,
+          name: name,
+          price: price
         )
-        
-        if let item = selectedItem {
-          if let index = fixedExpenses.firstIndex(where: { $0.id == item.id }) {
-            fixedExpenses[index].date = date
-            fixedExpenses[index].name = name
-            fixedExpenses[index].price = price.numberFormat ?? 0
-          }
-        } else {
-          fixedExpenses.append(.init(
-            date: date,
-            name: name,
-            price: price.numberFormat ?? 0)
-          )
-        }
       }
       .presentationDetents([.fraction(0.8)])
       .presentationCornerRadius(20)
@@ -194,6 +158,60 @@ private struct FixedExpensesListView: View {
   
   private func removeList(at offsets: IndexSet) {
     fixedExpenses.remove(atOffsets: offsets)
+  }
+  
+  private func fixedExpensesRow(
+    for item: TransactionItem
+  ) -> some View {
+    HStack(spacing: 0) {
+      Text("매달 \(item.date.formattedDateToString(.day_kr))")
+        .font(.pretendardMedium_16)
+        .foregroundStyle(Color.textBlack)
+        .padding(.vertical, 6)
+        .padding(.horizontal, 11)
+        .background(
+          RoundedRectangle(cornerRadius: 6)
+            .foregroundStyle(Color.textBrighter30)
+        )
+      
+      Spacer()
+      
+      VStack(alignment: .trailing, spacing: 0) {
+        Text(item.name)
+          .font(.pretendardMedium_12)
+          .foregroundStyle(Color.textBlack)
+        Text(item.price.decimalWithWon)
+          .font(.pretendardSemibold_18)
+          .foregroundStyle(Color.textBlack)
+      }
+    }
+    .padding(.vertical, 1)
+    .contentShape(Rectangle())
+  }
+  
+  private func saveFixedExpense(
+    day: Int,
+    name: String,
+    price: String
+  ) {
+    let date = day.convertDateBetweenStartAndEnd(
+      start: settingViewModel.state.salaryBudget.startDate,
+      end: settingViewModel.state.salaryBudget.endDate
+    )
+    
+    if let item = selectedItem {
+      if let index = fixedExpenses.firstIndex(where: { $0.id == item.id }) {
+        fixedExpenses[index].date = date
+        fixedExpenses[index].name = name
+        fixedExpenses[index].price = price.numberFormat ?? 0
+      }
+    } else {
+      fixedExpenses.append(.init(
+        date: date,
+        name: name,
+        price: price.numberFormat ?? 0
+      ))
+    }
   }
 }
 

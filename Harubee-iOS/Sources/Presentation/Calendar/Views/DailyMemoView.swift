@@ -85,8 +85,8 @@ struct DailyMemoView: View {
       
       FloatingTitleTextField(
         title: "메모",
-        text: $memo,
-        shouldShowKeyboard: true
+        shouldShowKeyboard: true,
+        text: $memo
       )
       .onChange(of: memo) { _, newValue in
         memoStringCount = newValue.count

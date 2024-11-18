@@ -9,10 +9,19 @@
 import SwiftUI
 
 struct FixedIncomeView: View {
-  private var settingViewModel: SettingViewModel
+  let settingViewModel: SettingViewModel
+  
+  @Environment(\.dismiss) private var dismiss
+  @State private var selectedDay: Int
+  @State private var fixedIncomeAmount: Int
+  @State private var isUpdated: Bool = false
+  @State private var isInfoBubbleVisible: Bool = false
+  @State private var isAlertPresented: Bool = false
+  
   private var salaryBudget: SalaryBudget {
     settingViewModel.state.salaryBudget
   }
+  
   private var fixedIncomeHeaderView: some View {
     VStack(spacing: 4) {
       VStack(alignment: .leading, spacing: 10) {
@@ -32,14 +41,6 @@ struct FixedIncomeView: View {
     .padding(.horizontal, 16)
     .padding(.top, 44)
   }
-  
-  @Environment(\.dismiss) private var dismiss
-  @State private var selectedDay: Int
-  @State private var fixedIncomeAmount: Int
-  
-  @State private var isUpdated: Bool = false
-  @State private var isInfoBubbleVisible: Bool = false
-  @State private var isAlertPresented: Bool = false
   
   init(
     settingViewModel: SettingViewModel
