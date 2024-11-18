@@ -133,7 +133,6 @@ private struct Honeycomb: View {
   let screenHeight: CGFloat
   
   // MARK: Internal Properties
-  @State private var isPresented: Bool = false
   private let hexGrid: [[Bool]] = [
     [true, false],
     [false, true, true],
@@ -156,9 +155,6 @@ private struct Honeycomb: View {
                  isTodayHarubee: true,
                  hexgonSize: hexgonSize
               )
-              .tapFeedback(tappedBackgroundColor: .clear) {
-                self.isPresented = true
-              }
             } else if row == 2 && col == 1 {
               HarubeeHexagon(
                 isInfoBubbleVisible: $isInfoBubbleVisible,
@@ -176,17 +172,6 @@ private struct Honeycomb: View {
       }
     }
     .offset(x: honeycombSpace - hexgonSize/5, y: -hexgonSize/5)
-    .sheet(isPresented: $isPresented) {
-      todayViewModel.send(.viewDidLoad)
-    } content: {
-      HarubeeAdjustView(
-        viewModel: DIContainer.shared.makeHarubeeAdjustViewModel(
-          salaryBudget: todayViewModel.state.salaryBudget!,
-          dailyBudget: todayViewModel.state.todayDailyBudget!
-        )
-      )
-      .presentationDetents([.height(623)])
-    }
   }
 }
 
@@ -204,7 +189,7 @@ private struct HarubeeHexagon: View {
   @State private var firstWaveOffset: CGFloat
   @State private var secondWaveOffset: CGFloat
   @State private var animatedFillPercentage: CGFloat
-
+  @State private var isPresented: Bool = false
   private let fillPercentage: Double
   private let isTodayExpenseEntered: Bool
   private let waveTimer = Timer.publish(
@@ -338,6 +323,9 @@ private struct HarubeeHexagon: View {
         
       }
     }
+    .tapFeedback(tappedBackgroundColor: .clear) {
+      self.isPresented = true
+    }
     .onReceive(waveTimer) { _ in
       firstWaveOffset += 1
       if firstWaveOffset > hexgonSize {
@@ -353,6 +341,28 @@ private struct HarubeeHexagon: View {
       withAnimation(.easeInOut(duration: 1.5)) {
         animatedFillPercentage = CGFloat(newPercentage)
       }
+    }
+    .sheet(isPresented: $isPresented) {
+      todayViewModel.send(.viewDidLoad)
+    } content: {
+      if isTodayHarubee {
+        HarubeeAdjustView(
+          viewModel: DIContainer.shared.makeHarubeeAdjustViewModel(
+            salaryBudget: todayViewModel.state.salaryBudget!,
+            dailyBudget: todayViewModel.state.todayDailyBudget!
+          )
+        )
+        .presentationDetents([.height(623)])
+      } else {
+        BalanceAdjustView(
+          viewModel: DIContainer.shared.makeBalanceAdjustViewModel(
+            salaryBudget: todayViewModel.state.salaryBudget!,
+            dailyBudget: todayViewModel.state.todayDailyBudget!
+          )
+        )
+        .presentationDetents([.height(623)])
+      }
+      
     }
   }
 }

@@ -55,6 +55,17 @@ final class DIContainer {
     )
   }
   
+  func makeBalanceAdjustViewModel(
+    salaryBudget: SalaryBudget,
+    dailyBudget: DailyBudget
+  ) -> BalanceAdjustViewModel {
+    BalanceAdjustViewModel(
+      salaryBudget: salaryBudget,
+      dailyBudget: dailyBudget,
+      budgetUseCase: useCaseProvider.budgetUseCase
+    )
+  }
+  
   func makeTransactionInputViewModel(
     salaryBudget: SalaryBudget,
     dailyBudget: DailyBudget
