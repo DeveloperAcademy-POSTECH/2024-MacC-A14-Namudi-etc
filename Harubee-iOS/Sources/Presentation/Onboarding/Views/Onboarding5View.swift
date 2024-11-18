@@ -111,6 +111,32 @@ private struct FixedExpensesListView: View {
   @State private var manageMode: Mode
   @State private var selectedItem: TransactionItem?
   
+  private var listHeaderView: some View {
+    HStack(spacing: 0) {
+      Text("목록")
+        .font(.pretendardSemibold_16)
+      
+      Spacer()
+      
+      Button {
+        self.manageMode = .add
+        self.selectedItem = nil
+        self.isPresented = true
+      } label: {
+        Image(systemName: "plus")
+          .frame(width: 30, height: 21)
+      }
+      .padding(.trailing, 10)
+    }
+  }
+  
+  private var emptyListAnnounce: some View {
+    Text("목록을 추가해주세요")
+      .font(.pretendardMedium_16)
+      .foregroundStyle(Color.textBlack30)
+      .padding(.top, 150)
+  }
+  
   init(
     viewModel: OnboardingViewModel,
     fixedExpenses: Binding<[TransactionItem]>
@@ -121,63 +147,22 @@ private struct FixedExpensesListView: View {
   }
   
   var body: some View {
-    VStack {
-      HStack(spacing: 0) {
-        Text("목록")
-          .font(.pretendardSemibold_16)
-        
-        Spacer()
-        
-        Button {
-          self.manageMode = .add
-          self.selectedItem = nil
-          self.isPresented = true
-        } label: {
-          Image(systemName: "plus")
-            .frame(width: 19, height: 21)
-        }
-      }
-      .padding(.horizontal, 20)
-      .foregroundStyle(Color.textBlack)
+    VStack(spacing: 0) {
+      listHeaderView
+        .padding(.horizontal, 20)
+        .foregroundStyle(Color.textBlack)
       
       if fixedExpenses.isEmpty {
-        Text("목록을 추가해주세요")
-          .font(.pretendardMedium_16)
-          .foregroundStyle(Color.textBlack30)
-          .padding(.top, 150)
-        
+        emptyListAnnounce
       } else {
         List {
           ForEach(fixedExpenses, id: \.id) { item in
-            HStack(spacing: 0) {
-              Text("매달 \(item.date.formattedDateToString(.day_kr))")
-                .font(.pretendardMedium_16)
-                .foregroundStyle(Color.textBlack)
-                .padding(.vertical, 6)
-                .padding(.horizontal, 11)
-                .background(
-                  RoundedRectangle(cornerRadius: 6)
-                    .foregroundStyle(Color.textBrighter30)
-                )
-              
-              Spacer()
-              
-              VStack(alignment: .trailing, spacing: 0) {
-                Text(item.name)
-                  .font(.pretendardMedium_12)
-                  .foregroundStyle(Color.textBlack)
-                Text(item.price.decimalWithWon)
-                  .font(.pretendardSemibold_18)
-                  .foregroundStyle(Color.textBlack)
+            fixedExpensesRow(for: item)
+              .onTapGesture {
+                self.manageMode = .modify
+                self.selectedItem = item
+                self.isPresented = true
               }
-            }
-            .padding(.vertical, 1)
-            .contentShape(Rectangle())
-            .onTapGesture {
-              self.manageMode = .modify
-              self.selectedItem = item
-              self.isPresented = true
-            }
           }
           .onDelete(perform: removeList)
         }
@@ -186,34 +171,7 @@ private struct FixedExpensesListView: View {
       }
     }
     .sheet(isPresented: $isPresented) {
-      FixedExpenseManageView(
-        mode: self.manageMode,
-        selectedDay: selectedItem?.date.day ?? 1,
-        fixedExpenseName: selectedItem?.name ?? "",
-        fixedExpenseAmount: selectedItem?.price.decimal ?? ""
-      ) { day, name, price in
-        
-        let date = day.convertDateBetweenStartAndEnd(
-          start: viewModel.state.incomeStartDate,
-          end: viewModel.state.incomeEndDate
-        )
-        
-        if let item = selectedItem {
-          if let index = fixedExpenses.firstIndex(where: { $0.id == item.id }) {
-            fixedExpenses[index].date = date
-            fixedExpenses[index].name = name
-            fixedExpenses[index].price = price.numberFormat ?? 0
-          }
-        } else {
-          fixedExpenses.append(.init(
-            date: date,
-            name: name,
-            price: price.numberFormat ?? 0)
-          )
-        }
-      }
-      .presentationDetents([.fraction(0.8)])
-      .presentationCornerRadius(20)
+      fixedExpenseSheet()
     }
     .onChange(of: selectedItem) { _, _ in }
     .onChange(of: fixedExpenses) { _, _ in
@@ -223,8 +181,72 @@ private struct FixedExpensesListView: View {
     }
   }
   
-  func removeList(at offsets: IndexSet) {
+  private func removeList(at offsets: IndexSet) {
     fixedExpenses.remove(atOffsets: offsets)
+  }
+  
+  private func fixedExpensesRow(
+    for item: TransactionItem
+  ) -> some View {
+    HStack(spacing: 0) {
+      Text("매달 \(item.date.formattedDateToString(.day_kr))")
+        .font(.pretendardMedium_16)
+        .foregroundStyle(Color.textBlack)
+        .padding(.vertical, 6)
+        .padding(.horizontal, 11)
+        .background(
+          RoundedRectangle(cornerRadius: 6)
+            .foregroundStyle(Color.textBrighter30)
+        )
+      
+      Spacer()
+      
+      VStack(alignment: .trailing, spacing: 0) {
+        Text(item.name)
+          .font(.pretendardMedium_12)
+          .foregroundStyle(Color.textBlack)
+        Text(item.price.decimalWithWon)
+          .font(.pretendardSemibold_18)
+          .foregroundStyle(Color.textBlack)
+      }
+    }
+    .padding(.vertical, 1)
+    .contentShape(Rectangle())
+  }
+  
+  private func fixedExpenseSheet() -> some View {
+    FixedExpenseManageView(
+      mode: manageMode
+    ) { day, name, price in
+      saveFixedExpense(day: day, name: name, price: price)
+    }
+    .presentationDetents([.fraction(0.8)])
+    .presentationCornerRadius(20)
+  }
+  
+  private func saveFixedExpense(
+    day: Int,
+    name: String,
+    price: String
+  ) {
+    let date = day.convertDateBetweenStartAndEnd(
+      start: viewModel.state.incomeStartDate,
+      end: viewModel.state.incomeEndDate
+    )
+    
+    if let item = selectedItem {
+      if let index = fixedExpenses.firstIndex(where: { $0.id == item.id }) {
+        fixedExpenses[index].date = date
+        fixedExpenses[index].name = name
+        fixedExpenses[index].price = price.numberFormat ?? 0
+      }
+    } else {
+      fixedExpenses.append(.init(
+        date: date,
+        name: name,
+        price: price.numberFormat ?? 0
+      ))
+    }
   }
 }
 

@@ -11,15 +11,7 @@ import SwiftUI
 // MARK: - Help Button
 struct HelpButton: View {
   @Binding var infoBubbleVisible: Bool
-  private var buttonColor: Color
-  
-  init(
-    infoBubbleVisible: Binding<Bool>,
-    buttonColor: Color
-  ) {
-    self._infoBubbleVisible = infoBubbleVisible
-    self.buttonColor = buttonColor
-  }
+  let buttonColor: Color
   
   var body: some View {
     Image(systemName: "questionmark.circle")

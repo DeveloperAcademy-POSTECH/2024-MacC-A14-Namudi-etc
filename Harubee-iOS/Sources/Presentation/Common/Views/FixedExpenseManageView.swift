@@ -23,28 +23,14 @@ enum Mode {
 }
 
 struct FixedExpenseManageView: View {
-  private let mode: Mode
-  private let action: ((Int, String, String) -> Void)
+  let mode: Mode
+  let action: ((Int, String, String) -> Void)
   
   @Environment(\.dismiss) private var dismiss
-  @State private var selectedDay: Int
-  @State private var fixedExpenseName: String
-  @State private var fixedExpenseAmount: String
+  @State private var selectedDay: Int = 1
+  @State private var fixedExpenseName: String = ""
+  @State private var fixedExpenseAmount: String = ""
   @State private var isEnabled: Bool = false
-  
-  init(
-    mode: Mode,
-    selectedDay: Int = 1,
-    fixedExpenseName: String = "",
-    fixedExpenseAmount: String = "",
-    action: @escaping ((Int, String, String) -> Void)
-  ) {
-    self.mode = mode
-    self._fixedExpenseName = State(initialValue: fixedExpenseName)
-    self._fixedExpenseAmount = State(initialValue: fixedExpenseAmount)
-    self._selectedDay = State(initialValue: selectedDay)
-    self.action = action
-  }
   
   var body: some View {
     VStack(spacing: 0) {

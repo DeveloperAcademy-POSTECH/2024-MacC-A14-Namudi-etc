@@ -26,6 +26,10 @@ struct DayPickerView: View {
   let title: String
   let titleFont: TitleFont
   
+  @State private var keyboardObserver = KeyboardObserverManager()
+  @State private var showDayPicker: Bool = false
+  @Binding var selectedDay: Int
+  
   private var dayPicker: some View {
     VStack(spacing: 0) {
       Rectangle()
@@ -46,10 +50,6 @@ struct DayPickerView: View {
       .transition(.opacity.combined(with: .scale(scale: 0.9, anchor: .top)))
     }
   }
-  
-  @State private var keyboardObserver = KeyboardObserverManager()
-  @State private var showDayPicker: Bool = false
-  @Binding var selectedDay: Int
   
   var body: some View {
     VStack(spacing: 0) {

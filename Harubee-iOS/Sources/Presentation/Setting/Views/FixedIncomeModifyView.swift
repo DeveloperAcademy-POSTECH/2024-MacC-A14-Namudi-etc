@@ -9,11 +9,12 @@
 import SwiftUI
 
 struct FixedIncomeModifyView: View {
-  private var editFixedIncomeAmount: (String) -> Void
   
   @Environment(\.dismiss) private var dismiss
   @State private var fixedIncomeAmount: String
   @State private var isFocused: Bool = false
+  
+  private var editFixedIncomeAmount: (String) -> Void
   
   init(
     fixedIncomeAmount: String,
