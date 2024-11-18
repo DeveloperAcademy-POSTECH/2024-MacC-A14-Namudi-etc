@@ -22,7 +22,9 @@ struct Onboarding5View: View {
   
   var body: some View {
     VStack(spacing: 0) {
-      OnboardingHeaderView(harubee: viewModel.state.averageHarubee)
+      OnboardingHeaderView(
+        harubee: viewModel.state.averageHarubee
+      )
       
       OnboardingBodyView()
         .padding(.top, 30)
@@ -32,7 +34,7 @@ struct Onboarding5View: View {
         viewModel: viewModel,
         fixedExpenses: $fixedExpenses
       )
-        .padding(.top, 30)
+        .padding(.top, 32)
       
       
       Spacer()

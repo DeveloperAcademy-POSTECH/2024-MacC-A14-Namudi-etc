@@ -110,37 +110,32 @@ private struct OnboardingBodyView: View {
   }
   
   var body: some View {
-    VStack(spacing: 14) {
-      VStack(alignment: .leading, spacing: 6) {
-        Text("\(dateString)부터 오늘까지")
-        Text("얼마를 사용하셨나요?")
-      }
-      .frame(maxWidth: .infinity, alignment: .leading)
-      .font(.pretendardMedium_20)
-      .foregroundStyle(Color.textBlack)
-      .padding(.horizontal, 20)
+    VStack(spacing: 0) {
+      Text("현재 잔액은 얼마인가요?")
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .font(.pretendardMedium_20)
+        .foregroundStyle(Color.textBlack)
+        .padding(.horizontal, 20)
       
       VStack(alignment: .leading, spacing: 0) {
-        
-        FloatingTitleNumberField(
+        FloatingTitleTextField(
           title: "금액",
-          textSize: .medium,
-          text: $expenseAmount,
-          isFocused: $isFocused
+          text: $expenseAmount
         )
-        .onTapGesture {
-          isFocused = true
-        }
+        .disabled(true)
+        .padding(.top, 18)
         
-        Text("*계산이 어렵다면 수입금에서 잔액을 빼서 계산하는 방법도 있어요!")
-          .foregroundStyle(Color.textBlack30)
-          .font(.pretendardMedium_12)
-          .padding(.top, 6)
-          .padding(.horizontal, 4)
+        VStack(alignment: .leading, spacing: 0) {
+          Text("*신용카드 사용 등의 이유로 잔액 파악이 어렵다면")
+          Text("수입금에서 지출 금액을 빼서 계산하는 방법도 있어요!")
+        }
+        .foregroundStyle(Color.textBlack30)
+        .font(.pretendardMedium_12)
+        .padding(.top, 10)
+        .padding(.horizontal, 4)
       }
       .padding(.horizontal, 16)
     }
-    .padding(.top, 30)
     .frame(maxHeight: .infinity, alignment: .top)
   }
 }

@@ -117,7 +117,7 @@ private struct OnboardingBodyView: View {
           title: "금액",
           text: $incomeAmount
         )
-        .padding(.top, 14)
+        .padding(.top, 18)
         .keyboardType(.numberPad)
       }
       .padding(.horizontal, 20)
