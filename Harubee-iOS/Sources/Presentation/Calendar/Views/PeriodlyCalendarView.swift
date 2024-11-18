@@ -30,7 +30,7 @@ struct PeriodlyCalendarView: View {
             year: budget.startDate.formattedDateToString(.year_kr),
             period: viewModel.periodTitle,
             periodDirectionState: viewModel.periodDirectionState,
-            onNavigate: handlePeriodDirection,
+            onNavigate: { viewModel.send(.movePeriod($0)) },
             infoBubbleVisible: $infoBubbleVisible
           )
           .zIndex(1)
@@ -46,7 +46,7 @@ struct PeriodlyCalendarView: View {
       if !viewModel.isCurrentPeriodContainsToday {
         ReturnToTodayButton(
           title: "이번 기간으로 돌아가기",
-          action: handleReturnToToday
+          action: { viewModel.send(.moveToCurrent) }
         )
       }
       
@@ -73,17 +73,9 @@ struct PeriodlyCalendarView: View {
   }
   
   // MARK: - Action Handlers
-  private func handlePeriodDirection(_ direction: PeriodDirection) {
-    viewModel.send(.movePeriod(direction))
-  }
-  
   private func handleDateSelection(_ date: Date) {
     viewModel.send(.selectDate(date))
     navigateToDailyView = true
-  }
-  
-  private func handleReturnToToday() {
-    viewModel.send(.moveToCurrent)
   }
 }
 
