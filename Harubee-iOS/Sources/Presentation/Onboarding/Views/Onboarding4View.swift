@@ -36,6 +36,7 @@ struct Onboarding4View: View {
           expenseAmount: $previousExpenseAmount,
           isFocused: $isFocused
         )
+        .padding(.top, 30)
         
         MainColorBottomButton(
           title: "다음으로",
@@ -118,14 +119,18 @@ private struct OnboardingBodyView: View {
         .padding(.horizontal, 20)
       
       VStack(alignment: .leading, spacing: 0) {
-        FloatingTitleTextField(
+        FloatingTitleNumberField(
           title: "금액",
-          text: $expenseAmount
+          textSize: .medium,
+          text: $expenseAmount,
+          isFocused: $isFocused
         )
-        .disabled(true)
+        .onTapGesture {
+          isFocused = true
+        }
         .padding(.top, 18)
         
-        VStack(alignment: .leading, spacing: 0) {
+        VStack(alignment: .leading, spacing: 2) {
           Text("*신용카드 사용 등의 이유로 잔액 파악이 어렵다면")
           Text("수입금에서 지출 금액을 빼서 계산하는 방법도 있어요!")
         }
