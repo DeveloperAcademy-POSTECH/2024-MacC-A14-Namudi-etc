@@ -21,6 +21,7 @@ final class TodayViewModel {
   struct State {
     var todayDate = Date()
     var todayHarubee = 0
+    var nextIncomeDate: Date = Date()
     var todayHarubeePercentage: Double = 0.0
     var todayBalance: Int = 0
     var todayBalancePercentage: Double = 0.0
@@ -157,11 +158,15 @@ extension TodayViewModel {
   }
   
   private func initializeState(salaryBudget: SalaryBudget) {
+    let calendar = Calendar.current
     let currentBalance = salaryBudget.balance
     let currentFixedIncome = salaryBudget.fixedIncome
     let todayDailyBudget = salaryBudget.dailyBudgets.first(
       where: { $0.date == state.todayDate.formattedDate }
     )
+    let nextIncomeDate = calendar.date(
+      byAdding: .day, value: 1, to: salaryBudget.endDate
+    )!
     let todayExpense = todayDailyBudget?.expense ?? .zero
     let todayHarubee = (
       todayDailyBudget?.harubee ?? Int(salaryBudget.defaultHarubee)
@@ -178,6 +183,7 @@ extension TodayViewModel {
     state.todayDailyBudget = todayDailyBudget
     state.todayHarubee = remainTodayHarubee
     state.todayBalance = currentBalance
+    state.nextIncomeDate = nextIncomeDate
     state.weeklyStreaks = weeklyStreaks
     state.todayHarubeePercentage = todayHarubeePercentage
     state.todayBalancePercentage = (

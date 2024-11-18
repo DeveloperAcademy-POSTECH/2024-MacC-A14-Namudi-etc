@@ -243,7 +243,7 @@ private struct HarubeeHexagon: View {
         
         let textColor = isTodayHarubee
             ? (animatedFillPercentage <= 0.5 ? Color.whiteDefault : Color.textBlack)
-            : Color.whiteDeep50
+            : Color.whiteDefault
         
         return Text(hexagonText)
             .font(isTodayHarubee
@@ -261,25 +261,35 @@ private struct HarubeeHexagon: View {
     }()
     
     let harubeeNumberContainer: some View = {
-      
       let isIncludedInWave = animatedFillPercentage <= 0.33
-      
       return HStack {
         (isIncludedInWave ? Image(.harubeeWhite) : Image(.harubeeMain))
           .resizable()
           .frame(width: 20, height: 20)
         
-        Text((todayViewModel.state.todayHarubee.decimalWithWon))
+        Text(todayViewModel.state.todayHarubee.decimalWithWon)
           .foregroundStyle(isIncludedInWave ? Color.whiteDefault : Color.main)
           .font(.pretendardSemibold_24)
       }
       .fixedSize()
-      .padding(EdgeInsets(top: 4, leading: 9, bottom: 6, trailing: 10)
-      )
+      .padding(EdgeInsets(top: 4, leading: 9, bottom: 6, trailing: 10))
       .background(
         RoundedRectangle(cornerRadius: 8)
           .foregroundStyle(Color.mainBrighter60)
       )
+    }()
+    
+    let balanceNumberContainer: some View = {
+      HStack {
+        Text(todayViewModel.state.todayBalance.decimalWithWon)
+          .foregroundStyle(.whiteDefault)
+          .font(.pretendardSemibold_20)
+      }.fixedSize()
+        .padding(EdgeInsets(top: 4, leading: 9, bottom: 6, trailing: 9))
+        .background(
+          RoundedRectangle(cornerRadius: 8)
+            .foregroundStyle(Color.mainBrighter60)
+        )
     }()
     
     ZStack {
@@ -302,22 +312,30 @@ private struct HarubeeHexagon: View {
         .stroke(Color.whiteDefault, lineWidth: 1.5)
         .frame(width: hexgonSize, height: hexgonSize)
       
-      VStack(spacing: isTodayHarubee ? 9 : 2) {
+      VStack(spacing: 0) {
+        
+        if !isTodayHarubee {
+          Text(
+            "다음 수입일(\(todayViewModel.state.nextIncomeDate.formattedDateToString(.monthDay_slash)))까지"
+          )
+            .font(.pretendardMedium_12)
+            .foregroundStyle(.whiteDeep50)
+        }
         
         hexagonLabel
+          .padding(.top, isTodayHarubee ? 0 : 3)
           .infoBubble(isVisible: $isInfoBubbleVisible) {
             infoBubbleText
           }
         
         if isTodayHarubee {
-          
           harubeeNumberContainer
-          
+            .padding(.top, 11)
         } else {
-          Text(todayViewModel.state.todayBalance.decimalWithWon)
-            .font(.pretendardSemibold_20)
-            .foregroundStyle(Color.whiteDefault)
+          balanceNumberContainer
+            .padding(.top, 13)
         }
+        
       }
     }
     .onReceive(waveTimer) { _ in
