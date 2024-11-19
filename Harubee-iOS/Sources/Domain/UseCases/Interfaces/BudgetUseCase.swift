@@ -109,9 +109,11 @@ protocol BudgetUseCase {
   /// 기본 하루비를 계산합니다.
   /// - Parameters:
   ///   - salaryBudget: 조정된 하루비들을 확인하기 위한 SalaryBudget
+  ///   - anchorDate: 기본 하루비를 계산할 기준 날짜
   /// - Returns: 계산된 기본 하루비
   func calculateDefaultHarubee(
-    salaryBudget: SalaryBudget
+    salaryBudget: SalaryBudget,
+    anchorDate: Date
   ) -> Double
   
   

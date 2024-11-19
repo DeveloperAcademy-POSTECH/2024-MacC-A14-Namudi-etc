@@ -222,7 +222,8 @@ final class BudgetUseCaseImpl: BudgetUseCase {
     
     // 2. 새로 업데이트된 SalaryBudget의 잔액으로 기본 하루비 다시 계산하기
     let newDefaultHarubee = self.calculateDefaultHarubee(
-      salaryBudget: newSalaryBudget
+      salaryBudget: newSalaryBudget,
+      anchorDate: .now
     )
     
     // 3. SalaryBudget에 기본 하루비 업데이트하기
@@ -236,7 +237,8 @@ final class BudgetUseCaseImpl: BudgetUseCase {
     salaryBudget: SalaryBudget
   ) throws -> SalaryBudget {
     let newDefaultHarubee = self.calculateDefaultHarubee(
-      salaryBudget: salaryBudget
+      salaryBudget: salaryBudget,
+      anchorDate: .now
     )
     
     return try salaryBudgetRepository.updateDefaultHarubee(
@@ -269,7 +271,8 @@ final class BudgetUseCaseImpl: BudgetUseCase {
         balance: newBalance,
         defaultHarubee: salaryBudget.defaultHarubee,
         dailyBudgets: salaryBudget.dailyBudgets
-      )
+      ),
+      anchorDate: .now
     )
     
     // 6. Repository 통해 저장하기
@@ -320,7 +323,8 @@ final class BudgetUseCaseImpl: BudgetUseCase {
         balance: newBalance,
         defaultHarubee: salaryBudget.defaultHarubee,
         dailyBudgets: salaryBudget.dailyBudgets
-      )
+      ),
+      anchorDate: .now
     )
     
     // 6. Repository 통해 저장하기
@@ -338,10 +342,11 @@ final class BudgetUseCaseImpl: BudgetUseCase {
   }
   
   func calculateDefaultHarubee(
-    salaryBudget: SalaryBudget
+    salaryBudget: SalaryBudget,
+    anchorDate: Date
   ) -> Double {
     
-    let currentDate = Date().formattedDate
+    let currentDate = anchorDate.formattedDate
     
     var nilCount = 0.0
     var newBalance = Double(salaryBudget.balance)
@@ -606,7 +611,10 @@ final class BudgetUseCaseImpl: BudgetUseCase {
       )
       
       // salaryBudget의 기본 하루비 업데이트
-      let defaultHarubee = self.calculateDefaultHarubee(salaryBudget: salaryBudget)
+      let defaultHarubee = self.calculateDefaultHarubee(
+        salaryBudget: salaryBudget,
+        anchorDate: dailyBudget.date.addingTimeInterval(86400)
+      )
       salaryBudget.defaultHarubee = defaultHarubee
       
       index += 1

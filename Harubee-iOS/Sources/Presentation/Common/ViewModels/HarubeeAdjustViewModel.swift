@@ -92,7 +92,8 @@ extension HarubeeAdjustViewModel {
     
     // 기본 하루비 계산
     let defaultHarubee = self.budgetUseCase.calculateDefaultHarubee(
-      salaryBudget: salaryBudget
+      salaryBudget: salaryBudget,
+      anchorDate: .now
     )
     
     return Int(defaultHarubee)
