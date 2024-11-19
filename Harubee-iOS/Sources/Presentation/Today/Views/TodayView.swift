@@ -240,7 +240,7 @@ private struct HarubeeHexagon: View {
     let infoBubbleText: Text = {
       Text(isTodayHarubee
            ? "오늘의 하루비를\n바로 조정할 수 있어요"
-           : "평균 하루비는 하루비 조정과 상관없이 잔액을\n다음 수입일까지 남은 일로 나눈 금액을 의미해요")
+           : "쓸 수 있는 돈은 현재 잔액에서 고정지출과\n실제 지출을 뺀 금액이에요\n\n현재 잔액을 확인하고, 실제 잔액과 다르다면\n조정하여 더 정확한 하루비를 계산할 수 있어요")
       .font(.pretendardSemibold_12)
       .foregroundStyle(Color.textBlack)
     }()
