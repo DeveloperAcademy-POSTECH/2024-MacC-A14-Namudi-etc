@@ -86,7 +86,6 @@ enum DateFormatType: String {
   case fullDate_kr = "yyyy년 MM월 dd일 (E)"
   case year_kr = "yyyy년"
   case monthDay_kr = "M월 d일"
-  case monthDay_dot = "M.d"
   case monthDay_slash = "M/d"
   case day_kr = "d일"
   case dayWeekday = "d(EEE)"
