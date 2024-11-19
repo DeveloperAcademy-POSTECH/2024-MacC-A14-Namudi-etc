@@ -570,4 +570,53 @@ final class BudgetUseCaseImpl: BudgetUseCase {
     
     return incomeDay
   }
+  
+  // TODO: 함수명, 로직 수정 필요
+  func checkSalaryBudget(_ salaryBudget: SalaryBudget) throws -> SalaryBudget {
+    var salaryBudget = salaryBudget
+    
+    let today = Date().formattedDate
+    var index = 0
+    
+    // 1. 최근 접속 날짜 불러오기
+    let recentAccessDay = UserDefaults.standard.object(
+      forKey: "recentAccessDay"
+    ) as? Date ?? today
+    
+    // 최근 접속 날짜 업데이트
+    UserDefaults.standard.set(today, forKey: "recentAccessDay")
+    
+    // 2. 최근 접속 날짜가 오늘 날짜와 일치한 경우, 기존 salaryBudget 리턴
+    if recentAccessDay.isToday { return salaryBudget }
+    
+    // 3.
+    while salaryBudget.dailyBudgets[index].date != today {
+      let dailyBudget = salaryBudget.dailyBudgets[index]
+      
+      // dailyBudget의 하루비가 nil이 아닌 경우, 건너뜀
+      if dailyBudget.harubee != nil {
+        index += 1
+        continue
+      }
+      
+      // dailyBudget의 하루비를 기본 하루비로 업데이트
+      salaryBudget.dailyBudgets[index] = try dailyBudgetRepository.updateHarubee(
+        dailyBudget.id,
+        harubee: Int(salaryBudget.defaultHarubee)
+      )
+      
+      // salaryBudget의 기본 하루비 업데이트
+      let defaultHarubee = self.calculateDefaultHarubee(salaryBudget: salaryBudget)
+      salaryBudget.defaultHarubee = defaultHarubee
+      
+      index += 1
+    }
+    
+    try salaryBudgetRepository.updateDefaultHarubee(
+      salaryBudget.id,
+      defaultHarubee: salaryBudget.defaultHarubee
+    )
+    
+    return salaryBudget
+  }
 }
