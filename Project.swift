@@ -29,6 +29,7 @@ let project = Project(
       infoPlist: .extendingDefault(
         with: [
           "CFBundleDisplayName": "하루비",
+          "CFBundleShortVersionString": "1.0.1",
           "UIUserInterfaceStyle": "Light",
           "UISupportedInterfaceOrientations": [
             "UIInterfaceOrientationPortrait"
