@@ -67,7 +67,7 @@ final class CalendarViewModel {
   
   var periodTitle: String {
     state.currentBudget.map { budget in
-      "\(budget.startDate.formattedDateToString(.monthDay_slash)) - \(budget.endDate.formattedDateToString(.monthDay_slash))"
+      "\(budget.startDate.formattedDateToString(.monthDay_dot)) - \(budget.endDate.formattedDateToString(.monthDay_dot))"
     } ?? ""
   }
   
