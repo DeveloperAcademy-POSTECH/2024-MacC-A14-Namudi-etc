@@ -220,63 +220,6 @@ private struct HarubeeHexagon: View {
   }
   
   var body: some View {
-    
-    let hexagonLabel: Text = {
-        let hexagonText = isTodayHarubee
-            ? (isTodayExpenseEntered ? "오늘의 남은 하루비" : "오늘의 하루비")
-            : "쓸 수 있는 돈"
-        
-        let textColor = isTodayHarubee
-            ? (animatedFillPercentage <= 0.5 ? Color.whiteDefault : Color.textBlack)
-            : Color.whiteDefault
-        
-        return Text(hexagonText)
-            .font(isTodayHarubee
-                  ? .pretendardSemibold_20
-                  : .pretendardSemibold_16)
-            .foregroundStyle(textColor)
-    }()
-    
-    let infoBubbleText: Text = {
-      Text(isTodayHarubee
-           ? "오늘의 하루비를\n바로 조정할 수 있어요"
-           : "쓸 수 있는 돈은 현재 잔액에서 고정지출과\n실제 지출을 뺀 금액이에요\n\n현재 잔액을 확인하고, 실제 잔액과 다르다면\n조정하여 더 정확한 하루비를 계산할 수 있어요")
-      .font(.pretendardSemibold_12)
-      .foregroundStyle(Color.textBlack)
-    }()
-    
-    let harubeeNumberContainer: some View = {
-      let isIncludedInWave = animatedFillPercentage <= 0.33
-      return HStack {
-        (isIncludedInWave ? Image(.harubeeWhite) : Image(.harubeeMain))
-          .resizable()
-          .frame(width: 20, height: 20)
-        
-        Text(todayViewModel.state.todayHarubee.decimalWithWon)
-          .foregroundStyle(isIncludedInWave ? Color.whiteDefault : Color.main)
-          .font(.pretendardSemibold_24)
-      }
-      .fixedSize()
-      .padding(EdgeInsets(top: 4, leading: 9, bottom: 6, trailing: 10))
-      .background(
-        RoundedRectangle(cornerRadius: 8)
-          .foregroundStyle(Color.mainBrighter60)
-      )
-    }()
-    
-    let balanceNumberContainer: some View = {
-      HStack {
-        Text(todayViewModel.state.todayBalance.decimalWithWon)
-          .foregroundStyle(.whiteDefault)
-          .font(.pretendardSemibold_20)
-      }.fixedSize()
-        .padding(EdgeInsets(top: 4, leading: 9, bottom: 6, trailing: 9))
-        .background(
-          RoundedRectangle(cornerRadius: 8)
-            .foregroundStyle(Color.mainBrighter60)
-        )
-    }()
-    
     ZStack {
       RoundedHexagon()
         .fill(Color.main)
@@ -364,6 +307,63 @@ private struct HarubeeHexagon: View {
       }
       
     }
+  }
+  
+  private var hexagonLabel: Text {
+    let hexagonText = isTodayHarubee
+    ? (isTodayExpenseEntered ? "오늘의 남은 하루비" : "오늘의 하루비")
+    : "쓸 수 있는 돈"
+    
+    let textColor = isTodayHarubee
+    ? (animatedFillPercentage <= 0.5
+       ? Color.whiteDefault : Color.textBlack)
+    : Color.whiteDefault
+    
+    return Text(hexagonText)
+      .font(isTodayHarubee
+            ? .pretendardSemibold_20
+            : .pretendardSemibold_16)
+      .foregroundStyle(textColor)
+  }
+  
+  private var infoBubbleText: Text {
+    Text(isTodayHarubee
+         ? "오늘의 하루비를\n바로 조정할 수 있어요"
+         : "쓸 수 있는 돈은 현재 잔액에서 고정지출과\n실제 지출을 뺀 금액이에요\n\n현재 잔액을 확인하고, 실제 잔액과 다르다면\n조정하여 더 정확한 하루비를 계산할 수 있어요")
+    .font(.pretendardSemibold_12)
+    .foregroundStyle(Color.textBlack)
+  }
+  
+  private var harubeeNumberContainer: some View {
+    let isIncludedInWave = self.animatedFillPercentage <= 0.33
+    return HStack {
+      (isIncludedInWave ? Image(.harubeeWhite) : Image(.harubeeMain))
+        .resizable()
+        .frame(width: 20, height: 20)
+      
+      Text(todayViewModel.state.todayHarubee.decimalWithWon)
+        .foregroundStyle(isIncludedInWave ? Color.whiteDefault : Color.main)
+        .font(.pretendardSemibold_24)
+    }
+    .fixedSize()
+    .padding(EdgeInsets(top: 4, leading: 9, bottom: 6, trailing: 10))
+    .background(
+      RoundedRectangle(cornerRadius: 8)
+        .foregroundStyle(Color.mainBrighter60)
+    )
+  }
+  
+  private var balanceNumberContainer: some View {
+    HStack {
+      Text(todayViewModel.state.todayBalance.decimalWithWon)
+        .foregroundStyle(.whiteDefault)
+        .font(.pretendardSemibold_20)
+    }.fixedSize()
+      .padding(EdgeInsets(top: 4, leading: 9, bottom: 6, trailing: 9))
+      .background(
+        RoundedRectangle(cornerRadius: 8)
+          .foregroundStyle(Color.mainBrighter60)
+      )
   }
 }
 
