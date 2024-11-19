@@ -34,15 +34,22 @@ final class BalanceAdjustViewModel {
     dailyBudget: DailyBudget,
     budgetUseCase: BudgetUseCase
   ) {
-    self.state = .init(salaryBudget: salaryBudget, dailyBudget: dailyBudget)
     self.budgetUseCase = budgetUseCase
-    let balance = Int(salaryBudget.balance)
-    let totalFixedExpense = salaryBudget.fixedExpenses.reduce(0) {
-      $0 + $1.price
-    }
-    self.state.totalFixedExpense = totalFixedExpense
-    self.state.balance = balance
-    self.state.realBalance = balance + totalFixedExpense
+    
+    let balance = salaryBudget.balance
+    
+    // 오늘 날짜부터 다음 수입일까지의 고정지출액
+    let totalFixedExpense = salaryBudget.fixedExpenses
+      .filter { $0.date >= Date().formattedDate }
+      .reduce(0) { $0 + $1.price }
+    
+    self.state = .init(
+      salaryBudget: salaryBudget,
+      dailyBudget: dailyBudget,
+      balance: balance,
+      totalFixedExpense: totalFixedExpense,
+      realBalance: balance + totalFixedExpense
+    )
   }
   
   func send(_ action: Action) {
