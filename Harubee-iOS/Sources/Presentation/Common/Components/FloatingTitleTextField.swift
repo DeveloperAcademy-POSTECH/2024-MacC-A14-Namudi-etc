@@ -42,7 +42,7 @@ struct FloatingTitleTextField: View {
           ? Color.textBrighter
           : Color.main
         )
-        .padding(.top, 8)
+        .padding(.top, !isTextfieldFocused ? 8 : 7)
     }
     .onAppear {
         self.isTextfieldFocused = shouldShowKeyboard

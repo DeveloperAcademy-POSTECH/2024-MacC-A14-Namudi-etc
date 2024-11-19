@@ -22,26 +22,6 @@ struct FixedIncomeView: View {
     settingViewModel.state.salaryBudget
   }
   
-  private var fixedIncomeHeaderView: some View {
-    VStack(spacing: 4) {
-      VStack(alignment: .leading, spacing: 10) {
-        Text("고정수입 날짜를 기준으로")
-        Text("하루비를 알려드릴게요.")
-      }
-      .foregroundStyle(Color.textBlack)
-      .frame(maxWidth: .infinity, alignment: .leading)
-      .padding(.horizontal, 4)
-      .infoBubble($isInfoBubbleVisible)
-      
-      Rectangle()
-        .frame(height: 1)
-        .foregroundStyle(Color.textBrighter30)
-    }
-    .font(.pretendardSemibold_22)
-    .padding(.horizontal, 16)
-    .padding(.top, 44)
-  }
-  
   init(
     settingViewModel: SettingViewModel
   ) {
@@ -120,6 +100,26 @@ struct FixedIncomeView: View {
         }
       )
     }
+  }
+  
+  private var fixedIncomeHeaderView: some View {
+    VStack(spacing: 4) {
+      VStack(alignment: .leading, spacing: 10) {
+        Text("고정수입 날짜를 기준으로")
+        Text("하루비를 알려드릴게요.")
+      }
+      .foregroundStyle(Color.textBlack)
+      .frame(maxWidth: .infinity, alignment: .leading)
+      .padding(.horizontal, 4)
+      .infoBubble($isInfoBubbleVisible)
+      
+      Rectangle()
+        .frame(height: 1)
+        .foregroundStyle(Color.textBrighter30)
+    }
+    .font(.pretendardSemibold_22)
+    .padding(.horizontal, 16)
+    .padding(.top, 44)
   }
 }
 

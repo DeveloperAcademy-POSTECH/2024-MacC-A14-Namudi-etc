@@ -30,27 +30,6 @@ struct DayPickerView: View {
   @State private var showDayPicker: Bool = false
   @Binding var selectedDay: Int
   
-  private var dayPicker: some View {
-    VStack(spacing: 0) {
-      Rectangle()
-        .frame(height: 1)
-        .foregroundStyle(Color.textBrighter30)
-        .padding(.top, 14)
-        .padding(.horizontal, 16)
-      
-      Picker("날짜 선택", selection: $selectedDay) {
-        ForEach(1..<32) { day in
-          Text("\(day)일").tag(day)
-        }
-      }
-      .pickerStyle(.wheel)
-      .frame(maxWidth: .infinity, maxHeight: 150)
-      .padding(.horizontal, 10)
-      .padding(.top, 21)
-      .transition(.opacity.combined(with: .scale(scale: 0.9, anchor: .top)))
-    }
-  }
-  
   var body: some View {
     VStack(spacing: 0) {
       HStack(spacing: 0) {
@@ -78,6 +57,27 @@ struct DayPickerView: View {
       if showDayPicker {
         UIApplication.shared.endEditing()
       }
+    }
+  }
+  
+  private var dayPicker: some View {
+    VStack(spacing: 0) {
+      Rectangle()
+        .frame(height: 1)
+        .foregroundStyle(Color.textBrighter30)
+        .padding(.top, 14)
+        .padding(.horizontal, 16)
+      
+      Picker("날짜 선택", selection: $selectedDay) {
+        ForEach(1..<32) { day in
+          Text("\(day)일").tag(day)
+        }
+      }
+      .pickerStyle(.wheel)
+      .frame(maxWidth: .infinity, maxHeight: 150)
+      .padding(.horizontal, 10)
+      .padding(.top, 21)
+      .transition(.opacity.combined(with: .scale(scale: 0.9, anchor: .top)))
     }
   }
 }

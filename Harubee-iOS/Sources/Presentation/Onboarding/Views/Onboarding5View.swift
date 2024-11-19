@@ -111,32 +111,6 @@ private struct FixedExpensesListView: View {
   @State private var manageMode: Mode
   @State private var selectedItem: TransactionItem?
   
-  private var listHeaderView: some View {
-    HStack(spacing: 0) {
-      Text("목록")
-        .font(.pretendardSemibold_16)
-      
-      Spacer()
-      
-      Button {
-        self.manageMode = .add
-        self.selectedItem = nil
-        self.isPresented = true
-      } label: {
-        Image(systemName: "plus")
-          .frame(width: 30, height: 21)
-      }
-      .padding(.trailing, 10)
-    }
-  }
-  
-  private var emptyListAnnounce: some View {
-    Text("목록을 추가해주세요")
-      .font(.pretendardMedium_16)
-      .foregroundStyle(Color.textBlack30)
-      .padding(.top, 150)
-  }
-  
   init(
     viewModel: OnboardingViewModel,
     fixedExpenses: Binding<[TransactionItem]>
@@ -179,6 +153,32 @@ private struct FixedExpensesListView: View {
         $0.date.day < $1.date.day
       })
     }
+  }
+  
+  private var listHeaderView: some View {
+    HStack(spacing: 0) {
+      Text("목록")
+        .font(.pretendardSemibold_16)
+      
+      Spacer()
+      
+      Button {
+        self.manageMode = .add
+        self.selectedItem = nil
+        self.isPresented = true
+      } label: {
+        Image(systemName: "plus")
+          .frame(width: 30, height: 21)
+      }
+      .padding(.trailing, 10)
+    }
+  }
+  
+  private var emptyListAnnounce: some View {
+    Text("목록을 추가해주세요")
+      .font(.pretendardMedium_16)
+      .foregroundStyle(Color.textBlack30)
+      .padding(.top, 150)
   }
   
   private func removeList(at offsets: IndexSet) {
