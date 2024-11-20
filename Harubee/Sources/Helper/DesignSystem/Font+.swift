@@ -10,7 +10,21 @@ import SwiftUI
 
 extension Font {
   
-  typealias Pretendard = HarubeeIOSFontFamily.Pretendard
+  private enum Pretendard: String {
+    case black = "Pretendard-Black"
+    case extraBold = "Pretendard-ExtraBold"
+    case bold = "Pretendard-Bold"
+    case semiBold = "Pretendard-SemiBold"
+    case medium = "Pretendard-Medium"
+    case regular = "Pretendard-Regular"
+    case light = "Pretendard-Light"
+    case extraLight = "Pretendard-ExtraLight"
+    case thin = "Pretendard-Thin"
+    
+    func swiftUIFont(size: CGFloat) -> Font {
+      return .custom(self.rawValue, size: size)
+    }
+  }
   
   // MARK: - Pretendard SemiBold
   static let pretendardSemibold_11 = Pretendard.semiBold.swiftUIFont(size: 11)

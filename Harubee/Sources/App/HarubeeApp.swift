@@ -1,16 +1,14 @@
 //
-//  HarubeeIOSApp.swift
-//  Harubee-iOS
+//  HarubeeApp.swift
+//  Harubee
 //
-//  Created by namdghyun on 10/28/24.
-//  Copyright © 2024 namudiEtc. All rights reserved.
+//  Created by 이정동 on 11/20/24.
 //
 
 import SwiftUI
 
 @main
-struct HarubeeIOSApp: App {
-  
+struct HarubeeApp: App {
   @State private var appRootManager = AppRootManager()
   
   var body: some Scene {
