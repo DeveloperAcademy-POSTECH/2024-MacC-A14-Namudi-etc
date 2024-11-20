@@ -96,7 +96,7 @@ struct CalendarCell: View {
       return dailyBudget?.harubee != nil ? .main : .textBlack
     } else {
       // 과거: 항상 연한 색상
-      return .textBright
+      return .textBrighter
     }
   }
   
