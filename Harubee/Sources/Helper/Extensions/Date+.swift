@@ -124,4 +124,5 @@ enum DateFormatType: String {
   case monthDay_slash = "M/d"
   case day_kr = "d일"
   case dayWeekday = "d(EEE)"
+  case time_kr = "a h:mm"
 }

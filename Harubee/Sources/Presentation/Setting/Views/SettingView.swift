@@ -23,9 +23,12 @@ struct SettingView: View {
   }
   
   var body: some View {
-    ZStack(alignment: .top) {
-      Color.textBlack5.edgesIgnoringSafeArea(.bottom)
+    ScrollView {
+//      Color.textBlack5.edgesIgnoringSafeArea(.bottom)
       VStack(spacing: 6) {
+        
+        SettingHeaderView()
+        
         SectionContainer {
           SettingItem(
             title: "고정지출 관리",
@@ -51,8 +54,10 @@ struct SettingView: View {
         }
         
         settingFooterView
-      }
+      }.background(.textBlack5)
     }
+    .ignoresSafeArea()
+    .scrollIndicators(.hidden)
     .navigationBarStyle(.white(title: "설정", backTitle: "뒤로"))
     .font(.pretendardMedium_18)
     .foregroundStyle(Color.textBlack)
@@ -70,8 +75,44 @@ struct SettingView: View {
           .foregroundStyle(Color.textBlack30)
       }.frame(maxWidth: .infinity, alignment: .leading)
       
-//      SettingItem(title: "개발자 정보", previewText: "")
+      Text("현재 1.0.1")
+        .font(.pretendardMedium_14)
+        .foregroundStyle(Color.textBlack30)
     }
+    .frame(maxWidth: .infinity, alignment: .leading)
+    .padding(.horizontal, 18)
+    .padding(.vertical, 32)
+    .background(Color.whiteDefault)
+  }
+}
+
+// MARK: - SettingHeaderView
+private struct SettingHeaderView: View {
+  @State private var harubeeNotificationSelectedTime: Date = .now
+  @State private var expanseNotificationSelectedTime: Date = .now
+  @State private var isHarubeeNotification: Bool = false
+  @State private var isExpanseNotification: Bool = false
+  
+  var body: some View {
+    VStack(spacing: 24) {
+      PickerView(
+        category: .setting,
+        title: "오늘의 하루비 알림",
+        isToggleOn: $isHarubeeNotification,
+        selectedTime: $harubeeNotificationSelectedTime
+      )
+      
+      PickerView(
+        category: .setting,
+        title: "실제 지출 입력 알림",
+        isToggleOn: $isExpanseNotification,
+        selectedTime: $expanseNotificationSelectedTime
+      )
+    }
+    .padding(.top, 142)
+    .padding(.bottom, 27)
+    .background(Color.whiteDefault)
+    .shadow(color: Color.textBlack5, radius: 3, x: 0, y: 1)
   }
 }
 
