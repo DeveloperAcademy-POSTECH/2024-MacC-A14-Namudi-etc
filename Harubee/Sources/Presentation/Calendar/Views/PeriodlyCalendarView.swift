@@ -294,10 +294,10 @@ private extension View {
   
   func harubeeInfoBubble(_ isVisible: Binding<Bool>) -> some View {
     self
-      .overlay(alignment: .center) {
+      .overlay(alignment: .top) {
         Color.clear
           .frame(width: 55, height: 10)
-          .padding(.top, 165)
+          .padding(.top, 300)
           .infoBubble(
             isVisible: isVisible,
             alignment: .bottom
