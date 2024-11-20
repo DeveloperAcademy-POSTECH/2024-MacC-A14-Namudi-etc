@@ -8,10 +8,41 @@
 
 /* Begin PBXBuildFile section */
 		57322E982CEE011E0075D1B1 /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = 57322E972CEE011E0075D1B1 /* Lottie */; };
+		57322F922CEE0FD60075D1B1 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 57322F912CEE0FD60075D1B1 /* WidgetKit.framework */; };
+		57322F942CEE0FD60075D1B1 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 57322F932CEE0FD60075D1B1 /* SwiftUI.framework */; };
+		57322FA12CEE0FD70075D1B1 /* HarubeeWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 57322F8F2CEE0FD60075D1B1 /* HarubeeWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		57322F9F2CEE0FD70075D1B1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 57322D9B2CEDE9F90075D1B1 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 57322F8E2CEE0FD60075D1B1;
+			remoteInfo = HarubeeWidgetExtension;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		57322FA62CEE0FD70075D1B1 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				57322FA12CEE0FD70075D1B1 /* HarubeeWidgetExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		57322DA32CEDE9F90075D1B1 /* Harubee.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Harubee.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		57322F8F2CEE0FD60075D1B1 /* HarubeeWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = HarubeeWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		57322F912CEE0FD60075D1B1 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		57322F932CEE0FD60075D1B1 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
+		57322FA72CEE10270075D1B1 /* HarubeeWidgetExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = HarubeeWidgetExtension.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -22,6 +53,13 @@
 			);
 			target = 57322DA22CEDE9F90075D1B1 /* Harubee */;
 		};
+		57322FA52CEE0FD70075D1B1 /* Exceptions for "HarubeeWidget" folder in "HarubeeWidgetExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 57322F8E2CEE0FD60075D1B1 /* HarubeeWidgetExtension */;
+		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -31,6 +69,14 @@
 				57322E9A2CEE01440075D1B1 /* Exceptions for "Harubee" folder in "Harubee" target */,
 			);
 			path = Harubee;
+			sourceTree = "<group>";
+		};
+		57322F952CEE0FD60075D1B1 /* HarubeeWidget */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				57322FA52CEE0FD70075D1B1 /* Exceptions for "HarubeeWidget" folder in "HarubeeWidgetExtension" target */,
+			);
+			path = HarubeeWidget;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -44,13 +90,25 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		57322F8C2CEE0FD60075D1B1 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				57322F942CEE0FD60075D1B1 /* SwiftUI.framework in Frameworks */,
+				57322F922CEE0FD60075D1B1 /* WidgetKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		57322D9A2CEDE9F90075D1B1 = {
 			isa = PBXGroup;
 			children = (
+				57322FA72CEE10270075D1B1 /* HarubeeWidgetExtension.entitlements */,
 				57322DA52CEDE9F90075D1B1 /* Harubee */,
+				57322F952CEE0FD60075D1B1 /* HarubeeWidget */,
+				57322F902CEE0FD60075D1B1 /* Frameworks */,
 				57322DA42CEDE9F90075D1B1 /* Products */,
 			);
 			indentWidth = 2;
@@ -61,8 +119,18 @@
 			isa = PBXGroup;
 			children = (
 				57322DA32CEDE9F90075D1B1 /* Harubee.app */,
+				57322F8F2CEE0FD60075D1B1 /* HarubeeWidgetExtension.appex */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		57322F902CEE0FD60075D1B1 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				57322F912CEE0FD60075D1B1 /* WidgetKit.framework */,
+				57322F932CEE0FD60075D1B1 /* SwiftUI.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -75,10 +143,12 @@
 				57322D9F2CEDE9F90075D1B1 /* Sources */,
 				57322DA02CEDE9F90075D1B1 /* Frameworks */,
 				57322DA12CEDE9F90075D1B1 /* Resources */,
+				57322FA62CEE0FD70075D1B1 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				57322FA02CEE0FD70075D1B1 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				57322DA52CEDE9F90075D1B1 /* Harubee */,
@@ -91,6 +161,28 @@
 			productReference = 57322DA32CEDE9F90075D1B1 /* Harubee.app */;
 			productType = "com.apple.product-type.application";
 		};
+		57322F8E2CEE0FD60075D1B1 /* HarubeeWidgetExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 57322FA22CEE0FD70075D1B1 /* Build configuration list for PBXNativeTarget "HarubeeWidgetExtension" */;
+			buildPhases = (
+				57322F8B2CEE0FD60075D1B1 /* Sources */,
+				57322F8C2CEE0FD60075D1B1 /* Frameworks */,
+				57322F8D2CEE0FD60075D1B1 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				57322F952CEE0FD60075D1B1 /* HarubeeWidget */,
+			);
+			name = HarubeeWidgetExtension;
+			packageProductDependencies = (
+			);
+			productName = HarubeeWidgetExtension;
+			productReference = 57322F8F2CEE0FD60075D1B1 /* HarubeeWidgetExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -102,6 +194,9 @@
 				LastUpgradeCheck = 1610;
 				TargetAttributes = {
 					57322DA22CEDE9F90075D1B1 = {
+						CreatedOnToolsVersion = 16.1;
+					};
+					57322F8E2CEE0FD60075D1B1 = {
 						CreatedOnToolsVersion = 16.1;
 					};
 				};
@@ -124,12 +219,20 @@
 			projectRoot = "";
 			targets = (
 				57322DA22CEDE9F90075D1B1 /* Harubee */,
+				57322F8E2CEE0FD60075D1B1 /* HarubeeWidgetExtension */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		57322DA12CEDE9F90075D1B1 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		57322F8D2CEE0FD60075D1B1 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -146,7 +249,22 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		57322F8B2CEE0FD60075D1B1 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		57322FA02CEE0FD70075D1B1 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 57322F8E2CEE0FD60075D1B1 /* HarubeeWidgetExtension */;
+			targetProxy = 57322F9F2CEE0FD70075D1B1 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		57322DAF2CEDE9FA0075D1B1 /* Debug */ = {
@@ -273,12 +391,12 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_ENTITLEMENTS = Harubee/Harubee.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Harubee/Resources/Preview Content\"";
-				DEVELOPMENT_TEAM = "";
-				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 5DFZR8RCQR;
+				DEVELOPMENT_TEAM = 5DFZR8RCQR;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Harubee/Resources/Info.plist;
@@ -300,7 +418,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = etc.namudi.harubee.ios.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = Harubee_Development;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
@@ -316,12 +433,12 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_ENTITLEMENTS = Harubee/Harubee.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Harubee/Resources/Preview Content\"";
-				DEVELOPMENT_TEAM = "";
-				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 5DFZR8RCQR;
+				DEVELOPMENT_TEAM = 5DFZR8RCQR;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Harubee/Resources/Info.plist;
@@ -343,7 +460,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = etc.namudi.harubee.ios.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = Harubee_Development;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
@@ -351,6 +467,66 @@
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+		57322FA32CEE0FD70075D1B1 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = HarubeeWidgetExtension.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 5DFZR8RCQR;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = HarubeeWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = HarubeeWidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = etc.namudi.harubee.ios.app.HarubeeWidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		57322FA42CEE0FD70075D1B1 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = HarubeeWidgetExtension.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 5DFZR8RCQR;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = HarubeeWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = HarubeeWidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = etc.namudi.harubee.ios.app.HarubeeWidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};
@@ -371,6 +547,15 @@
 			buildConfigurations = (
 				57322DB22CEDE9FA0075D1B1 /* Debug */,
 				57322DB32CEDE9FA0075D1B1 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		57322FA22CEE0FD70075D1B1 /* Build configuration list for PBXNativeTarget "HarubeeWidgetExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				57322FA32CEE0FD70075D1B1 /* Debug */,
+				57322FA42CEE0FD70075D1B1 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
