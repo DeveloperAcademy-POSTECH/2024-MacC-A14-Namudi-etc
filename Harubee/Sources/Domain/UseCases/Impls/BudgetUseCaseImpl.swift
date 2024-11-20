@@ -530,6 +530,42 @@ final class BudgetUseCaseImpl: BudgetUseCase {
     return incomeDay
   }
   
+  func setTodayHarubeeNotificationTime(time: Date) {
+    try? userDefaultsRepository.saveTodayHarubeeNotificationTime(time)
+  }
+
+  func getTodayHarubeeNotificationTime() -> Date? {
+    // 지정된 알림 시간을 가져오고 저장된 알림 시간이 없으면 9:00 AM으로 설정하기
+    guard let time = userDefaultsRepository.readTodayHarubeeNotificationTime()
+    else {
+      var dateComponents = DateComponents()
+      dateComponents.hour = 9
+      dateComponents.minute = 0
+      
+      return calendar.date(from: dateComponents)
+    }
+    
+    return time
+  }
+
+  func setExpenseNotificationTime(time: Date) {
+    try? userDefaultsRepository.saveExpenseNotificationTime(time)
+  }
+
+  func getExpenseNotificationTime() -> Date? {
+    // 지정된 알림 시간을 가져오고 저장된 알림 시간이 없으면 10:00 PM으로 설정하기
+    guard let time = userDefaultsRepository.readExpenseNotificationTime()
+    else {
+      var dateComponents = DateComponents()
+      dateComponents.hour = 22
+      dateComponents.minute = 0
+      
+      return calendar.date(from: dateComponents)
+    }
+    
+    return time
+  }
+  
   // TODO: 함수명, 로직 수정 필요
   func checkSalaryBudget(_ salaryBudget: SalaryBudget) throws -> SalaryBudget {
     var salaryBudget = salaryBudget
