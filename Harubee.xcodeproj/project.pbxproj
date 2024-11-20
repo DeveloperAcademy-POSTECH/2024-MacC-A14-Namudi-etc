@@ -42,7 +42,6 @@
 		57322F8F2CEE0FD60075D1B1 /* HarubeeWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = HarubeeWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		57322F912CEE0FD60075D1B1 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		57322F932CEE0FD60075D1B1 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
-		57322FA72CEE10270075D1B1 /* HarubeeWidgetExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = HarubeeWidgetExtension.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -56,7 +55,7 @@
 		57322FA52CEE0FD70075D1B1 /* Exceptions for "HarubeeWidget" folder in "HarubeeWidgetExtension" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				Info.plist,
+				Resources/Info.plist,
 			);
 			target = 57322F8E2CEE0FD60075D1B1 /* HarubeeWidgetExtension */;
 		};
@@ -105,7 +104,6 @@
 		57322D9A2CEDE9F90075D1B1 = {
 			isa = PBXGroup;
 			children = (
-				57322FA72CEE10270075D1B1 /* HarubeeWidgetExtension.entitlements */,
 				57322DA52CEDE9F90075D1B1 /* Harubee */,
 				57322F952CEE0FD60075D1B1 /* HarubeeWidget */,
 				57322F902CEE0FD60075D1B1 /* Frameworks */,
@@ -391,7 +389,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = Harubee/Harubee.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Harubee/Resources/Harubee.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
@@ -436,7 +434,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = Harubee/Harubee.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Harubee/Resources/Harubee.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
@@ -481,7 +479,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
-				CODE_SIGN_ENTITLEMENTS = HarubeeWidgetExtension.entitlements;
+				CODE_SIGN_ENTITLEMENTS = HarubeeWidget/Resources/HarubeeWidgetExtension.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
@@ -489,7 +487,7 @@
 				DEVELOPMENT_TEAM = "";
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 5DFZR8RCQR;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = HarubeeWidget/Info.plist;
+				INFOPLIST_FILE = HarubeeWidget/Resources/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "하루비";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
@@ -519,7 +517,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
-				CODE_SIGN_ENTITLEMENTS = HarubeeWidgetExtension.entitlements;
+				CODE_SIGN_ENTITLEMENTS = HarubeeWidget/Resources/HarubeeWidgetExtension.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
@@ -527,7 +525,7 @@
 				DEVELOPMENT_TEAM = "";
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 5DFZR8RCQR;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = HarubeeWidget/Info.plist;
+				INFOPLIST_FILE = HarubeeWidget/Resources/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "하루비";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
