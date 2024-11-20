@@ -48,7 +48,7 @@ struct CalendarCell: View {
   
   private var amountLabel: some View {
     Text(displayAmount.formatted(.number))
-      .font(.pretendardMedium_11)
+      .font(amountFont)
       .foregroundStyle(amountColor)
       .padding(.bottom, 5)
   }
@@ -72,6 +72,16 @@ struct CalendarCell: View {
       // 과거: 실제 지출만 표시 (지출이 없으면 0)
       return dailyBudget?.expense ?? 0
     }
+  }
+  
+  private var amountFont: Font {
+    if date > Date() {
+      return dailyBudget?.harubee != nil
+      ? .pretendardSemibold_11
+      : .pretendardMedium_11
+    }
+    
+    return .pretendardMedium_11
   }
   
   private var amountColor: Color {
