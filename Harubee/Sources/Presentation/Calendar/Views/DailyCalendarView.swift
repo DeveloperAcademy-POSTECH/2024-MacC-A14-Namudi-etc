@@ -296,6 +296,7 @@ private struct ComparisonLabel: View {
     HStack(alignment: .center, spacing: 2) {
       Spacer()
       Text("하루비보다")
+        .font(.pretendardMedium_14)
       
       Image(
         systemName: isOverBudget 
@@ -304,13 +305,13 @@ private struct ComparisonLabel: View {
       )
         .font(.custom("SF Pro", size: 10))
         .foregroundStyle(isOverBudget ? Color.redDefault : Color.main)
-        .padding(.trailing, -1)
+        .padding(.trailing, -4)
       
       Text(" \(abs(harubee - expense))원")
         .font(.pretendardSemibold_14)
         .foregroundStyle(isOverBudget ? Color.redDefault : Color.main)
       
-      Text(isOverBudget ? " 더 썼어요" : " 덜 썼어요")
+      Text(isOverBudget ? "더 썼어요" : "덜 썼어요")
     }
     .font(.pretendardMedium_14)
   }
