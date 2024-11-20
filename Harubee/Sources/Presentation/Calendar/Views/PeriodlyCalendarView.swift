@@ -92,12 +92,12 @@ private struct CalendarHeader: View {
       yearLabel
         .padding(.bottom, 1)
       periodDirection
-        .titleInfoBubble($infoBubbleVisible)
         .padding(.bottom, 6)
       weekdayHeaderRow
         .padding(.horizontal, 14)
         .padding(.bottom, 4)
     }
+    .titleInfoBubble($infoBubbleVisible)
     .frame(maxWidth: .infinity, alignment: .bottom)
     .frame(height: 98, alignment: .bottom)
     .background(Color.main)
@@ -175,22 +175,24 @@ private struct CalendarContent: View {
   @Binding var infoBubbleVisible: Bool
   
   var body: some View {
-    VStack(spacing: 25) {
-      PeriodlyCalendar(
-        startDate: budget.startDate,
-        endDate: budget.endDate
-      ) { date in
-        CalendarCell(
-          date: date,
-          defaultHarubee: Int(budget.defaultHarubee),
-          dailyBudget: budget.dailyBudgets.first {
-            $0.date.isSameDay(as: date)
-          },
-          onSelect: onDateSelect
-        )
+    ScrollView(showsIndicators: false) {
+      VStack(spacing: 25) {
+        PeriodlyCalendar(
+          startDate: budget.startDate,
+          endDate: budget.endDate
+        ) { date in
+          CalendarCell(
+            date: date,
+            defaultHarubee: Int(budget.defaultHarubee),
+            dailyBudget: budget.dailyBudgets.first {
+              $0.date.isSameDay(as: date)
+            },
+            onSelect: onDateSelect
+          )
+        }
+        .hexagonInfoBubble($infoBubbleVisible)
+        .harubeeInfoBubble($infoBubbleVisible)
       }
-      .hexagonInfoBubble($infoBubbleVisible)
-      .harubeeInfoBubble($infoBubbleVisible)
     }
   }
 }
@@ -245,7 +247,7 @@ private extension View {
       .overlay(alignment: .top) {
         Color.clear
           .frame(width: 55, height: 10)
-          .padding(.top, 210)
+          .padding(.top, 165)
           .infoBubble(
             isVisible: isVisible,
             alignment: .bottom
@@ -295,7 +297,7 @@ private extension View {
       .overlay(alignment: .center) {
         Color.clear
           .frame(width: 55, height: 10)
-          .padding(.top, 100)
+          .padding(.top, 165)
           .infoBubble(
             isVisible: isVisible,
             alignment: .bottom
