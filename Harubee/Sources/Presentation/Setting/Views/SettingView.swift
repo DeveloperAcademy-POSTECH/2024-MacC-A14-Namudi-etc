@@ -24,10 +24,9 @@ struct SettingView: View {
   
   var body: some View {
     ScrollView {
-//      Color.textBlack5.edgesIgnoringSafeArea(.bottom)
       VStack(spacing: 6) {
         
-        SettingHeaderView()
+        SettingHeaderView(settingViewModel: settingViewModel)
         
         SectionContainer {
           SettingItem(
@@ -88,6 +87,9 @@ struct SettingView: View {
 
 // MARK: - SettingHeaderView
 private struct SettingHeaderView: View {
+  
+  let settingViewModel: SettingViewModel
+  
   @State private var harubeeNotificationSelectedTime: Date = .now
   @State private var expanseNotificationSelectedTime: Date = .now
   @State private var isHarubeeNotification: Bool = false
