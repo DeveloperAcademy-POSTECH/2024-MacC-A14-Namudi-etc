@@ -10,12 +10,6 @@ import SwiftUI
 
 @main
 struct HarubeeWidgetBundle: WidgetBundle {
-  @State private var harubeeWidgetEntryViewModel = HarubeeWidgetEntryViewModel(
-    salaryBudgetRepository: SalaryBudgetRepositoryImpl(
-      modelContext: StorageProvider().modelContext
-    )
-  )
-  
   var body: some Widget {
     HarubeeWidget()
   }
@@ -57,4 +51,5 @@ struct HarubeeWidgetBundle: WidgetBundle {
       - Font+
     > Extensions
       - Int+
+      - Date+
  */

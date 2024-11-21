@@ -7,51 +7,66 @@
 
 import WidgetKit
 import SwiftUI
+import SwiftData
 
-
-struct Provider: AppIntentTimelineProvider {
-  func placeholder(in context: Context) -> SimpleEntry {
-    SimpleEntry(date: Date(), configuration: ConfigurationAppIntent())
+// MARK: - Provider
+struct Provider: TimelineProvider {
+  
+  func placeholder(in context: Context) -> HarubeeWidgetEntry {
+    HarubeeWidgetEntry(
+      date: .now,
+      salaryBudget: SalaryBudget.default
+    )
   }
   
-  func snapshot(
-    for configuration: ConfigurationAppIntent,
-    in context: Context
-  ) async -> SimpleEntry {
-    SimpleEntry(date: Date(), configuration: configuration)
+  func getSnapshot(
+    in context: Context,
+    completion: @escaping (HarubeeWidgetEntry) -> Void
+  ) {
+    completion(HarubeeWidgetEntry(
+      date: .now,
+      salaryBudget: SalaryBudget.default
+    ))
   }
   
-  func timeline(
-    for configuration: ConfigurationAppIntent,
-    in context: Context
-  ) async -> Timeline<SimpleEntry> {
-    var entries: [SimpleEntry] = []
+  func getTimeline(
+    in context: Context,
+    completion: @escaping (Timeline<HarubeeWidgetEntry>) -> Void
+  ) {
     
-    // Generate a timeline consisting of five entries an hour apart, starting from the current date.
+    // TODO: 수정 필요
     let currentDate = Date()
-    for hourOffset in 0 ..< 5 {
+    
+    let salaryBudget = WidgetManager.shared.fetchSalaryBudget()
+    
+    var entries: [HarubeeWidgetEntry] = []
+    
+    for hourOffset in 0..<5 {
       let entryDate = Calendar.current.date(byAdding: .hour, value: hourOffset, to: currentDate)!
-      let entry = SimpleEntry(date: entryDate, configuration: configuration)
+      let entry = HarubeeWidgetEntry(date: entryDate, salaryBudget: salaryBudget)
       entries.append(entry)
     }
     
-    return Timeline(entries: entries, policy: .atEnd)
+    let policyDate = Calendar.current.date(
+      byAdding: .day,
+      value: 1,
+      to: currentDate.formattedDate
+    )!
+    
+    completion(Timeline(
+      entries: entries,
+      policy: .atEnd
+    ))
   }
 }
 
-struct SimpleEntry: TimelineEntry {
-  let date: Date
-  let configuration: ConfigurationAppIntent
-}
-
-
+// MARK: - HarubeeWidget
 struct HarubeeWidget: Widget {
   let kind: String = "HarubeeWidget"
   
   var body: some WidgetConfiguration {
-    AppIntentConfiguration(
+    StaticConfiguration(
       kind: kind,
-      intent: ConfigurationAppIntent.self,
       provider: Provider()
     ) { entry in
       HarubeeWidgetEntryView(entry: entry)
@@ -64,30 +79,22 @@ struct HarubeeWidget: Widget {
   }
 }
 
-extension ConfigurationAppIntent {
-  fileprivate static var smiley: ConfigurationAppIntent {
-    let intent = ConfigurationAppIntent()
-    intent.favoriteEmoji = "😀"
-    return intent
-  }
-  
-  fileprivate static var starEyes: ConfigurationAppIntent {
-    let intent = ConfigurationAppIntent()
-    intent.favoriteEmoji = "🤩"
-    return intent
-  }
+// MARK: - HarubeeWidgetEntry
+struct HarubeeWidgetEntry: TimelineEntry {
+  let date: Date
+  let salaryBudget: SalaryBudget?
 }
 
+
+// MARK: - Preview
 #Preview("SystemMedium", as: .systemMedium) {
   HarubeeWidget()
 } timeline: {
-  SimpleEntry(date: .now, configuration: .smiley)
-  SimpleEntry(date: .now, configuration: .starEyes)
+  HarubeeWidgetEntry(date: .now, salaryBudget: SalaryBudget.default)
 }
 
 #Preview("SystemSmall", as: .systemSmall) {
   HarubeeWidget()
 } timeline: {
-  SimpleEntry(date: .now, configuration: .smiley)
-  SimpleEntry(date: .now, configuration: .starEyes)
+  HarubeeWidgetEntry(date: .now, salaryBudget: SalaryBudget.default)
 }
