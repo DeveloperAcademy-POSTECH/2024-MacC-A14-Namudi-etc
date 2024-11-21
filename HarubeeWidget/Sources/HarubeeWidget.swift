@@ -59,7 +59,7 @@ struct HarubeeWidget: Widget {
     }
     .configurationDisplayName("하루비")
     .description("하루비 위젯입니다")
-    .supportedFamilies([.systemSmall])
+    .supportedFamilies([.systemSmall, .systemMedium])
     .contentMarginsDisabled()
   }
 }
@@ -78,7 +78,14 @@ extension ConfigurationAppIntent {
   }
 }
 
-#Preview(as: .systemSmall) {
+#Preview("SystemMedium", as: .systemMedium) {
+  HarubeeWidget()
+} timeline: {
+  SimpleEntry(date: .now, configuration: .smiley)
+  SimpleEntry(date: .now, configuration: .starEyes)
+}
+
+#Preview("SystemSmall", as: .systemSmall) {
   HarubeeWidget()
 } timeline: {
   SimpleEntry(date: .now, configuration: .smiley)

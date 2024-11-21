@@ -10,9 +10,15 @@ import SwiftUI
 
 @main
 struct HarubeeWidgetBundle: WidgetBundle {
-    var body: some Widget {
-        HarubeeWidget()
-    }
+  @State private var harubeeWidgetEntryViewModel = HarubeeWidgetEntryViewModel(
+    salaryBudgetRepository: SalaryBudgetRepositoryImpl(
+      modelContext: StorageProvider().modelContext
+    )
+  )
+  
+  var body: some Widget {
+    HarubeeWidget()
+  }
 }
 
 
@@ -26,6 +32,25 @@ struct HarubeeWidgetBundle: WidgetBundle {
     - semiBold
     - medium
  Sources
+  > App
+    > DI
+      StorageProvider
+  > Data
+    > DTOs
+      - DailyBudgetDTO
+      - SalaryBudgetDTO
+      - TransactionItemDTO
+    > Repositories
+      > Impls
+        - SalaryBudgetRepositoryImpl
+  > Domain
+    > Models
+      - DailyBudget
+      - SalaryBudget
+      - TransactionItem
+    > Repositories
+      - SalaryBudgetRepository
+      - UpdateValue
   > Helper
     > DesignSystem
       - Color+

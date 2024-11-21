@@ -71,6 +71,39 @@ struct SystemMediumWidgetView: View {
   var body: some View {
     VStack {
       
+      bodyView
+      
+      Spacer()
+      
+      HStack(spacing: 37) {
+        footerTextView
+        
+        ExpenseInputButton(title: "실제 지출 및 수입 입력하기")
+      }
+      .padding(.leading, 2)
+      
+    }
+    .padding(16)
+  }
+  
+  private var bodyView: some View {
+    HStack {
+      Text("1")
+      Spacer()
+      Text("2")
+    }
+  }
+  
+  private var footerTextView: some View {
+    VStack(alignment: .leading, spacing: 2) {
+      Text("오늘의 하루비")
+        .font(.pretendardMedium_12)
+        .foregroundStyle(.textBright)
+      
+      TodayHarubeeTextView(
+        text: 99999.decimalWithWon,
+        contentSize: .second
+      )
     }
   }
 }
@@ -104,7 +137,10 @@ private struct TodayHarubeeTextView: View {
     HStack {
       Image(.harubeeMain)
         .resizable()
-        .frame(width: contentSize.imageSize, height: contentSize.imageSize)
+        .frame(
+          width: contentSize.imageSize,
+          height: contentSize.imageSize
+        )
       
       Text(text)
         .font(contentSize.font)
@@ -134,7 +170,7 @@ private struct ExpenseInputButton: View {
 }
 
 
-
+// MARK: - Preview
 extension ConfigurationAppIntent {
   fileprivate static var smiley: ConfigurationAppIntent {
     let intent = ConfigurationAppIntent()
