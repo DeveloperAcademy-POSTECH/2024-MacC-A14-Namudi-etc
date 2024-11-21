@@ -110,7 +110,10 @@ private struct FixedExpensesListView: View {
     }
     .sheet(isPresented: $isPresented) {
       FixedExpenseManageView(
-        mode: self.manageMode
+        mode: self.manageMode,
+        selectedDay: selectedItem?.date.day ?? 1,
+        fixedExpenseName: selectedItem?.name ?? "",
+        fixedExpenseAmount: selectedItem?.price.decimal ?? ""
       ) { day, name, price in
         saveFixedExpense(
           day: day,
