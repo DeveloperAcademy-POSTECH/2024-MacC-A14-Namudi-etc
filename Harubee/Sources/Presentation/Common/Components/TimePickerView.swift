@@ -14,10 +14,10 @@ struct TimePickerView: View {
   @Binding var selectedTime: Date
   @Binding var showPicker: Bool
   
-  
   var body: some View {
     VStack(spacing: 0) {
       HStack(spacing: 0) {
+        
         Text(title)
           .font(.pretendardSemibold_18)
           .foregroundStyle(Color.textBlack)
@@ -26,7 +26,8 @@ struct TimePickerView: View {
         
         PickerButton(
           showPicker: $showPicker,
-          selectedTime: $selectedTime
+          selectedTime: $selectedTime,
+          isToggleOn: $isToggleOn
         )
         
         Toggle("", isOn: $isToggleOn)
@@ -55,12 +56,18 @@ struct TimePickerView: View {
         .transition(.opacity.combined(with: .scale(scale: 0.9, anchor: .top)))
       }
     }
+    .onChange(of: isToggleOn) {
+      if !isToggleOn && showPicker {
+        showPicker = false
+      }
+    }
   }
 }
 
 private struct PickerButton: View {
   @Binding var showPicker: Bool
   @Binding var selectedTime: Date
+  @Binding var isToggleOn: Bool
   
   var body: some View {
     Button {
@@ -70,13 +77,16 @@ private struct PickerButton: View {
     } label: {
       Text(selectedTime.timeString)
         .font(.pretendardMedium_16)
-        .foregroundStyle(showPicker ? Color.main : Color.textBlack)
+        .foregroundStyle(
+          isToggleOn ? (showPicker ? Color.main : Color.textBlack)
+                     : .textBlack30
+        )
         .padding(.vertical, 6)
         .padding(.horizontal, 11)
         .background(
           RoundedRectangle(cornerRadius: 6)
             .foregroundStyle(Color.textBrighter30)
         )
-    }
+    }.disabled(!isToggleOn)
   }
 }
