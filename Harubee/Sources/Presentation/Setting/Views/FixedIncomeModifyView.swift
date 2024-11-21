@@ -9,18 +9,17 @@
 import SwiftUI
 
 struct FixedIncomeModifyView: View {
-  
   @Environment(\.dismiss) private var dismiss
   @State private var isFocused: Bool = false
-  @Binding var fixedIncomeAmount: String
+  @State private var fixedIncomeAmount: String
   
-  private var editFixedIncomeAmount: (String) -> Void
+  private let editFixedIncomeAmount: (String) -> Void
   
   init(
-    fixedIncomeAmount: Binding<String>,
+    fixedIncomeAmount: String,
     editFixedIncomeAmount: @escaping (String) -> Void
   ) {
-    self._fixedIncomeAmount = fixedIncomeAmount
+    self._fixedIncomeAmount = State(initialValue: fixedIncomeAmount)
     self.editFixedIncomeAmount = editFixedIncomeAmount
   }
   
@@ -64,7 +63,7 @@ struct FixedIncomeModifyView: View {
 }
 
 #Preview {
-  FixedIncomeModifyView(fixedIncomeAmount: .constant("")) {_ in 
+  FixedIncomeModifyView(fixedIncomeAmount: "") {_ in
     print("button tapped")
   }
 }
