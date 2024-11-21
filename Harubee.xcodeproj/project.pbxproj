@@ -59,6 +59,19 @@
 			);
 			target = 57322F8E2CEE0FD60075D1B1 /* HarubeeWidgetExtension */;
 		};
+		573230A62CEF104A0075D1B1 /* Exceptions for "Harubee" folder in "HarubeeWidgetExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Resources/Colors.xcassets,
+				"Resources/Fonts/Pretendard-Medium.ttf",
+				"Resources/Fonts/Pretendard-SemiBold.ttf",
+				Resources/Images.xcassets,
+				"Sources/Helper/DesignSystem/Color+.swift",
+				"Sources/Helper/DesignSystem/Font+.swift",
+				"Sources/Helper/Extensions/Int+.swift",
+			);
+			target = 57322F8E2CEE0FD60075D1B1 /* HarubeeWidgetExtension */;
+		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -66,6 +79,7 @@
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
 				57322E9A2CEE01440075D1B1 /* Exceptions for "Harubee" folder in "Harubee" target */,
+				573230A62CEF104A0075D1B1 /* Exceptions for "Harubee" folder in "HarubeeWidgetExtension" target */,
 			);
 			path = Harubee;
 			sourceTree = "<group>";
