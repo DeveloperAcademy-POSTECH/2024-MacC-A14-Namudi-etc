@@ -158,9 +158,12 @@ private struct FixedIncomeBodyView: View {
         }
         .sheet(isPresented: $showingSheet) {
           FixedIncomeModifyView(
-            fixedIncomeAmount: settingViewModel.state.salaryBudget.fixedIncome.decimalWithWon
-          ) { fixedIncomeString in
-            fixedIncomeAmount = fixedIncomeString.numberFormat ?? 0
+            fixedIncomeAmount: .init(
+              get: { fixedIncomeAmount.decimalWithWon },
+              set: { fixedIncomeAmount = $0.numberFormat ?? 0 }
+            )
+          ) { updatedAmount in
+            fixedIncomeAmount = updatedAmount.numberFormat ?? 0
           }
           .presentationDetents([.height(497)])
           .presentationCornerRadius(20)
