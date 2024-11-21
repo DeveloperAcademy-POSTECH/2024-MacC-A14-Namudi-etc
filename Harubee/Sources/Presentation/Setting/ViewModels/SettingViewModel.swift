@@ -12,6 +12,10 @@ import Foundation
 final class SettingViewModel {
   struct State {
     var salaryBudget: SalaryBudget
+    var harubeeNotificationTime: Date?
+    var expenseNotificationTime: Date?
+    var harubeeNotificationStatus: Bool?
+    var expenseNotificationStatus: Bool?
   }
   
   enum Action {
@@ -31,6 +35,7 @@ final class SettingViewModel {
     self.state = State(
       salaryBudget: salaryBudget
     )
+    fetchNotificationData()
   }
   
   // MARK: - Public Methods (유저 액션 핸들러)
@@ -51,6 +56,19 @@ final class SettingViewModel {
   }
   
   // MARK: - Private Methods (유즈케이스 호출 메소드)
+  private func fetchNotificationData() {
+
+    let harubeeNotificationTime = try? budgetUseCase.getTodayHarubeeNotificationTime()
+    let expenseNotificationTime = try? budgetUseCase.getExpenseNotificationTime()
+    let harubeeNotificationStatus = try? budgetUseCase.getTodayHarubeeNotificationStatus()
+    let expenseNotificationStatus = try? budgetUseCase.getExpenseNotificationStatus()
+    
+    self.state.harubeeNotificationTime = harubeeNotificationTime
+    self.state.expenseNotificationTime = expenseNotificationTime
+    self.state.harubeeNotificationStatus = harubeeNotificationStatus
+    self.state.expenseNotificationStatus = expenseNotificationStatus
+  }
+  
   private func updateFixedIncomeDay(_ incomeDay: Int) {
     do {
       let newSalaryBudget = try budgetUseCase.setIncomeDay(

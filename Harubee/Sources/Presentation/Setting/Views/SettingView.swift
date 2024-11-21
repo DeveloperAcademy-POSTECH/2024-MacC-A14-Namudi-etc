@@ -9,7 +9,7 @@
 import SwiftUI
 
 struct SettingView: View {
-  let settingViewModel: SettingViewModel
+  @State private var settingViewModel: SettingViewModel
   
   @State private var navigateFixedExpense: Bool = false
   @State private var navigateFixedIncome: Bool = false
@@ -60,6 +60,7 @@ struct SettingView: View {
     .navigationBarStyle(.white(title: "설정", backTitle: "뒤로"))
     .font(.pretendardMedium_18)
     .foregroundStyle(Color.textBlack)
+
   }
   
   private var settingFooterView: some View {
@@ -90,25 +91,35 @@ private struct SettingHeaderView: View {
   
   let settingViewModel: SettingViewModel
   
-  @State private var harubeeNotificationSelectedTime: Date = .now
-  @State private var expanseNotificationSelectedTime: Date = .now
-  @State private var isHarubeeNotification: Bool = false
-  @State private var isExpanseNotification: Bool = false
+  @State private var harubeeNotificationSelectedTime: Date
+  @State private var expenseNotificationSelectedTime: Date
+  @State private var harubeeNotificationStatus: Bool
+  @State private var expenseNotificationStatus: Bool
+  
+  init(
+    settingViewModel: SettingViewModel
+  ) {
+    self.settingViewModel = settingViewModel
+    self.harubeeNotificationSelectedTime = settingViewModel.state.harubeeNotificationTime ?? Date()
+    self.expenseNotificationSelectedTime = settingViewModel.state.expenseNotificationTime ?? Date()
+    self.harubeeNotificationStatus = settingViewModel.state.harubeeNotificationStatus ?? true
+    self.expenseNotificationStatus = settingViewModel.state.expenseNotificationStatus ?? true
+  }
   
   var body: some View {
     VStack(spacing: 24) {
       PickerView(
         category: .setting,
         title: "오늘의 하루비 알림",
-        isToggleOn: $isHarubeeNotification,
+        isToggleOn: $harubeeNotificationStatus,
         selectedTime: $harubeeNotificationSelectedTime
       )
       
       PickerView(
         category: .setting,
         title: "실제 지출 입력 알림",
-        isToggleOn: $isExpanseNotification,
-        selectedTime: $expanseNotificationSelectedTime
+        isToggleOn: $expenseNotificationStatus,
+        selectedTime: $expenseNotificationSelectedTime
       )
     }
     .padding(.top, 142)
