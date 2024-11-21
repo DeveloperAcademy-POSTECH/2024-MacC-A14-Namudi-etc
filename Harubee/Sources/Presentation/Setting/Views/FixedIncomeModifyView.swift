@@ -30,14 +30,18 @@ struct FixedIncomeModifyView: View {
       VStack(spacing: 0) {
         BottomSheetHeaderView(title: "고정수입 금액 입력")
         
-        FloatingTitleTextField(title: "금액", text: $fixedIncomeAmount)
-          .disabled(true)
-          .padding(.top, 38)
-          .padding(.horizontal, 16)
-          .contentShape(Rectangle())
-          .onTapGesture {
-            isFocused = true
-          }
+        FloatingTitleNumberField(
+          title: "금액",
+          textSize: .medium,
+          text: $fixedIncomeAmount,
+          isFocused: $isFocused
+        )
+        .padding(.top, 38)
+        .padding(.horizontal, 16)
+        .contentShape(Rectangle())
+        .onTapGesture {
+          isFocused = true
+        }
         
         Spacer()
         
