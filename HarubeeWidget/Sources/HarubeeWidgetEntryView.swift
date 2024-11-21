@@ -28,6 +28,10 @@ struct HarubeeWidgetEntryView : View {
 struct SystemSmallWidgetView: View {
   let entry: Provider.Entry
   
+  private var todayHarubee: Int {
+    self.getTodayHarubee()
+  }
+  
   var body: some View {
     VStack(alignment: .leading, spacing: 0) {
       Text("오늘의 하루비")
@@ -37,12 +41,12 @@ struct SystemSmallWidgetView: View {
       
       ViewThatFits {
         TodayHarubeeTextView(
-          text: 99999.decimalWithWon,
+          text: todayHarubee.decimalWithWon,
           contentSize: .first
         )
         
         TodayHarubeeTextView(
-          text: 9999999.formattedAsTenThousandWon,
+          text: todayHarubee.decimalWithWon,
           contentSize: .second
         )
       }
@@ -56,17 +60,40 @@ struct SystemSmallWidgetView: View {
       // TODO: AppIntent로 수정 필요
       ExpenseInputButton(title: "실제 지출 입력하기")
         .padding(.horizontal, 16)
-
+      
     }
     .padding(.top, 24)
     .padding(.bottom, 16)
+  }
+  
+  private func getTodayHarubee() -> Int {
+    let salaryBudget = entry.salaryBudget
+    let dailyBudget = entry.salaryBudget?.dailyBudgets.first(where: {
+      $0.date == Date().formattedDate
+    })
     
+    let harubee = dailyBudget?.harubee ?? (Int(salaryBudget?.defaultHarubee ?? 0))
+    
+    let expenseSum = dailyBudget?.expense ?? 0
+    
+    return harubee - expenseSum
   }
 }
 
 // MARK: - SystemMediumWidgetView
 struct SystemMediumWidgetView: View {
+  struct DailyStreak {
+    let date: Date
+    let isAfterToday: Bool
+    let harubee: Int
+    let isOverHarubee: Bool?
+  }
+  
   let entry: Provider.Entry
+  
+  private var dailyStreak: [DailyStreak] {
+    self.getDailyStreak()
+  }
   
   var body: some View {
     VStack {
@@ -105,6 +132,10 @@ struct SystemMediumWidgetView: View {
         contentSize: .second
       )
     }
+  }
+  
+  private func getDailyStreak() -> [DailyStreak] {
+    return []
   }
 }
 
@@ -171,31 +202,16 @@ private struct ExpenseInputButton: View {
 
 
 // MARK: - Preview
-extension ConfigurationAppIntent {
-  fileprivate static var smiley: ConfigurationAppIntent {
-    let intent = ConfigurationAppIntent()
-    intent.favoriteEmoji = "😀"
-    return intent
-  }
-  
-  fileprivate static var starEyes: ConfigurationAppIntent {
-    let intent = ConfigurationAppIntent()
-    intent.favoriteEmoji = "🤩"
-    return intent
-  }
-}
 
 #Preview("SystemMedium", as: .systemMedium) {
   HarubeeWidget()
 } timeline: {
-  SimpleEntry(date: .now, configuration: .smiley)
-  SimpleEntry(date: .now, configuration: .starEyes)
+  HarubeeWidgetEntry(date: .now, salaryBudget: SalaryBudget.default)
 }
 
 #Preview("SystemSmall", as: .systemSmall) {
   HarubeeWidget()
 } timeline: {
-  SimpleEntry(date: .now, configuration: .smiley)
-  SimpleEntry(date: .now, configuration: .starEyes)
+  HarubeeWidgetEntry(date: .now, salaryBudget: SalaryBudget.default)
 }
 
