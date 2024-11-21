@@ -34,8 +34,6 @@ struct PickerView: View {
   
   @State private var showPicker: Bool = false
   
-  private var pickerId: UUID = .init()
-  
   init(
     category: Category,
     title: String,

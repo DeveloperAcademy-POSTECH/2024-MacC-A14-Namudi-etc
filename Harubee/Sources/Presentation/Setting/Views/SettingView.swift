@@ -95,6 +95,8 @@ private struct SettingHeaderView: View {
   @State private var expenseNotificationSelectedTime: Date
   @State private var harubeeNotificationStatus: Bool
   @State private var expenseNotificationStatus: Bool
+  @State private var showHarubeeTimePicker: Bool = false
+  @State private var showExpenseTimePicker: Bool = false
   
   init(
     settingViewModel: SettingViewModel
@@ -126,6 +128,16 @@ private struct SettingHeaderView: View {
     .padding(.bottom, 27)
     .background(Color.whiteDefault)
     .shadow(color: Color.textBlack5, radius: 3, x: 0, y: 1)
+    .onChange(of: harubeeNotificationStatus) { _, newValue in
+      settingViewModel.send(
+        .toggleNotificationStatus(.harubee, newValue)
+      )
+    }
+    .onChange(of: expenseNotificationStatus) { _, newValue in
+      settingViewModel.send(
+        .toggleNotificationStatus(.expense, newValue)
+      )
+    }
   }
 }
 

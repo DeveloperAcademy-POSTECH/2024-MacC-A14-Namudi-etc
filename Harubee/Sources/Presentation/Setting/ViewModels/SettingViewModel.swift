@@ -8,6 +8,11 @@
 
 import Foundation
 
+enum NotificationType {
+  case harubee
+  case expense
+}
+
 @Observable
 final class SettingViewModel {
   struct State {
@@ -19,6 +24,7 @@ final class SettingViewModel {
   }
   
   enum Action {
+    case toggleNotificationStatus(NotificationType, Bool)
     case fixedIncomeSaveButtonTapped(Int?, Int?)
     case updateFixedExpenses([TransactionItem])
   }
@@ -41,6 +47,9 @@ final class SettingViewModel {
   // MARK: - Public Methods (유저 액션 핸들러)
   func send(_ action: Action) {
     switch action {
+    case .toggleNotificationStatus(let type, let newStatus):
+      saveNotificationStatus(notificationType: type, newStatus: newStatus)
+      
     case .fixedIncomeSaveButtonTapped(let incomeDay, let incomeAmount):
       if let incomeDay = incomeDay {
         self.updateFixedIncomeDay(incomeDay)
@@ -56,6 +65,21 @@ final class SettingViewModel {
   }
   
   // MARK: - Private Methods (유즈케이스 호출 메소드)
+  private func saveNotificationStatus(
+    notificationType: NotificationType,
+    newStatus: Bool
+  ) {
+    switch notificationType {
+    case .harubee:
+      print("save harubee status \(newStatus)")
+      budgetUseCase.setTodayHarubeeNotificationStatus(newStatus)
+    case .expense:
+      print("save expense status \(newStatus)")
+      budgetUseCase.setExpenseNotificationStatus(newStatus)
+    }
+  }
+  
+  
   private func fetchNotificationData() {
 
     let harubeeNotificationTime = try? budgetUseCase.getTodayHarubeeNotificationTime()
