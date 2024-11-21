@@ -69,7 +69,10 @@ struct FixedExpenseManageView: View {
     }
     .onChange(of: selectedDay) { oldValue, newValue in
       if oldValue != newValue {
-        isEnabled = true
+        if (!fixedExpenseName.isEmpty
+            || !fixedExpenseAmount.isEmpty) {
+          isEnabled = true
+        }
       } else {
         isEnabled = false
       }
