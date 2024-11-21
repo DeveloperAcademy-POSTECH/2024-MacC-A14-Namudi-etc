@@ -14,6 +14,8 @@ final class UserDefaultsRepositoryImpl: UserDefaultsRepository {
     static let incomeDay = "income_day"
     static let harubeeNotificationTime = "harubee_notification_time"
     static let expenseNotificationTime = "expense_notification_time"
+    static let harubeeNotificationStatus = "harubee_notification_status"
+    static let expenseNotificationStatus = "expense_notification_status"
   }
   
   private let userDefaults: UserDefaults
@@ -44,5 +46,21 @@ final class UserDefaultsRepositoryImpl: UserDefaultsRepository {
 
   func readExpenseNotificationTime() -> Date? {
     userDefaults.object(forKey: Keys.expenseNotificationTime) as? Date
+  }
+  
+  func saveTodayHarubeeNotificationStatus(_ isEnabled: Bool) throws {
+    userDefaults.set(isEnabled, forKey: Keys.harubeeNotificationStatus)
+  }
+
+  func readTodayHarubeeNotificationStatus() -> Bool? {
+    return userDefaults.bool(forKey: Keys.harubeeNotificationStatus)
+  }
+
+  func saveExpenseNotificationStatus(_ isEnabled: Bool) throws {
+    userDefaults.set(isEnabled, forKey: Keys.expenseNotificationStatus)
+  }
+
+  func readExpenseNotificationStatus() -> Bool? {
+    return userDefaults.bool(forKey: Keys.expenseNotificationStatus)
   }
 }

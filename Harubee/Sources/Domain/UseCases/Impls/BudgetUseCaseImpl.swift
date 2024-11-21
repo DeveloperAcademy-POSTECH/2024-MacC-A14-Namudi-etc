@@ -580,6 +580,32 @@ final class BudgetUseCaseImpl: BudgetUseCase {
     return time
   }
   
+  func setTodayHarubeeNotificationStatus(_ isEnabled: Bool) {
+    try? userDefaultsRepository.saveTodayHarubeeNotificationStatus(isEnabled)
+  }
+
+  func getTodayHarubeeNotificationStatus() throws -> Bool? {
+    guard let status = userDefaultsRepository.readTodayHarubeeNotificationStatus()
+    else {
+      try? userDefaultsRepository.saveTodayHarubeeNotificationStatus(true)
+      return true
+    }
+    return status
+  }
+
+  func setExpenseNotificationStatus(_ isEnabled: Bool) {
+    try? userDefaultsRepository.saveExpenseNotificationStatus(isEnabled)
+  }
+
+  func getExpenseNotificationStatus() throws -> Bool? {
+    guard let status = userDefaultsRepository.readExpenseNotificationStatus()
+    else {
+      try? userDefaultsRepository.saveTodayHarubeeNotificationStatus(true)
+      return true
+    }
+    return status
+  }
+  
   // TODO: 함수명, 로직 수정 필요
   func checkSalaryBudget(_ salaryBudget: SalaryBudget) throws -> SalaryBudget {
     var salaryBudget = salaryBudget
