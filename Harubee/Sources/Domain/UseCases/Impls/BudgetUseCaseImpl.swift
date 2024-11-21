@@ -533,11 +533,18 @@ final class BudgetUseCaseImpl: BudgetUseCase {
     // 지정된 알림 시간을 가져오고 저장된 알림 시간이 없으면 9:00 AM으로 설정하기
     guard let time = userDefaultsRepository.readTodayHarubeeNotificationTime()
     else {
-      var dateComponents = DateComponents()
+      let today = Date()
+      var dateComponents = calendar.dateComponents(
+        [.year, .month, .day], from: today
+      )
       dateComponents.hour = 9
       dateComponents.minute = 0
+      dateComponents.timeZone = TimeZone.current
       
-      return calendar.date(from: dateComponents)
+      let defaultDate = calendar.date(from: dateComponents)
+      try? userDefaultsRepository.saveTodayHarubeeNotificationTime(defaultDate!)
+      
+      return defaultDate
     }
     
     return time
@@ -551,11 +558,18 @@ final class BudgetUseCaseImpl: BudgetUseCase {
     // 지정된 알림 시간을 가져오고 저장된 알림 시간이 없으면 10:00 PM으로 설정하기
     guard let time = userDefaultsRepository.readExpenseNotificationTime()
     else {
-      var dateComponents = DateComponents()
+      let today = Date()
+      var dateComponents = calendar.dateComponents(
+        [.year, .month, .day], from: today
+      )
       dateComponents.hour = 22
       dateComponents.minute = 0
+      dateComponents.timeZone = TimeZone.current
       
-      return calendar.date(from: dateComponents)
+      let defaultDate = calendar.date(from: dateComponents)
+      try? userDefaultsRepository.saveExpenseNotificationTime(defaultDate!)
+      
+      return defaultDate
     }
     
     return time
