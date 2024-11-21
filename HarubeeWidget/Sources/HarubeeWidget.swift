@@ -8,23 +8,6 @@
 import WidgetKit
 import SwiftUI
 
-/*
- Harubee App Target 파일들 중 Widget Target을 추가한 파일 리스트
- 
- Resources
-  - Colors
-  - Images
-  > Fonts
-    - semiBold
-    - medium
- Sources
-  > Helper
-    > DesignSystem
-      - Color+
-      - Font+
-    > Extensions
-      - Int+
- */
 
 struct Provider: AppIntentTimelineProvider {
   func placeholder(in context: Context) -> SimpleEntry {
@@ -54,99 +37,12 @@ struct Provider: AppIntentTimelineProvider {
     
     return Timeline(entries: entries, policy: .atEnd)
   }
-  
-  //    func relevances() async -> WidgetRelevances<ConfigurationAppIntent> {
-  //        // Generate a list containing the contexts this widget is relevant in.
-  //    }
 }
 
 struct SimpleEntry: TimelineEntry {
   let date: Date
   let configuration: ConfigurationAppIntent
 }
-
-struct HarubeeWidgetEntryView : View {
-  @Environment(\.widgetFamily) private var widgetFamily
-  var entry: Provider.Entry
-  
-  var body: some View {
-    switch widgetFamily {
-    case .systemSmall:
-      SystemSmallWidgetView(entry: entry)
-    default:
-      EmptyView()
-    }
-  }
-}
-
-struct SystemSmallWidgetView: View {
-  let entry: Provider.Entry
-  
-  var body: some View {
-    VStack(alignment: .leading, spacing: 0) {
-      Text("오늘의 하루비")
-        .font(.pretendardMedium_14)
-        .foregroundStyle(.textBright)
-        .padding(.horizontal, 19)
-      
-      ViewThatFits {
-        bodyTextView(
-          text: 99999.decimalWithWon,
-          textFont: .pretendardSemibold_20,
-          imageSize: 18
-        )
-        
-        bodyTextView(
-          text: 9999999.formattedAsTenThousandWon,
-          textFont: .pretendardSemibold_18,
-          imageSize: 16
-        )
-      }
-      .padding(.top, 2)
-      .padding(.horizontal, 19)
-      .lineLimit(1)
-      
-      
-      Spacer()
-      
-      // TODO: AppIntent로 수정 필요
-      Button {
-        
-      } label: {
-        Text("실제 지출 입력하기")
-          .font(.pretendardSemibold_12)
-          .foregroundStyle(.whiteDefault)
-          .frame(maxWidth: .infinity)
-          .padding(.vertical, 13)
-          .background(.main)
-          .clipShape(RoundedRectangle(cornerRadius: 25))
-      }
-      .buttonStyle(.plain)
-      .padding(.horizontal, 16)
-
-    }
-    .padding(.top, 24)
-    .padding(.bottom, 16)
-    
-  }
-  
-  private func bodyTextView(
-    text: String,
-    textFont: Font,
-    imageSize: CGFloat
-  ) -> some View {
-    HStack {
-      Image(.harubeeMain)
-        .resizable()
-        .frame(width: imageSize, height: imageSize)
-      
-      Text(text)
-        .font(textFont)
-        .foregroundStyle(.main)
-    }
-  }
-}
-
 
 
 struct HarubeeWidget: Widget {

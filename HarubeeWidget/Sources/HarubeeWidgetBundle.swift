@@ -14,3 +14,22 @@ struct HarubeeWidgetBundle: WidgetBundle {
         HarubeeWidget()
     }
 }
+
+
+/*
+ Harubee App Target 파일들 중 Widget Target을 추가한 파일 리스트
+ 
+ Resources
+  - Colors
+  - Images
+  > Fonts
+    - semiBold
+    - medium
+ Sources
+  > Helper
+    > DesignSystem
+      - Color+
+      - Font+
+    > Extensions
+      - Int+
+ */
