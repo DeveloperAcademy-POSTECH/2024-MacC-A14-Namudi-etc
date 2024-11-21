@@ -23,6 +23,9 @@ struct SettingView: View {
   }
   
   var body: some View {
+    
+    NavigationHeaderView()
+    
     ScrollView {
       VStack(spacing: 6) {
         
@@ -56,11 +59,10 @@ struct SettingView: View {
       }.background(.textBlack5)
     }
     .ignoresSafeArea()
+    .toolbar(.hidden)
     .scrollIndicators(.hidden)
-    .navigationBarStyle(.white(title: "설정", backTitle: "뒤로"))
     .font(.pretendardMedium_18)
     .foregroundStyle(Color.textBlack)
-
   }
   
   private var settingFooterView: some View {
@@ -83,6 +85,46 @@ struct SettingView: View {
     .padding(.horizontal, 18)
     .padding(.vertical, 32)
     .background(Color.whiteDefault)
+  }
+}
+
+// MARK: - NavigationHeaderView
+private struct NavigationHeaderView: View {
+  @Environment(\.dismiss) private var dismiss
+  
+  var body: some View {
+    HStack {
+      backButton
+        .tapFeedback(haptic: .none) {
+          dismiss()
+        }
+      
+      Spacer()
+      
+      Text("설정")
+        .foregroundStyle(.textBlack)
+        .font(.pretendardSemibold_18)
+      
+      Spacer()
+      
+      backButton.hidden()
+    }
+    .padding(EdgeInsets(
+      top: 5, leading: 16, bottom: 11, trailing: 16)
+    )
+  }
+  
+  private var backButton: some View {
+    HStack(alignment: .center, spacing: 0) {
+      Image(systemName: "chevron.left")
+        .resizable()
+        .frame(width: 10, height: 18)
+        
+      Text("뒤로")
+        .padding(.leading, 6)
+        .font(.pretendardMedium_18)
+    }
+    .foregroundStyle(.main)
   }
 }
 
@@ -124,7 +166,7 @@ private struct SettingHeaderView: View {
         selectedTime: $expenseNotificationSelectedTime
       )
     }
-    .padding(.top, 142)
+    .padding(.top, 44)
     .padding(.bottom, 27)
     .background(Color.whiteDefault)
     .shadow(color: Color.textBlack5, radius: 3, x: 0, y: 1)
