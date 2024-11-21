@@ -158,10 +158,7 @@ private struct FixedIncomeBodyView: View {
         }
         .sheet(isPresented: $showingSheet) {
           FixedIncomeModifyView(
-            fixedIncomeAmount: .init(
-              get: { fixedIncomeAmount.decimalWithWon },
-              set: { fixedIncomeAmount = $0.numberFormat ?? 0 }
-            )
+            fixedIncomeAmount: fixedIncomeAmount.decimal
           ) { updatedAmount in
             fixedIncomeAmount = updatedAmount.numberFormat ?? 0
           }
