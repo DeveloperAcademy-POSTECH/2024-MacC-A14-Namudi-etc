@@ -152,18 +152,18 @@ private struct SettingHeaderView: View {
   
   var body: some View {
     VStack(spacing: 24) {
-      PickerView(
-        category: .setting,
+      TimePickerView(
         title: "오늘의 하루비 알림",
         isToggleOn: $harubeeNotificationStatus,
-        selectedTime: $harubeeNotificationSelectedTime
+        selectedTime: $harubeeNotificationSelectedTime,
+        showPicker: $showHarubeeTimePicker
       )
       
-      PickerView(
-        category: .setting,
+      TimePickerView(
         title: "실제 지출 입력 알림",
         isToggleOn: $expenseNotificationStatus,
-        selectedTime: $expenseNotificationSelectedTime
+        selectedTime: $expenseNotificationSelectedTime,
+        showPicker: $showExpenseTimePicker
       )
     }
     .padding(.top, 44)
