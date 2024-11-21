@@ -216,7 +216,10 @@ private struct FixedExpensesListView: View {
   
   private func fixedExpenseSheet() -> some View {
     FixedExpenseManageView(
-      mode: manageMode
+      mode: manageMode,
+      selectedDay: selectedItem?.date.day ?? 1,
+      fixedExpenseName: selectedItem?.name ?? "",
+      fixedExpenseAmount: selectedItem?.price.decimal ?? ""
     ) { day, name, price in
       saveFixedExpense(day: day, name: name, price: price)
     }

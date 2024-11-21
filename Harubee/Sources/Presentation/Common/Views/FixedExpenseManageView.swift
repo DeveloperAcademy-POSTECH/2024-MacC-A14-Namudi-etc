@@ -27,10 +27,24 @@ struct FixedExpenseManageView: View {
   let action: ((Int, String, String) -> Void)
   
   @Environment(\.dismiss) private var dismiss
-  @State private var selectedDay: Int = 1
-  @State private var fixedExpenseName: String = ""
-  @State private var fixedExpenseAmount: String = ""
+  @State private var selectedDay: Int
+  @State private var fixedExpenseName: String
+  @State private var fixedExpenseAmount: String
   @State private var isEnabled: Bool = false
+  
+  init(
+    mode: Mode,
+    selectedDay: Int = 1,
+    fixedExpenseName: String = "",
+    fixedExpenseAmount: String = "",
+    action: @escaping (Int, String, String) -> Void
+  ) {
+    self.mode = mode
+    self.action = action
+    self._selectedDay = State(initialValue: selectedDay)
+    self._fixedExpenseName = State(initialValue: fixedExpenseName)
+    self._fixedExpenseAmount = State(initialValue: fixedExpenseAmount)
+  }
   
   var body: some View {
     VStack(spacing: 0) {
