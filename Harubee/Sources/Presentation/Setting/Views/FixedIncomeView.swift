@@ -18,6 +18,9 @@ struct FixedIncomeView: View {
   @State private var isInfoBubbleVisible: Bool = false
   @State private var isAlertPresented: Bool = false
   
+  private let beforeSelectedDay: Int
+  private let beforeFixedIncomeAmount: Int
+  
   private var salaryBudget: SalaryBudget {
     settingViewModel.state.salaryBudget
   }
@@ -28,6 +31,8 @@ struct FixedIncomeView: View {
     self.settingViewModel = settingViewModel
     self.selectedDay = settingViewModel.state.salaryBudget.startDate.day
     self.fixedIncomeAmount = settingViewModel.state.salaryBudget.fixedIncome
+    self.beforeSelectedDay = settingViewModel.state.salaryBudget.startDate.day
+    self.beforeFixedIncomeAmount = settingViewModel.state.salaryBudget.fixedIncome
   }
   
   var body: some View {
@@ -48,30 +53,24 @@ struct FixedIncomeView: View {
           title: "저장하기",
           isEnabled: $isUpdated
         ) {
-          if selectedDay != salaryBudget.startDate.day {
+          // 수입일이 변경되면, alert가 뜨고, 거기서 확인을 눌렀을 때 분기처리
+          // 수입일이 변경 안되면, alert 안뜨고 그냥 저장
+          
+          if selectedDay != beforeSelectedDay {
             isAlertPresented = true
           } else {
-            settingViewModel.send(.fixedIncomeSaveButtonTapped(
-              selectedDay,
-              fixedIncomeAmount
-            ))
+            settingViewModel.send(
+              .fixedIncomeSaveButtonTapped(nil, fixedIncomeAmount)
+            )
             dismiss()
           }
         }
       }
       .onChange(of: selectedDay) { _, _ in
-        isUpdated = (
-          selectedDay != salaryBudget.startDate.day
-          || fixedIncomeAmount != salaryBudget.fixedIncome
-        )
-
+        isFixedIncomeUpdated()
       }
       .onChange(of: fixedIncomeAmount) { _, _ in
-        isUpdated = (
-          selectedDay != salaryBudget.startDate.day
-          || fixedIncomeAmount != salaryBudget.fixedIncome
-        )
-
+        isFixedIncomeUpdated()
       }
       .frame(maxHeight: .infinity, alignment: .top)
       
@@ -81,6 +80,7 @@ struct FixedIncomeView: View {
           .ignoresSafeArea()
           .onTapGesture { isInfoBubbleVisible.toggle() }
       }
+      
     }
     .applyNavigationBarStyle(isInfoBubbleVisible: $isInfoBubbleVisible)
     .alert(isPresented: $isAlertPresented) {
@@ -120,6 +120,13 @@ struct FixedIncomeView: View {
     .font(.pretendardSemibold_22)
     .padding(.horizontal, 16)
     .padding(.top, 44)
+  }
+  
+  private func isFixedIncomeUpdated() {
+    isUpdated = (
+      selectedDay != salaryBudget.startDate.day
+      || fixedIncomeAmount != salaryBudget.fixedIncome
+    )
   }
 }
 
