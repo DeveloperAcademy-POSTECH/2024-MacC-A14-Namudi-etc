@@ -92,6 +92,24 @@ struct SettingView: View {
           .toggleNotificationStatus(.expense, newValue)
         )
       }
+      .onChange(of: showHarubeeTimePicker) { _, newValue in
+        if !newValue,
+           settingViewModel.state.harubeeNotificationTime
+            != harubeeSelectedTime {
+          settingViewModel.send(
+            .updateNotificationTime(.harubee, harubeeSelectedTime)
+          )
+        }
+      }
+      .onChange(of: showExpenseTimePicker) { _, newValue in
+        if !newValue,
+           settingViewModel.state.expenseNotificationTime
+            != expenseSelectedTime {
+          settingViewModel.send(
+            .updateNotificationTime(.expense, expenseSelectedTime)
+          )
+        }
+      }
     }
     .ignoresSafeArea()
     .toolbar(.hidden)
@@ -138,37 +156,13 @@ private struct NavigationHeaderView: View {
     HStack {
       backButton
         .tapFeedback(haptic: .none) {
-          let initialHarubeeTime = settingViewModel.state.harubeeNotificationTime
-          let initialExpenseTime = settingViewModel.state.expenseNotificationTime
-          
-          // 기존에 설정한 알림시간 설정과 다르고 열려있지 않다면
-          if initialHarubeeTime != harubeeSelectedTime
-              && showHarubeeTimePicker == false {
-            // 바뀐시간으로 저장하기
-            settingViewModel.send(
-              .updateNotificationTime(.harubee, harubeeSelectedTime)
-            )
-            
-            dismiss()
-            
-            // 기존에 설정한 알림시간 설정과 다르고 열려있다면
-          } else if initialHarubeeTime != harubeeSelectedTime
-                      && showHarubeeTimePicker == true {
+          // 하나라도 Picker가 열려있으면
+          if showHarubeeTimePicker || showExpenseTimePicker {
             isShowAlert = true
           }
-          
-          if initialExpenseTime != expenseSelectedTime
-              && showExpenseTimePicker == false {
-            
-            settingViewModel.send(
-              .updateNotificationTime(.expense, expenseSelectedTime)
-            )
-            
+          // 둘다 닫혀있으면
+          else {
             dismiss()
-            
-          } else if initialExpenseTime != expenseSelectedTime
-                      && showExpenseTimePicker == true {
-            isShowAlert = true
           }
         }
       
