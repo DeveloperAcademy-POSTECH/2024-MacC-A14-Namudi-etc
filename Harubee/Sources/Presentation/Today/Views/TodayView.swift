@@ -257,6 +257,7 @@ private struct HarubeeHexagon: View {
           .infoBubble(isVisible: $isInfoBubbleVisible) {
             infoBubbleText
           }
+          .animation(.easeInOut(duration: 1.5), value: animatedFillPercentage)
         
         if isTodayHarubee {
           harubeeNumberContainer
