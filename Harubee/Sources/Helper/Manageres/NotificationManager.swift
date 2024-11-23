@@ -52,11 +52,27 @@ final class NotificationManager {
     UNUserNotificationCenter.current().getNotificationSettings { settings in
       switch settings.authorizationStatus {
       case .authorized, .provisional:
-        let content = UNMutableNotificationContent()
-        content.title = "알림 제목입니다."
-        content.body = "알림 바디입니다."
-        content.sound = .default
-        content.badge = 1
+        
+        let content: UNMutableNotificationContent = {
+          switch notificationType {
+          case .harubee:
+            let content = UNMutableNotificationContent()
+            content.title = "오늘의 하루비 알림입니다."
+            content.body = "알림 바디입니다."
+            content.sound = .default
+            content.badge = 1
+            return content
+            
+          case .expense:
+            let content = UNMutableNotificationContent()
+            content.title = "실제 지출 입력 알림입니다."
+            content.body = "알림 바디입니다."
+            content.sound = .default
+            content.badge = 1
+            return content
+          }
+        }()
+        
         
         let calendar = Calendar.current
         let dateComponents = calendar.dateComponents(
