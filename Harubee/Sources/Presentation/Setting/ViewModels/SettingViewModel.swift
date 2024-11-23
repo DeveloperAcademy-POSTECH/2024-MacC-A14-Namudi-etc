@@ -24,6 +24,7 @@ final class SettingViewModel {
   }
   
   enum Action {
+    case handleNotification
     case toggleNotificationStatus(type: NotificationType, Bool)
     case updateNotificationTime(type: NotificationType, Date)
     case fixedIncomeSaveButtonTapped(Int?, Int?)
@@ -46,6 +47,8 @@ final class SettingViewModel {
   // MARK: - Public Methods (유저 액션 핸들러)
   func send(_ action: Action) {
     switch action {
+    case .handleNotification:
+      print("백 버튼이 눌렸습니다.")
     case .toggleNotificationStatus(type: let type, let newStatus):
       saveNotificationStatus(notificationType: type, newStatus: newStatus)
       
@@ -71,12 +74,22 @@ final class SettingViewModel {
     notificationType: NotificationType,
     time: Date
   ) {
-    NotifiactionManager.shared
+    NotificationManager.shared
       .scheduleNotification(
         time: time,
         notificationType: notificationType
       )
   }
+  
+  private func deleteNotification(
+    notificationType: NotificationType
+  ) {
+    NotificationManager.shared
+      .deleteNotification(
+        notificationType: notificationType
+      )
+  }
+  
   
   private func saveNotificationTime(
     notificationType: NotificationType,
