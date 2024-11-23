@@ -230,11 +230,13 @@ private struct HarubeeHexagon: View {
         .fill(isTodayHarubee ? Color.textBrighter : Color.textBlack30)
         .frame(width: hexgonSize, height: hexgonSize)
         .clipShape(RoundedHexagon())
+        .animation(.easeInOut(duration: 1.5), value: animatedFillPercentage)
       
       Wave(xOffset: secondWaveOffset, fillPercentage: animatedFillPercentage)
         .fill(isTodayHarubee ? Color.whiteDefault :  Color.mainBright)
         .frame(width: hexgonSize, height: hexgonSize)
         .clipShape(RoundedHexagon())
+        .animation(.easeInOut(duration: 1.5), value: animatedFillPercentage)
       
       RoundedHexagon()
         .stroke(Color.whiteDefault, lineWidth: 1.5)
@@ -281,9 +283,7 @@ private struct HarubeeHexagon: View {
       }
     }
     .onChange(of: fillPercentage) { _, newPercentage in
-      withAnimation(.easeInOut(duration: 1.5)) {
-        animatedFillPercentage = CGFloat(newPercentage)
-      }
+      animatedFillPercentage = CGFloat(newPercentage)
     }
     .sheet(isPresented: $isPresented) {
       todayViewModel.send(.viewDidLoad)
