@@ -42,7 +42,7 @@ struct TodayHarubeeTextView: View {
   
   var body: some View {
     VStack(alignment: .leading, spacing: 2) {
-      Text("오늘의 하루비")
+      Text(title)
         .font(contentSize.titleFont)
         .foregroundStyle(.textBright)
       

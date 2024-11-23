@@ -12,7 +12,11 @@ import WidgetKit
 struct SystemSmallWidgetView: View {
   let entry: Provider.Entry
   
-  private var todayHarubee: Int {
+  private var title: String {
+    self.getTitle()
+  }
+  
+  private var harubee: Int {
     self.getTodayHarubee()
   }
   
@@ -20,8 +24,8 @@ struct SystemSmallWidgetView: View {
     VStack(alignment: .leading, spacing: 0) {
       
       TodayHarubeeTextView(
-        title: "오늘의 하루비",
-        harubee: 99999,
+        title: title,
+        harubee: harubee,
         contentSize: .first
       )
       .padding(.horizontal, 19)
@@ -38,9 +42,20 @@ struct SystemSmallWidgetView: View {
     .background(.whiteDefault)
   }
   
+  private func getTitle() -> String {
+    let salaryBudget = entry.salaryBudget
+    let dailyBudget = salaryBudget?.dailyBudgets.first(where: {
+      $0.date == Date().formattedDate
+    })
+    
+    return dailyBudget?.expense == nil
+    ? "오늘의 하루비"
+    : "오늘의 남은 하루비"
+  }
+  
   private func getTodayHarubee() -> Int {
     let salaryBudget = entry.salaryBudget
-    let dailyBudget = entry.salaryBudget?.dailyBudgets.first(where: {
+    let dailyBudget = salaryBudget?.dailyBudgets.first(where: {
       $0.date == Date().formattedDate
     })
     

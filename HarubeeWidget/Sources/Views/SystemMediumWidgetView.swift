@@ -61,7 +61,7 @@ private struct BodyView: View {
     var dailyStreak: [DailyStreak?] = []
     
     guard let salaryBudget = salaryBudget,
-          var index = salaryBudget.dailyBudgets.firstIndex(where: {
+          let index = salaryBudget.dailyBudgets.firstIndex(where: {
             $0.date == .now.formattedDate
           }) else {
       return Array(repeating: nil, count: 6)
@@ -185,17 +185,47 @@ private struct DailyView: View {
 private struct FooterView: View {
   let salaryBudget: SalaryBudget?
   
+  private var title: String {
+    self.getTitle()
+  }
+  
+  private var harubee: Int {
+    self.getTodayHarubee()
+  }
+  
   var body: some View {
     HStack(spacing: 37) {
       TodayHarubeeTextView(
-        title: "오늘의 하루비",
-        harubee: 9999,
+        title: title,
+        harubee: harubee,
         contentSize: .second
       )
       
       ExpenseInputButton(title: "실제 지출 및 수입 입력하기")
     }
     .padding(.leading, 2)
+  }
+  
+  private func getTitle() -> String {
+    let dailyBudget = salaryBudget?.dailyBudgets.first(where: {
+      $0.date == Date().formattedDate
+    })
+    
+    return dailyBudget?.expense == nil
+    ? "오늘의 하루비"
+    : "오늘의 남은 하루비"
+  }
+  
+  private func getTodayHarubee() -> Int {
+    let dailyBudget = salaryBudget?.dailyBudgets.first(where: {
+      $0.date == Date().formattedDate
+    })
+    
+    let harubee = dailyBudget?.harubee ?? (Int(salaryBudget?.defaultHarubee ?? 0))
+    
+    let expenseSum = dailyBudget?.expense ?? 0
+    
+    return harubee - expenseSum
   }
 }
 
