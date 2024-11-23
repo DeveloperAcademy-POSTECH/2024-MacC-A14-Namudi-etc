@@ -22,16 +22,8 @@ struct HarubeeApp: App {
         case .today:
           TodayView(todayViewModel: DIContainer.shared.makeTodayViewModel())
             .onChange(of: scenePhase) {
-              switch $1 {
-              case .active:
-                print("Active")
-              case .inactive:
-                print("Inactive")
-              case .background:
-                print("Background")
+              if case ScenePhase.background = $1 {
                 WidgetCenter.shared.reloadAllTimelines()
-              @unknown default:
-                break
               }
             }
         }
