@@ -262,6 +262,7 @@ private struct HarubeeHexagon: View {
         if isTodayHarubee {
           harubeeNumberContainer
             .padding(.top, 11)
+            .animation(.easeInOut(duration: 1.5), value: animatedFillPercentage)
         } else {
           balanceNumberContainer
             .padding(.top, 13)
