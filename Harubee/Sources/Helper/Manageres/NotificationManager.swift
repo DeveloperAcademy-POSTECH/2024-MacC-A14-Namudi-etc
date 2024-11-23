@@ -9,10 +9,15 @@
 import UserNotifications
 
 // MARK: - Notification Manager
-final class NotifiactionManager {
-  static let shared = NotifiactionManager()
+final class NotificationManager {
+  static let shared = NotificationManager()
   
   private init() {}
+  
+  private enum identifiers {
+    static let harubeeNotification = "harubeeNotification"
+    static let expenseNotification = "expenseNotification"
+  }
   
   //MARK: 유저 알림 권한 요청
   func reqNotificationPermission() {
@@ -42,7 +47,7 @@ final class NotifiactionManager {
   func scheduleNotification(
     time: Date,
     notificationType: NotificationType
-  ) -> Void {
+  ) {
     
     UNUserNotificationCenter.current().getNotificationSettings { settings in
       switch settings.authorizationStatus {
@@ -62,8 +67,17 @@ final class NotifiactionManager {
           dateMatching: dateComponents, repeats: true
         )
         
+        let identifier: String = {
+            switch notificationType {
+            case .harubee:
+                return identifiers.harubeeNotification
+            case .expense:
+                return identifiers.expenseNotification
+            }
+        }()
+        
         let request = UNNotificationRequest(
-          identifier: UUID().uuidString,
+          identifier: identifier,
           content: content,
           trigger: trigger
         )
@@ -77,5 +91,21 @@ final class NotifiactionManager {
         break
       }
     }
+  }
+  
+  func deleteNotification(notificationType: NotificationType) {
+    
+    let identifier: String = {
+        switch notificationType {
+        case .harubee:
+            return identifiers.harubeeNotification
+        case .expense:
+            return identifiers.expenseNotification
+        }
+    }()
+    
+    UNUserNotificationCenter.current().removeDeliveredNotifications(
+      withIdentifiers: [identifier]
+    )
   }
 }
