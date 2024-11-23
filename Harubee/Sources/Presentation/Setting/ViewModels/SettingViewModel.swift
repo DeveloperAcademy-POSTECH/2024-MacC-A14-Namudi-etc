@@ -25,6 +25,7 @@ final class SettingViewModel {
   
   enum Action {
     case toggleNotificationStatus(NotificationType, Bool)
+    case updateNotificationTime(NotificationType, Date)
     case fixedIncomeSaveButtonTapped(Int?, Int?)
     case updateFixedExpenses([TransactionItem])
   }
@@ -38,9 +39,7 @@ final class SettingViewModel {
     salaryBudget: SalaryBudget
   ) {
     self.budgetUseCase = budgetUseCase
-    self.state = State(
-      salaryBudget: salaryBudget
-    )
+    self.state = State(salaryBudget: salaryBudget)
     fetchNotificationData()
   }
   
@@ -50,6 +49,9 @@ final class SettingViewModel {
     case .toggleNotificationStatus(let type, let newStatus):
       saveNotificationStatus(notificationType: type, newStatus: newStatus)
       
+    case .updateNotificationTime(let type, let time):
+      saveNotificationTime(notificationType: type, time: time)
+
     case .fixedIncomeSaveButtonTapped(let incomeDay, let incomeAmount):
       if let incomeDay = incomeDay {
         self.updateFixedIncomeDay(incomeDay)
@@ -65,16 +67,26 @@ final class SettingViewModel {
   }
   
   // MARK: - Private Methods (유즈케이스 호출 메소드)
+  private func saveNotificationTime(
+    notificationType: NotificationType,
+    time: Date
+  ) {
+    switch notificationType {
+    case .harubee:
+      budgetUseCase.setTodayHarubeeNotificationTime(time: time)
+    case .expense:
+      budgetUseCase.setExpenseNotificationTime(time: time)
+    }
+  }
+  
   private func saveNotificationStatus(
     notificationType: NotificationType,
     newStatus: Bool
   ) {
     switch notificationType {
     case .harubee:
-      print("save harubee status \(newStatus)")
       budgetUseCase.setTodayHarubeeNotificationStatus(newStatus)
     case .expense:
-      print("save expense status \(newStatus)")
       budgetUseCase.setExpenseNotificationStatus(newStatus)
     }
   }
