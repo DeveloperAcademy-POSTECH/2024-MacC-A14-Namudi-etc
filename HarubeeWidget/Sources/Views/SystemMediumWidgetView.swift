@@ -20,15 +20,18 @@ struct SystemMediumWidgetView: View {
       
       FooterView(salaryBudget: entry.salaryBudget)
     }
+    .frame(maxWidth: .infinity)
     .padding(16)
+    .background(.whiteDefault)
   }
 }
 
 
+// MARK: - BodyView
 private struct BodyView: View {
   let salaryBudget: SalaryBudget?
   
-  private var dailyStreak: [DailyStreak] {
+  private var dailyStreak: [DailyStreak?] {
     self.getDailyStreak()
   }
   
@@ -54,20 +57,62 @@ private struct BodyView: View {
     }
   }
   
-  private func getDailyStreak() -> [DailyStreak] {
-    return DailyStreak.mock
+  private func getDailyStreak() -> [DailyStreak?] {
+    var dailyStreak: [DailyStreak?] = []
+    
+    guard let salaryBudget = salaryBudget,
+          var index = salaryBudget.dailyBudgets.firstIndex(where: {
+            $0.date == .now.formattedDate
+          }) else {
+      return Array(repeating: nil, count: 6)
+    }
+    
+    for i in 0..<6 {
+    
+      if index > salaryBudget.dailyBudgets.count - 1 {
+        dailyStreak.append(nil)
+        continue
+      }
+      
+      let dailyBudget = salaryBudget.dailyBudgets[index + i]
+      
+      let date = dailyBudget.date
+      let time: DailyStreak.Time = date == .now.formattedDate
+      ? .today : .future
+      let harubee = dailyBudget.harubee ?? Int(salaryBudget.defaultHarubee)
+      let isAdjustedHarubee = dailyBudget.harubee != nil ? true : false
+      let expenseType: DailyStreak.ExpenseType = {
+        guard let expense = dailyBudget.expense,
+              let income = dailyBudget.income else { return .empty }
+        
+        let result = harubee - expense + income
+        return result >= 0 ? .good : .bad
+      }()
+      
+      dailyStreak.append(DailyStreak(
+        date: date,
+        time: time,
+        harubee: harubee,
+        isAdjustedHarubee: isAdjustedHarubee,
+        expenseType: expenseType
+      ))
+    }
+    
+    return dailyStreak
   }
 }
 
+
+// MARK: - DailyView
 private struct DailyView: View {
-  let daily: DailyStreak
+  let daily: DailyStreak?
   
   var body: some View {
     VStack(spacing: 0) {
-      switch daily.time {
+      switch daily?.time {
       case .today:
         todayContent
-      case .future:
+      case .future, .none:
         futureContent
       }
     }
@@ -83,16 +128,20 @@ private struct DailyView: View {
       
       Spacer()
       
-      switch daily.expenseType {
+      switch daily?.expenseType {
       case .empty:
         Image(.hexagonNone)
           .resizable()
           .frame(width: 20, height: 20)
       case .good:
-        Image(.hexagonNone)
+        Image(.hexagonGood)
           .resizable()
           .frame(width: 20, height: 20)
       case .bad:
+        Image(.hexagonBad)
+          .resizable()
+          .frame(width: 20, height: 20)
+      case .none:
         Image(.hexagonNone)
           .resizable()
           .frame(width: 20, height: 20)
@@ -104,21 +153,23 @@ private struct DailyView: View {
   
   private var futureContent: some View {
     VStack(spacing: 0) {
-      Text(daily.date.formattedDateToString(.dayWeekday))
+      Text(
+        daily?.date.formattedDateToString(.dayWeekday) ?? ""
+      )
         .font(.pretendardSemibold_12)
         .foregroundStyle(.textBright)
       
       Spacer()
       
       ViewThatFits {
-        Text(daily.harubee.decimal)
+        Text(daily?.harubee.decimal ?? "")
           .font(.pretendardMedium_12)
         
-        Text(daily.harubee.formattedAsTenThousandWon)
+        Text(daily?.harubee.formattedAsTenThousandWon ?? "")
           .font(.pretendardMedium_12)
       }
       .foregroundStyle(
-        daily.isAdjustedHarubee == true
+        daily?.isAdjustedHarubee == true
         ? .main
         : .textBlack
       )
@@ -129,32 +180,27 @@ private struct DailyView: View {
   }
 }
 
+
+// MARK: - FooterView
 private struct FooterView: View {
   let salaryBudget: SalaryBudget?
   
   var body: some View {
     HStack(spacing: 37) {
-      footerTextView
+      TodayHarubeeTextView(
+        title: "오늘의 하루비",
+        harubee: 9999,
+        contentSize: .second
+      )
       
       ExpenseInputButton(title: "실제 지출 및 수입 입력하기")
     }
     .padding(.leading, 2)
   }
-  
-  private var footerTextView: some View {
-    VStack(alignment: .leading, spacing: 2) {
-      Text("오늘의 하루비")
-        .font(.pretendardMedium_12)
-        .foregroundStyle(.textBright)
-      
-      TodayHarubeeTextView(
-        text: 99999.decimalWithWon,
-        contentSize: .second
-      )
-    }
-  }
 }
 
+
+// MARK: - DailyStreak
 private struct DailyStreak: Hashable {
   enum Time {
     case today
@@ -187,7 +233,7 @@ private struct DailyStreak: Hashable {
     self.expenseType = expenseType
   }
   
-  static let mock: [Self] = [
+  static let mock: [Self?] = [
     .init(
       date: .now,
       time: .today,
@@ -206,20 +252,12 @@ private struct DailyStreak: Hashable {
       harubee: 999999
     ),
     .init(
-      date: .now.addingTimeInterval(86400 * 4),
+      date: .now.addingTimeInterval(86400 * 3),
       time: .future,
       harubee: 100000
     ),
-    .init(
-      date: .now.addingTimeInterval(86400 * 5),
-      time: .future,
-      harubee: 100000
-    ),
-    .init(
-      date: .now.addingTimeInterval(86400 * 6),
-      time: .future,
-      harubee: 100000
-    )
+    nil,
+    nil
   ]
 }
 
@@ -229,5 +267,8 @@ private struct DailyStreak: Hashable {
 #Preview("SystemMedium", as: .systemMedium) {
   HarubeeWidget()
 } timeline: {
-  HarubeeWidgetEntry(date: .now, salaryBudget: SalaryBudget.default)
+  HarubeeWidgetEntry(
+    date: .now,
+    salaryBudget: SalaryBudget.default
+  )
 }

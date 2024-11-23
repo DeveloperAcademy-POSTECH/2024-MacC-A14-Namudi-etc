@@ -14,7 +14,14 @@ struct TodayHarubeeTextView: View {
     case first
     case second
     
-    var font: Font {
+    var titleFont: Font {
+      switch self {
+      case .first: .pretendardMedium_14
+      case .second: .pretendardMedium_12
+      }
+    }
+    
+    var harubeeFont: Font {
       switch self {
       case .first: .pretendardSemibold_20
       case .second: .pretendardSemibold_18
@@ -29,21 +36,32 @@ struct TodayHarubeeTextView: View {
     }
   }
   
-  let text: String
+  let title: String
+  let harubee: Int
   let contentSize: ContentSize
   
   var body: some View {
-    HStack {
-      Image(.harubeeMain)
-        .resizable()
-        .frame(
-          width: contentSize.imageSize,
-          height: contentSize.imageSize
-        )
+    VStack(alignment: .leading, spacing: 2) {
+      Text("오늘의 하루비")
+        .font(contentSize.titleFont)
+        .foregroundStyle(.textBright)
       
-      Text(text)
-        .font(contentSize.font)
+      HStack(spacing: 5) {
+        Image(.harubeeMain)
+          .resizable()
+          .frame(
+            width: contentSize.imageSize,
+            height: contentSize.imageSize
+          )
+        
+        ViewThatFits {
+          Text(harubee.decimalWithWon)
+          Text(harubee.formattedAsTenThousandWon)
+        }
+        .lineLimit(1)
+        .font(contentSize.harubeeFont)
         .foregroundStyle(.main)
+      }
     }
   }
 }
