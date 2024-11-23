@@ -84,12 +84,12 @@ struct SettingView: View {
       .background(.textBlack5)
       .onChange(of: harubeeNotificationStatus) { _, newValue in
         settingViewModel.send(
-          .toggleNotificationStatus(.harubee, newValue)
+          .toggleNotificationStatus(type: .harubee, newValue)
         )
       }
       .onChange(of: expenseNotificationStatus) { _, newValue in
         settingViewModel.send(
-          .toggleNotificationStatus(.expense, newValue)
+          .toggleNotificationStatus(type: .expense, newValue)
         )
       }
       .onChange(of: showHarubeeTimePicker) { _, newValue in
@@ -97,7 +97,7 @@ struct SettingView: View {
            settingViewModel.state.harubeeNotificationTime
             != harubeeSelectedTime {
           settingViewModel.send(
-            .updateNotificationTime(.harubee, harubeeSelectedTime)
+            .updateNotificationTime(type: .harubee, harubeeSelectedTime)
           )
         }
       }
@@ -106,7 +106,7 @@ struct SettingView: View {
            settingViewModel.state.expenseNotificationTime
             != expenseSelectedTime {
           settingViewModel.send(
-            .updateNotificationTime(.expense, expenseSelectedTime)
+            .updateNotificationTime(type: .expense, expenseSelectedTime)
           )
         }
       }
@@ -194,7 +194,7 @@ private struct NavigationHeaderView: View {
         
         settingViewModel.send(
           .updateNotificationTime(
-            showHarubeeTimePicker ? .harubee : .expense,
+            type: showHarubeeTimePicker ? .harubee : .expense,
             showHarubeeTimePicker ? harubeeSelectedTime : expenseSelectedTime)
         )
         

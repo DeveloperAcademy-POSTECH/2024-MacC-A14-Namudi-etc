@@ -39,7 +39,10 @@ final class NotifiactionManager {
   }
   
   // MARK: - 푸시 알림 등록
-  func scheduleNotification(hour: Int, minute: Int) -> Void {
+  func scheduleNotification(
+    time: Date,
+    notificationType: NotificationType
+  ) -> Void {
     
     UNUserNotificationCenter.current().getNotificationSettings { settings in
       switch settings.authorizationStatus {
@@ -50,9 +53,10 @@ final class NotifiactionManager {
         content.sound = .default
         content.badge = 1
         
-        var dateComponents = DateComponents()
-        dateComponents.hour = hour
-        dateComponents.minute = minute
+        let calendar = Calendar.current
+        let dateComponents = calendar.dateComponents(
+          [.hour, .minute], from: time
+        )
         
         let trigger = UNCalendarNotificationTrigger(
           dateMatching: dateComponents, repeats: true
