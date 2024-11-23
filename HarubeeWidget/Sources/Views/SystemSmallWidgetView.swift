@@ -18,26 +18,13 @@ struct SystemSmallWidgetView: View {
   
   var body: some View {
     VStack(alignment: .leading, spacing: 0) {
-      Text("오늘의 하루비")
-        .font(.pretendardMedium_14)
-        .foregroundStyle(.textBright)
-        .padding(.horizontal, 19)
       
-      ViewThatFits {
-        TodayHarubeeTextView(
-          text: todayHarubee.decimalWithWon,
-          contentSize: .first
-        )
-        
-        TodayHarubeeTextView(
-          text: todayHarubee.decimalWithWon,
-          contentSize: .second
-        )
-      }
-      .padding(.top, 2)
+      TodayHarubeeTextView(
+        title: "오늘의 하루비",
+        harubee: 99999,
+        contentSize: .first
+      )
       .padding(.horizontal, 19)
-      .lineLimit(1)
-      
       
       Spacer()
       
@@ -48,6 +35,7 @@ struct SystemSmallWidgetView: View {
     }
     .padding(.top, 24)
     .padding(.bottom, 16)
+    .background(.whiteDefault)
   }
   
   private func getTodayHarubee() -> Int {
@@ -68,5 +56,8 @@ struct SystemSmallWidgetView: View {
 #Preview("SystemSmall", as: .systemSmall) {
   HarubeeWidget()
 } timeline: {
-  HarubeeWidgetEntry(date: .now, salaryBudget: SalaryBudget.default)
+  HarubeeWidgetEntry(
+    date: .now,
+    salaryBudget: SalaryBudget.default
+  )
 }
