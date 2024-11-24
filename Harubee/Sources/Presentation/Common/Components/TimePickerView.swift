@@ -75,7 +75,7 @@ private struct PickerButton: View {
         showPicker.toggle()
       }
     } label: {
-      Text(selectedTime.formattedToTimeString)
+      Text(selectedTime.formattedDateToString(.time_kr))
         .font(.pretendardMedium_16)
         .foregroundStyle(
           isToggleOn ? (showPicker ? Color.main : Color.textBlack)

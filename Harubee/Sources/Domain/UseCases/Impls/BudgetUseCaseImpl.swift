@@ -587,8 +587,8 @@ final class BudgetUseCaseImpl: BudgetUseCase {
   func getTodayHarubeeNotificationStatus() throws -> Bool? {
     guard let status = userDefaultsRepository.readTodayHarubeeNotificationStatus()
     else {
-      try? userDefaultsRepository.saveTodayHarubeeNotificationStatus(true)
-      return true
+      try? userDefaultsRepository.saveTodayHarubeeNotificationStatus(false)
+      return false
     }
     return status
   }
@@ -600,8 +600,8 @@ final class BudgetUseCaseImpl: BudgetUseCase {
   func getExpenseNotificationStatus() throws -> Bool? {
     guard let status = userDefaultsRepository.readExpenseNotificationStatus()
     else {
-      try? userDefaultsRepository.saveTodayHarubeeNotificationStatus(true)
-      return true
+      try? userDefaultsRepository.saveTodayHarubeeNotificationStatus(false)
+      return false
     }
     return status
   }
