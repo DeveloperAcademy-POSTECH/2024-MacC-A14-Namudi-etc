@@ -57,15 +57,15 @@ final class NotificationManager {
           switch notificationType {
           case .harubee:
             let content = UNMutableNotificationContent()
-            content.title = "오늘의 하루비 알림입니다."
-            content.body = "알림 바디입니다."
+            content.title = "오늘의 하루비를 확인해주세요!"
+            content.body = "하루비와 함께 하루를 시작해볼까요?"
             content.sound = .default
             return content
             
           case .expense:
             let content = UNMutableNotificationContent()
-            content.title = "실제 지출 입력 알림입니다."
-            content.body = "알림 바디입니다."
+            content.title = "오늘의 실제 지출을 입력하셨나요?"
+            content.body = "정확한 하루비를 계산해드릴게요."
             content.sound = .default
             return content
           }
@@ -109,14 +109,14 @@ final class NotificationManager {
   
   func deleteNotification(notificationType: NotificationType) {
     
-    let identifier: String = {
-        switch notificationType {
-        case .harubee:
-            return identifiers.harubeeNotification
-        case .expense:
-            return identifiers.expenseNotification
-        }
-    }()
+    var identifier: String {
+      switch notificationType {
+      case .harubee:
+        return identifiers.harubeeNotification
+      case .expense:
+        return identifiers.expenseNotification
+      }
+    }
     
     UNUserNotificationCenter.current().removeDeliveredNotifications(
       withIdentifiers: [identifier]
