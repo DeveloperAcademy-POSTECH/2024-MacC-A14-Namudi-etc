@@ -45,8 +45,15 @@ struct SalaryBudget: Identifiable {
       fixedIncome: 0,
       fixedExpenses: [],
       balance: 0,
-      defaultHarubee: 99999,
-      dailyBudgets: []
+      defaultHarubee: 999999,
+      dailyBudgets: [
+        .init(date: .now, memo: []),
+        .init(date: .now.addingTimeInterval(TimeInterval(86400 * 1)), memo: []),
+        .init(date: .now.addingTimeInterval(TimeInterval(86400 * 2)), memo: []),
+        .init(date: .now.addingTimeInterval(TimeInterval(86400 * 3)), memo: []),
+        .init(date: .now.addingTimeInterval(TimeInterval(86400 * 4)), memo: []),
+        .init(date: .now.addingTimeInterval(TimeInterval(86400 * 5)), memo: []),
+      ]
     )
   }
 }

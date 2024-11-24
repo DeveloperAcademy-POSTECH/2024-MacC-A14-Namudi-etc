@@ -21,24 +21,35 @@ struct WidgetManager {
   private let salaryBudgetRepository: SalaryBudgetRepository
   
   func fetchCurrentSalaryBudget() -> SalaryBudget? {
-    let salaryBudget = try? salaryBudgetRepository.readByTargetDateContaining(.now)
-    return salaryBudget
+    do {
+      let salaryBudgets = try salaryBudgetRepository.readAll()
+      
+      let now = Date().formattedDate
+      let currentSalaryBudget = salaryBudgets.first(where: {
+        $0.startDate <= now && $0.endDate >= now
+      }) ?? salaryBudgets.last
+      
+      return currentSalaryBudget
+    } catch {
+      return nil
+    }
   }
   
-  func getDailyStreak(_ salaryBudget: SalaryBudget?) -> [DailyStreak?] {
-    var dailyStreak: [DailyStreak?] = []
+  func getDailyStreak(_ salaryBudget: SalaryBudget?) -> [DailyStreak] {
+    var dailyStreak: [DailyStreak] = []
     
+    // SalaryBudget이 없거나, 
     guard let salaryBudget = salaryBudget,
           let index = salaryBudget.dailyBudgets.firstIndex(where: {
             $0.date == .now.formattedDate
           }) else {
-      return Array(repeating: nil, count: 6)
+      return []
     }
     
     for i in 0..<6 {
     
       if index > salaryBudget.dailyBudgets.count - 1 {
-        dailyStreak.append(nil)
+//        dailyStreak.append(nil)
         continue
       }
       

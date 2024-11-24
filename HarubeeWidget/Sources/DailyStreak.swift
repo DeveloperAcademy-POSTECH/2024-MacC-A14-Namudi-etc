@@ -40,7 +40,7 @@ struct DailyStreak: Hashable {
     self.expenseType = expenseType
   }
   
-  static let mock: [Self?] = [
+  static let mock: [Self] = [
     .init(
       date: .now,
       time: .today,
@@ -63,7 +63,15 @@ struct DailyStreak: Hashable {
       time: .future,
       harubee: 100000
     ),
-    nil,
-    nil
+    .init(
+      date: .now.addingTimeInterval(86400 * 4),
+      time: .future,
+      harubee: 100000
+    ),
+    .init(
+      date: .now.addingTimeInterval(86400 * 5),
+      time: .future,
+      harubee: 100000
+    )
   ]
 }

@@ -34,6 +34,13 @@ extension Int {
      return String(format: "%d만", amountInTenThousands)
    }
   
+  var amountFormat: String {
+    if self >= 100000 {
+      return String(format: "%d만", self / 10000)
+    } else {
+      return self.decimal
+    }
+  }
   
   func convertDateBetweenStartAndEnd(start: Date, end: Date) -> Date {
     let calendar = Calendar.current
