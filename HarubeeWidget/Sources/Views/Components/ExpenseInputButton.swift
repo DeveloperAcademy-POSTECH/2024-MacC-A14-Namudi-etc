@@ -13,13 +13,29 @@ struct ExpenseInputButton: View {
   
   var body: some View {
     Link(destination: WidgetURL.transactionInput.url) {
-      Text(title)
-        .font(.pretendardSemibold_12)
-        .foregroundStyle(.whiteDefault)
-        .frame(maxWidth: .infinity)
-        .padding(.vertical, 13)
-        .background(.main)
-        .clipShape(RoundedRectangle(cornerRadius: 25))
+      ViewThatFits {
+        Text(title)
+          .padding(.horizontal, 18)
+          
+        Text(title)
+          .padding(.horizontal, 13)
+      }
     }
+    .font(.pretendardSemibold_12)
+    .foregroundStyle(.whiteDefault)
+    .padding(.vertical, 13)
+    .background(.main)
+    .clipShape(RoundedRectangle(cornerRadius: 25))
   }
+}
+
+// MARK: - Preview
+import WidgetKit
+#Preview("SystemMedium", as: .systemMedium) {
+  HarubeeWidget()
+} timeline: {
+  HarubeeWidgetEntry(
+    date: .now,
+    salaryBudget: SalaryBudget.default
+  )
 }
