@@ -13,26 +13,42 @@ struct SystemMediumWidgetView: View {
   let entry: Provider.Entry
   
   var body: some View {
+    VStack {
+      if let salaryBudget = entry.salaryBudget {
+        SystemMediumContentView(salaryBudget: salaryBudget)
+      } else {
+        WidgetAnnounceView()
+      }
+    }
+    .frame(maxWidth: .infinity, maxHeight: .infinity)
+    .background(.whiteDefault)
+  }
+}
+
+// MARK: - SystemMediumContentView
+private struct SystemMediumContentView: View {
+  let salaryBudget: SalaryBudget
+  
+  var body: some View {
     VStack(spacing: 0) {
-      BodyView(salaryBudget: entry.salaryBudget)
+      BodyView(salaryBudget: salaryBudget)
       
       Spacer()
       
-      FooterView(salaryBudget: entry.salaryBudget)
+      FooterView(salaryBudget: salaryBudget)
     }
-    .frame(maxWidth: .infinity)
     .padding(16)
-    .background(.whiteDefault)
   }
 }
 
 
 // MARK: - BodyView
 private struct BodyView: View {
-  let salaryBudget: SalaryBudget?
+  let salaryBudget: SalaryBudget
   
-  private var dailyStreak: [DailyStreak?] {
-    WidgetManager.shared.getDailyStreak(salaryBudget)
+  private var dailyStreak: [DailyStreak] {
+//    WidgetManager.shared.getDailyStreak(salaryBudget)
+    DailyStreak.mock
   }
   
   var body: some View {
@@ -61,14 +77,14 @@ private struct BodyView: View {
 
 // MARK: - DailyView
 private struct DailyView: View {
-  let daily: DailyStreak?
+  let daily: DailyStreak
   
   var body: some View {
     VStack(spacing: 0) {
-      switch daily?.time {
+      switch daily.time {
       case .today:
         todayContent
-      case .future, .none:
+      case .future:
         futureContent
       }
     }
@@ -84,7 +100,7 @@ private struct DailyView: View {
       
       Spacer()
       
-      switch daily?.expenseType {
+      switch daily.expenseType {
       case .empty:
         Image(.hexagonNone)
           .resizable()
@@ -97,10 +113,6 @@ private struct DailyView: View {
         Image(.hexagonBad)
           .resizable()
           .frame(width: 20, height: 20)
-      case .none:
-        Image(.hexagonNone)
-          .resizable()
-          .frame(width: 20, height: 20)
       }
       
       Spacer()
@@ -110,17 +122,17 @@ private struct DailyView: View {
   private var futureContent: some View {
     VStack(spacing: 0) {
       Text(
-        daily?.date.formattedDateToString(.dayWeekday) ?? ""
+        daily.date.formattedDateToString(.dayWeekday)
       )
         .font(.pretendardSemibold_12)
         .foregroundStyle(.textBright)
       
       Spacer()
       
-      AmountText(amount: daily?.harubee ?? 0)
+      Text(daily.harubee.amountFormat)
         .font(.pretendardMedium_12)
         .foregroundStyle(
-          daily?.isAdjustedHarubee == true
+          daily.isAdjustedHarubee == true
           ? .main
           : .textBlack
         )
@@ -134,7 +146,7 @@ private struct DailyView: View {
 
 // MARK: - FooterView
 private struct FooterView: View {
-  let salaryBudget: SalaryBudget?
+  let salaryBudget: SalaryBudget
   
   private var title: String {
     self.getTitle()
@@ -160,7 +172,7 @@ private struct FooterView: View {
   }
   
   private func getTitle() -> String {
-    let dailyBudget = salaryBudget?.dailyBudgets.first(where: {
+    let dailyBudget = salaryBudget.dailyBudgets.first(where: {
       $0.date == Date().formattedDate
     })
     
@@ -170,11 +182,11 @@ private struct FooterView: View {
   }
   
   private func getTodayHarubee() -> Int {
-    let dailyBudget = salaryBudget?.dailyBudgets.first(where: {
+    let dailyBudget = salaryBudget.dailyBudgets.first(where: {
       $0.date == Date().formattedDate
     })
     
-    let harubee = dailyBudget?.harubee ?? (Int(salaryBudget?.defaultHarubee ?? 0))
+    let harubee = dailyBudget?.harubee ?? (Int(salaryBudget.defaultHarubee))
     
     let expenseSum = dailyBudget?.expense ?? 0
     

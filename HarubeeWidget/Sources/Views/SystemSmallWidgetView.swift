@@ -12,6 +12,23 @@ import WidgetKit
 struct SystemSmallWidgetView: View {
   let entry: Provider.Entry
   
+  var body: some View {
+    VStack {
+      if let salaryBudget = entry.salaryBudget {
+        SystemSmallContentView(salaryBudget: salaryBudget)
+      } else {
+        WidgetAnnounceView()
+      }
+    }
+    .frame(maxWidth: .infinity, maxHeight: .infinity)
+    .background(.whiteDefault)
+  }
+}
+
+private struct SystemSmallContentView: View {
+  
+  let salaryBudget: SalaryBudget
+  
   private var title: String {
     self.getTitle()
   }
@@ -42,8 +59,8 @@ struct SystemSmallWidgetView: View {
   }
   
   private func getTitle() -> String {
-    let salaryBudget = entry.salaryBudget
-    let dailyBudget = salaryBudget?.dailyBudgets.first(where: {
+    let salaryBudget = salaryBudget
+    let dailyBudget = salaryBudget.dailyBudgets.first(where: {
       $0.date == Date().formattedDate
     })
     
@@ -53,12 +70,12 @@ struct SystemSmallWidgetView: View {
   }
   
   private func getTodayHarubee() -> Int {
-    let salaryBudget = entry.salaryBudget
-    let dailyBudget = salaryBudget?.dailyBudgets.first(where: {
+    let salaryBudget = salaryBudget
+    let dailyBudget = salaryBudget.dailyBudgets.first(where: {
       $0.date == Date().formattedDate
     })
     
-    let harubee = dailyBudget?.harubee ?? (Int(salaryBudget?.defaultHarubee ?? 0))
+    let harubee = dailyBudget?.harubee ?? (Int(salaryBudget.defaultHarubee))
     
     let expenseSum = dailyBudget?.expense ?? 0
     
@@ -72,6 +89,6 @@ struct SystemSmallWidgetView: View {
 } timeline: {
   HarubeeWidgetEntry(
     date: .now,
-    salaryBudget: SalaryBudget.default
+    salaryBudget: nil
   )
 }
