@@ -17,41 +17,8 @@ final class OnboardingViewModel {
     var fixedExpenses: [TransactionItem] = [] // 고정 지출 내역
     var averageHarubee: Int = 0 // 평균 하루비
     
-    var incomeStartDate: Date {
-      let calendar = Calendar.current
-      let now = Date()
-      
-      var components = calendar.dateComponents([.year, .month, .day], from: now)
-      
-      if components.day! < incomeDay {
-        components.month! -= 1
-      }
-      components.day! = incomeDay
-      
-      let startDate = calendar.date(from: components)!
-      return startDate
-    }
-    
-    var incomeEndDate: Date {
-      let calendar = Calendar.current
-      
-      // startDate가 한 달의 시작 날짜가 됩니다.
-      let startDate = incomeStartDate
-      
-      // startDate의 일자(day)를 기준으로 한 달 후의 날짜를 구함
-      var components = calendar.dateComponents([.year, .month, .day], from: startDate)
-      components.month! += 1 // 한 달 뒤로 설정
-      
-      // 다음 달에 동일한 일자가 있는지 확인하여 날짜를 생성
-      if let calculatedEndDate = calendar.date(from: components) {
-        return calculatedEndDate.addingTimeInterval(-86400)
-      } else {
-        // 동일 일자가 없는 경우(예: 30일이나 31일이 없는 달) 해당 월의 마지막 날로 조정
-        var fallbackComponents = components
-        fallbackComponents.day = calendar.range(of: .day, in: .month, for: calendar.date(from: components)!)?.last
-        return calendar.date(from: fallbackComponents)!
-      }
-    }
+    var incomeStartDate: Date = .now
+    var incomeEndDate: Date = .now
   }
   
   enum Action {
@@ -74,6 +41,10 @@ final class OnboardingViewModel {
     switch action {
     case let .updateFixedIncomeDay(day):
       self.state.incomeDay = day
+      
+      let (start, end) = Date.calculateStartAndEndDate(from: day)
+      self.state.incomeStartDate = start
+      self.state.incomeEndDate = end
       
     case let .updateFixedIncomeAmount(amount):
       self.state.incomeAmount = amount

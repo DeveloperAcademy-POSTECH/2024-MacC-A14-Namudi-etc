@@ -60,15 +60,6 @@ extension Date {
     return configuredCalendar.component(.day, from: self)
   }
   
-  /// DateFormat을 변환합니다
-  /// - Parameter format: Date에 사용할 DateComponent 타입들
-  /// - Returns: Date
-  func formattedDate(_ format: Set<Calendar.Component>) -> Self {
-    let calendar = configuredCalendar
-    let dateComponent = calendar.dateComponents(format, from: self)
-    return calendar.date(from: dateComponent)!
-  }
-  
   /// Date를 String Format으로 변환합니다
   /// - Parameter dateFormatType: 변환하고 싶은 dateFormat 타입
   /// - Returns: 변환된 String 값
@@ -77,6 +68,46 @@ extension Date {
     formatter.dateFormat = dateFormatType.rawValue
     formatter.locale = Locale(identifier: "ko_KR")
     return formatter.string(from: self)
+  }
+  
+  static func calculateStartAndEndDate(from incomeDay: Int) -> (Date, Date) {
+    var incomeStartDate: Date {
+      let calendar = Calendar.current
+      let now = Date()
+      
+      var components = calendar.dateComponents([.year, .month, .day], from: now)
+      
+      if components.day! < incomeDay {
+        components.month! -= 1
+      }
+      components.day! = incomeDay
+      
+      let startDate = calendar.date(from: components)!
+      return startDate
+    }
+    
+    var incomeEndDate: Date {
+      let calendar = Calendar.current
+      
+      // startDate가 한 달의 시작 날짜가 됩니다.
+      let startDate = incomeStartDate
+      
+      // startDate의 일자(day)를 기준으로 한 달 후의 날짜를 구함
+      var components = calendar.dateComponents([.year, .month, .day], from: startDate)
+      components.month! += 1 // 한 달 뒤로 설정
+      
+      // 다음 달에 동일한 일자가 있는지 확인하여 날짜를 생성
+      if let calculatedEndDate = calendar.date(from: components) {
+        return calculatedEndDate.addingTimeInterval(-86400)
+      } else {
+        // 동일 일자가 없는 경우(예: 30일이나 31일이 없는 달) 해당 월의 마지막 날로 조정
+        var fallbackComponents = components
+        fallbackComponents.day = calendar.range(of: .day, in: .month, for: calendar.date(from: components)!)?.last
+        return calendar.date(from: fallbackComponents)!
+      }
+    }
+    
+    return (incomeStartDate, incomeEndDate)
   }
 }
 
