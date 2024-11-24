@@ -29,9 +29,9 @@ extension Int {
   }
   
   /// 정수를 "만원" 단위로 변환해줍니다 - [Ex. 1.2만원]
-   var formattedAsTenThousand: String {
-     let amountInTenThousands = Double(self) / 10000
-     return String(format: "%.1f만", amountInTenThousands)
+   var formattedAsTenThousandWon: String {
+     let amountInTenThousands = self / 10000
+     return String(format: "%d만", amountInTenThousands)
    }
   
   

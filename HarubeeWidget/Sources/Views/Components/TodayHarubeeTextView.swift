@@ -46,7 +46,7 @@ struct TodayHarubeeTextView: View {
         .font(contentSize.titleFont)
         .foregroundStyle(.textBright)
       
-      HStack(spacing: 5) {
+      HStack(spacing: 0) {
         Image(.harubeeMain)
           .resizable()
           .frame(
@@ -54,11 +54,12 @@ struct TodayHarubeeTextView: View {
             height: contentSize.imageSize
           )
         
-        ViewThatFits {
-          Text(harubee.decimalWithWon)
-          Text(harubee.formattedAsTenThousandWon)
+        Group {
+          AmountText(amount: harubee)
+            .padding(.leading, 5)
+          
+          Text("원")
         }
-        .lineLimit(1)
         .font(contentSize.harubeeFont)
         .foregroundStyle(.main)
       }
