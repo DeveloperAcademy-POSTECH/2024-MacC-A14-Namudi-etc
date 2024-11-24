@@ -466,6 +466,9 @@ private struct TodayFooterView: View {
       )
       .presentationDetents([.height(623)])
     }
+    .onOpenURL { url in
+      self.isPresented = url == WidgetURL.transactionInput.url
+    }
   }
 }
 
