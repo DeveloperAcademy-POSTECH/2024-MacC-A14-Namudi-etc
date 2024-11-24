@@ -32,7 +32,7 @@ private struct BodyView: View {
   let salaryBudget: SalaryBudget?
   
   private var dailyStreak: [DailyStreak?] {
-    self.getDailyStreak()
+    WidgetManager.shared.getDailyStreak(salaryBudget)
   }
   
   var body: some View {
@@ -55,50 +55,6 @@ private struct BodyView: View {
           .fill(.whiteDeep50)
       )
     }
-  }
-  
-  private func getDailyStreak() -> [DailyStreak?] {
-    var dailyStreak: [DailyStreak?] = []
-    
-    guard let salaryBudget = salaryBudget,
-          let index = salaryBudget.dailyBudgets.firstIndex(where: {
-            $0.date == .now.formattedDate
-          }) else {
-      return Array(repeating: nil, count: 6)
-    }
-    
-    for i in 0..<6 {
-    
-      if index > salaryBudget.dailyBudgets.count - 1 {
-        dailyStreak.append(nil)
-        continue
-      }
-      
-      let dailyBudget = salaryBudget.dailyBudgets[index + i]
-      
-      let date = dailyBudget.date
-      let time: DailyStreak.Time = date == .now.formattedDate
-      ? .today : .future
-      let harubee = dailyBudget.harubee ?? Int(salaryBudget.defaultHarubee)
-      let isAdjustedHarubee = dailyBudget.harubee != nil ? true : false
-      let expenseType: DailyStreak.ExpenseType = {
-        guard let expense = dailyBudget.expense,
-              let income = dailyBudget.income else { return .empty }
-        
-        let result = harubee - expense + income
-        return result >= 0 ? .good : .bad
-      }()
-      
-      dailyStreak.append(DailyStreak(
-        date: date,
-        time: time,
-        harubee: harubee,
-        isAdjustedHarubee: isAdjustedHarubee,
-        expenseType: expenseType
-      ))
-    }
-    
-    return dailyStreak
   }
 }
 
@@ -224,68 +180,6 @@ private struct FooterView: View {
     
     return harubee - expenseSum
   }
-}
-
-
-// MARK: - DailyStreak
-private struct DailyStreak: Hashable {
-  enum Time {
-    case today
-    case future
-  }
-  
-  enum ExpenseType {
-    case empty
-    case good
-    case bad
-  }
-  
-  let date: Date
-  let time: Time
-  let harubee: Int
-  let isAdjustedHarubee: Bool
-  let expenseType: ExpenseType
-  
-  init(
-    date: Date,
-    time: Time,
-    harubee: Int,
-    isAdjustedHarubee: Bool = false,
-    expenseType: ExpenseType = .empty
-  ) {
-    self.date = date
-    self.time = time
-    self.harubee = harubee
-    self.isAdjustedHarubee = isAdjustedHarubee
-    self.expenseType = expenseType
-  }
-  
-  static let mock: [Self?] = [
-    .init(
-      date: .now,
-      time: .today,
-      harubee: 130000,
-      expenseType: .empty
-    ),
-    .init(
-      date: .now.addingTimeInterval(86400 * 1),
-      time: .future,
-      harubee: 99999,
-      isAdjustedHarubee: true
-    ),
-    .init(
-      date: .now.addingTimeInterval(86400 * 2),
-      time: .future,
-      harubee: 999999
-    ),
-    .init(
-      date: .now.addingTimeInterval(86400 * 3),
-      time: .future,
-      harubee: 100000
-    ),
-    nil,
-    nil
-  ]
 }
 
 
