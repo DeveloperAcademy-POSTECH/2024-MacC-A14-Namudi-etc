@@ -141,7 +141,7 @@ private struct Honeycomb: View {
   
   var body: some View {
     
-    let hexgonSize = (screenHeight - 100)/3
+    let hexgonSize = (screenHeight - 120)/3
     let honeycombSpace = -10.0
     
     VStack(spacing: honeycombSpace - (hexgonSize/(4 * sqrt(3)))) {
@@ -250,14 +250,23 @@ private struct HarubeeHexagon: View {
           )
             .font(.pretendardMedium_12)
             .foregroundStyle(.whiteDeep50)
+            .infoBubble(isVisible: $isInfoBubbleVisible) {
+              infoBubbleText
+            }
         }
         
-        hexagonLabel
-          .padding(.top, isTodayHarubee ? 0 : 3)
-          .infoBubble(isVisible: $isInfoBubbleVisible) {
-            infoBubbleText
-          }
-          .animation(.easeInOut(duration: 1.5), value: animatedFillPercentage)
+        if isTodayHarubee {
+          hexagonLabel
+            .padding(.top, isTodayHarubee ? 0 : 3)
+            .animation(.easeInOut(duration: 1.5), value: animatedFillPercentage)
+            .infoBubble(isVisible: $isInfoBubbleVisible) {
+              infoBubbleText
+            }
+        } else {
+          hexagonLabel
+            .padding(.top, isTodayHarubee ? 0 : 3)
+            .animation(.easeInOut(duration: 1.5), value: animatedFillPercentage)
+        }
         
         if isTodayHarubee {
           harubeeNumberContainer
