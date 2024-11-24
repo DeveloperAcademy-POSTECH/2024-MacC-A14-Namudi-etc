@@ -161,19 +161,14 @@ private struct DailyView: View {
       
       Spacer()
       
-      ViewThatFits {
-        Text(daily?.harubee.decimal ?? "")
-          .font(.pretendardMedium_12)
-        
-        Text(daily?.harubee.formattedAsTenThousandWon ?? "")
-          .font(.pretendardMedium_12)
-      }
-      .foregroundStyle(
-        daily?.isAdjustedHarubee == true
-        ? .main
-        : .textBlack
-      )
-      .lineLimit(1)
+      AmountText(amount: daily?.harubee ?? 0)
+        .font(.pretendardMedium_12)
+        .foregroundStyle(
+          daily?.isAdjustedHarubee == true
+          ? .main
+          : .textBlack
+        )
+        .lineLimit(1)
       
       Spacer()
     }

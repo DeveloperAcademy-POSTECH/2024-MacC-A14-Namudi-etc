@@ -45,7 +45,7 @@ struct SalaryBudget: Identifiable {
       fixedIncome: 0,
       fixedExpenses: [],
       balance: 0,
-      defaultHarubee: 100000,
+      defaultHarubee: 99999,
       dailyBudgets: []
     )
   }
