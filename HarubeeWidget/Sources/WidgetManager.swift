@@ -20,7 +20,7 @@ struct WidgetManager {
   
   private let salaryBudgetRepository: SalaryBudgetRepository
   
-  func fetchSalaryBudget() -> SalaryBudget? {
+  func fetchCurrentSalaryBudget() -> SalaryBudget? {
     let salaryBudget = try? salaryBudgetRepository.readByTargetDateContaining(.now)
     return salaryBudget
   }

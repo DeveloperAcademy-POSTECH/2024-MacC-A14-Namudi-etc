@@ -33,29 +33,29 @@ struct Provider: TimelineProvider {
     in context: Context,
     completion: @escaping (Timeline<HarubeeWidgetEntry>) -> Void
   ) {
-    
-    // TODO: 수정 필요
+    // 1. 오늘 날짜
     let currentDate = Date()
     
-    let salaryBudget = WidgetManager.shared.fetchSalaryBudget()
+    // 2. 현재 기간에 해당하는 SalaryBudget 가져오기
+    let salaryBudget = WidgetManager.shared.fetchCurrentSalaryBudget()
     
-    var entries: [HarubeeWidgetEntry] = []
+    // 3. 엔트리 저장
+    let entry = HarubeeWidgetEntry(
+      date: currentDate,
+      salaryBudget: salaryBudget
+    )
     
-    for hourOffset in 0..<5 {
-      let entryDate = Calendar.current.date(byAdding: .hour, value: hourOffset, to: currentDate)!
-      let entry = HarubeeWidgetEntry(date: entryDate, salaryBudget: salaryBudget)
-      entries.append(entry)
-    }
-    
-    let policyDate = Calendar.current.date(
+    // 4. 업데이트 날짜
+    let afterDate = Calendar.current.date(
       byAdding: .day,
       value: 1,
       to: currentDate.formattedDate
     )!
     
+    // 5. 타임라인 엔트리 등록
     completion(Timeline(
-      entries: entries,
-      policy: .atEnd
+      entries: [entry],
+      policy: .after(afterDate)
     ))
   }
 }
@@ -73,7 +73,7 @@ struct HarubeeWidget: Widget {
         .containerBackground(.fill.tertiary, for: .widget)
     }
     .configurationDisplayName("하루비")
-    .description("하루비 위젯입니다")
+    .description("하루비를 확인하고 실제 지출 입력에 빠르게 접근합니다.")
     .supportedFamilies([.systemSmall, .systemMedium])
     .contentMarginsDisabled()
   }
