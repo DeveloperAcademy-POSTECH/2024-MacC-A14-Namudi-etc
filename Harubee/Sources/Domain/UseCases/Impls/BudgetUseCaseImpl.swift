@@ -495,7 +495,6 @@ final class BudgetUseCaseImpl: BudgetUseCase {
     day: Int,
     salaryBudget: SalaryBudget
   ) throws -> SalaryBudget {
-    let today = Date().formattedDate
     
     // 1. 월급일이 1일부터 31일 사이에 속하는지 확인하기
     guard (1...31).contains(day) else {
@@ -505,60 +504,15 @@ final class BudgetUseCaseImpl: BudgetUseCase {
     // 2. UserDefaults에 설정하기
     try userDefaultsRepository.saveIncomeDay(day)
     
-    // 3. 새로운 SalaryBudget을 위한 데이트 계산하기
-    var incomeStartDate: Date {
-      var components = calendar.dateComponents(
-        [.year, .month, .day],
-        from: today
-      )
-      
-      if components.day! < day {
-        components.month! -= 1
-      }
-      
-      components.day! = day
-      
-      let startDate = calendar.date(from: components)!
-      
-      return startDate
-    }
-    
-    var incomeEndDate: Date {
-      // startDate가 한 달의 시작 날짜가 됩니다.
-      let startDate = incomeStartDate
-      
-      // startDate의 일자(day)를 기준으로 한 달 후의 날짜를 구함
-      var components = calendar.dateComponents(
-        [.year, .month, .day],
-        from: startDate
-      )
-      
-      components.month! += 1 // 한 달 뒤로 설정
-      
-      // 다음 달에 동일한 일자가 있는지 확인하여 날짜를 생성
-      if let calculatedEndDate = calendar.date(from: components) {
-        return calculatedEndDate.addingTimeInterval(-86400)
-      } else {
-        // 동일 일자가 없는 경우(예: 30일이나 31일이 없는 달) 해당 월의 마지막 날로 조정
-        var fallbackComponents = components
-        
-        fallbackComponents.day = calendar.range(
-          of: .day,
-          in: .month,
-          for: calendar.date(from: components)!
-        )?.last
-        
-        return calendar.date(from: fallbackComponents)!
-      }
-    }
+    let (startDate, endDate) = Date.calculateStartAndEndDate(from: day)
     
     // 4.  기존 salaryBudget 삭제하기
     try salaryBudgetRepository.deleteById(salaryBudget.id)
     
     // 5. 새로운 SalaryBudget 생성
     return try self.createSalaryBudget(
-      startDate: incomeStartDate,
-      endDate: incomeEndDate,
+      startDate: startDate,
+      endDate: endDate,
       fixedIncome: salaryBudget.fixedIncome,
       fixedExpenses: salaryBudget.fixedExpenses
     )
