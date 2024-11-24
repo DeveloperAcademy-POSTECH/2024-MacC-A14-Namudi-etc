@@ -12,9 +12,7 @@ struct ExpenseInputButton: View {
   let title: String
   
   var body: some View {
-    Button {
-      
-    } label: {
+    Link(destination: WidgetURL.transactionInput.url) {
       Text(title)
         .font(.pretendardSemibold_12)
         .foregroundStyle(.whiteDefault)
@@ -23,6 +21,5 @@ struct ExpenseInputButton: View {
         .background(.main)
         .clipShape(RoundedRectangle(cornerRadius: 25))
     }
-    .buttonStyle(.plain)
   }
 }

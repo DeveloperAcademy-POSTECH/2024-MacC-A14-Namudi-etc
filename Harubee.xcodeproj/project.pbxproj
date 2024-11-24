@@ -77,6 +77,7 @@
 				Sources/Domain/Models/TransactionItem.swift,
 				Sources/Domain/Repositories/SalaryBudgetRepository.swift,
 				Sources/Domain/Repositories/UpdateValue.swift,
+				Sources/Helper/Constants/WidgetURL.swift,
 				"Sources/Helper/DesignSystem/Color+.swift",
 				"Sources/Helper/DesignSystem/Font+.swift",
 				"Sources/Helper/Extensions/Date+.swift",

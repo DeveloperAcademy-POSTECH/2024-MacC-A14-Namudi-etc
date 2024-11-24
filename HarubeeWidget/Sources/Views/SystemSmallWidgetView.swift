@@ -32,7 +32,6 @@ struct SystemSmallWidgetView: View {
       
       Spacer()
       
-      // TODO: AppIntent로 수정 필요
       ExpenseInputButton(title: "실제 지출 입력하기")
         .padding(.horizontal, 16)
       
