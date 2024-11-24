@@ -144,8 +144,7 @@ private struct WeekDayCell: View {
       .frame(width: circleSize, height: circleSize)
       .animation(.spring(duration: 0.2), value: isSelected)
     }
-    .frame(width: width)
-    .frame(height: 64)
+    .frame(width: width, height: 64)
     .onTapGesture {
       onSelect(date)
     }

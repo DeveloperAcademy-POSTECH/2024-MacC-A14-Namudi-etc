@@ -160,10 +160,12 @@ private struct HarubeeSection: View {
         )
         .frame(height: 53)
       
-      HStack {
+      HStack(spacing: 0) {
         Text(budget.date.isToday ? "오늘의 하루비" : "이 날의 하루비")
           .font(.pretendardSemibold_16)
           .foregroundStyle(Color.textBlack)
+        
+        Spacer()
         
         Text("\(budget.harubee ?? defaultHarubee)원")
           .font(.pretendardSemibold_18)
@@ -173,6 +175,7 @@ private struct HarubeeSection: View {
             : Color.textBlack
           )
           .frame(maxWidth: .infinity, alignment: .trailing)
+          .padding(.trailing, 3)
         
         if budget.date >= Date().formattedDate {
           Image(systemName: "pencil")
