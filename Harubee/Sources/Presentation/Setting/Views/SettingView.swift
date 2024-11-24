@@ -269,10 +269,10 @@ private struct NavigationHeaderView: View {
     } message: {
       if showHarubeeTimePicker {
         Text(
-          "오늘의 하루비 알림이\n'매일 \(harubeeSelectedTime.formattedToTimeString)'로 변경돼요."
+          "오늘의 하루비 알림이\n'매일 \(harubeeSelectedTime.formattedDateToString(.time_kr))'로 변경돼요."
         )
       } else {
-        Text("실제 지출 입력 알림이\n'매일 \(expenseSelectedTime.formattedToTimeString)'로 변경돼요.")
+        Text("실제 지출 입력 알림이\n'매일 \(expenseSelectedTime.formattedDateToString(.time_kr))'로 변경돼요.")
       }
     }
   }
