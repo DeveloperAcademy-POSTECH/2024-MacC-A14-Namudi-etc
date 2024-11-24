@@ -14,12 +14,13 @@ final class NotificationManager {
   
   private init() {}
   
+  // MARK: 알림 별 identifiers
   private enum identifiers {
     static let harubeeNotification = "harubeeNotification"
     static let expenseNotification = "expenseNotification"
   }
   
-  //MARK: 유저 알림 권한 요청
+  // MARK: 유저 알림 권한 요청
   func reqNotificationPermission() {
     let center = UNUserNotificationCenter.current()
     
@@ -35,7 +36,7 @@ final class NotificationManager {
               options: [.alert, .badge, .sound]
             )
           } catch {
-            print("Failed to enroll Aniyah with error: \(error)")
+            print("Failed to enroll with error: \(error)")
           }
           
         }
@@ -48,19 +49,17 @@ final class NotificationManager {
     time: Date,
     notificationType: NotificationType
   ) {
-    
     UNUserNotificationCenter.current().getNotificationSettings { settings in
       switch settings.authorizationStatus {
       case .authorized, .provisional:
         
-        let content: UNMutableNotificationContent = {
+        var content: UNMutableNotificationContent {
           switch notificationType {
           case .harubee:
             let content = UNMutableNotificationContent()
             content.title = "오늘의 하루비 알림입니다."
             content.body = "알림 바디입니다."
             content.sound = .default
-            content.badge = 1
             return content
             
           case .expense:
@@ -68,10 +67,9 @@ final class NotificationManager {
             content.title = "실제 지출 입력 알림입니다."
             content.body = "알림 바디입니다."
             content.sound = .default
-            content.badge = 1
             return content
           }
-        }()
+        }
         
         
         let calendar = Calendar.current
@@ -83,14 +81,14 @@ final class NotificationManager {
           dateMatching: dateComponents, repeats: true
         )
         
-        let identifier: String = {
-            switch notificationType {
-            case .harubee:
-                return identifiers.harubeeNotification
-            case .expense:
-                return identifiers.expenseNotification
-            }
-        }()
+        var identifier: String {
+          switch notificationType {
+          case .harubee:
+            return identifiers.harubeeNotification
+          case .expense:
+            return identifiers.expenseNotification
+          }
+        }
         
         let request = UNNotificationRequest(
           identifier: identifier,
