@@ -25,8 +25,6 @@ struct HarubeeWidgetEntryView : View {
 }
 
 
-
-
 // MARK: - Preview
 
 #Preview("SystemMedium", as: .systemMedium) {

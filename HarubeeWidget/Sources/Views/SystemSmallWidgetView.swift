@@ -34,8 +34,8 @@ struct SystemSmallWidgetView: View {
       
       ExpenseInputButton(title: "실제 지출 입력하기")
         .padding(.horizontal, 16)
-      
     }
+    .frame(maxWidth: .infinity)
     .padding(.top, 24)
     .padding(.bottom, 16)
     .background(.whiteDefault)

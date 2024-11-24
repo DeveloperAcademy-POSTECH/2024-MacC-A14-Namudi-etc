@@ -46,6 +46,8 @@ struct HarubeeWidgetBundle: WidgetBundle {
       - SalaryBudgetRepository
       - UpdateValue
   > Helper
+    > Constants
+      - WidgetURL
     > DesignSystem
       - Color+
       - Font+

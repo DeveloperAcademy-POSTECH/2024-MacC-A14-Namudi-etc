@@ -194,12 +194,14 @@ private struct FooterView: View {
   }
   
   var body: some View {
-    HStack(spacing: 37) {
+    HStack {
       TodayHarubeeTextView(
         title: title,
         harubee: harubee,
         contentSize: .second
       )
+      
+      Spacer()
       
       ExpenseInputButton(title: "실제 지출 및 수입 입력하기")
     }
