@@ -118,7 +118,7 @@ final class NotificationManager {
       }
     }
     
-    UNUserNotificationCenter.current().removeDeliveredNotifications(
+    UNUserNotificationCenter.current().removePendingNotificationRequests(
       withIdentifiers: [identifier]
     )
   }
