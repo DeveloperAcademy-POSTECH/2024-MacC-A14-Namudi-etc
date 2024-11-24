@@ -57,6 +57,7 @@ struct TodayView: View {
     }
     .onAppear {
       todayViewModel.send(.viewDidLoad)
+      NotificationManager.shared.reqNotificationPermission()
     }
     .toolbar {
       ToolbarItem(placement: .topBarTrailing) {
