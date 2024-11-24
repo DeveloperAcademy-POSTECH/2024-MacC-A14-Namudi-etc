@@ -53,9 +53,6 @@ struct FixedIncomeView: View {
           title: "저장하기",
           isEnabled: $isUpdated
         ) {
-          // 수입일이 변경되면, alert가 뜨고, 거기서 확인을 눌렀을 때 분기처리
-          // 수입일이 변경 안되면, alert 안뜨고 그냥 저장
-          
           if selectedDay != beforeSelectedDay {
             isAlertPresented = true
           } else {
