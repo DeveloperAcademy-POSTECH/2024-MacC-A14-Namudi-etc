@@ -10,7 +10,6 @@ import Foundation
 
 struct CalculatorLogic {
   
-  private let expressionMaxLength = 15
   private let maxNumber = 99_999_999
   
   // MARK: - func processKeypad
@@ -48,11 +47,6 @@ struct CalculatorLogic {
     _ keypadType: KeypadButtonType,
     expression: String
   ) -> String {
-    
-    // 기존 연산식의 길이가 최대치에 달했을 경우
-    if expression.count + keypadType.title.count >= expressionMaxLength {
-      return expression
-    }
     
     let operators = KeypadButtonType.operators.map { $0.title }
     let zeros = KeypadButtonType.zeros.map { $0.title }
@@ -94,11 +88,6 @@ struct CalculatorLogic {
     
     // 기존 표현식이 빈 문자열이면 리턴
     if expression.isEmpty { return "" }
-    
-    // 기존 연산식의 길이가 최대치에 달했을 경우
-    if expression.count >= expressionMaxLength {
-      return expression
-    }
     
     // 표현식의 마지막 텍스트
     let lastText = expression[expression.count - 1]
