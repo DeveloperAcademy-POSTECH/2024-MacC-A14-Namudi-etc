@@ -342,9 +342,17 @@ private struct HarubeeHexagon: View {
   }
   
   private var infoBubbleText: Text {
-    Text(isTodayHarubee
-         ? "오늘의 하루비를\n바로 조정할 수 있어요"
-         : "쓸 수 있는 돈은 현재 잔액에서\n고정지출과 실제 지출을 뺀 금액이에요\n\n현재 잔액을 확인하고, 실제 잔액과 다르다면\n조정하여 더 정확한 하루비를 계산할 수 있어요")
+    Text(
+      isTodayHarubee
+      ? "오늘의 하루비를\n바로 조정할 수 있어요"
+      : """
+        쓸 수 있는 돈은 현재 잔액에서
+        예정된 고정지출과 실제 지출을 뺀 금액이에요
+        
+        현재 잔액을 확인하고, 실제 잔액과 다르다면
+        조정하여 더 정확한 하루비를 계산할 수 있어요
+        """
+    )
     .font(.pretendardSemibold_12)
     .foregroundStyle(Color.textBlack)
   }
@@ -635,7 +643,7 @@ private struct StreakCell: View {
                                             : .pretendardMedium_11
             )
           
-          Text(dailyStreak.harubee.formattedAsTenThousand)
+          Text(dailyStreak.harubee.amountFormat)
             .font(
               dailyStreak.isHarubeeAdjusted ? .pretendardSemibold_11
                                             : .pretendardMedium_11

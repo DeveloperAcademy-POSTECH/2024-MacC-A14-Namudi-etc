@@ -9,6 +9,8 @@ import Foundation
 
 // MARK: - DailyStreak
 struct DailyStreak: Hashable {
+  static let count = 6
+  
   enum Time {
     case today
     case future
@@ -20,16 +22,16 @@ struct DailyStreak: Hashable {
     case bad
   }
   
-  let date: Date
+  let date: Date?
   let time: Time
-  let harubee: Int
+  let harubee: Int?
   let isAdjustedHarubee: Bool
   let expenseType: ExpenseType
   
   init(
-    date: Date,
+    date: Date?,
     time: Time,
-    harubee: Int,
+    harubee: Int?,
     isAdjustedHarubee: Bool = false,
     expenseType: ExpenseType = .empty
   ) {
@@ -64,14 +66,14 @@ struct DailyStreak: Hashable {
       harubee: 100000
     ),
     .init(
-      date: .now.addingTimeInterval(86400 * 4),
+      date: nil,
       time: .future,
-      harubee: 100000
+      harubee: nil
     ),
     .init(
-      date: .now.addingTimeInterval(86400 * 5),
+      date: nil,
       time: .future,
-      harubee: 100000
-    )
+      harubee: nil
+    ),
   ]
 }
