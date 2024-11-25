@@ -62,7 +62,7 @@ final class CalendarViewModel {
   
   var isCurrentPeriodContainsToday: Bool {
     guard let budget = state.currentBudget else { return false }
-    return budget.contains(date: Date())
+    return budget.contains(date: Date().formattedDate)
   }
   
   var periodTitle: String {
