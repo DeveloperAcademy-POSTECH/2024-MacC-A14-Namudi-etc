@@ -141,7 +141,7 @@ private struct Honeycomb: View {
   
   var body: some View {
     
-    let hexgonSize = (screenHeight - 120)/3
+    let hexgonSize = (screenHeight - 114)/3
     let honeycombSpace = -10.0
     
     VStack(spacing: honeycombSpace - (hexgonSize/(4 * sqrt(3)))) {
@@ -164,7 +164,10 @@ private struct Honeycomb: View {
               )
             } else {
               RoundedHexagon()
-                .stroke(hexGrid[row][col] ? Color.whiteDefault : .clear, lineWidth: 1.5)
+                .stroke(
+                  hexGrid[row][col] ? Color.whiteDefault : .clear,
+                  lineWidth: 1.5
+                )
                 .frame(width: hexgonSize, height: hexgonSize)
             }
           }
@@ -283,8 +286,9 @@ private struct HarubeeHexagon: View {
       self.isPresented = true
     }
     .onReceive(waveTimer) { _ in
-      firstWaveOffset += 1
-      if firstWaveOffset > hexgonSize {
+
+      firstWaveOffset -= 1
+      if firstWaveOffset < -hexgonSize {
         firstWaveOffset = 0
       }
       
@@ -340,7 +344,7 @@ private struct HarubeeHexagon: View {
   private var infoBubbleText: Text {
     Text(isTodayHarubee
          ? "오늘의 하루비를\n바로 조정할 수 있어요"
-         : "쓸 수 있는 돈은 현재 잔액에서 고정지출과\n실제 지출을 뺀 금액이에요\n\n현재 잔액을 확인하고, 실제 잔액과 다르다면\n조정하여 더 정확한 하루비를 계산할 수 있어요")
+         : "쓸 수 있는 돈은 현재 잔액에서\n고정지출과 실제 지출을 뺀 금액이에요\n\n현재 잔액을 확인하고, 실제 잔액과 다르다면\n조정하여 더 정확한 하루비를 계산할 수 있어요")
     .font(.pretendardSemibold_12)
     .foregroundStyle(Color.textBlack)
   }
@@ -623,7 +627,7 @@ private struct StreakCell: View {
           Text(dailyStreak.harubee.formattedAsTenThousandWon)
             .font(.pretendardMedium_11)
         }.padding(.vertical, 5)
-          .foregroundStyle(Color.main)
+          .foregroundStyle(.textBlack)
       } else {
         hexagonImage
           .resizable()
