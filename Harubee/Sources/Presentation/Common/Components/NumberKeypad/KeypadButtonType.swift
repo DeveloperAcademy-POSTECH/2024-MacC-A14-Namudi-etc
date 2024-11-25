@@ -23,7 +23,7 @@ enum KeypadButtonType: Int {
   enum Symbol: String {
     case doubleZero = "00"
     case tripleZero = "000"
-    case clear = "C"
+    case clear = "AC"
     case plus = "+"
     case minus = "-"
     case delete = "삭제"
