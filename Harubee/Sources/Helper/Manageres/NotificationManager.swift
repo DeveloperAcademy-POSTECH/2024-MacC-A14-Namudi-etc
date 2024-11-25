@@ -121,5 +121,6 @@ final class NotificationManager {
     UNUserNotificationCenter.current().removePendingNotificationRequests(
       withIdentifiers: [identifier]
     )
+    print("removed notification with id:\(identifier)")
   }
 }
