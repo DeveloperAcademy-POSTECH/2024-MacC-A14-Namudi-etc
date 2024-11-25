@@ -58,7 +58,9 @@ struct TimePickerView: View {
     }
     .onChange(of: isToggleOn) {
       if !isToggleOn && showPicker {
-        showPicker = false
+        withAnimation {
+          showPicker = false
+        }
       }
     }
   }

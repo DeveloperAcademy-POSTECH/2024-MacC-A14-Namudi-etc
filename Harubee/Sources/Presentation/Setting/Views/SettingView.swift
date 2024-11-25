@@ -9,14 +9,8 @@
 import SwiftUI
 
 struct SettingView: View {
-  @State var settingViewModel: SettingViewModel
+  let settingViewModel: SettingViewModel
   
-  @State private var harubeeSelectedTime: Date
-  @State private var expenseSelectedTime: Date
-  @State private var harubeeNotificationStatus: Bool
-  @State private var expenseNotificationStatus: Bool
-  @State private var showHarubeeTimePicker: Bool = false
-  @State private var showExpenseTimePicker: Bool = false
   @State private var navigateFixedExpense: Bool = false
   @State private var navigateFixedIncome: Bool = false
   
@@ -26,35 +20,14 @@ struct SettingView: View {
   
   init(settingViewModel: SettingViewModel) {
     self.settingViewModel = settingViewModel
-    harubeeSelectedTime = settingViewModel.state.harubeeNotificationTime!
-    expenseSelectedTime = settingViewModel.state.expenseNotificationTime!
-    harubeeNotificationStatus = settingViewModel.state.harubeeNotificationStatus!
-    expenseNotificationStatus = settingViewModel.state.expenseNotificationStatus!
   }
   
   var body: some View {
-    
-    NavigationHeaderView(
-      harubeeSelectedTime: $harubeeSelectedTime,
-      expenseSelectedTime: $expenseSelectedTime,
-      harubeeNotificationStatus: $harubeeNotificationStatus,
-      expenseNotificationStatus: $expenseNotificationStatus,
-      showHarubeeTimePicker: $showHarubeeTimePicker,
-      showExpenseTimePicker: $showExpenseTimePicker,
-      settingViewModel: settingViewModel
-    )
-    
-    ScrollView {
+    ZStack(alignment: .top) {
+      Color.textBlack5.edgesIgnoringSafeArea(.bottom)
       VStack(spacing: 6) {
         
-        SettingNotificationView(
-          harubeeSelectedTime: $harubeeSelectedTime,
-          expenseSelectedTime: $expenseSelectedTime,
-          harubeeNotificationStatus: $harubeeNotificationStatus,
-          expenseNotificationStatus: $expenseNotificationStatus,
-          showHarubeeTimePicker: $showHarubeeTimePicker,
-          showExpenseTimePicker: $showExpenseTimePicker
-        )
+        SettingHeaderView()
         
         SectionContainer {
           SettingItem(
@@ -82,59 +55,8 @@ struct SettingView: View {
         
         settingFooterView
       }
-      .background(.textBlack5)
-      .onChange(of: harubeeNotificationStatus) { _, status in
-        settingViewModel.send(
-          .toggleNotificationStatus(type: .harubee, status)
-        )
-        if status {
-          settingViewModel
-            .send(
-              .registerNotification(type: .harubee, time: harubeeSelectedTime)
-            )
-        } else {
-          settingViewModel
-            .send(.deleteNotification(type: .harubee))
-        }
-      }
-      .onChange(of: expenseNotificationStatus) { _, status in
-        settingViewModel.send(
-          .toggleNotificationStatus(type: .expense, status)
-        )
-        if status {
-          settingViewModel
-            .send(
-              .registerNotification(type: .expense, time: expenseSelectedTime)
-            )
-        } else {
-          settingViewModel
-            .send(.deleteNotification(type: .expense))
-        }
-      }
-      .onChange(of: showHarubeeTimePicker) {
-        handleTimePickerChange(
-          pickerToShow: $showHarubeeTimePicker,
-          otherPickerToShow: $showExpenseTimePicker,
-          selectedTime: harubeeSelectedTime,
-          initialTime: settingViewModel.state.harubeeNotificationTime!,
-          notificationStatus: harubeeNotificationStatus,
-          type: .harubee
-        )
-      }
-      .onChange(of: showExpenseTimePicker) {
-        handleTimePickerChange(
-          pickerToShow: $showExpenseTimePicker,
-          otherPickerToShow: $showHarubeeTimePicker,
-          selectedTime: expenseSelectedTime,
-          initialTime: settingViewModel.state.expenseNotificationTime!,
-          notificationStatus: expenseNotificationStatus,
-          type: .expense
-        )
-      }
     }
-    .ignoresSafeArea()
-    .toolbar(.hidden)
-    .scrollIndicators(.hidden)
+    .navigationBarStyle(.white(title: "설정", backTitle: "뒤로"))
     .font(.pretendardMedium_18)
     .foregroundStyle(Color.textBlack)
   }
@@ -187,160 +109,45 @@ struct SettingView: View {
   }
 }
 
-// MARK: - NavigationHeaderView
-private struct NavigationHeaderView: View {
-  @Environment(\.dismiss) private var dismiss
-  @State private var isShowAlert: Bool = false
-  
-  @Binding var harubeeSelectedTime: Date
-  @Binding var expenseSelectedTime: Date
-  @Binding var harubeeNotificationStatus: Bool
-  @Binding var expenseNotificationStatus: Bool
-  @Binding var showHarubeeTimePicker: Bool
-  @Binding var showExpenseTimePicker: Bool
-  let settingViewModel: SettingViewModel
-  
-  var body: some View {
-    HStack {
-      backButton
-        .tapFeedback(haptic: .none) {
-          // 하나라도 Picker가 열려있으면
-          if showHarubeeTimePicker || showExpenseTimePicker {
-            isShowAlert = true
-          } else {
-            dismiss()
-          }
-        }
-      
-      Spacer()
-      
-      Text("설정")
-        .foregroundStyle(.textBlack)
-        .font(.pretendardSemibold_18)
-      
-      Spacer()
-      
-      backButton.hidden()
-    }
-    .tint(.main)
-    .padding(EdgeInsets(
-      top: 5, leading: 16, bottom: 11, trailing: 16)
-    )
-    .alert(
-      "알림 설정을 마무리할까요?",
-      isPresented: $isShowAlert
-    ) {
-      Button(role: .cancel) {
-        dismiss()
-      } label: {
-        Text("취소")
-      }
+// MARK: - SettingHeaderView
+private struct SettingHeaderView: View {
+  @State private var harubeeNotificationSelectedTime: Date = .now
+  @State private var expanseNotificationSelectedTime: Date = .now
+  @State private var isHarubeeNotification: Bool = false
+  @State private var isExpanseNotification: Bool = false
+  @State private var showHarubeePicker: Bool = false
+  @State private var showExpensePicker: Bool = false
 
-      Button {
-        
-        settingViewModel.send(
-          .updateNotificationTime(
-            type: showHarubeeTimePicker ? .harubee : .expense,
-            showHarubeeTimePicker ? harubeeSelectedTime : expenseSelectedTime)
-        )
-        
-        if showHarubeeTimePicker {
-          handleNotification(
-            type: .harubee,
-            currentStatus: harubeeNotificationStatus,
-            initialStatus: settingViewModel.state.harubeeNotificationStatus!,
-            currentTime: harubeeSelectedTime,
-            initialTime: settingViewModel.state.harubeeNotificationTime!
-          )
-        } else {
-          handleNotification(
-            type: .expense,
-            currentStatus: expenseNotificationStatus,
-            initialStatus: settingViewModel.state.expenseNotificationStatus!,
-            currentTime: expenseSelectedTime,
-            initialTime: settingViewModel.state.expenseNotificationTime!
-          )
-        }
-        
-        dismiss()
-      } label: {
-        Text("확인")
-      }
-    } message: {
-      if showHarubeeTimePicker {
-        Text(
-          "오늘의 하루비 알림이\n'매일 \(harubeeSelectedTime.formattedDateToString(.time_kr))'로 변경돼요."
-        )
-      } else {
-        Text("실제 지출 입력 알림이\n'매일 \(expenseSelectedTime.formattedDateToString(.time_kr))'로 변경돼요.")
-      }
-    }
-  }
-  
-  private var backButton: some View {
-    HStack(alignment: .center, spacing: 0) {
-      Image(systemName: "chevron.left")
-        .resizable()
-        .frame(width: 10, height: 18)
-        
-      Text("뒤로")
-        .padding(.leading, 6)
-        .font(.pretendardMedium_18)
-    }
-    .foregroundStyle(.main)
-  }
-  
-  private func handleNotification(
-    type: NotificationType,
-    currentStatus: Bool,
-    initialStatus: Bool,
-    currentTime: Date,
-    initialTime: Date
-  ) {
-    if currentStatus {
-      if !initialStatus || currentTime != initialTime {
-        settingViewModel.send(
-          .registerNotification(type: type, time: currentTime)
-        )
-      }
-    } else if initialStatus {
-      settingViewModel.send(
-        .deleteNotification(type: type)
-      )
-    }
-  }
-}
-
-// MARK: - SettingNotificationView
-private struct SettingNotificationView: View {
-  
-  @Binding var harubeeSelectedTime: Date
-  @Binding var expenseSelectedTime: Date
-  @Binding var harubeeNotificationStatus: Bool
-  @Binding var expenseNotificationStatus: Bool
-  @Binding var showHarubeeTimePicker: Bool
-  @Binding var showExpenseTimePicker: Bool
-  
   var body: some View {
     VStack(spacing: 24) {
       TimePickerView(
         title: "오늘의 하루비 알림",
-        isToggleOn: $harubeeNotificationStatus,
-        selectedTime: $harubeeSelectedTime,
-        showPicker: $showHarubeeTimePicker
+        isToggleOn: $isHarubeeNotification,
+        selectedTime: $harubeeNotificationSelectedTime,
+        showPicker: $showHarubeePicker
       )
-      
+
       TimePickerView(
         title: "실제 지출 입력 알림",
-        isToggleOn: $expenseNotificationStatus,
-        selectedTime: $expenseSelectedTime,
-        showPicker: $showExpenseTimePicker
+        isToggleOn: $isExpanseNotification,
+        selectedTime: $expanseNotificationSelectedTime,
+        showPicker: $showExpensePicker
       )
     }
-    .padding(.top, 40)
+    .padding(.top, 44)
     .padding(.bottom, 27)
     .background(Color.whiteDefault)
     .shadow(color: Color.textBlack5, radius: 3, x: 0, y: 1)
+    .onChange(of: showHarubeePicker) {
+      if showHarubeePicker && showExpensePicker {
+        showExpensePicker = false
+      }
+    }
+    .onChange(of: showExpensePicker) {
+      if showHarubeePicker && showExpensePicker {
+        showHarubeePicker = false
+      }
+    }
   }
 }
 
