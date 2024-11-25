@@ -75,38 +75,7 @@ struct SettingView: View {
           .foregroundStyle(Color.textBlack30)
       }.frame(maxWidth: .infinity, alignment: .leading)
       
-      Text("현재 1.0.1")
-        .font(.pretendardMedium_14)
-        .foregroundStyle(Color.textBlack30)
-    }
-    .frame(maxWidth: .infinity, alignment: .leading)
-    .padding(.horizontal, 18)
-    .padding(.vertical, 32)
-    .background(Color.whiteDefault)
-  }
-  
-  private func handleTimePickerChange(
-    pickerToShow: Binding<Bool>,
-    otherPickerToShow: Binding<Bool>,
-    selectedTime: Date,
-    initialTime: Date,
-    notificationStatus: Bool,
-    type: NotificationType
-  ) {
-    // Picker가 동시에 열리지 않도록 설정
-    if pickerToShow.wrappedValue && otherPickerToShow.wrappedValue {
-      otherPickerToShow.wrappedValue = false
-    }
-    
-    // Picker가 닫힌 경우 처리
-    if !pickerToShow.wrappedValue, initialTime != selectedTime {
-      // 지정된 시간으로 업데이트
-      settingViewModel.send(.updateNotificationTime(type: type, selectedTime))
-      
-      // 알림 상태가 활성화되어 있다면 알림 등록
-      if notificationStatus {
-        settingViewModel.send(.registerNotification(type: type, time: selectedTime))
-      }
+      //      SettingItem(title: "개발자 정보", previewText: "")
     }
   }
 }
