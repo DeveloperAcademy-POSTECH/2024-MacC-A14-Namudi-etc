@@ -12,6 +12,7 @@ struct DailyStreak {
   let date: Date
   let isAfterToday: Bool
   let harubee: Int
+  let isHarubeeAdjusted: Bool
   let isOverHarubee: Bool?
 }
 
@@ -211,18 +212,18 @@ extension TodayViewModel {
       do {
         
         let dailyBudget = try budgetUseCase.getDailyBudget(date: currentDate)
-        let harubee = dailyBudget.harubee == nil
-            ? Int(salaryBudget.defaultHarubee)
-            : dailyBudget.harubee
+        
+        let harubee = dailyBudget.harubee ?? Int(salaryBudget.defaultHarubee)
         
         let isOverHarubee = dailyBudget.expense == nil
             ? nil
-            : (dailyBudget.expense! > harubee!)
+            : (dailyBudget.expense! > harubee)
         
         let newDailyStreak = DailyStreak(
           date: currentDate,
           isAfterToday: currentDate > today,
-          harubee: harubee!,
+          harubee: harubee,
+          isHarubeeAdjusted: dailyBudget.harubee != nil,
           isOverHarubee: isOverHarubee
         )
         
@@ -253,6 +254,7 @@ extension TodayViewModel {
           date: currentDate,
           isAfterToday: currentDate > today,
           harubee: harubee,
+          isHarubeeAdjusted: false,
           isOverHarubee: nil
         )
         

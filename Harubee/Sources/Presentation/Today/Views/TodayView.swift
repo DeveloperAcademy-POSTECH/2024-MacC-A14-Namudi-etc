@@ -621,14 +621,23 @@ private struct StreakCell: View {
       if dailyStreak.isAfterToday {
         ViewThatFits {
           Text(dailyStreak.harubee.decimal)
-            .font(.pretendardMedium_12)
+            .font(
+              dailyStreak.isHarubeeAdjusted ? .pretendardSemibold_12
+                                            : .pretendardMedium_12
+            )
           
           Text(dailyStreak.harubee.decimal)
-            .font(.pretendardMedium_11)
+            .font(
+              dailyStreak.isHarubeeAdjusted ? .pretendardSemibold_11
+                                            : .pretendardMedium_11
+            )
           
-          Text(dailyStreak.harubee.formattedAsTenThousandWon)
-            .font(.pretendardMedium_11)
-        }.foregroundStyle(.textBlack)
+          Text(dailyStreak.harubee.formattedAsTenThousand)
+            .font(
+              dailyStreak.isHarubeeAdjusted ? .pretendardSemibold_11
+                                            : .pretendardMedium_11
+            )
+        }.foregroundStyle(dailyStreak.isHarubeeAdjusted ? .main : .textBlack)
           .padding(.bottom, 14)
       } else {
         hexagonImage
