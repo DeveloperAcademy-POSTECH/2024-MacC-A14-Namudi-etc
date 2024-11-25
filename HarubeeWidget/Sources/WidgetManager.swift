@@ -35,46 +35,44 @@ struct WidgetManager {
     }
   }
   
-  func getDailyStreak(_ salaryBudget: SalaryBudget?) -> [DailyStreak] {
+  func getDailyStreak(_ salaryBudget: SalaryBudget) -> [DailyStreak] {
     var dailyStreak: [DailyStreak] = []
     
-    // SalaryBudget이 없거나, 
-    guard let salaryBudget = salaryBudget,
-          let index = salaryBudget.dailyBudgets.firstIndex(where: {
-            $0.date == .now.formattedDate
-          }) else {
-      return []
-    }
+    let index = salaryBudget.dailyBudgets.firstIndex { dailyBudget in
+      dailyBudget.date == .now.formattedDate
+    } ?? salaryBudget.dailyBudgets.count
     
-    for i in 0..<6 {
-    
-      if index > salaryBudget.dailyBudgets.count - 1 {
-//        dailyStreak.append(nil)
-        continue
-      }
-      
-      let dailyBudget = salaryBudget.dailyBudgets[index + i]
-      
-      let date = dailyBudget.date
-      let time: DailyStreak.Time = date == .now.formattedDate
-      ? .today : .future
-      let harubee = dailyBudget.harubee ?? Int(salaryBudget.defaultHarubee)
-      let isAdjustedHarubee = dailyBudget.harubee != nil ? true : false
-      let expenseType: DailyStreak.ExpenseType = {
-        guard let expense = dailyBudget.expense,
-              let income = dailyBudget.income else { return .empty }
+    for i in 0..<DailyStreak.count {
+      if index + i > salaryBudget.dailyBudgets.count - 1 {
+        dailyStreak.append(.init(
+          date: nil,
+          time: .future,
+          harubee: nil
+        ))
+      } else {
+        let dailyBudget = salaryBudget.dailyBudgets[index + i]
         
-        let result = harubee - expense + income
-        return result >= 0 ? .good : .bad
-      }()
-      
-      dailyStreak.append(DailyStreak(
-        date: date,
-        time: time,
-        harubee: harubee,
-        isAdjustedHarubee: isAdjustedHarubee,
-        expenseType: expenseType
-      ))
+        let date = dailyBudget.date
+        let time: DailyStreak.Time = date == .now.formattedDate
+        ? .today : .future
+        let harubee = dailyBudget.harubee ?? Int(salaryBudget.defaultHarubee)
+        let isAdjustedHarubee = dailyBudget.harubee != nil ? true : false
+        let expenseType: DailyStreak.ExpenseType = {
+          guard let expense = dailyBudget.expense,
+                let income = dailyBudget.income else { return .empty }
+          
+          let result = harubee - expense + income
+          return result >= 0 ? .good : .bad
+        }()
+        
+        dailyStreak.append(DailyStreak(
+          date: date,
+          time: time,
+          harubee: harubee,
+          isAdjustedHarubee: isAdjustedHarubee,
+          expenseType: expenseType
+        ))
+      }
     }
     
     return dailyStreak

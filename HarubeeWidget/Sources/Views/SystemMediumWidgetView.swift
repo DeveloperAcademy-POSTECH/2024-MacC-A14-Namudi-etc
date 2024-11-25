@@ -47,8 +47,7 @@ private struct BodyView: View {
   let salaryBudget: SalaryBudget
   
   private var dailyStreak: [DailyStreak] {
-//    WidgetManager.shared.getDailyStreak(salaryBudget)
-    DailyStreak.mock
+    WidgetManager.shared.getDailyStreak(salaryBudget)
   }
   
   var body: some View {
@@ -122,15 +121,19 @@ private struct DailyView: View {
   private var futureContent: some View {
     VStack(spacing: 0) {
       Text(
-        daily.date.formattedDateToString(.dayWeekday)
+        daily.date?.formattedDateToString(.dayWeekday) ?? ""
       )
-        .font(.pretendardSemibold_12)
-        .foregroundStyle(.textBright)
+      .font(.pretendardSemibold_12)
+      .foregroundStyle(.textBright)
       
       Spacer()
       
-      Text(daily.harubee.amountFormat)
-        .font(.pretendardMedium_12)
+      Text(daily.harubee?.amountFormat ?? "")
+        .font(
+          daily.isAdjustedHarubee == true
+          ? .pretendardSemibold_12
+          : .pretendardMedium_12
+        )
         .foregroundStyle(
           daily.isAdjustedHarubee == true
           ? .main
