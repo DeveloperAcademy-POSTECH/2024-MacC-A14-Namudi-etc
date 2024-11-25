@@ -30,8 +30,10 @@ struct NumberKeypadView: View {
   
   var body: some View {
     VStack(spacing: 0) {
-      
-      expressionView
+      ExpressionView(
+        expression: $expression,
+        doneAction: doneAction
+      )
       
       NumberKeypadButton(
         expression: $expression,
@@ -41,11 +43,25 @@ struct NumberKeypadView: View {
     .frame(maxWidth: .infinity)
     .background(.whiteDefault)
   }
+}
+
+// MARK: - ExpressionView
+private struct ExpressionView: View {
+  @Binding var expression: String
   
-  private var expressionView: some View {
+  let doneAction: () -> Void
+  
+  private let scrollPositionID = "target"
+  
+  var body: some View {
     HStack(spacing: 20) {
-      Text(expression)
-      
+      ViewThatFits {
+        Text(expression)
+          .lineLimit(1)
+        
+        scrollText
+      }
+
       Spacer()
       
       Text("완료")
@@ -53,12 +69,32 @@ struct NumberKeypadView: View {
           self.doneAction()
         }
     }
-    .frame(maxWidth: .infinity)
+    .frame(maxWidth: .infinity, maxHeight: 50)
     .padding(.horizontal, 22)
-    .padding(.vertical, 16)
     .background(.whiteDeep)
     .font(.pretendardMedium_16)
     .foregroundStyle(.textBlack)
+  }
+  
+  private var scrollText: some View {
+    ScrollViewReader { proxy in
+      ScrollView(.horizontal) {
+        HStack(spacing: 0) {
+          Text(expression)
+            .lineLimit(1)
+            
+          Image(systemName: "poweron")
+            .resizable()
+            .frame(maxWidth: 2, maxHeight: 20)
+            .foregroundStyle(.main)
+            .id(scrollPositionID)
+        }
+      }
+      .scrollIndicators(.never)
+      .onChange(of: expression, initial: true) { _, _ in
+        proxy.scrollTo(scrollPositionID, anchor: .trailing)
+      }
+    }
   }
 }
 
@@ -93,7 +129,7 @@ private struct NumberKeypadButton: View {
     }
     .padding(.top, 26)
     .padding(.horizontal, 16)
-    .padding(.bottom, 31)
+//    .padding(.bottom, 31)
   }
   
   @ViewBuilder
@@ -110,7 +146,7 @@ private struct NumberKeypadButton: View {
     .font(keypad.font)
     .clipShape(RoundedRectangle(cornerRadius: 10))
     .contentShape(Rectangle())
-    .tapFeedback {
+    .tapFeedback(haptic: .soft) {
       let (newExpression, newAmount) = calculator.processKeypad(
         keypad,
         expression: expression
