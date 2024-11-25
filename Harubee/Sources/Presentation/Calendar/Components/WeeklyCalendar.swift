@@ -26,7 +26,7 @@ struct WeeklyCalendar: View {
       ScrollView(.horizontal, showsIndicators: false) {
         ScrollViewReader { scrollProxy in
           LazyHStack(spacing: 0) {
-            ForEach(weeks.indices, id: \.self) { weekIndex in
+            ForEach(weeks.indices, id: \ .self) { weekIndex in
               WeekRow(
                 dates: weeks[weekIndex],
                 selectedDate: selectedDate,
@@ -38,7 +38,6 @@ struct WeeklyCalendar: View {
               .id(weekIndex)
             }
           }
-          .scrollTargetLayout()
           .onAppear { scrollToSelectedWeek(proxy: scrollProxy) }
           .onChange(of: selectedDate) { _, _ in
             scrollToSelectedWeek(proxy: scrollProxy)
@@ -54,8 +53,8 @@ struct WeeklyCalendar: View {
     let calendar = Calendar.current
     let days = calendar.dateComponents([.day], from: budget.startDate, to: budget.endDate).day ?? 0
     
-    let allDates = (0...days).compactMap { offset in
-      calendar.date(byAdding: .day, value: offset, to: budget.startDate)
+    let allDates = (0...days).compactMap {
+      calendar.date(byAdding: .day, value: $0, to: budget.startDate)
     }
     return allDates.chunked(into: daysInWeek)
   }
@@ -80,16 +79,10 @@ private struct WeekRow: View {
   let isLastWeek: Bool
   let weekCount: Int
   
-  private let daysInWeek = 7
-  
   var body: some View {
     GeometryReader { geometry in
-      let totalCellWidth = layout.cellWidth * CGFloat(weekCount)
-      let totalSpacing = layout.cellSpacing * CGFloat(max(0, weekCount - 1))
-      let contentWidth = totalCellWidth + totalSpacing + (layout.horizontalPadding * 2)
-      
       HStack(spacing: layout.cellSpacing) {
-        ForEach(dates, id: \.timeIntervalSince1970) { date in
+        ForEach(dates, id: \ .timeIntervalSince1970) { date in
           WeekDayCell(
             date: date,
             isSelected: Calendar.current.isDate(date, equalTo: selectedDate, toGranularity: .day),
@@ -99,16 +92,15 @@ private struct WeekRow: View {
         }
       }
       .padding(.horizontal, layout.horizontalPadding)
-      .frame(width: contentWidth)
-      .frame(maxWidth: geometry.size.width, alignment: shouldAlignLeft ? .leading : .center)
-      .frame(maxHeight: .infinity)
-      .contentShape(Rectangle())
+      .padding(.bottom, 6)
+      .frame(maxWidth: geometry.size.width, alignment: alignment)
+      .frame(height: geometry.size.height, alignment: .bottom)
     }
     .frame(width: layout.containerWidth)
   }
   
-  private var shouldAlignLeft: Bool {
-    isLastWeek && weekCount < daysInWeek
+  private var alignment: Alignment {
+    isLastWeek && weekCount < 7 ? .leading : .center
   }
 }
 
@@ -120,10 +112,11 @@ private struct WeekDayCell: View {
   let onSelect: (Date) -> Void
   
   var body: some View {
-    VStack(spacing: 9) {
+    VStack(spacing: 0) {
       Text(weekday)
         .font(.pretendardMedium_14)
         .foregroundStyle(Color.whiteDefault)
+        .padding(.bottom, 9)
       
       ZStack {
         if isSelected {
@@ -144,7 +137,7 @@ private struct WeekDayCell: View {
       .frame(width: circleSize, height: circleSize)
       .animation(.spring(duration: 0.2), value: isSelected)
     }
-    .frame(width: width, height: 64)
+    .frame(width: width, height: 68)
     .onTapGesture {
       onSelect(date)
     }
@@ -161,9 +154,7 @@ private struct WeekDayCell: View {
     "\(Calendar.current.component(.day, from: date))"
   }
   
-  private var circleSize: CGFloat {
-    min(30, width * 0.7)
-  }
+  private let circleSize: CGFloat = 30
 }
 
 // MARK: - WeeklyLayout
@@ -175,8 +166,8 @@ private struct WeeklyLayout {
   
   init(availableWidth: CGFloat, daysCount: Int) {
     containerWidth = availableWidth
-    horizontalPadding = 16
-    cellSpacing = 8
+    horizontalPadding = 21
+    cellSpacing = 14
     
     let usableWidth = availableWidth - (horizontalPadding * 2)
     let totalSpacing = cellSpacing * CGFloat(daysCount - 1)
