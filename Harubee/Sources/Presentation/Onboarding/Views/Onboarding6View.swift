@@ -99,7 +99,7 @@ private struct CurrentHarubeeView: View {
       }
       .padding(.horizontal, 4)
       
-      Text("(잔액 - 미래 고정지출) ÷ 다음 주요 수입일까지 남은 일수")
+      Text("(잔액 - 예정된 고정지출) ÷ 다음 주요 수입일까지 남은 일수")
         .font(.pretendardSemibold_14)
         .foregroundStyle(Color.whiteDefault)
         .frame(maxWidth: .infinity)
@@ -140,23 +140,24 @@ private struct UserInfoView: View {
   var body: some View {
     VStack(spacing: 12) {
       UserInfoItemView(
-        title: "한 달 수입금",
-        content: incomeAmount.decimalWithWon
+        title: "수입금 중",
+        content: incomeAmount.decimalWithWon,
+        contentColor: .whiteDeep50
       )
       
       UserInfoItemView(
-        title: "수입일(\(startDate.formattedDateToString(.monthDay_kr))) 이후 지출한 금액",
+        title: "현재 잔액",
         content: "- \(previousExpense.decimalWithWon)"
       )
       
       UserInfoItemView(
-        title: "고정 지출 (총 \(fixedExpenses.count)건)",
+        title: "고정 지출 (총 \(fixedExpenses.count)건) 중",
         content: "\(fixedExpenses.reduce(0) { $0 + $1.price }.decimalWithWon)",
         contentColor: .whiteDeep50
       )
       
       UserInfoItemView(
-        title: "앞으로 나갈 고정 지출 (총 \(fixedExpenses.filter { $0.date > .now.formattedDate }.count)건)",
+        title: "예정된 고정 지출 (총 \(fixedExpenses.filter { $0.date > .now.formattedDate }.count)건)",
         content: "- \(fixedExpenses.filter { $0.date > .now.formattedDate }.reduce(0) { $0 + $1.price }.decimalWithWon)"
       )
       .padding(.leading, 14)

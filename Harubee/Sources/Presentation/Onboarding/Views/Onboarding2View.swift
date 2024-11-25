@@ -125,7 +125,7 @@ private struct CalculateContentView: View {
         .padding(.leading, 4)
         .padding(.top, 22)
       
-      Text("(나의 수입 - 고정지출) ÷ 다음 주요 수입일까지 남은 일수")
+      Text("(잔액 - 예정된 고정지출) ÷ 다음 주요 수입일까지 남은 일수")
         .font(.pretendardSemibold_14)
         .foregroundStyle(.whiteDefault)
         .frame(maxWidth: .infinity)

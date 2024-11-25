@@ -22,7 +22,7 @@ struct FloatingTitleTextField: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .foregroundStyle(
           !text.isEmpty
-          ? (isTextfieldFocused ? Color.main : Color.textBright)
+          ? (isTextfieldFocused ? .main : .textBright)
           : .clear
         )
         .offset(y: !text.isEmpty ? -4 : 0)
@@ -39,8 +39,8 @@ struct FloatingTitleTextField: View {
         .frame(height: !isTextfieldFocused ? 1 : 2)
         .foregroundStyle(
           !isTextfieldFocused
-          ? Color.textBrighter
-          : Color.main
+          ? .textBrighter
+          : .mainBright
         )
         .padding(.top, !isTextfieldFocused ? 8 : 7)
     }
@@ -95,7 +95,7 @@ struct FloatingTitleNumberField: View {
       Rectangle()
         .frame(height: isFocused ? 2 : 1)
         .foregroundStyle(
-          isFocused ? .main : .textBrighter
+          isFocused ? .mainBright : .textBrighter
         )
         .padding(.top, isFocused ? 7 : 8)
     }
