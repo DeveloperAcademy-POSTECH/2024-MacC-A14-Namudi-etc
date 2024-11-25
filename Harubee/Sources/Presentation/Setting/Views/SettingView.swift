@@ -27,7 +27,7 @@ struct SettingView: View {
       Color.textBlack5.edgesIgnoringSafeArea(.bottom)
       VStack(spacing: 6) {
         
-        SettingHeaderView()
+        SettingHeaderView(settingViewModel: settingViewModel)
         
         SectionContainer {
           SettingItem(
@@ -52,13 +52,15 @@ struct SettingView: View {
             FixedIncomeView(settingViewModel: settingViewModel)
           }
         }
-        
         settingFooterView
       }
     }
     .navigationBarStyle(.white(title: "설정", backTitle: "뒤로"))
     .font(.pretendardMedium_18)
     .foregroundStyle(Color.textBlack)
+    .onAppear {
+      settingViewModel.send(.viewDidLoad)
+    }
   }
   
   private var settingFooterView: some View {
@@ -111,10 +113,8 @@ struct SettingView: View {
 
 // MARK: - SettingHeaderView
 private struct SettingHeaderView: View {
-  @State private var harubeeNotificationSelectedTime: Date = .now
-  @State private var expanseNotificationSelectedTime: Date = .now
-  @State private var isHarubeeNotification: Bool = false
-  @State private var isExpanseNotification: Bool = false
+  let settingViewModel: SettingViewModel
+  
   @State private var showHarubeePicker: Bool = false
   @State private var showExpensePicker: Bool = false
 
@@ -122,15 +122,15 @@ private struct SettingHeaderView: View {
     VStack(spacing: 24) {
       TimePickerView(
         title: "오늘의 하루비 알림",
-        isToggleOn: $isHarubeeNotification,
-        selectedTime: $harubeeNotificationSelectedTime,
+        isToggleOn: settingViewModel.binding(.harubeeNotificationStatus),
+        selectedTime: settingViewModel.binding(.harubeeNotificationTime),
         showPicker: $showHarubeePicker
       )
 
       TimePickerView(
         title: "실제 지출 입력 알림",
-        isToggleOn: $isExpanseNotification,
-        selectedTime: $expanseNotificationSelectedTime,
+        isToggleOn: settingViewModel.binding(.expenseNotificationStatus),
+        selectedTime: settingViewModel.binding(.expenseNotificationTime),
         showPicker: $showExpensePicker
       )
     }
@@ -147,6 +147,34 @@ private struct SettingHeaderView: View {
       if showHarubeePicker && showExpensePicker {
         showHarubeePicker = false
       }
+    }
+    .onChange(
+      of: settingViewModel.state.harubeeNotificationTime
+    ) { _, newValue in
+      settingViewModel.send(
+        .onChangeNotificationTime(notificationType: .harubee, newValue)
+      )
+    }
+    .onChange(
+      of: settingViewModel.state.expenseNotificationTime
+    ) { _, newValue in
+      settingViewModel.send(
+        .onChangeNotificationTime(notificationType: .expense, newValue)
+      )
+    }
+    .onChange(
+      of: settingViewModel.state.harubeeNotificationStatus
+    ) { _, newValue in
+      settingViewModel.send(
+        .onChangeNotificationStatus(notificationType: .harubee, newValue)
+      )
+    }
+    .onChange(
+      of: settingViewModel.state.expenseNotificationStatus
+    ) { _, newValue in
+      settingViewModel.send(
+        .onChangeNotificationStatus(notificationType: .expense, newValue)
+      )
     }
   }
 }
