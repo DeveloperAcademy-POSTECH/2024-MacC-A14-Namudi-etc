@@ -38,7 +38,7 @@ struct FixedExpenseView: View {
             }),
           isInfoBubbleVisible: $isInfoBubbleVisible
         )
-        .padding(.top, 33)
+        .padding(.top, 45)
       }
       .frame(maxHeight: .infinity, alignment: .top)
       
@@ -62,15 +62,10 @@ private struct FixedExpenseHeaderView: View {
         Text("총 \(fixedExpenses.count)건")
         Text("총 \(fixedExpenses.reduce(0) { $0 + $1.price }.decimalWithWon)")
       }
-      .font(.pretendardSemibold_24)
+      .font(.pretendardSemibold_22)
       .frame(maxWidth: .infinity, alignment: .leading)
       .padding(.horizontal, 26)
       .padding(.top, 44)
-      
-      Rectangle()
-        .frame(height: 1)
-        .foregroundStyle(Color.textBrighter30)
-        .padding(.horizontal, 18)
     }
   }
 }

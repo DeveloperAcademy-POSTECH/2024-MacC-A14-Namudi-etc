@@ -37,7 +37,7 @@ struct FixedIncomeView: View {
   
   var body: some View {
     ZStack {
-      VStack(spacing: 48) {
+      VStack(spacing: 44) {
         fixedIncomeHeaderView
         .zIndex(1)
         
@@ -100,23 +100,16 @@ struct FixedIncomeView: View {
   }
   
   private var fixedIncomeHeaderView: some View {
-    VStack(spacing: 4) {
-      VStack(alignment: .leading, spacing: 10) {
-        Text("고정수입 날짜를 기준으로")
-        Text("하루비를 알려드릴게요.")
-      }
-      .foregroundStyle(Color.textBlack)
-      .frame(maxWidth: .infinity, alignment: .leading)
-      .padding(.horizontal, 4)
-      .infoBubble($isInfoBubbleVisible)
-      
-      Rectangle()
-        .frame(height: 1)
-        .foregroundStyle(Color.textBrighter30)
+    VStack(alignment: .leading, spacing: 10) {
+      Text("고정수입 날짜를 기준으로")
+      Text("하루비를 알려드릴게요.")
     }
+    .foregroundStyle(Color.textBlack)
     .font(.pretendardSemibold_22)
-    .padding(.horizontal, 16)
+    .frame(maxWidth: .infinity, alignment: .leading)
+    .padding(.horizontal, 20)
     .padding(.top, 44)
+    .infoBubble($isInfoBubbleVisible)
   }
   
   private func isFixedIncomeUpdated() {
@@ -156,7 +149,7 @@ private struct FixedIncomeBodyView: View {
               .font(.pretendardMedium_20)
               .foregroundStyle(Color.textBlack)
             Image(systemName: "pencil")
-              .frame(width: 21, height: 24)
+              .font(.system(size: 20))
               .foregroundStyle(Color.textBlack30)
           }
         }
