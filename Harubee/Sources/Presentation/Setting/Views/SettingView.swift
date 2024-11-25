@@ -65,7 +65,7 @@ struct SettingView: View {
           .font(.pretendardSemibold_18)
           .foregroundStyle(Color.textBlack)
         
-        Text("현재 1.0.1")
+        Text("v\(Bundle.main.shortVersionString)")
           .font(.pretendardMedium_14)
           .foregroundStyle(Color.textBlack30)
       }.frame(maxWidth: .infinity, alignment: .leading)
