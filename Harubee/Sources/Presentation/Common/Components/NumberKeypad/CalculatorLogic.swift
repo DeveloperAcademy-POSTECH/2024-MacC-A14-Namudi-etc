@@ -177,7 +177,9 @@ struct CalculatorLogic {
       )
     }
     
-    return before < maxNumber ? before.decimalWithWon : maxNumber.decimalWithWon
+    return before < maxNumber
+    ? before.decimalWithWon
+    : maxNumber.decimalWithWon
   }
   
   // MARK: - processExpression
@@ -187,8 +189,17 @@ struct CalculatorLogic {
     op: String
   ) -> Int {
     switch op {
-    case KeypadButtonType.plus.title: return before + current
-    case KeypadButtonType.minus.title: return before - current
+      
+    case KeypadButtonType.plus.title:
+      let result = before.addingReportingOverflow(current)
+      if result.overflow { return before }
+      else { return result.partialValue }
+      
+    case KeypadButtonType.minus.title:
+      let result = before.subtractingReportingOverflow(current)
+      if result.overflow { return before }
+      else { return result.partialValue }
+      
     default: return 0
     }
   }
@@ -221,9 +232,16 @@ struct CalculatorLogic {
       currentIndex -= 1
     }
     
-    let numberString = newExpression[(currentIndex)...] // 포멧할 숫자(decimal) 문자열
-    let number = numberString.numberFormat! // 숫자(decimal) 문자열을 정수 타입으로 포멧
-    newExpression[(currentIndex)...] = number.decimal // 기존 표현식에서 마지막 숫자 문자열 부분을 교체
+    var numberString = newExpression[(currentIndex)...] // 포멧할 숫자(decimal) 문자열
+    
+    if let number = numberString.numberFormat {
+      newExpression[(currentIndex)...] = number.decimal // 기존 표현식에서 마지막 숫자 문자열 부분을 교체
+    } else {
+      let _ = numberString.popLast()
+      let number = numberString.numberFormat!
+      newExpression[(currentIndex)...] = number.decimal // 기존 표현식에서 마지막 숫자 문자열 부분을 교체
+    }
+    
     return newExpression
   }
 }
