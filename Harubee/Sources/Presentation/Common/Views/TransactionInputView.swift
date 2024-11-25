@@ -21,7 +21,7 @@ struct TransactionInputView: View {
   
   @State private var isUpdated: Bool = false
   @State private var isAlert: Bool = false
-  @State private var isFocused: Bool = false
+  @State private var isFocused: Bool = true
   @State private var alertTitle: String = ""
   
   @State private var expense: String
@@ -89,10 +89,7 @@ struct TransactionInputView: View {
       }
     }
     .id(transactionFocusType)
-    .onChange(
-      of: transactionFocusType,
-      initial: true
-    ) { _, _ in
+    .onChange(of: transactionFocusType) { _, _ in
       switch transactionFocusType {
       case .income, .expense:
         self.isFocused = true
