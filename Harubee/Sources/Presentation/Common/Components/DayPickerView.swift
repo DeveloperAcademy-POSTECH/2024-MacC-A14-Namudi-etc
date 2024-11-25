@@ -27,7 +27,7 @@ struct DayPickerView: View {
   let titleFont: TitleFont
   
   @State private var keyboardObserver = KeyboardObserverManager()
-  @State private var showDayPicker: Bool = false
+  @Binding var showDayPicker: Bool
   @Binding var selectedDay: Int
   
   var body: some View {

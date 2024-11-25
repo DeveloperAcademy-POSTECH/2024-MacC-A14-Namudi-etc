@@ -13,6 +13,8 @@ struct Onboarding3View: View {
   
   @State private var isPresented: Bool = false
   @State private var isEnabled: Bool
+  @State private var isFocused: Bool = false
+  @State private var showDayPicker: Bool = false
   @State private var incomeDay: Int
   @State private var incomeAmount: String
   
@@ -25,37 +27,49 @@ struct Onboarding3View: View {
   }
   
   var body: some View {
-    VStack(spacing: 0) {
-      OnboardingHeaderView()
-      
-      OnboardingBodyView(
-        incomeDay: $incomeDay,
-        incomeAmount: $incomeAmount
-      )
-      
-      Spacer()
-      
-      MainColorBottomButton(
-        title: "다음으로",
-        isEnabled: $isEnabled
-      ) {
-        self.isPresented = true
+    ZStack(alignment: .bottom) {
+      VStack(spacing: 0) {
+        OnboardingHeaderView()
+        
+        OnboardingBodyView(
+          incomeDay: $incomeDay,
+          incomeAmount: $incomeAmount,
+          isFocused: $isFocused,
+          showDayPicker: $showDayPicker
+        )
+        
+        Spacer()
+        
+        MainColorBottomButton(
+          title: "다음으로",
+          isEnabled: $isEnabled
+        ) {
+          self.isPresented = true
+        }
       }
-    }
-    .contentShape(Rectangle())
-    .onTapGesture {
-      UIApplication.shared.endEditing()
-    }
-    .onChange(of: incomeAmount, { _, _ in
-      viewModel.send(.updateFixedIncomeAmount(incomeAmount.numberFormat ?? 0))
-      self.isEnabled = true
-    })
-    .onChange(of: incomeDay, { _, _ in
-      viewModel.send(.updateFixedIncomeDay(incomeDay))
-    })
-    .navigationDestination(isPresented: $isPresented) {
-      Onboarding4View(viewModel: viewModel)
-        .navigationBarBackButtonHidden()
+      .contentShape(Rectangle())
+      .onTapGesture {
+        UIApplication.shared.endEditing()
+      }
+      .onChange(of: incomeDay, { _, _ in
+        viewModel.send(.updateFixedIncomeDay(incomeDay))
+      })
+      .navigationDestination(isPresented: $isPresented) {
+        Onboarding4View(viewModel: viewModel)
+          .navigationBarBackButtonHidden()
+      }
+      
+      if isFocused {
+        NumberKeypadView(amount: $incomeAmount) {
+          self.isFocused = false
+          if !incomeAmount.isEmpty {
+            viewModel.send(.updateFixedIncomeAmount(
+              incomeAmount.numberFormat ?? 0
+            ))
+            self.isEnabled = true
+          }
+        }
+      }
     }
   }
 }
@@ -82,23 +96,17 @@ private struct OnboardingHeaderView: View {
 }
 
 private struct OnboardingBodyView: View {
-  
-  @Binding private var incomeDay: Int
-  @Binding private var incomeAmount: String
-  
-  init(
-    incomeDay: Binding<Int>,
-    incomeAmount: Binding<String>
-  ) {
-    self._incomeDay = incomeDay
-    self._incomeAmount = incomeAmount
-  }
+  @Binding var incomeDay: Int
+  @Binding var incomeAmount: String
+  @Binding var isFocused: Bool
+  @Binding var showDayPicker: Bool
   
   var body: some View {
     VStack(spacing: 30) {
       DayPickerView(
         title: "주요 수입일은 언제인가요?",
         titleFont: .onboarding,
+        showDayPicker: $showDayPicker,
         selectedDay: $incomeDay
       )
       .padding(.top, 34)
@@ -113,15 +121,19 @@ private struct OnboardingBodyView: View {
           .foregroundStyle(Color.textBlack30)
           .padding(.top, 6)
         
-        FloatingTitleTextField(
+        FloatingTitleNumberField(
           title: "금액",
-          text: $incomeAmount
+          textSize: .medium,
+          text: $incomeAmount,
+          isFocused: $isFocused
         )
+        .onTapGesture {
+          isFocused = true
+          showDayPicker = false
+        }
         .padding(.top, 16)
-        .keyboardType(.numberPad)
       }
       .padding(.horizontal, 20)
-      
     }
     .onChange(of: incomeAmount) { oldValue, newValue in
       incomeAmount = (incomeAmount.numberFormat ?? 0).decimal

@@ -11,17 +11,28 @@ import SwiftUI
 struct Onboarding4View: View {
   private var viewModel: OnboardingViewModel
   
-  @State private var previousExpenseAmount: String
-  
+  @State private var currentBalanceAmount: String
   @State private var isEnabled: Bool
-  @State private var isFocused: Bool = false
+  @State private var isFocused: Bool = true
   @State private var isPresented: Bool = false
   
   init(viewModel: OnboardingViewModel) {
     self.viewModel = viewModel
-    self._previousExpenseAmount = .init(initialValue: viewModel.state.previousExpense?.decimal ?? "")
     
-    self._isEnabled = .init(initialValue: viewModel.state.previousExpense == nil ? false : true)
+    if let currentBalance = viewModel.state.currentBalance {
+      self._currentBalanceAmount = .init(
+        initialValue: currentBalance.decimalWithWon
+      )
+    } else {
+      self._currentBalanceAmount = .init(
+        initialValue: viewModel.state.incomeAmount?.decimalWithWon ?? ""
+      )
+    }
+    
+    self._isEnabled = .init(
+      initialValue: viewModel.state.currentBalance == nil
+      ? false : true
+    )
   }
   
   var body: some View {
@@ -33,7 +44,7 @@ struct Onboarding4View: View {
         
         OnboardingBodyView(
           startDate: viewModel.state.incomeStartDate,
-          expenseAmount: $previousExpenseAmount,
+          currentBalance: $currentBalanceAmount,
           isFocused: $isFocused
         )
         
@@ -46,14 +57,12 @@ struct Onboarding4View: View {
       }
       
       if isFocused {
-        NumberKeypadView(amount: $previousExpenseAmount) {
+        NumberKeypadView(amount: $currentBalanceAmount) {
           self.isFocused = false
-          if !previousExpenseAmount.isEmpty {
-            
-            viewModel.send(.updatePreviousExpense(
-              previousExpenseAmount.numberFormat ?? 0
+          if !currentBalanceAmount.isEmpty {
+            viewModel.send(.updateCurrentBalance(
+              currentBalanceAmount.numberFormat ?? 0
             ))
-            
             self.isEnabled = true
           }
         }
@@ -99,10 +108,9 @@ private struct OnboardingHeaderView: View {
 }
 
 private struct OnboardingBodyView: View {
-  
-  
   let startDate: Date
-  @Binding var expenseAmount: String
+  
+  @Binding var currentBalance: String
   @Binding var isFocused: Bool
   
   private var dateString: String {
@@ -120,7 +128,7 @@ private struct OnboardingBodyView: View {
       FloatingTitleNumberField(
         title: "금액",
         textSize: .medium,
-        text: $expenseAmount,
+        text: $currentBalance,
         isFocused: $isFocused
       )
       .onTapGesture {
@@ -128,7 +136,6 @@ private struct OnboardingBodyView: View {
       }
       .padding(.horizontal, 16)
       .padding(.top, 16)
-      
       
       VStack(alignment: .leading, spacing: 2) {
         Text("*신용카드 사용 등의 이유로 잔액 파악이 어렵다면")
@@ -139,7 +146,6 @@ private struct OnboardingBodyView: View {
       .font(.pretendardMedium_12)
       .padding(.top, 10)
       .padding(.horizontal, 20)
-      
     }
     .padding(.top, 30)
     .frame(maxHeight: .infinity, alignment: .top)

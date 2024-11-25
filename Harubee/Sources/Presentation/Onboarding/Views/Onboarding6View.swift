@@ -42,7 +42,7 @@ struct Onboarding6View: View {
           
           UserInfoView(
             incomeAmount: viewModel.state.incomeAmount ?? 0,
-            previousExpense: viewModel.state.previousExpense ?? 0,
+            currentBalance: viewModel.state.currentBalance ?? 0,
             fixedExpenses: viewModel.state.fixedExpenses,
             startDate: viewModel.state.incomeStartDate,
             endDate: viewModel.state.incomeEndDate
@@ -118,20 +118,20 @@ private struct CurrentHarubeeView: View {
 private struct UserInfoView: View {
   
   private let incomeAmount: Int
-  private let previousExpense: Int
+  private let currentBalance: Int
   private let fixedExpenses: [TransactionItem]
   private let startDate: Date
   private let endDate: Date
   
   init(
     incomeAmount: Int,
-    previousExpense: Int,
+    currentBalance: Int,
     fixedExpenses: [TransactionItem],
     startDate: Date,
     endDate: Date
   ) {
     self.incomeAmount = incomeAmount
-    self.previousExpense = previousExpense
+    self.currentBalance = currentBalance
     self.fixedExpenses = fixedExpenses
     self.startDate = startDate
     self.endDate = endDate
@@ -147,7 +147,7 @@ private struct UserInfoView: View {
       
       UserInfoItemView(
         title: "현재 잔액",
-        content: "- \(previousExpense.decimalWithWon)"
+        content: currentBalance.decimalWithWon
       )
       
       UserInfoItemView(
