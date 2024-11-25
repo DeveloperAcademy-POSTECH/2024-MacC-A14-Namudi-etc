@@ -47,7 +47,7 @@ struct CalendarCell: View {
   }
   
   private var amountLabel: some View {
-    Text(displayAmount.formatted(.number))
+    Text(displayAmount.amountFormat)
       .font(amountFont)
       .foregroundStyle(amountColor)
       .padding(.bottom, 5)
