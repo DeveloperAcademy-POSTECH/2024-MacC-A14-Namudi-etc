@@ -30,7 +30,7 @@ final class BudgetUseCaseImpl: BudgetUseCase {
   func createSalaryBudgetFromOnboarding(
     startDate: Date,
     endDate: Date,
-    previousExpense: Int?,
+    currentBalance: Int?,
     fixedIncome: Int,
     fixedExpenses: [TransactionItem]
   ) throws -> SalaryBudget {
@@ -39,16 +39,11 @@ final class BudgetUseCaseImpl: BudgetUseCase {
     let endDate = endDate.formattedDate
     let today = Date().formattedDate
     
-    // 2. 총 고정 지출 금액 계산하기
-    let totalFixedExpenses = fixedExpenses.reduce(0) { $0 + $1.price }
+    // 2. 앞으로 예정된 고정 지출 금액 계산하기
+    let totalFixedExpenses = fixedExpenses.filter { $0.date > today }.reduce(0) { $0 + $1.price }
     
-    // 3. 고정 수입에서 고정 지출을 뺀 금액 잔액으로 설정하기
-    var initialBalance = fixedIncome - totalFixedExpenses
-    
-    // 3-1. 만약 이전 지출 금액을 받은 경우 잔액 다시 계산하기
-    if let previousExpense {
-      initialBalance -= previousExpense
-    }
+    // 3. 사용자가 입력한 잔액에서 앞으로 예정된 고정 지출 금액 빼기
+    let initialBalance = currentBalance! - totalFixedExpenses
     
     // 4. 남은 기간의 일자 개수 구하기 (오늘부터 endDate까지)
     let calendar = Calendar.current

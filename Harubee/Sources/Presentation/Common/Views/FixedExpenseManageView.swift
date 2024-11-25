@@ -31,6 +31,7 @@ struct FixedExpenseManageView: View {
   @State private var fixedExpenseName: String
   @State private var fixedExpenseAmount: String
   @State private var isEnabled: Bool = false
+  @State private var showDayPicker: Bool = false
   
   private let beforeSelectedDay: Int
   
@@ -50,42 +51,45 @@ struct FixedExpenseManageView: View {
   }
   
   var body: some View {
-    VStack(spacing: 0) {
-      BottomSheetHeaderView(title: "고정지출 내역 \(mode.title)")
-      
-      BodyView(
-        fixedExpenseName: $fixedExpenseName,
-        fixedExpenseAmount: $fixedExpenseAmount,
-        selectedDay: $selectedDay
-      )
+    ZStack(alignment: .bottom) {
+      VStack(spacing: 0) {
+        BottomSheetHeaderView(title: "고정지출 내역 \(mode.title)")
+        
+        BodyView(
+          fixedExpenseName: $fixedExpenseName,
+          fixedExpenseAmount: $fixedExpenseAmount,
+          selectedDay: $selectedDay,
+          showDayPicker: $showDayPicker
+        )
         .padding(.top, 37)
-      
-      Spacer()
-      
-      MainColorBottomButton(
-        title: "저장하기",
-        isEnabled: $isEnabled
-      ) {
-        self.action(selectedDay, fixedExpenseName, fixedExpenseAmount)
-        self.dismiss()
+        
+        Spacer()
+        
+        MainColorBottomButton(
+          title: "저장하기",
+          isEnabled: $isEnabled
+        ) {
+          self.action(selectedDay, fixedExpenseName, fixedExpenseAmount)
+          self.dismiss()
+        }
       }
-    }
-    .onChange(of: selectedDay) { _, newValue in
-      if mode == .modify {
-        if beforeSelectedDay == newValue {
-          isEnabled = false
+      .onChange(of: selectedDay) { _, newValue in
+        if mode == .modify {
+          if beforeSelectedDay == newValue {
+            isEnabled = false
+          } else {
+            updateIsEnabled()
+          }
         } else {
           updateIsEnabled()
         }
-      } else {
+      }
+      .onChange(of: fixedExpenseName) { _, _ in
         updateIsEnabled()
       }
-    }
-    .onChange(of: fixedExpenseName) { _, _ in
-      updateIsEnabled()
-    }
-    .onChange(of: fixedExpenseAmount) { _, _ in
-      updateIsEnabled()
+      .onChange(of: fixedExpenseAmount) { _, _ in
+        updateIsEnabled()
+      }
     }
   }
   
@@ -104,12 +108,14 @@ private struct BodyView: View {
   @Binding var fixedExpenseName: String
   @Binding var fixedExpenseAmount: String
   @Binding var selectedDay: Int
+  @Binding var showDayPicker: Bool
   
   var body: some View {
     VStack(spacing: 0) {
       DayPickerView(
         title: "날짜",
         titleFont: .view,
+        showDayPicker: $showDayPicker,
         selectedDay: $selectedDay
       )
       
@@ -117,16 +123,16 @@ private struct BodyView: View {
         title: "이름",
         text: $fixedExpenseName
       )
-        .padding(.horizontal, 16)
-        .padding(.top, 20)
+      .padding(.horizontal, 16)
+      .padding(.top, 20)
       
       FloatingTitleTextField(
         title: "금액",
         text: $fixedExpenseAmount
       )
-        .padding(.horizontal, 16)
-        .padding(.top, 22)
-        .keyboardType(.numberPad)
+      .padding(.horizontal, 16)
+      .padding(.top, 22)
+      .keyboardType(.numberPad)
     }
     .onChange(of: fixedExpenseAmount) { _, _ in
       fixedExpenseAmount = (fixedExpenseAmount.numberFormat ?? 0).decimal

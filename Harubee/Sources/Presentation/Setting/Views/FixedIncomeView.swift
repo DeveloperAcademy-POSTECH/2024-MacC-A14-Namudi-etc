@@ -125,6 +125,7 @@ private struct FixedIncomeBodyView: View {
   let settingViewModel: SettingViewModel
   
   @State private var showingSheet: Bool = false
+  @State private var showDayPicker: Bool = false
   @Binding var selectedDay: Int
   @Binding var fixedIncomeAmount: Int
   
@@ -133,6 +134,7 @@ private struct FixedIncomeBodyView: View {
       DayPickerView(
         title: "주요 고정수입 날짜",
         titleFont: .view,
+        showDayPicker: $showDayPicker,
         selectedDay: $selectedDay
       )
       

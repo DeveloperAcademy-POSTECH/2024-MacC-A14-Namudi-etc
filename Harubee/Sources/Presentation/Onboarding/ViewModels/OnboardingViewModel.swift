@@ -13,7 +13,7 @@ final class OnboardingViewModel {
   struct State {
     var incomeDay: Int = 1 // 고정 수입일
     var incomeAmount: Int? // 한달 수입금
-    var previousExpense: Int? // 수입일 이후 지출 금액
+    var currentBalance: Int? // 현재 잔액
     var fixedExpenses: [TransactionItem] = [] // 고정 지출 내역
     var averageHarubee: Int = 0 // 평균 하루비
     
@@ -58,7 +58,7 @@ final class OnboardingViewModel {
     case updateFixedIncomeDay(Int)
     case updateFixedIncomeAmount(Int)
     case updateFixedExpenses([TransactionItem])
-    case updatePreviousExpense(Int)
+    case updateCurrentBalance(Int)
     case finishOnboardingSetting
   }
   
@@ -81,14 +81,14 @@ final class OnboardingViewModel {
     case let .updateFixedExpenses(fixedExpenses):
       self.state.fixedExpenses = fixedExpenses
       
-    case let .updatePreviousExpense(previousExpense):
-      self.state.previousExpense = previousExpense
+    case let .updateCurrentBalance(currentBalance):
+      self.state.currentBalance = currentBalance
       
     case .finishOnboardingSetting:
       let _ = try? budgetUseCase.createSalaryBudgetFromOnboarding(
         startDate: self.state.incomeStartDate,
         endDate: self.state.incomeEndDate,
-        previousExpense: self.state.previousExpense,
+        currentBalance: self.state.currentBalance,
         fixedIncome: self.state.incomeAmount ?? 0,
         fixedExpenses: self.state.fixedExpenses
       )
@@ -101,8 +101,7 @@ final class OnboardingViewModel {
 extension OnboardingViewModel {
   private func calculateAverageHarubee() -> Int {
     let balance = calculateBalance(
-      incomeAmount: self.state.incomeAmount ?? 0,
-      previousExpense: self.state.previousExpense ?? 0,
+      currentBalance: self.state.currentBalance ?? 0,
       fixedExpenses: self.state.fixedExpenses
     )
     
@@ -115,12 +114,11 @@ extension OnboardingViewModel {
   }
   
   private func calculateBalance(
-    incomeAmount: Int,
-    previousExpense: Int,
+    currentBalance: Int,
     fixedExpenses: [TransactionItem]
   ) -> Int {
     let now = Date().formattedDate
     let totalExpenses = fixedExpenses.filter { $0.date > now }.reduce(0) { $0 + $1.price }
-    return incomeAmount - previousExpense - totalExpenses
+    return currentBalance - totalExpenses
   }
 }
