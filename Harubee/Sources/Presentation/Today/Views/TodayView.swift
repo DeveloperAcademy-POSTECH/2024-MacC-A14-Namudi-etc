@@ -534,14 +534,18 @@ private struct CalendarStreakView: View {
             .foregroundStyle(Color.whiteDeep50)
             .frame(maxWidth: 50, maxHeight: 72)
           
-          VStack(spacing: 15) {
+          VStack {
             Text("오늘")
               .font(.pretendardSemibold_12)
               .foregroundStyle(Color.main)
+              .padding(.top, 10)
+            
+            Spacer()
             
             hexagonImage
               .resizable()
               .frame(width: 23, height: 23)
+              .padding(.bottom, 10)
           }
         }
         
@@ -575,14 +579,15 @@ private struct StreakGroupView: View {
       RoundedRectangle(cornerRadius: 8)
         .foregroundStyle(Color.whiteDeep50)
         .frame(maxWidth: .infinity, maxHeight: 72)
-      HStack {
-        ForEach(streaks.indices, id: \.self) { index in
-          StreakCell(dailyStreak: streaks[index])
-          if index < streaks.count - 1 {
-            Spacer()
+      GeometryReader { proxy in
+        HStack {
+          ForEach(streaks.indices, id: \.self) { index in
+            StreakCell(dailyStreak: streaks[index])
+              .frame(width: (proxy.size.width - 16)/3)
           }
         }
-      }.padding(.horizontal, 8)
+      }
+      .padding(.horizontal, 8)
     }
   }
 }
@@ -605,16 +610,13 @@ private struct StreakCell: View {
   }
   
   var body: some View {
-    VStack(spacing: 15) {
-      ViewThatFits {
+    VStack {
         Text(dailyStreak.date.formattedDateToString(.dayWeekday))
           .font(.pretendardSemibold_12)
-        
-        Text(dailyStreak.date.formattedDateToString(.dayWeekday))
-          .font(.pretendardSemibold_11)
-      }
-      .foregroundStyle(Color.textBright)
-      .frame(width: 33, height: 14)
+          .foregroundStyle(Color.textBright)
+          .frame(width: 35, height: 14)
+      
+      Spacer()
       
       if dailyStreak.isAfterToday {
         ViewThatFits {
@@ -626,14 +628,16 @@ private struct StreakCell: View {
           
           Text(dailyStreak.harubee.formattedAsTenThousandWon)
             .font(.pretendardMedium_11)
-        }.padding(.vertical, 5)
-          .foregroundStyle(.textBlack)
+        }.foregroundStyle(.textBlack)
+          .padding(.bottom, 14)
       } else {
         hexagonImage
           .resizable()
           .frame(width: 23, height: 23)
+          .padding(.bottom, 10)
       }
     }
+    .padding(.top, 10)
   }
 }
 
