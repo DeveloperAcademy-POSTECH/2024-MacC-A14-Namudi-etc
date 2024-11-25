@@ -107,9 +107,10 @@ struct FixedIncomeView: View {
     .foregroundStyle(Color.textBlack)
     .font(.pretendardSemibold_22)
     .frame(maxWidth: .infinity, alignment: .leading)
-    .padding(.horizontal, 20)
-    .padding(.top, 44)
     .infoBubble($isInfoBubbleVisible)
+    .padding(.top, 44)
+    .padding(.horizontal, 20)
+
   }
   
   private func isFixedIncomeUpdated() {
