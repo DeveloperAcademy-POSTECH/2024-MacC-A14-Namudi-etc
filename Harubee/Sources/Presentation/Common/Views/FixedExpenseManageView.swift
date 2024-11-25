@@ -32,6 +32,8 @@ struct FixedExpenseManageView: View {
   @State private var fixedExpenseAmount: String
   @State private var isEnabled: Bool = false
   
+  private let beforeSelectedDay: Int
+  
   init(
     mode: Mode,
     selectedDay: Int = 1,
@@ -44,6 +46,7 @@ struct FixedExpenseManageView: View {
     self._selectedDay = State(initialValue: selectedDay)
     self._fixedExpenseName = State(initialValue: fixedExpenseName)
     self._fixedExpenseAmount = State(initialValue: fixedExpenseAmount)
+    self.beforeSelectedDay = selectedDay
   }
   
   var body: some View {
@@ -67,33 +70,32 @@ struct FixedExpenseManageView: View {
         self.dismiss()
       }
     }
-    .onChange(of: selectedDay) { oldValue, newValue in
-      if oldValue != newValue {
-        if (!fixedExpenseName.isEmpty
-            || !fixedExpenseAmount.isEmpty) {
-          isEnabled = true
+    .onChange(of: selectedDay) { _, newValue in
+      if mode == .modify {
+        if beforeSelectedDay == newValue {
+          isEnabled = false
+        } else {
+          updateIsEnabled()
         }
       } else {
-        isEnabled = false
+        updateIsEnabled()
       }
     }
     .onChange(of: fixedExpenseName) { _, _ in
-      if (fixedExpenseName.isEmpty
-          || fixedExpenseAmount.isEmpty
-          || fixedExpenseAmount == "0") {
-        isEnabled = false
-      } else {
-        isEnabled = true
-      }
+      updateIsEnabled()
     }
     .onChange(of: fixedExpenseAmount) { _, _ in
-      if (fixedExpenseName.isEmpty
-          || fixedExpenseAmount.isEmpty
-          || fixedExpenseAmount == "0") {
-        isEnabled = false
-      } else {
-        isEnabled = true
-      }
+      updateIsEnabled()
+    }
+  }
+  
+  private func updateIsEnabled() {
+    if !fixedExpenseName.isEmpty
+        && !fixedExpenseAmount.isEmpty
+        && fixedExpenseAmount != "0" {
+      isEnabled = true
+    } else {
+      isEnabled = false
     }
   }
 }
