@@ -62,7 +62,7 @@ struct Onboarding3View: View {
 
 private struct OnboardingHeaderView: View {
   var body: some View {
-    VStack(spacing: 28) {
+    VStack(spacing: 30) {
       OnboardingNavigationHeaderView(onboardingPage: .first)
       
       VStack(alignment: .leading, spacing: 6) {
@@ -117,7 +117,7 @@ private struct OnboardingBodyView: View {
           title: "금액",
           text: $incomeAmount
         )
-        .padding(.top, 14)
+        .padding(.top, 16)
         .keyboardType(.numberPad)
       }
       .padding(.horizontal, 20)

@@ -32,7 +32,7 @@ struct Onboarding5View: View {
         viewModel: viewModel,
         fixedExpenses: $fixedExpenses
       )
-        .padding(.top, 30)
+        .padding(.top, 32)
       
       
       Spacer()
@@ -90,7 +90,6 @@ private struct OnboardingHeaderView: View {
 }
 
 private struct OnboardingBodyView: View {
-  
   var body: some View {
     VStack(alignment: .leading, spacing: 6) {
       Text("매달 고정으로 나가는 지출 목록을")
@@ -123,7 +122,7 @@ private struct FixedExpensesListView: View {
   var body: some View {
     VStack(spacing: 0) {
       listHeaderView
-        .padding(.horizontal, 20)
+        .padding(.horizontal, 22)
         .foregroundStyle(Color.textBlack)
       
       if fixedExpenses.isEmpty {
