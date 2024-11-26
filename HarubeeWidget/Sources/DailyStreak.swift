@@ -44,36 +44,37 @@ struct DailyStreak: Hashable {
   
   static let mock: [Self] = [
     .init(
-      date: .now,
+      date: .now.formattedDate,
       time: .today,
-      harubee: 130000,
+      harubee: 13000,
       expenseType: .empty
     ),
     .init(
-      date: .now.addingTimeInterval(86400 * 1),
+      date: .now.addingTimeInterval(86400 * 1).formattedDate,
       time: .future,
-      harubee: 99999,
+      harubee: 20000,
       isAdjustedHarubee: true
     ),
     .init(
-      date: .now.addingTimeInterval(86400 * 2),
+      date: .now.addingTimeInterval(86400 * 2).formattedDate,
       time: .future,
-      harubee: 999999
+      harubee: 20000
     ),
     .init(
-      date: .now.addingTimeInterval(86400 * 3),
+      date: .now.addingTimeInterval(86400 * 3).formattedDate,
       time: .future,
-      harubee: 100000
+      harubee: 20000
     ),
     .init(
-      date: nil,
+      date: .now.addingTimeInterval(86400 * 4).formattedDate,
       time: .future,
-      harubee: nil
+      harubee: 23000
     ),
     .init(
-      date: nil,
+      date: .now.addingTimeInterval(86400 * 5).formattedDate,
       time: .future,
-      harubee: nil
+      harubee: 18000,
+      isAdjustedHarubee: true
     ),
   ]
 }

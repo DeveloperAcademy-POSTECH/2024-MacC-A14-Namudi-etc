@@ -45,14 +45,38 @@ struct SalaryBudget: Identifiable {
       fixedIncome: 0,
       fixedExpenses: [],
       balance: 0,
-      defaultHarubee: 999999,
+      defaultHarubee: 20000,
       dailyBudgets: [
-        .init(date: .now, memo: []),
-        .init(date: .now.addingTimeInterval(TimeInterval(86400 * 1)), memo: []),
-        .init(date: .now.addingTimeInterval(TimeInterval(86400 * 2)), memo: []),
-        .init(date: .now.addingTimeInterval(TimeInterval(86400 * 3)), memo: []),
-        .init(date: .now.addingTimeInterval(TimeInterval(86400 * 4)), memo: []),
-        .init(date: .now.addingTimeInterval(TimeInterval(86400 * 5)), memo: []),
+        .init(
+          date: .now.formattedDate,
+          harubee: 25000,
+          memo: []
+        ),
+        .init(
+          date: .now.formattedDate.addingTimeInterval(TimeInterval(86400 * 1)),
+          harubee: nil,
+          memo: []
+        ),
+        .init(
+          date: .now.formattedDate.addingTimeInterval(TimeInterval(86400 * 2)),
+          harubee: nil,
+          memo: []
+        ),
+        .init(
+          date: .now.formattedDate.addingTimeInterval(TimeInterval(86400 * 3)),
+          harubee: nil,
+          memo: []
+        ),
+        .init(
+          date: .now.formattedDate.addingTimeInterval(TimeInterval(86400 * 4)),
+          harubee: nil,
+          memo: []
+        ),
+        .init(
+          date: .now.formattedDate.addingTimeInterval(TimeInterval(86400 * 5)),
+          harubee: nil,
+          memo: []
+        ),
       ]
     )
   }
