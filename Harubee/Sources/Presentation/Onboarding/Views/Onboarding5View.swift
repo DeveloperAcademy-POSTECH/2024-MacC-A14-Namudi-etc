@@ -222,7 +222,7 @@ private struct FixedExpensesListView: View {
     ) { day, name, price in
       saveFixedExpense(day: day, name: name, price: price)
     }
-    .presentationDetents([.fraction(0.8)])
+    .presentationDetents([.large])
     .presentationCornerRadius(20)
   }
   

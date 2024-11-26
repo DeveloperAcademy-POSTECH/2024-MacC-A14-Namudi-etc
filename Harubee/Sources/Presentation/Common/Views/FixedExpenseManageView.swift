@@ -73,6 +73,7 @@ struct FixedExpenseManageView: View {
           self.dismiss()
         }
       }
+      .ignoresSafeArea(.keyboard)
       
       if isNumberFieldFocused {
         NumberKeypadView(amount: $fixedExpenseAmount) {
@@ -80,6 +81,7 @@ struct FixedExpenseManageView: View {
         }
       }
     }
+    
     .onChange(of: selectedDay) { _, newValue in
       if mode == .modify {
         if beforeSelectedDay == newValue {

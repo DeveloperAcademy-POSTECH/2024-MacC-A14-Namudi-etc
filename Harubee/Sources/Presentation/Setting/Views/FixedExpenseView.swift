@@ -116,7 +116,7 @@ private struct FixedExpensesListView: View {
           price: price
         )
       }
-      .presentationDetents([.fraction(0.8)])
+      .presentationDetents([.large])
       .presentationCornerRadius(20)
     }
     .onChange(of: selectedItem) { _, _ in }
