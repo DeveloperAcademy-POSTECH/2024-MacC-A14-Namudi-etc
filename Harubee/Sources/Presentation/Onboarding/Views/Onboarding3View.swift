@@ -47,29 +47,27 @@ struct Onboarding3View: View {
           self.isPresented = true
         }
       }
-      .contentShape(Rectangle())
-      .onTapGesture {
-        UIApplication.shared.endEditing()
-      }
-      .onChange(of: incomeDay, { _, _ in
-        viewModel.send(.updateFixedIncomeDay(incomeDay))
-      })
-      .navigationDestination(isPresented: $isPresented) {
-        Onboarding4View(viewModel: viewModel)
-          .navigationBarBackButtonHidden()
-      }
       
       if isFocused {
         NumberKeypadView(amount: $incomeAmount) {
           self.isFocused = false
-          if !incomeAmount.isEmpty {
-            viewModel.send(.updateFixedIncomeAmount(
-              incomeAmount.numberFormat ?? 0
-            ))
-            self.isEnabled = true
-          }
         }
       }
+    }
+    .onChange(of: incomeDay, { _, _ in
+      viewModel.send(.updateFixedIncomeDay(incomeDay))
+    })
+    .onChange(of: incomeAmount, { _, _ in
+      if !incomeAmount.isEmpty {
+        viewModel.send(.updateFixedIncomeAmount(
+          incomeAmount.numberFormat ?? 0
+        ))
+        self.isEnabled = true
+      }
+    })
+    .navigationDestination(isPresented: $isPresented) {
+      Onboarding4View(viewModel: viewModel)
+        .navigationBarBackButtonHidden()
     }
   }
 }
