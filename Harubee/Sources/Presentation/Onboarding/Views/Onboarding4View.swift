@@ -68,6 +68,9 @@ struct Onboarding4View: View {
         }
       }
     }
+    .onAppear {
+      viewModel.send(.onAppearOnboardingStep3)
+    }
     .navigationDestination(isPresented: $isPresented) {
       Onboarding5View(viewModel: viewModel)
         .navigationBarBackButtonHidden()

@@ -22,6 +22,7 @@ final class OnboardingViewModel {
   }
   
   enum Action {
+    case onAppearOnboardingStep3
     case updateFixedIncomeDay(Int)
     case updateFixedIncomeAmount(Int)
     case updateFixedExpenses([TransactionItem])
@@ -39,6 +40,10 @@ final class OnboardingViewModel {
   
   func send(_ action: Action) {
     switch action {
+    case .onAppearOnboardingStep3:
+      if self.state.currentBalance == nil {
+        self.state.currentBalance = self.state.incomeAmount ?? 0
+      }
     case let .updateFixedIncomeDay(day):
       self.state.incomeDay = day
       
