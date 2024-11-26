@@ -26,7 +26,6 @@ struct DayPickerView: View {
   let title: String
   let titleFont: TitleFont
   
-  @State private var keyboardObserver = KeyboardObserverManager()
   @Binding var showDayPicker: Bool
   @Binding var selectedDay: Int
   
@@ -43,13 +42,6 @@ struct DayPickerView: View {
         )
       }
       .padding(.horizontal, 20)
-      .onChange(
-        of: keyboardObserver.isKeyboardVisible
-      ) { _, newValue in
-        if newValue {
-          showDayPicker = false
-        }
-      }
       
       if showDayPicker { dayPicker }
     }

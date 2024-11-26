@@ -30,6 +30,10 @@ final class KeyboardObserverManager {
     )
   }
   
+  func hideKeyboard() {
+    UIApplication.shared.endEditing()
+  }
+  
   @objc private func keyboardWillShow() {
     isKeyboardVisible = true
   }
