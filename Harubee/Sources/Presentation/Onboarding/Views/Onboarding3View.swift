@@ -135,8 +135,11 @@ private struct OnboardingBodyView: View {
       }
       .padding(.horizontal, 20)
     }
-    .onChange(of: incomeAmount) { oldValue, newValue in
+    .onChange(of: incomeAmount) { _, _ in
       incomeAmount = (incomeAmount.numberFormat ?? 0).decimal
+    }
+    .onChange(of: showDayPicker) {
+      if $1 { isFocused = false }
     }
   }
 }

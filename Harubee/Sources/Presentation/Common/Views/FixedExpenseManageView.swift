@@ -31,7 +31,7 @@ struct FixedExpenseManageView: View {
   @State private var fixedExpenseName: String
   @State private var fixedExpenseAmount: String
   @State private var isEnabled: Bool = false
-  @State private var showDayPicker: Bool = false
+  @State private var isNumberFieldFocused: Bool = false
   
   private let beforeSelectedDay: Int
   
@@ -59,7 +59,7 @@ struct FixedExpenseManageView: View {
           fixedExpenseName: $fixedExpenseName,
           fixedExpenseAmount: $fixedExpenseAmount,
           selectedDay: $selectedDay,
-          showDayPicker: $showDayPicker
+          isNumberFieldFocused: $isNumberFieldFocused
         )
         .padding(.top, 37)
         
@@ -73,23 +73,29 @@ struct FixedExpenseManageView: View {
           self.dismiss()
         }
       }
-      .onChange(of: selectedDay) { _, newValue in
-        if mode == .modify {
-          if beforeSelectedDay == newValue {
-            isEnabled = false
-          } else {
-            updateIsEnabled()
-          }
+      
+      if isNumberFieldFocused {
+        NumberKeypadView(amount: $fixedExpenseAmount) {
+          self.isNumberFieldFocused = false
+        }
+      }
+    }
+    .onChange(of: selectedDay) { _, newValue in
+      if mode == .modify {
+        if beforeSelectedDay == newValue {
+          isEnabled = false
         } else {
           updateIsEnabled()
         }
-      }
-      .onChange(of: fixedExpenseName) { _, _ in
+      } else {
         updateIsEnabled()
       }
-      .onChange(of: fixedExpenseAmount) { _, _ in
-        updateIsEnabled()
-      }
+    }
+    .onChange(of: fixedExpenseName) { _, _ in
+      updateIsEnabled()
+    }
+    .onChange(of: fixedExpenseAmount) { _, _ in
+      updateIsEnabled()
     }
   }
   
@@ -105,10 +111,13 @@ struct FixedExpenseManageView: View {
 }
 
 private struct BodyView: View {
+  @State private var keyboardObserver = KeyboardObserverManager()
   @Binding var fixedExpenseName: String
   @Binding var fixedExpenseAmount: String
   @Binding var selectedDay: Int
-  @Binding var showDayPicker: Bool
+  @Binding var isNumberFieldFocused: Bool
+  
+  @State private var showDayPicker: Bool = false
   
   var body: some View {
     VStack(spacing: 0) {
@@ -126,16 +135,36 @@ private struct BodyView: View {
       .padding(.horizontal, 16)
       .padding(.top, 20)
       
-      FloatingTitleTextField(
+      FloatingTitleNumberField(
         title: "금액",
-        text: $fixedExpenseAmount
+        textSize: .medium,
+        text: $fixedExpenseAmount,
+        isFocused: $isNumberFieldFocused
       )
       .padding(.horizontal, 16)
       .padding(.top, 22)
-      .keyboardType(.numberPad)
+      .onTapGesture {
+        showDayPicker = false
+        keyboardObserver.hideKeyboard()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+          isNumberFieldFocused = true
+        }
+      }
     }
     .onChange(of: fixedExpenseAmount) { _, _ in
       fixedExpenseAmount = (fixedExpenseAmount.numberFormat ?? 0).decimal
+    }
+    .onChange(of: keyboardObserver.isKeyboardVisible) {
+      if $1 {
+        self.showDayPicker = false
+        self.isNumberFieldFocused = false
+      }
+    }
+    .onChange(of: showDayPicker) {
+      if $1 {
+        self.isNumberFieldFocused = false
+        keyboardObserver.hideKeyboard()
+      }
     }
   }
 }
