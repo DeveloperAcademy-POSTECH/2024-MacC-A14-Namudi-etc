@@ -45,7 +45,7 @@ struct DailyMemoView: View {
   // MARK: - View
   var body: some View {
     VStack(spacing: 0) {
-      headerView
+      BottomSheetHeaderView(title: mode.title)
       memoInputSection
         .padding(.top, 38)
         .padding(.horizontal, 16)
@@ -53,27 +53,6 @@ struct DailyMemoView: View {
       saveButton
     }
     .frame(maxHeight: .infinity, alignment: .top)
-    .padding(.top, 20)
-  }
-  
-  private var headerView: some View {
-    ZStack {
-      HStack(spacing: 0) {
-        Button {
-          dismiss()
-        } label: {
-          Text("닫기")
-            .font(.pretendardMedium_18)
-            .foregroundStyle(Color.main)
-        }
-        Spacer()
-      }
-      .padding(.horizontal, 16)
-      
-      Text(mode.title)
-        .font(.pretendardSemibold_18)
-        .foregroundStyle(Color.textBlack)
-    }
   }
   
   private var memoInputSection: some View {
