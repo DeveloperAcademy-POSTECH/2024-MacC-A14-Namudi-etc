@@ -36,8 +36,6 @@ struct BalanceAdjustView: View {
   var body: some View {
     ZStack(alignment: .bottom) {
       VStack(spacing: 0) {
-        BottomSheetHeaderView(title: "쓸 수 있는 돈 조정")
-        
         ZStack(alignment: .top) {
           ExpectedBalanceContentView(
             viewModel: viewModel, realBalance: $realBalance
@@ -81,6 +79,7 @@ struct BalanceAdjustView: View {
         }
       }
     }
+    .navigationBarStyle(.sheet(title: "쓸 수 있는 돈 조정"))
     .onChange(of: isFocused) { _, _ in
       self.isUpdated = beforeRealBalance == realBalance.numberFormat ? false : true
     }

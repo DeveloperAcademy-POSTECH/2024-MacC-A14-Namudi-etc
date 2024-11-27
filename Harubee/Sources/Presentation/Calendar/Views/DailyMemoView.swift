@@ -45,7 +45,6 @@ struct DailyMemoView: View {
   // MARK: - View
   var body: some View {
     VStack(spacing: 0) {
-      BottomSheetHeaderView(title: mode.title)
       memoInputSection
         .padding(.top, 38)
         .padding(.horizontal, 16)
@@ -53,6 +52,7 @@ struct DailyMemoView: View {
       saveButton
     }
     .frame(maxHeight: .infinity, alignment: .top)
+    .navigationBarStyle(.sheet(title: mode.title))
   }
   
   private var memoInputSection: some View {

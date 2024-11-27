@@ -9,14 +9,22 @@
 import SwiftUI
 
 struct NavigationBarStyleModifier: ViewModifier {
-  let style: NavigationBarStyle
   @Environment(\.dismiss) private var dismiss
+  let style: NavigationBarStyle
   
   func body(content: Content) -> some View {
+    if case .sheet = style {
+      sheetHeader(content)
+    } else {
+      navigationBar(content)
+    }
+  }
+  
+  private func navigationBar(_ content: Content) -> some View {
     UINavigationBar.appearance().tintColor = UIColor(style.tintColor)
     
     return content
-      .toolbarBackground(style.backgroundColor, for: .navigationBar)
+      .toolbarBackground(.clear, for: .navigationBar)
       .toolbarColorScheme(style.colorScheme, for: .navigationBar)
       .navigationBarTitleDisplayMode(.inline)
       .navigationBarBackButtonHidden()
@@ -43,6 +51,31 @@ struct NavigationBarStyleModifier: ViewModifier {
         }
       }
   }
+  
+  private func sheetHeader(_ content: Content) -> some View {
+    VStack(spacing: 0) {
+      ZStack {
+        HStack {
+          Button {
+            dismiss()
+          } label: {
+            Text(style.backTitle)
+              .font(.pretendardMedium_18)
+              .foregroundStyle(style.tintColor)
+          }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        
+        Text(style.title)
+          .font(.pretendardSemibold_18)
+          .foregroundStyle(style.titleColor)
+      }
+      .padding(.horizontal, 16)
+      .padding(.top, 20)
+      
+      content
+    }
+  }
 }
 
 extension View {
@@ -54,20 +87,14 @@ extension View {
 enum NavigationBarStyle {
   case main(title: String, backTitle: String)
   case white(title: String, backTitle: String)
-  case clear(title: String, backTitle: String)
-  
-  var backgroundColor: Color {
-    switch self {
-    case .main: return .main
-    case .white: return .whiteDefault
-    case .clear: return .clear
-    }
-  }
+  case sheet(title: String)
+  case clear
   
   var tintColor: Color {
     switch self {
     case .main: return .whiteDefault
     case .white: return .main
+    case .sheet: return .main
     case .clear: return .clear
     }
   }
@@ -76,6 +103,7 @@ enum NavigationBarStyle {
     switch self {
     case .main: return .whiteDefault
     case .white: return .textBlack
+    case .sheet: return .textBlack
     case .clear: return .clear
     }
   }
@@ -84,21 +112,31 @@ enum NavigationBarStyle {
     switch self {
     case .main: return .dark
     case .white: return .light
+    case .sheet: return .light
     case .clear: return .dark
     }
   }
   
   var title: String {
     switch self {
-    case .main(let title, _), .white(let title, _), .clear(let title, _):
+    case .main(let title, _),
+        .white(let title, _),
+        .sheet(let title):
       return title
+    case .clear:
+      return ""
     }
   }
   
   var backTitle: String {
     switch self {
-    case .main(_, let backTitle), .white(_, let backTitle), .clear(_, let backTitle):
+    case .main(_, let backTitle),
+        .white(_, let backTitle):
       return backTitle
+    case .sheet:
+      return "취소"
+    case .clear:
+      return ""
     }
   }
 }

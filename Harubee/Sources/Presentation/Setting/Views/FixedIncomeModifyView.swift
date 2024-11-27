@@ -24,11 +24,8 @@ struct FixedIncomeModifyView: View {
   }
   
   var body: some View {
-
     ZStack(alignment: .bottom) {
       VStack(spacing: 0) {
-        BottomSheetHeaderView(title: "고정수입 금액 입력")
-        
         FloatingTitleNumberField(
           title: "금액",
           textSize: .medium,
@@ -59,6 +56,7 @@ struct FixedIncomeModifyView: View {
         }
       }
     }
+    .navigationBarStyle(.sheet(title: "고정수입 금액 입력"))
   }
 }
 

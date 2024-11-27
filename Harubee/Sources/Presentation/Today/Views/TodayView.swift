@@ -86,7 +86,7 @@ struct TodayView: View {
           }
       }
     }
-    .navigationBarStyle(.clear(title: "", backTitle: ""))
+    .navigationBarStyle(.clear)
   }
 }
 
