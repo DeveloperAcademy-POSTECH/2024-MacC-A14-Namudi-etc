@@ -24,7 +24,7 @@ struct Onboarding5View: View {
     VStack(spacing: 0) {
       OnboardingHeaderView(harubee: viewModel.state.averageHarubee)
       
-      OnboardingBodyView()
+      onboardingBodyTitleView
         .padding(.top, 30)
         .padding(.horizontal, 20)
       
@@ -48,6 +48,16 @@ struct Onboarding5View: View {
       Onboarding6View(viewModel: viewModel)
         .navigationBarBackButtonHidden()
     }
+  }
+  
+  private var onboardingBodyTitleView: some View {
+    VStack(alignment: .leading, spacing: 6) {
+      Text("매달 고정으로 나가는 지출 목록을")
+      Text("입력해주세요 (예: 월세, 구독비, 저축)")
+    }
+    .frame(maxWidth: .infinity, alignment: .leading)
+    .font(.pretendardMedium_20)
+    .foregroundStyle(Color.textBlack)
   }
 }
 
@@ -86,18 +96,6 @@ private struct OnboardingHeaderView: View {
     .background(
       Rectangle().fill(Color.main).ignoresSafeArea()
     )
-  }
-}
-
-private struct OnboardingBodyView: View {
-  var body: some View {
-    VStack(alignment: .leading, spacing: 6) {
-      Text("매달 고정으로 나가는 지출 목록을")
-      Text("입력해주세요 (예: 월세, 구독비, 저축)")
-    }
-    .frame(maxWidth: .infinity, alignment: .leading)
-    .font(.pretendardMedium_20)
-    .foregroundStyle(Color.textBlack)
   }
 }
 

@@ -29,7 +29,7 @@ struct Onboarding3View: View {
   var body: some View {
     ZStack(alignment: .bottom) {
       VStack(spacing: 0) {
-        OnboardingHeaderView()
+        onboardingHeaderView
         
         OnboardingBodyView(
           incomeDay: $incomeDay,
@@ -70,10 +70,8 @@ struct Onboarding3View: View {
         .navigationBarBackButtonHidden()
     }
   }
-}
-
-private struct OnboardingHeaderView: View {
-  var body: some View {
+  
+  private var onboardingHeaderView: some View {
     VStack(spacing: 30) {
       OnboardingNavigationHeaderView(onboardingPage: .first)
       
@@ -90,6 +88,7 @@ private struct OnboardingHeaderView: View {
     .background(
       Rectangle().fill(Color.main).ignoresSafeArea()
     )
+
   }
 }
 

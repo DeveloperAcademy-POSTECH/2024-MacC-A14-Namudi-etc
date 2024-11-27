@@ -20,13 +20,13 @@ struct Onboarding2View: View {
     ZStack {
       Color.main.ignoresSafeArea()
       VStack(spacing: 0) {
-        TitleView()
+        titleView
         
-        HarubeeExplainView()
+        harubeeExplainView
         .padding(.horizontal, 16)
         .padding(.top, 12)
         
-        CalculateContentView()
+        calculateContentView
           .padding(.top, 73)
           .padding(.horizontal, 16)
         Spacer()
@@ -57,10 +57,8 @@ struct Onboarding2View: View {
       }
     }
   }
-}
-
-private struct TitleView: View {
-  var body: some View {
+  
+  private var titleView: some View {
     VStack(alignment: .leading, spacing: 6) {
       HStack(spacing: 4) {
         Image(.harubeeWhite)
@@ -76,10 +74,8 @@ private struct TitleView: View {
     .frame(maxWidth: .infinity, alignment: .leading)
     .padding(.horizontal, 20)
   }
-}
-
-private struct HarubeeExplainView: View {
-  var body: some View {
+  
+  private var harubeeExplainView: some View {
     VStack(spacing: 22) {
       Rectangle()
         .frame(height: 1)
@@ -108,10 +104,8 @@ private struct HarubeeExplainView: View {
       .frame(maxWidth: .infinity, alignment: .leading)
     }
   }
-}
-
-private struct CalculateContentView: View {
-  var body: some View {
+  
+  private var calculateContentView: some View {
     VStack(spacing: 0) {
       Rectangle()
         .frame(height: 1)
