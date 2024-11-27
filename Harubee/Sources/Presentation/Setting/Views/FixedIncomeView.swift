@@ -139,7 +139,7 @@ private struct FixedIncomeBodyView: View {
       )
       
       HStack(spacing: 0) {
-        Text("금액")
+        Text("총 수입 금액")
           .font(.pretendardMedium_18)
         
         Spacer()
