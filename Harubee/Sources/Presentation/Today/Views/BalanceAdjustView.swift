@@ -96,19 +96,19 @@ private struct ExpectedBalanceContentView: View {
   var body: some View {
     VStack(alignment: .leading, spacing: 0) {
       
-      HStack(alignment: .bottom, spacing: 0) {
+      HStack(alignment: .firstTextBaseline, spacing: 0) {
         Text("현재 쓸 수 있는 돈은")
-          .font(.pretendardMedium_18)
+          .font(.pretendardSemibold_18)
         
         Text(
           "\((realBalance.numberFormat! - viewModel.state.totalFixedExpense).decimalWithWon)"
         )
           .font(.pretendardSemibold_22)
           .foregroundStyle(.main)
-          .padding(.leading, 6)
+          .padding(.leading, 4)
         
         Text("입니다")
-          .font(.pretendardMedium_18)
+          .font(.pretendardSemibold_18)
       }
       .foregroundStyle(Color.textBlack)
       
