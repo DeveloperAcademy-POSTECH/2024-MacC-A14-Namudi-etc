@@ -33,8 +33,6 @@ struct HarubeeAdjustView: View {
   var body: some View {
     ZStack(alignment: .bottom) {
       VStack(spacing: 0) {
-        BottomSheetHeaderView(title: "하루비 조정")
-        
         ZStack(alignment: .top) {
           DefaultHarubeeContentView(
             isUpdated: $isUpdated,
@@ -72,6 +70,7 @@ struct HarubeeAdjustView: View {
         }
       }
     }
+    .navigationBarStyle(.sheet(title: "하루비 조정"))
     .onChange(of: isFocused) { _, _ in
       self.isUpdated = beforeHarubee == harubee.numberFormat ? false : true
     }

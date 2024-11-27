@@ -54,8 +54,6 @@ struct TransactionInputView: View {
   var body: some View {
     ZStack(alignment: .bottom) {
       VStack {
-        BottomSheetHeaderView(title: "실제 지출 및 수입 입력")
-        
         TransactionBodyItemView(
           expense: $expense,
           income: $income,
@@ -89,6 +87,7 @@ struct TransactionInputView: View {
       }
     }
     .id(transactionFocusType)
+    .navigationBarStyle(.sheet(title: "실제 지출 및 수입 입력"))
     .onChange(of: transactionFocusType) { _, _ in
       switch transactionFocusType {
       case .income, .expense:

@@ -53,14 +53,13 @@ struct FixedExpenseManageView: View {
   var body: some View {
     ZStack(alignment: .bottom) {
       VStack(spacing: 0) {
-        BottomSheetHeaderView(title: "고정지출 내역 \(mode.title)")
-        
         BodyView(
           fixedExpenseName: $fixedExpenseName,
           fixedExpenseAmount: $fixedExpenseAmount,
           selectedDay: $selectedDay,
           isNumberFieldFocused: $isNumberFieldFocused
         )
+
         .padding(.top, 37)
         
         Spacer()
@@ -81,7 +80,7 @@ struct FixedExpenseManageView: View {
         }
       }
     }
-    
+    .navigationBarStyle(.sheet(title: "고정지출 내역"))
     .onChange(of: selectedDay) { _, newValue in
       if mode == .modify {
         if beforeSelectedDay == newValue {
