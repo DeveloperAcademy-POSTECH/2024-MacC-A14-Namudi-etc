@@ -116,13 +116,7 @@ private struct ExpectedBalanceContentView: View {
         Text("*쓸 수 있는 돈은 실제 잔액에서")
         HStack(spacing: 0) {
           Text("예정된 고정지출 \(viewModel.state.totalFixedExpense.decimalWithWon)")
-            .background(
-              Rectangle()
-                .fill(.main10)
-                .offset(y: 5)
-                .frame(height: 10)
-              
-            )
+            .highlighter(.main10)
           Text("을 뺀 금액입니다.")
         }
       }

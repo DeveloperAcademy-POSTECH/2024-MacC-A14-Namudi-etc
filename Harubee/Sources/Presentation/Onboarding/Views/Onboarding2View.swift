@@ -84,24 +84,16 @@ struct Onboarding2View: View {
         Text("하루비는 다음 수입일까지")
           .font(.pretendardMedium_16)
           .foregroundStyle(Color.whiteDeep50)
-          .padding(.leading, 4)
         HStack(spacing: 3) {
-          ZStack(alignment: .bottom) {
-            Text("하루에 쓸 수 있는 금액을 미리 알려주는 앱")
-              .padding(.horizontal, 4)
-              .foregroundStyle(Color.whiteDefault)
-              .background(
-                Rectangle()
-                  .fill(Color.mainBrighter15)
-                  .frame(height: 7)
-                  .offset(y: 8)
-              )
-          }
+          Text("하루에 쓸 수 있는 금액을 미리 알려주는 앱")
+            .foregroundStyle(Color.whiteDefault)
+            .highlighter(.mainBrighter15)
           Text("이에요")
             .foregroundStyle(Color.whiteDeep50)
         }
       }
       .frame(maxWidth: .infinity, alignment: .leading)
+      .padding(.horizontal, 4)
     }
   }
   
