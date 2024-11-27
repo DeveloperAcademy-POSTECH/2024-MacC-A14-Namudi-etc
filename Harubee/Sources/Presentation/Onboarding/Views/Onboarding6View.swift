@@ -23,7 +23,7 @@ struct Onboarding6View: View {
           .padding(.horizontal, 20)
         
         VStack(spacing: 0) {
-          TitleView()
+          titleView
             .padding(.top, 22)
             .padding(.horizontal, 4)
           
@@ -62,10 +62,8 @@ struct Onboarding6View: View {
       
     }
   }
-}
-
-private struct TitleView: View {
-  var body: some View {
+  
+  private var titleView: some View {
     VStack(alignment: .leading, spacing: 0) {
       Text("모든 단계가")
       Text("끝났어요!")
