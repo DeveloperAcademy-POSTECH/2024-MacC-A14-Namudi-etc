@@ -109,7 +109,7 @@ private struct OnboardingBodyView: View {
       .padding(.top, 34)
       
       VStack(alignment: .leading, spacing: 0) {
-        Text("한 달의 수입금은 얼마인가요?")
+        Text("한 달의 총 수입 금액은 얼마인가요?")
           .font(.pretendardMedium_20)
           .foregroundStyle(Color.textBlack)
         
