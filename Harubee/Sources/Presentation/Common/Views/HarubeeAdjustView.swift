@@ -94,7 +94,7 @@ private struct DefaultHarubeeContentView: View {
       
       if isUpdated {
         Text("하루비 조정 후 계산된")
-          .font(.pretendardMedium_18)
+          .font(.pretendardSemibold_18)
           .foregroundStyle(Color.textBlack)
           .padding(.top, 3)
       }
@@ -116,17 +116,17 @@ private struct DefaultHarubeeContentView: View {
   }
   
   private var highlightDefaultHarubeeLabel: some View {
-    HStack(alignment: .bottom, spacing: 0) {
+    HStack(alignment: .firstTextBaseline, spacing: 0) {
       Text(isUpdated ? "기본 하루비는" : "현재 기본 하루비는")
-        .font(.pretendardMedium_18)
+        .font(.pretendardSemibold_18)
       
       Text(defaultHarubee.decimalWithWon)
         .font(.pretendardSemibold_22)
         .foregroundStyle(.main)
-        .padding(.leading, 6)
+        .padding(.leading, 4)
       
       Text("입니다")
-        .font(.pretendardMedium_18)
+        .font(.pretendardSemibold_18)
     }
     .foregroundStyle(Color.textBlack)
   }
@@ -186,9 +186,10 @@ private struct HarubeeAdjustField: View {
   private var resetHarubeeButton: some View {
     HStack(spacing: 3) {
       Image(systemName: "arrow.clockwise")
-      Text("기본 하루비 초기화")
+        .font(.pretendardSemibold_14)
+      Text("기본 하루비로 변경")
+        .font(.pretendardMedium_14)
     }
-    .font(.pretendardMedium_14)
     .foregroundStyle(.main)
     .padding(.horizontal, 8)
     .padding(.vertical, 6)
