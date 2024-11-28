@@ -58,9 +58,6 @@ struct SettingView: View {
     .navigationBarStyle(.white(title: "설정", backTitle: "뒤로"))
     .font(.pretendardMedium_18)
     .foregroundStyle(Color.textBlack)
-    .onAppear {
-      settingViewModel.send(.viewDidLoad)
-    }
   }
   
   private var settingFooterView: some View {
@@ -116,34 +113,6 @@ private struct SettingHeaderView: View {
       if showHarubeePicker && showExpensePicker {
         showHarubeePicker = false
       }
-    }
-    .onChange(
-      of: settingViewModel.state.harubeeNotificationTime
-    ) { _, newValue in
-      settingViewModel.send(
-        .onChangeNotificationTime(notificationType: .harubee, newValue)
-      )
-    }
-    .onChange(
-      of: settingViewModel.state.expenseNotificationTime
-    ) { _, newValue in
-      settingViewModel.send(
-        .onChangeNotificationTime(notificationType: .expense, newValue)
-      )
-    }
-    .onChange(
-      of: settingViewModel.state.harubeeNotificationStatus
-    ) { _, newValue in
-      settingViewModel.send(
-        .onChangeNotificationStatus(notificationType: .harubee, newValue)
-      )
-    }
-    .onChange(
-      of: settingViewModel.state.expenseNotificationStatus
-    ) { _, newValue in
-      settingViewModel.send(
-        .onChangeNotificationStatus(notificationType: .expense, newValue)
-      )
     }
   }
 }
