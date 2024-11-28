@@ -18,16 +18,9 @@ enum NotificationType {
 final class SettingViewModel {
   struct State {
     var salaryBudget: SalaryBudget
-    var harubeeNotificationTime: Date = Date()
-    var expenseNotificationTime: Date = Date()
-    var harubeeNotificationStatus: Bool = false
-    var expenseNotificationStatus: Bool = false
   }
   
   enum Action {
-    case viewDidLoad
-    case onChangeNotificationTime(notificationType: NotificationType, Date)
-    case onChangeNotificationStatus(notificationType: NotificationType, Bool)
     case fixedIncomeSaveButtonTapped(Int?, Int?)
     case updateFixedExpenses([TransactionItem])
   }
@@ -35,6 +28,10 @@ final class SettingViewModel {
   private(set) var state: State
   
   private let budgetUseCase: BudgetUseCase
+  private var harubeeNotificationTime: Date = Date()
+  private var expenseNotificationTime: Date = Date()
+  private var harubeeNotificationStatus: Bool = false
+  private var expenseNotificationStatus: Bool = false
   
   init(
     budgetUseCase: BudgetUseCase,
@@ -42,20 +39,12 @@ final class SettingViewModel {
   ) {
     self.budgetUseCase = budgetUseCase
     self.state = State(salaryBudget: salaryBudget)
+    fetchNotificationData()
   }
   
   // MARK: - Public Methods (유저 액션 핸들러)
   func send(_ action: Action) {
     switch action {
-    case .viewDidLoad:
-      fetchNotificationData()
-      
-    case .onChangeNotificationTime(notificationType: let type, let time):
-      onChangeNotificationTime(notificationType: type, time: time)
-      
-    case .onChangeNotificationStatus(notificationType: let type, let status):
-      onChangeNotificationStatus(notificationType: type, status: status)
-
     case .fixedIncomeSaveButtonTapped(let incomeDay, let incomeAmount):
       if let incomeDay = incomeDay {
         self.updateFixedIncomeDay(incomeDay)
@@ -81,7 +70,7 @@ final class SettingViewModel {
       // 알림 시간 저장
       budgetUseCase.setTodayHarubeeNotificationTime(time: time)
       // 토글이 On이라면
-      if state.harubeeNotificationStatus {
+      if harubeeNotificationStatus {
         // 알림 등록
         NotificationManager.shared.scheduleNotification(
           time: time, notificationType: .harubee
@@ -91,7 +80,7 @@ final class SettingViewModel {
       // 알림 시간 저장
       budgetUseCase.setExpenseNotificationTime(time: time)
       // 토글이 On이라면
-      if state.expenseNotificationStatus {
+      if expenseNotificationStatus {
         // 알림 등록
         NotificationManager.shared.scheduleNotification(
           time: time, notificationType: .expense
@@ -109,7 +98,7 @@ final class SettingViewModel {
       budgetUseCase.setTodayHarubeeNotificationStatus(status)
       if status {
         NotificationManager.shared.scheduleNotification(
-          time: state.harubeeNotificationTime,
+          time: harubeeNotificationTime,
           notificationType: .harubee
         )
       } else {
@@ -121,7 +110,7 @@ final class SettingViewModel {
       budgetUseCase.setExpenseNotificationStatus(status)
       if status {
         NotificationManager.shared.scheduleNotification(
-          time: state.expenseNotificationTime,
+          time: expenseNotificationTime,
           notificationType: .expense
         )
       } else {
@@ -139,10 +128,10 @@ final class SettingViewModel {
     let harubeeNotificationStatus = try? budgetUseCase.getTodayHarubeeNotificationStatus()
     let expenseNotificationStatus = try? budgetUseCase.getExpenseNotificationStatus()
     
-    self.state.harubeeNotificationTime = harubeeNotificationTime ?? Date()
-    self.state.expenseNotificationTime = expenseNotificationTime ?? Date()
-    self.state.harubeeNotificationStatus = harubeeNotificationStatus ?? false
-    self.state.expenseNotificationStatus = expenseNotificationStatus ?? false
+    self.harubeeNotificationTime = harubeeNotificationTime ?? Date()
+    self.expenseNotificationTime = expenseNotificationTime ?? Date()
+    self.harubeeNotificationStatus = harubeeNotificationStatus ?? false
+    self.expenseNotificationStatus = expenseNotificationStatus ?? false
   }
   
   private func updateFixedIncomeDay(_ incomeDay: Int) {
@@ -196,23 +185,47 @@ extension SettingViewModel {
     switch key {
     case .harubeeNotificationTime:
       return Binding(
-        get: { self.state.harubeeNotificationTime as! T },
-        set: { self.state.harubeeNotificationTime = $0 as! Date }
+        get: { self.harubeeNotificationTime as! T },
+        set: {
+          self.harubeeNotificationTime = $0 as! Date
+          self.onChangeNotificationTime(
+            notificationType: .harubee,
+            time: $0 as! Date
+          )
+        }
       )
     case .expenseNotificationTime:
       return Binding(
-        get: { self.state.expenseNotificationTime as! T },
-        set: { self.state.expenseNotificationTime = $0 as! Date }
+        get: { self.expenseNotificationTime as! T },
+        set: {
+          self.expenseNotificationTime = $0 as! Date
+          self.onChangeNotificationTime(
+            notificationType: .expense,
+            time: $0 as! Date
+          )
+        }
       )
     case .harubeeNotificationStatus:
       return Binding(
-        get: { self.state.harubeeNotificationStatus as! T },
-        set: { self.state.harubeeNotificationStatus = $0 as! Bool }
+        get: { self.harubeeNotificationStatus as! T },
+        set: {
+          self.harubeeNotificationStatus = $0 as! Bool
+          self.onChangeNotificationStatus(
+            notificationType: .harubee,
+            status: $0 as! Bool
+          )
+        }
       )
     case .expenseNotificationStatus:
       return Binding(
-        get: { self.state.expenseNotificationStatus as! T },
-        set: { self.state.expenseNotificationStatus = $0 as! Bool }
+        get: { self.expenseNotificationStatus as! T },
+        set: {
+          self.expenseNotificationStatus = $0 as! Bool
+          self.onChangeNotificationStatus(
+            notificationType: .expense,
+            status: $0 as! Bool
+          )
+        }
       )
     }
   }
