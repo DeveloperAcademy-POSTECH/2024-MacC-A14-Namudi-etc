@@ -28,7 +28,7 @@ struct Onboarding5View: View {
         .padding(.top, 30)
         .padding(.horizontal, 20)
       
-      FixedExpensesListView(
+      FixedExpenseListView(
         viewModel: viewModel,
         fixedExpenses: $fixedExpenses
       )
@@ -99,23 +99,13 @@ private struct OnboardingHeaderView: View {
   }
 }
 
-private struct FixedExpensesListView: View {
-  private var viewModel: OnboardingViewModel
+private struct FixedExpenseListView: View {
+  let viewModel: OnboardingViewModel
   
-  @State private var isPresented: Bool = false
-  @Binding private var fixedExpenses: [TransactionItem]
-  
-  @State private var manageMode: Mode
+  @State private var manageMode: Mode = .add
   @State private var selectedItem: TransactionItem?
-  
-  init(
-    viewModel: OnboardingViewModel,
-    fixedExpenses: Binding<[TransactionItem]>
-  ) {
-    self.viewModel = viewModel
-    self._fixedExpenses = fixedExpenses
-    self._manageMode = State(initialValue: .add)
-  }
+  @State private var isPresented: Bool = false
+  @Binding var fixedExpenses: [TransactionItem]
   
   var body: some View {
     VStack(spacing: 0) {
@@ -142,7 +132,20 @@ private struct FixedExpensesListView: View {
       }
     }
     .sheet(isPresented: $isPresented) {
-      fixedExpenseSheet()
+      FixedExpenseManageView(
+        mode: self.manageMode,
+        selectedDay: selectedItem?.date.day ?? 1,
+        fixedExpenseName: selectedItem?.name ?? "",
+        fixedExpenseAmount: selectedItem?.price.decimal ?? ""
+      ) { day, name, price in
+        saveFixedExpense(
+          day: day,
+          name: name,
+          price: price
+        )
+      }
+      .presentationDetents([.large])
+      .presentationCornerRadius(20)
     }
     .onChange(of: selectedItem) { _, _ in }
     .onChange(of: fixedExpenses) { _, _ in
@@ -178,10 +181,6 @@ private struct FixedExpensesListView: View {
       .padding(.top, 150)
   }
   
-  private func removeList(at offsets: IndexSet) {
-    fixedExpenses.remove(atOffsets: offsets)
-  }
-  
   private func fixedExpensesRow(
     for item: TransactionItem
   ) -> some View {
@@ -211,19 +210,6 @@ private struct FixedExpensesListView: View {
     .contentShape(Rectangle())
   }
   
-  private func fixedExpenseSheet() -> some View {
-    FixedExpenseManageView(
-      mode: manageMode,
-      selectedDay: selectedItem?.date.day ?? 1,
-      fixedExpenseName: selectedItem?.name ?? "",
-      fixedExpenseAmount: selectedItem?.price.decimal ?? ""
-    ) { day, name, price in
-      saveFixedExpense(day: day, name: name, price: price)
-    }
-    .presentationDetents([.large])
-    .presentationCornerRadius(20)
-  }
-  
   private func saveFixedExpense(
     day: Int,
     name: String,
@@ -234,12 +220,13 @@ private struct FixedExpensesListView: View {
       end: viewModel.state.incomeEndDate
     )
     
-    if let item = selectedItem {
-      if let index = fixedExpenses.firstIndex(where: { $0.id == item.id }) {
-        fixedExpenses[index].date = date
-        fixedExpenses[index].name = name
-        fixedExpenses[index].price = price.numberFormat ?? 0
-      }
+    if let item = selectedItem,
+       let index = fixedExpenses.firstIndex(where: {
+         $0.id == item.id
+       }) {
+      fixedExpenses[index].date = date
+      fixedExpenses[index].name = name
+      fixedExpenses[index].price = price.numberFormat ?? 0
     } else {
       fixedExpenses.append(.init(
         date: date,
@@ -247,6 +234,10 @@ private struct FixedExpensesListView: View {
         price: price.numberFormat ?? 0
       ))
     }
+  }
+  
+  private func removeList(at offsets: IndexSet) {
+    fixedExpenses.remove(atOffsets: offsets)
   }
 }
 
