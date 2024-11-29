@@ -28,7 +28,7 @@ struct FixedExpenseView: View {
           fixedExpenses: salaryBudget.fixedExpenses
         )
         
-        FixedExpensesListView(
+        FixedExpenseListView(
           settingViewModel: settingViewModel,
           fixedExpenses: .init(
             get: {
@@ -70,7 +70,7 @@ private struct FixedExpenseHeaderView: View {
   }
 }
 
-private struct FixedExpensesListView: View {
+private struct FixedExpenseListView: View {
   let settingViewModel: SettingViewModel
   
   @State private var manageMode: Mode = .add
@@ -154,10 +154,6 @@ private struct FixedExpensesListView: View {
       .padding(.top, 150)
   }
   
-  private func removeList(at offsets: IndexSet) {
-    fixedExpenses.remove(atOffsets: offsets)
-  }
-  
   private func fixedExpensesRow(
     for item: TransactionItem
   ) -> some View {
@@ -197,12 +193,13 @@ private struct FixedExpensesListView: View {
       end: settingViewModel.state.salaryBudget.endDate
     )
     
-    if let item = selectedItem {
-      if let index = fixedExpenses.firstIndex(where: { $0.id == item.id }) {
-        fixedExpenses[index].date = date
-        fixedExpenses[index].name = name
-        fixedExpenses[index].price = price.numberFormat ?? 0
-      }
+    if let item = selectedItem,
+       let index = fixedExpenses.firstIndex(where: {
+         $0.id == item.id
+       }) {
+      fixedExpenses[index].date = date
+      fixedExpenses[index].name = name
+      fixedExpenses[index].price = price.numberFormat ?? 0
     } else {
       fixedExpenses.append(.init(
         date: date,
@@ -210,6 +207,10 @@ private struct FixedExpensesListView: View {
         price: price.numberFormat ?? 0
       ))
     }
+  }
+  
+  private func removeList(at offsets: IndexSet) {
+    fixedExpenses.remove(atOffsets: offsets)
   }
 }
 
