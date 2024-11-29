@@ -61,7 +61,9 @@ extension SalaryBudgetDTO {
       startDate: self.startDate,
       endDate: self.endDate,
       fixedIncome: self.fixedIncome,
-      fixedExpenses: self.fixedExpenses.map { $0.toEntity() },
+      fixedExpenses: self.fixedExpenses
+        .map { $0.toEntity() }
+        .sorted { $0.date < $1.date },
       balance: self.balance,
       defaultHarubee: self.defaultHarubee,
       dailyBudgets: self.dailyBudgets
