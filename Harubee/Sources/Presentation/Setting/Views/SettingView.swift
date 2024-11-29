@@ -9,7 +9,7 @@
 import SwiftUI
 
 struct SettingView: View {
-  let settingViewModel: SettingViewModel
+  @State private var settingViewModel: SettingViewModel
   
   @State private var navigateFixedExpense: Bool = false
   @State private var navigateFixedIncome: Bool = false
