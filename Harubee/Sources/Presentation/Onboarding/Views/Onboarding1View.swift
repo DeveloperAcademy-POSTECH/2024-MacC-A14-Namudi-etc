@@ -11,35 +11,53 @@ import Lottie
 
 struct Onboarding1View: View {
   @State private var viewModel: OnboardingViewModel
-  @State var isPresented: Bool = false
+  @State private var isVisible: Bool = false
+  @State private var isPresented: Bool = false
   
   init(viewModel: OnboardingViewModel) {
     self.viewModel = viewModel
   }
   
   var body: some View {
-    ZStack {
+    ZStack(alignment: .bottom) {
       Color.main.ignoresSafeArea()
-      VStack(spacing: 0) {
-        ZStack(alignment: .bottom) {
-          LottieView(animation: .onboarding)
-            .playing(loopMode: .loop)
-            .frame(height: 146)
-          Text("쉽고 빠른 지출 계획의 시작")
-            .font(.pretendardSemibold_20)
-            .foregroundStyle(Color.whiteDefault)
-            .padding(.bottom, 7)
-        }
-        .padding(.top, UIScreen.main.bounds.height * 0.28)
-        // 피그마에서 Lottie 위로 padding 244, 244 / 852 * 100 = 28.~~~
-        
-        Spacer()
-        
-        MainColorBottomButton(title: "시작하기") {
-          self.isPresented = true
+      
+      VStack {
+        LottieView(animation: .onboarding)
+          .playing(loopMode: .loop)
+          .frame(height: 146)
+        Text("쉽고 빠른 지출 계획의 시작")
+          .font(.pretendardSemibold_20)
+          .foregroundStyle(Color.whiteDefault)
+          .offset(y: -30)
+      }
+      .frame(maxHeight: .infinity)
+      .padding(.bottom, 100)
+      //        Text(isVisible ? "화면을 터치해주세요" : " ")
+      //          .padding(.bottom, 50)
+      //          .font(.pretendardSemibold_16)
+      //          .foregroundStyle(.whiteDefault)
+      
+      
+      if isVisible {
+        MainColorBottomButton(
+          title: "다음으로",
+          isReverseColor: true
+        ) {
+          isPresented = true
         }
       }
     }
+    .onAppear {
+      DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+        withAnimation {
+          self.isVisible = true
+        }
+      }
+    }
+//    .onTapGesture {
+//      self.isPresented = isVisible
+//    }
     .navigationDestination(isPresented: $isPresented) {
       Onboarding2View(viewModel: viewModel)
         .navigationBarBackButtonHidden()
