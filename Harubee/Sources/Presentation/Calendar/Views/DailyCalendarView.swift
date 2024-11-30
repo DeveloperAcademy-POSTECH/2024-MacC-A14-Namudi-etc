@@ -80,7 +80,11 @@ struct DailyCalendarView: View {
     .overlay(alignment: .bottom) {
       if !(viewModel.state.selectedDate ?? initialDate).isToday &&
           viewModel.isCurrentPeriodContainsToday {
-        ReturnToTodayButton(title: "오늘로 돌아가기") {
+        CalendarBottomFAB(
+          title: "오늘로 돌아가기",
+          titleColor: .whiteDefault,
+          backgroundColor: .mainBright,
+          icon: Image(systemName: "arrow.clockwise")) {
           viewModel.send(.selectDate(Date()))
         }
       }

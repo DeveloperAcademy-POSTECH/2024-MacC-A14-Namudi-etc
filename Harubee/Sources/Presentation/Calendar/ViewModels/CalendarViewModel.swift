@@ -65,6 +65,13 @@ final class CalendarViewModel {
     return budget.contains(date: Date().formattedDate)
   }
   
+  var hasExpenseMissingDays: Bool {
+    guard let budget = state.currentBudget else { return false }
+    return !budget.dailyBudgets.filter {
+      $0.date < Date().formattedDate && $0.expense == nil
+    }.isEmpty
+  }
+  
   var periodTitle: String {
     state.currentBudget.map { budget in
       "\(budget.startDate.formattedDateToString(.monthDay_slash)) - \(budget.endDate.formattedDateToString(.monthDay_slash))"
