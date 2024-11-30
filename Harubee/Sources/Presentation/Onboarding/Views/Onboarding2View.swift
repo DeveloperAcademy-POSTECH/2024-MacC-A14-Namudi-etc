@@ -31,23 +31,11 @@ struct Onboarding2View: View {
           .padding(.horizontal, 16)
         Spacer()
         
-        Button {
-          self.isPresented = true
-        } label: {
-          HStack {
-            Text("다음으로")
-              .font(.pretendardSemibold_18)
-              .foregroundStyle(Color.main)
-              .padding(.vertical, 20)
+        MainColorBottomButton(
+          title: "다음으로",
+          isReverseColor: true) {
+            isPresented = true
           }
-          .frame(maxWidth: .infinity)
-          .background(Color.whiteDefault)
-        }
-        .clipShape(
-          RoundedRectangle(cornerRadius: 10)
-        )
-        .padding(.bottom, 9)
-        .padding(.horizontal, 16)
       }
       .frame(maxHeight: .infinity, alignment: .top)
       .padding(.top, 76)

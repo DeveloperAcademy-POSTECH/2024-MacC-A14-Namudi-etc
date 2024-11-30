@@ -13,15 +13,26 @@ struct MainColorBottomButton: View {
   @Binding private var isEnabled: Bool
   
   private let title: String
+  private let isReverseColor: Bool
   private let action: () -> Void
+  
+  private var foregroundColor: Color {
+    !isReverseColor ? .whiteDefault : .main
+  }
+  
+  private var backgroundColor: Color {
+    !isReverseColor ? .main : .whiteDefault
+  }
   
   init(
     title: String,
     isEnabled: Binding<Bool> = .constant(true),
+    isReverseColor: Bool = false,
     action: @escaping () -> Void
   ) {
     self.title = title
     self._isEnabled = isEnabled
+    self.isReverseColor = isReverseColor
     self.action = action
   }
   
@@ -29,11 +40,19 @@ struct MainColorBottomButton: View {
     HStack {
       Text(title)
         .font(.pretendardSemibold_18)
-        .foregroundStyle(isEnabled ? Color.whiteDefault : Color.whiteDeep)
+        .foregroundStyle(
+          isEnabled
+          ? foregroundColor
+          : Color.whiteDeep
+        )
         .padding(.vertical, 20)
     }
     .frame(maxWidth: .infinity)
-    .background(isEnabled ? Color.main : Color.main30)
+    .background(
+      isEnabled
+      ? backgroundColor
+      : Color.main30
+    )
     .clipShape(RoundedRectangle(cornerRadius: 10))
     .tapFeedback(haptic: .none) {
       action()
