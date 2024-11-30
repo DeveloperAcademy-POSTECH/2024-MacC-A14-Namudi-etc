@@ -76,6 +76,7 @@ extension TodayViewModel {
       ) else { return }
       
       // 3. 새로운 시작일과 종료일 계산
+      // TODO: 수정 필요
       let (newStartDate, newEndDate) = calculateNewSalaryBudgetDates(
         referenceStartDay: Calendar.current.component(
           .day,
@@ -87,12 +88,20 @@ extension TodayViewModel {
         )
       )
       
+      let newFixedExpenses = recentSalaryBudget.fixedExpenses.map {
+        let date = $0.date.day.convertDateBetweenStartAndEnd(
+          start: newStartDate,
+          end: newEndDate
+        )
+        return TransactionItem(date: date, name: $0.name, price: $0.price)
+      }
+      
       // 4. 새로운 SalaryBudget 생성
       if let newSalaryBudget = try? budgetUseCase.createSalaryBudget(
         startDate: newStartDate,
         endDate: newEndDate,
         fixedIncome: recentSalaryBudget.fixedIncome,
-        fixedExpenses: recentSalaryBudget.fixedExpenses
+        fixedExpenses: newFixedExpenses
       ) {
         initializeState(salaryBudget: newSalaryBudget)
       }
