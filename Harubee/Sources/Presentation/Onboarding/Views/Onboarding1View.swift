@@ -33,20 +33,11 @@ struct Onboarding1View: View {
       }
       .frame(maxHeight: .infinity)
       .padding(.bottom, 100)
-      //        Text(isVisible ? "화면을 터치해주세요" : " ")
-      //          .padding(.bottom, 50)
-      //          .font(.pretendardSemibold_16)
-      //          .foregroundStyle(.whiteDefault)
       
-      
-      if isVisible {
-        MainColorBottomButton(
-          title: "다음으로",
-          isReverseColor: true
-        ) {
-          isPresented = true
-        }
-      }
+      Text(isVisible ? "화면을 터치해주세요" : " ")
+        .padding(.bottom, 50)
+        .font(.pretendardSemibold_16)
+        .foregroundStyle(.whiteDefault)
     }
     .onAppear {
       DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
@@ -55,9 +46,9 @@ struct Onboarding1View: View {
         }
       }
     }
-//    .onTapGesture {
-//      self.isPresented = isVisible
-//    }
+    .onTapGesture {
+      self.isPresented = isVisible
+    }
     .navigationDestination(isPresented: $isPresented) {
       Onboarding2View(viewModel: viewModel)
         .navigationBarBackButtonHidden()
