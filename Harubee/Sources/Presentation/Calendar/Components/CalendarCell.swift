@@ -54,9 +54,9 @@ struct CalendarCell: View {
   }
   
   private var cellBackground: some View {
-    RoundedRectangle(cornerRadius: 5)
+    RoundedRectangle(cornerRadius: 8)
       .fill(date.isToday ? Color.whiteDeep50 : .whiteDefault)
-      .stroke(date.isToday ? Color.mainBright : Color.clear, lineWidth: 1)
+      .stroke(date.isToday ? Color.mainBright : Color.clear, lineWidth: 2)
       .padding(1)
   }
   
