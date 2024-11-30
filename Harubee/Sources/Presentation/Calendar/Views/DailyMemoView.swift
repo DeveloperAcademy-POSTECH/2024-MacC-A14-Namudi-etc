@@ -30,6 +30,9 @@ struct DailyMemoView: View {
   
   private let mode: Mode
   private let onComplete: (String) -> Void
+  private var isEmptyMemo: Bool {
+      memo.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+  }
   
   // MARK: - Initialization
   init(
@@ -81,10 +84,10 @@ struct DailyMemoView: View {
         .frame(maxWidth: .infinity)
         .foregroundStyle(Color.whiteDefault)
         .background(
-          Color.main.opacity(memo.isEmpty ? 0.3 : 1)
+          Color.main.opacity(isEmptyMemo ? 0.3 : 1)
         )
     }
-    .disabled(memo.isEmpty)
+    .disabled(isEmptyMemo)
   }
   
   // MARK: - Actions
