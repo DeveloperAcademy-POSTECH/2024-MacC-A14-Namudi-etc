@@ -45,20 +45,25 @@ extension Int {
   func convertDateBetweenStartAndEnd(start: Date, end: Date) -> Date {
     let calendar = Calendar.current
     
-    var startDateComponents = calendar.dateComponents([.year, .month, .day], from: start)
-    let endDateComponents = calendar.dateComponents([.year, .month, .day], from: end)
+    var current = start
     
-    while startDateComponents != endDateComponents {
-      let day = startDateComponents.day!
-      if day == self {
-        return calendar.date(from: startDateComponents)!
-      }
-      startDateComponents.day! += 1
+    while current <= end {
+      let day = current.day
       
-      let start = calendar.date(from: startDateComponents)!
-      startDateComponents = calendar.dateComponents([.year, .month, .day], from: start)
+      if day == self { return current }
+      
+      current.addTimeInterval(86400)
     }
     
-    return calendar.date(from: endDateComponents)!
+    // 해당 날짜가 기간 사이에 존재하지 않는 경우는 시작 날짜의 달의 마지막 날을 리턴
+    let dateComponents = calendar.dateComponents([.year, .month], from: start)
+    let date = calendar.date(from: dateComponents)!
+    let lastDay = calendar.range(of: .day, in: .month, for: date)!.last!
+    
+    return Date.create(
+      year: dateComponents.year!,
+      month: dateComponents.month!,
+      day: lastDay
+    )
   }
 }
