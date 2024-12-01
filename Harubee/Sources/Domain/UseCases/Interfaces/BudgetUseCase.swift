@@ -226,4 +226,6 @@ protocol BudgetUseCase {
   /// - Parameter salaryBudget: 이번 기간의 SalaryBudget
   /// - Returns: 변경된 SalaryBudget
   func checkSalaryBudget(_ salaryBudget: SalaryBudget) throws -> SalaryBudget
+  
+  func reset()
 }

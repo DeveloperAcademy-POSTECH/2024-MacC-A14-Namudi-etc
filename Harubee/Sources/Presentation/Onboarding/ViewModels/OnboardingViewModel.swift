@@ -11,10 +11,13 @@ import Foundation
 @Observable
 final class OnboardingViewModel {
   struct State {
-    var incomeDay: Int = 1 // 고정 수입일
-    var incomeAmount: Int? // 한달 수입금
-    var currentBalance: Int? // 현재 잔액
-    var fixedExpenses: [TransactionItem] = [] // 고정 지출 내역
+    var incomeDay: Int = 5 // 고정 수입일
+    var incomeAmount: Int? = 1_000_000 // 한달 수입금
+    var currentBalance: Int? = 950_000 // 현재 잔액
+    var fixedExpenses: [TransactionItem] = [
+      .init(date: .now.addingTimeInterval(86400 * 5), name: "유튜브 프리미엄", price: 14900),
+      .init(date: .now.addingTimeInterval(86400 * 11), name: "ChatGPT", price: 32000)
+    ] // 고정 지출 내역
     var averageHarubee: Int = 0 // 평균 하루비
     
     var incomeStartDate: Date
@@ -37,7 +40,7 @@ final class OnboardingViewModel {
   init(budgetUseCase: BudgetUseCase) {
     self.budgetUseCase = budgetUseCase
     
-    let (start, end) = Date.calculateStartAndEndDate(from: 1)
+    let (start, end) = Date.calculateStartAndEndDate(from: 5)
     self.state = .init(incomeStartDate: start, incomeEndDate: end)
   }
   

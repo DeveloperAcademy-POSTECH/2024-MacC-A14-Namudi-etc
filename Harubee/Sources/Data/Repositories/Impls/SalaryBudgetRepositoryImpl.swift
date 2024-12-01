@@ -147,6 +147,10 @@ final class SalaryBudgetRepositoryImpl: SalaryBudgetRepository {
     guard let model = try readById(id) else { return }
     modelContext.delete(model)    
   }
+  
+  func reset() {
+    try? modelContext.delete(model: SalaryBudgetDTO.self)
+  }
 }
 
 

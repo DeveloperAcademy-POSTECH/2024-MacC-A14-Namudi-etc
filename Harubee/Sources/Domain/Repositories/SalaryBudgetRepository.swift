@@ -86,4 +86,6 @@ protocol SalaryBudgetRepository {
   /// DB에서 SalaryBudget을 삭제합니다.
   /// - Parameter id: 삭제할 SalaryBudget의 ID
   func deleteById(_ id: String) throws
+  
+  func reset()
 }

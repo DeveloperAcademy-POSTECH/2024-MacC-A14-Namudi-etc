@@ -21,11 +21,12 @@ struct HarubeeApp: App {
           Onboarding1View(viewModel: DIContainer.shared.makeOnboardingViewModel())
         case .today:
           TodayView(todayViewModel: DIContainer.shared.makeTodayViewModel())
-            .onChange(of: scenePhase) {
-              if case ScenePhase.background = $1 {
-                WidgetCenter.shared.reloadAllTimelines()
-              }
-            }
+            
+        }
+      }
+      .onChange(of: scenePhase) {
+        if case ScenePhase.background = $1 {
+          WidgetCenter.shared.reloadAllTimelines()
         }
       }
       .id(appRootManager.root)

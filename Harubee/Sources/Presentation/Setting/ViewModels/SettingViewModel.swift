@@ -23,6 +23,7 @@ final class SettingViewModel {
   enum Action {
     case fixedIncomeSaveButtonTapped(Int?, Int?)
     case updateFixedExpenses([TransactionItem])
+    case reset
   }
   
   private(set) var state: State
@@ -56,6 +57,9 @@ final class SettingViewModel {
       
     case let .updateFixedExpenses(items):
       self.updateFixedExpenses(items)
+      
+    case .reset:
+      self.budgetUseCase.reset()
     }
   }
   

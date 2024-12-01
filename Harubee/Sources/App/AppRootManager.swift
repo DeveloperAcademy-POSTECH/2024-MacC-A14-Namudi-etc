@@ -27,4 +27,9 @@ final class AppRootManager {
     self.root = .today
     UserDefaults.standard.set(false, forKey: "isOnboarding")
   }
+  
+  func changeRootViewToOnboarding() {
+    self.root = .onboarding
+    UserDefaults.standard.set(true, forKey: "isOnboarding")
+  }
 }

@@ -652,4 +652,8 @@ final class BudgetUseCaseImpl: BudgetUseCase {
     
     return salaryBudget
   }
+  
+  func reset() {
+    salaryBudgetRepository.reset()
+  }
 }
