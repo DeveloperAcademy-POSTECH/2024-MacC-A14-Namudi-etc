@@ -35,6 +35,11 @@ protocol BudgetUseCase {
     fixedExpenses: [TransactionItem]
   ) throws -> SalaryBudget
   
+  /// 다음 salaryBudget이 없다면, 생성합니다.
+  /// - Parameter salaryBudget: 초기 생성시에 사용했던 SalaryBudget
+  func createSalaryBudgetIfNeeded(
+    salaryBudget: SalaryBudget
+  ) throws
   
   /// 모든 SalaryBudget을 가져옵니다.
   /// - Returns: 저장된 모든 SalaryBudget
