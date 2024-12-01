@@ -311,7 +311,7 @@ private struct HarubeeHexagon: View {
             dailyBudget: todayViewModel.state.todayDailyBudget!
           )
         )
-        .presentationDetents([.height(623)])
+        .presentationDetents([.height(600)])
       } else {
         BalanceAdjustView(
           viewModel: DIContainer.shared.makeBalanceAdjustViewModel(
@@ -319,7 +319,7 @@ private struct HarubeeHexagon: View {
             dailyBudget: todayViewModel.state.todayDailyBudget!
           )
         )
-        .presentationDetents([.height(623)])
+        .presentationDetents([.height(600)])
       }
       
     }
@@ -473,7 +473,7 @@ private struct TodayFooterView: View {
         ),
         transactionFocusType: .expense
       )
-      .presentationDetents([.height(623)])
+      .presentationDetents([.height(600)])
     }
     .onOpenURL { url in
       self.isPresented = url == WidgetURL.transactionInput.url
