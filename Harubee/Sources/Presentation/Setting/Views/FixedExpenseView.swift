@@ -17,10 +17,6 @@ struct FixedExpenseView: View {
     settingViewModel.state.salaryBudget
   }
   
-  init(settingViewModel: SettingViewModel) {
-    self.settingViewModel = settingViewModel
-  }
-  
   var body: some View {
     ZStack {
       VStack(spacing: 0) {
