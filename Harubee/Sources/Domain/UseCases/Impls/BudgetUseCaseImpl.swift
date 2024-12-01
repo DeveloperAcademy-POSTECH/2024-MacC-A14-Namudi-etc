@@ -95,6 +95,13 @@ final class BudgetUseCaseImpl: BudgetUseCase {
     // 8. Repository에 저장하기
     salaryBudgetRepository.create(salaryBudget)
     
+    // 9. 필요하다면 다음달의 salaryBudget 생성
+    do {
+      try createSalaryBudgetIfNeeded(salaryBudget: salaryBudget)
+    } catch {
+      print(error)
+    }
+    
     return salaryBudget
   }
   
@@ -167,7 +174,80 @@ final class BudgetUseCaseImpl: BudgetUseCase {
     // 9. Repository에 저장하기
     salaryBudgetRepository.create(salaryBudget)
     
+    // 10. 다음달의 salaryBudget 생성
+    do {
+      try createSalaryBudgetIfNeeded(salaryBudget: salaryBudget)
+    } catch {
+      print(error)
+    }
+    
     return salaryBudget
+  }
+  
+  func createSalaryBudgetIfNeeded(salaryBudget: SalaryBudget) throws {
+    // 1. 모든 SalaryBudget 가져오기
+    let salaryBudgets = try salaryBudgetRepository.readAll()
+    
+    // 2. 이후에 SalaryBudget이 있다면 return
+    guard !salaryBudgets.contains(
+      where: {$0.startDate > salaryBudget.startDate }
+    ) else { return }
+    
+    // 3. 기존 startDate, endDate 기준으로 다음달의 날짜 계산하기
+    let nextStartDate = calendar.date(
+      byAdding: .month, value: 1, to: salaryBudget.startDate
+    )!
+    let nextEndDate = calendar.date(
+      byAdding: .month, value: 1, to: salaryBudget.endDate
+    )!
+    
+    // 4. 일 수 계산
+    let days = calendar.dateComponents(
+      [.day],
+      from: nextStartDate,
+      to: nextEndDate
+    ).day ?? 0
+    
+    // 5. dailyBudget 생성
+    let nextDailyBudgets = (0...days).compactMap { day -> DailyBudget? in
+      guard let date = calendar.date(
+        byAdding: .day,
+        value: day,
+        to: nextStartDate
+      ) else { return nil }
+      
+      return DailyBudget(
+        id: UUID().uuidString,
+        date: date,
+        harubee: nil,
+        memo: [],
+        expense: nil,
+        income: nil
+      )
+    }
+    
+    // 6. initalBalance 계산
+    let totalExpense = salaryBudget.fixedExpenses.reduce(0) { $0 + $1.price }
+    let initalBalance = salaryBudget.fixedIncome - totalExpense
+    
+    // 7. 새로운 기본 하루비 계산
+    let nextDefaultHarubee = Double(initalBalance) / Double(days + 1)
+    
+    // 8. nextSalaryBudget 생성
+    let nextSalaryBudget = SalaryBudget(
+      id: UUID().uuidString,
+      startDate: nextStartDate,
+      endDate: nextEndDate,
+      fixedIncome: salaryBudget.fixedIncome,
+      fixedExpenses: salaryBudget.fixedExpenses,
+      balance: initalBalance,
+      defaultHarubee: nextDefaultHarubee,
+      dailyBudgets: nextDailyBudgets
+    )
+    
+    
+    // 9. 저장하기
+    salaryBudgetRepository.create(nextSalaryBudget)
   }
   
   func getAllSalaryBudget() throws -> [SalaryBudget] {
