@@ -174,7 +174,7 @@ final class BudgetUseCaseImpl: BudgetUseCase {
     // 9. Repository에 저장하기
     salaryBudgetRepository.create(salaryBudget)
     
-    // 10. 다음달의 salaryBudget 생성
+    // 10. 필요하다면 다음달의 salaryBudget 생성
     do {
       try createSalaryBudgetIfNeeded(salaryBudget: salaryBudget)
     } catch {
@@ -190,7 +190,7 @@ final class BudgetUseCaseImpl: BudgetUseCase {
     
     // 2. 이후에 SalaryBudget이 있다면 return
     guard !salaryBudgets.contains(
-      where: {$0.startDate > salaryBudget.startDate }
+      where: { $0.startDate > salaryBudget.startDate }
     ) else { return }
     
     // 3. 기존 startDate, endDate 기준으로 다음달의 날짜 계산하기
