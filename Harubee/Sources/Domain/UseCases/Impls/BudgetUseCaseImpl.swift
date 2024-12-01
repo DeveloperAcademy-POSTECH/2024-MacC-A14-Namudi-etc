@@ -230,6 +230,14 @@ final class BudgetUseCaseImpl: BudgetUseCase {
     let totalExpense = salaryBudget.fixedExpenses.reduce(0) { $0 + $1.price }
     let initalBalance = salaryBudget.fixedIncome - totalExpense
     
+    let newFixedExpenses = salaryBudget.fixedExpenses.map {
+      let date = $0.date.day.convertDateBetweenStartAndEnd(
+        start: nextStartDate,
+        end: nextEndDate
+      )
+      return TransactionItem(date: date, name: $0.name, price: $0.price)
+    }
+    
     // 7. 새로운 기본 하루비 계산
     let nextDefaultHarubee = Double(initalBalance) / Double(days + 1)
     
@@ -239,7 +247,7 @@ final class BudgetUseCaseImpl: BudgetUseCase {
       startDate: nextStartDate,
       endDate: nextEndDate,
       fixedIncome: salaryBudget.fixedIncome,
-      fixedExpenses: salaryBudget.fixedExpenses,
+      fixedExpenses: newFixedExpenses,
       balance: initalBalance,
       defaultHarubee: nextDefaultHarubee,
       dailyBudgets: nextDailyBudgets
@@ -447,13 +455,22 @@ final class BudgetUseCaseImpl: BudgetUseCase {
     }
     
     for salaryBudget in afterSalaryBudgets {
+      
+      let newFixedExpenses = expenses.map {
+        let date = $0.date.day.convertDateBetweenStartAndEnd(
+          start: salaryBudget.startDate,
+          end: salaryBudget.endDate
+        )
+        return TransactionItem(date: date, name: $0.name, price: $0.price)
+      }
+      
       // 7. 기본 하루비 계산
       let defaultHarubee = self.calculateDefaultHarubee(
         salaryBudget: SalaryBudget(
           startDate: salaryBudget.startDate,
           endDate: salaryBudget.endDate,
           fixedIncome: salaryBudget.fixedIncome,
-          fixedExpenses: expenses,
+          fixedExpenses: newFixedExpenses,
           balance: nextNewBalance,
           defaultHarubee: salaryBudget.defaultHarubee,
           dailyBudgets: salaryBudget.dailyBudgets
@@ -465,7 +482,7 @@ final class BudgetUseCaseImpl: BudgetUseCase {
       try salaryBudgetRepository.updateSalaryBudget(
           salaryBudget.id,
           fixedIncome: .keep,
-          fixedExpenses: .set(expenses),
+          fixedExpenses: .set(newFixedExpenses),
           balance: .set(nextNewBalance),
           defaultHarubee: .set(defaultHarubee)
         )
