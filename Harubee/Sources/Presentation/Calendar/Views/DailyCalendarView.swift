@@ -80,7 +80,11 @@ struct DailyCalendarView: View {
     .overlay(alignment: .bottom) {
       if !(viewModel.state.selectedDate ?? initialDate).isToday &&
           viewModel.isCurrentPeriodContainsToday {
-        ReturnToTodayButton(title: "오늘로 돌아가기") {
+        CalendarBottomFAB(
+          title: "오늘로 돌아가기",
+          titleColor: .whiteDefault,
+          backgroundColor: .mainBright,
+          icon: Image(systemName: "arrow.clockwise")) {
           viewModel.send(.selectDate(Date()))
         }
       }
@@ -96,7 +100,7 @@ struct DailyCalendarView: View {
             salaryBudget: viewModel.state.currentBudget!, dailyBudget: viewModel.selectedDailyBudget!
           )
         )
-        .presentationDetents([.height(623)])
+        .presentationDetents([.height(600)])
       case .transactionIncome:
         TransactionInputView(
           viewModel: DIContainer.shared.makeTransactionInputViewModel(
@@ -105,7 +109,7 @@ struct DailyCalendarView: View {
           ),
           transactionFocusType: .income
         )
-        .presentationDetents([.height(623)])
+        .presentationDetents([.height(600)])
       case .transactionExpense:
         TransactionInputView(
           viewModel: DIContainer.shared.makeTransactionInputViewModel(
@@ -114,7 +118,7 @@ struct DailyCalendarView: View {
           ),
           transactionFocusType: .expense
         )
-        .presentationDetents([.height(623)])
+        .presentationDetents([.height(600)])
       case .addMemo:
         DailyMemoView { memo in
           viewModel.send(.updateMemo(.init(oldMemo: nil, newMemo: memo)))

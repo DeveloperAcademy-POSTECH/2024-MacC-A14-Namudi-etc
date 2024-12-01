@@ -44,9 +44,20 @@ struct PeriodlyCalendarView: View {
       }
       
       if !viewModel.isCurrentPeriodContainsToday {
-        ReturnToTodayButton(
+        CalendarBottomFAB(
           title: "이번 기간으로 돌아가기",
+          titleColor: .whiteDefault,
+          backgroundColor: .mainBright,
+          icon: Image(systemName: "arrow.clockwise"),
           action: { viewModel.send(.moveToCurrent) }
+        )
+      } else if viewModel.hasExpenseMissingDays {
+        CalendarBottomFAB(
+          title: "아직 지출 및 수입을 입력하지 않은 날이 있어요",
+          titleColor: .main,
+          backgroundColor: .whiteDeep,
+          icon: Image(systemName: ""),
+          action: {}
         )
       }
       
@@ -60,7 +71,6 @@ struct PeriodlyCalendarView: View {
       }
     }
     .applyNavigationBarStyle(infoBubbleVisible: $infoBubbleVisible)
-    .onAppear { viewModel.send(.loadInitialData) }
     .errorAlert(error: viewModel.state.error)
     .navigationDestination(isPresented: $navigateToDailyView) {
       if let selectedDate = viewModel.state.selectedDate {

@@ -24,7 +24,6 @@ final class CalendarViewModel {
   }
   
   enum Action {
-    case loadInitialData
     case updateCurrentData
     case movePeriod(PeriodDirection)
     case moveToCurrent
@@ -65,6 +64,13 @@ final class CalendarViewModel {
     return budget.contains(date: Date().formattedDate)
   }
   
+  var hasExpenseMissingDays: Bool {
+    guard let budget = state.currentBudget else { return false }
+    return !budget.dailyBudgets.filter {
+      $0.date < Date().formattedDate && $0.expense == nil
+    }.isEmpty
+  }
+  
   var periodTitle: String {
     state.currentBudget.map { budget in
       "\(budget.startDate.formattedDateToString(.monthDay_slash)) - \(budget.endDate.formattedDateToString(.monthDay_slash))"
@@ -84,13 +90,12 @@ final class CalendarViewModel {
   ) {
     self.budgetUseCase = budgetUseCase
     self.state = initialState
+    self.handleLoadInitialData()
   }
   
   // MARK: - Public Methods
   func send(_ action: Action) {
     switch action {
-    case .loadInitialData:
-      handleLoadInitialData()
     case .updateCurrentData:
       handleUpdateCurrentData()
     case .movePeriod(let direction):

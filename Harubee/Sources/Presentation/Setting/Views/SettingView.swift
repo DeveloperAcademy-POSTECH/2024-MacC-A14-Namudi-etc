@@ -10,7 +10,7 @@ import SwiftUI
 
 struct SettingView: View {
   @Environment(AppRootManager.self) private var appRootManager
-  @State private var settingViewModel: SettingViewModel
+  @State var settingViewModel: SettingViewModel
   
   @State private var navigateFixedExpense: Bool = false
   @State private var navigateFixedIncome: Bool = false
@@ -19,10 +19,6 @@ struct SettingView: View {
   
   private var salaryBudget: SalaryBudget? {
     settingViewModel.state.salaryBudget
-  }
-  
-  init(settingViewModel: SettingViewModel) {
-    self.settingViewModel = settingViewModel
   }
   
   var body: some View {
