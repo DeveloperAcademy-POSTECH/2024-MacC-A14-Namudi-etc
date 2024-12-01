@@ -329,14 +329,18 @@ final class BudgetUseCaseImpl: BudgetUseCase {
   ) throws -> SalaryBudget {
     
     // 1. 새로운 잔액 = oldBalance - (기존 월급 - 새로운 월급)
+    let totalFixedExpense = salaryBudget.fixedExpenses.reduce(0) {
+      $0 + $1.price
+    }
     let newBalance = salaryBudget.balance - (salaryBudget.fixedIncome - newIncome)
+    let nextNewBalance = newIncome - totalFixedExpense
     
     // 2. 잔액이 음수가 되는지 체크하기
-    guard newBalance >= 0 else {
+    guard newBalance >= 0, nextNewBalance >= 0 else {
       throw DomainError.invalidAmount
     }
     
-    // 5. 기본 하루비 다시 계산하기
+    // 3. 현재 기본 하루비 다시 계산하기
     let defaultHarubee = self.calculateDefaultHarubee(
       salaryBudget: SalaryBudget(
         startDate: salaryBudget.startDate,
@@ -350,7 +354,37 @@ final class BudgetUseCaseImpl: BudgetUseCase {
       anchorDate: .now
     )
     
-    // 6. Repository 통해 저장하기
+    // 4. 현재 SalaryBudget 이후에 SalaryBudgets 가져오기
+    let salaryBudgets = try salaryBudgetRepository.readAll()
+    let afterSalaryBudgets = salaryBudgets.filter {
+      $0.startDate > salaryBudget.startDate
+    }
+    
+    for salaryBudget in afterSalaryBudgets {
+      // 5. 기본 하루비 계산
+      let defaultHarubee = self.calculateDefaultHarubee(
+        salaryBudget: SalaryBudget(
+          startDate: salaryBudget.startDate,
+          endDate: salaryBudget.endDate,
+          fixedIncome: newIncome,
+          fixedExpenses: salaryBudget.fixedExpenses,
+          balance: nextNewBalance,
+          defaultHarubee: salaryBudget.defaultHarubee,
+          dailyBudgets: salaryBudget.dailyBudgets
+        ),
+        anchorDate: .now
+      )
+      
+      // 6. 반영된 수입과 잔액, 기본하루비 업데이트
+      try salaryBudgetRepository.updateSalaryBudget(
+          salaryBudget.id,
+          fixedIncome: .set(newIncome),
+          fixedExpenses: .keep,
+          balance: .set(nextNewBalance),
+          defaultHarubee: .set(defaultHarubee)
+        )
+    }
+    
     do {
       return try salaryBudgetRepository.updateSalaryBudget(
         salaryBudget.id,
@@ -371,6 +405,9 @@ final class BudgetUseCaseImpl: BudgetUseCase {
     
     let today = Date().formattedDate
     
+    // 0. 총 고정지출의 합계
+    let totalExpenses = expenses.reduce(0) { $0 + $1.price }
+    
     // 1. 기존 오늘 날짜 이후의 고정 지출의 합계
     let oldPostTodayTotalExpenses = salaryBudget.fixedExpenses
       .filter{ $0.date > today }
@@ -382,9 +419,10 @@ final class BudgetUseCaseImpl: BudgetUseCase {
     
     // 3. 잔액에 반영
     let newBalance = salaryBudget.balance - postTodayDifference
+    let nextNewBalance = salaryBudget.fixedIncome - totalExpenses
     
     // 4. 잔액이 음수가 되는지 체크하기
-    guard newBalance >= 0 else {
+    guard newBalance >= 0, nextNewBalance >= 0 else {
       throw DomainError.invalidAmount
     }
     
@@ -402,7 +440,38 @@ final class BudgetUseCaseImpl: BudgetUseCase {
       anchorDate: .now
     )
     
-    // 6. Repository 통해 저장하기
+    // 6. 현재 SalaryBudget 이후에 SalaryBudgets 가져오기
+    let salaryBudgets = try salaryBudgetRepository.readAll()
+    let afterSalaryBudgets = salaryBudgets.filter {
+      $0.startDate > salaryBudget.startDate
+    }
+    
+    for salaryBudget in afterSalaryBudgets {
+      // 7. 기본 하루비 계산
+      let defaultHarubee = self.calculateDefaultHarubee(
+        salaryBudget: SalaryBudget(
+          startDate: salaryBudget.startDate,
+          endDate: salaryBudget.endDate,
+          fixedIncome: salaryBudget.fixedIncome,
+          fixedExpenses: expenses,
+          balance: nextNewBalance,
+          defaultHarubee: salaryBudget.defaultHarubee,
+          dailyBudgets: salaryBudget.dailyBudgets
+        ),
+        anchorDate: .now
+      )
+      
+      // 8. 반영된 수입과 잔액, 기본하루비 업데이트
+      try salaryBudgetRepository.updateSalaryBudget(
+          salaryBudget.id,
+          fixedIncome: .keep,
+          fixedExpenses: .set(expenses),
+          balance: .set(nextNewBalance),
+          defaultHarubee: .set(defaultHarubee)
+        )
+    }
+    
+    // 9. Repository 통해 저장하기
     do {
       return try salaryBudgetRepository.updateSalaryBudget(
         salaryBudget.id,
@@ -581,10 +650,21 @@ final class BudgetUseCaseImpl: BudgetUseCase {
     
     let (startDate, endDate) = Date.calculateStartAndEndDate(from: day)
     
-    // 4.  기존 salaryBudget 삭제하기
+    // 4. 기존 salaryBudget 삭제하기
     try salaryBudgetRepository.deleteById(salaryBudget.id)
     
-    // 5. 새로운 SalaryBudget 생성
+    // 5. 현재 salaryBudgte 이후에 salaryBudget 가져오기
+    let salaryBudgets = try salaryBudgetRepository.readAll()
+    let afterSalaryBudgets = salaryBudgets.filter {
+      $0.startDate > salaryBudget.startDate
+    }
+    
+    // 6. 아이디 찾아서 삭제하기
+    for salaryBudget in afterSalaryBudgets {
+      try salaryBudgetRepository.deleteById(salaryBudget.id)
+    }
+    
+    // 7. 새로운 SalaryBudget 생성
     return try self.createSalaryBudget(
       startDate: startDate,
       endDate: endDate,
