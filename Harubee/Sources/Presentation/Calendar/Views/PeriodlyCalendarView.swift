@@ -71,7 +71,6 @@ struct PeriodlyCalendarView: View {
       }
     }
     .applyNavigationBarStyle(infoBubbleVisible: $infoBubbleVisible)
-    .onAppear { viewModel.send(.loadInitialData) }
     .errorAlert(error: viewModel.state.error)
     .navigationDestination(isPresented: $navigateToDailyView) {
       if let selectedDate = viewModel.state.selectedDate {

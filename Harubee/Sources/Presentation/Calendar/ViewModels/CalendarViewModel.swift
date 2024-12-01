@@ -24,7 +24,6 @@ final class CalendarViewModel {
   }
   
   enum Action {
-    case loadInitialData
     case updateCurrentData
     case movePeriod(PeriodDirection)
     case moveToCurrent
@@ -91,13 +90,12 @@ final class CalendarViewModel {
   ) {
     self.budgetUseCase = budgetUseCase
     self.state = initialState
+    self.handleLoadInitialData()
   }
   
   // MARK: - Public Methods
   func send(_ action: Action) {
     switch action {
-    case .loadInitialData:
-      handleLoadInitialData()
     case .updateCurrentData:
       handleUpdateCurrentData()
     case .movePeriod(let direction):
