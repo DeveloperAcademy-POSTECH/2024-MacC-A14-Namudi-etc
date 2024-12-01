@@ -64,18 +64,21 @@ extension TodayViewModel {
         date: state.todayDate
       )
       
+      // 2. 다음달의 SalaryBudget이 없다면 생성합니다.
+      try budgetUseCase.createSalaryBudgetIfNeeded(salaryBudget: salaryBudget)
+      
       initializeState(salaryBudget: salaryBudget)
       
     } catch DomainError.dataNotFound {
       
-      // 2. 없다면 가장 최근 SalaryBudget을 기반으로 새 SalaryBudget 생성
+      // 3. 없다면 가장 최근 SalaryBudget을 기반으로 새 SalaryBudget 생성
       let salaryBudgets = try? budgetUseCase.getAllSalaryBudget()
 
       guard let recentSalaryBudget = salaryBudgets?.max(
         by: { $0.endDate < $1.endDate }
       ) else { return }
       
-      // 3. 새로운 시작일과 종료일 계산
+      // 4. 새로운 시작일과 종료일 계산
       let (newStartDate, newEndDate) = calculateNewSalaryBudgetDates(
         referenceStartDay: Calendar.current.component(
           .day,
