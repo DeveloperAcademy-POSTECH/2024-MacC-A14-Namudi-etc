@@ -76,40 +76,67 @@ extension Date {
   /// - Parameter incomeDay: 수입일
   /// - Returns: 이번 월급 기간의 시작 및 종료 날짜
   static func calculateStartAndEndDate(from incomeDay: Int) -> (Date, Date) {
+    let calendar = Calendar.current
+    let today = Date()
+    
     var incomeStartDate: Date {
-      let calendar = Calendar.current
-      let now = Date()
       
-      var components = calendar.dateComponents([.year, .month, .day], from: now)
+      let todayComponents = calendar.dateComponents(
+        [.year, .month, .day], from: today
+      )
+      let currentMonthLastDay = calendar.range(
+        of: .day, in: .month, for: today
+      )!.upperBound - 1
       
-      if components.day! < incomeDay {
-        components.month! -= 1
+      
+      if incomeDay > currentMonthLastDay {
+        return create(
+          year: todayComponents.year!,
+          month: todayComponents.month!,
+          day: currentMonthLastDay
+        )
+        
+      } else if incomeDay <= todayComponents.day! {
+        return create(
+          year: todayComponents.year!,
+          month: todayComponents.month!,
+          day: incomeDay
+        )
+      } else {
+        let previousMonthFromToday = calendar.date(
+          byAdding: .month, value: -1, to: today
+        )!
+        let previousMonthComponents = calendar.dateComponents(
+          [.year, .month, .day], from: previousMonthFromToday
+        )
+        
+        return create(
+          year: previousMonthComponents.year!,
+          month: previousMonthComponents.month!,
+          day: incomeDay
+        )
       }
-      components.day! = incomeDay
-      
-      let startDate = calendar.date(from: components)!
-      return startDate
     }
     
     var incomeEndDate: Date {
-      let calendar = Calendar.current
+      let nextMonthFromStartDate = calendar.date(
+        byAdding: .month,
+        value: 1,
+        to: incomeStartDate
+      )!
+      let nextMonthComponents = calendar.dateComponents(
+        [.year, .month, .day], from: nextMonthFromStartDate
+      )
+      let nextMonthLastDay = calendar.range(
+        of: .day, in: .month, for: nextMonthFromStartDate
+      )!.upperBound - 1
+      let endDay = min(incomeDay, nextMonthLastDay)
       
-      // startDate가 한 달의 시작 날짜가 됩니다.
-      let startDate = incomeStartDate
-      
-      // startDate의 일자(day)를 기준으로 한 달 후의 날짜를 구함
-      var components = calendar.dateComponents([.year, .month, .day], from: startDate)
-      components.month! += 1 // 한 달 뒤로 설정
-      
-      // 다음 달에 동일한 일자가 있는지 확인하여 날짜를 생성
-      if let calculatedEndDate = calendar.date(from: components) {
-        return calculatedEndDate.addingTimeInterval(-86400)
-      } else {
-        // 동일 일자가 없는 경우(예: 30일이나 31일이 없는 달) 해당 월의 마지막 날로 조정
-        var fallbackComponents = components
-        fallbackComponents.day = calendar.range(of: .day, in: .month, for: calendar.date(from: components)!)?.last
-        return calendar.date(from: fallbackComponents)!
-      }
+      return create(
+        year: nextMonthComponents.year!,
+        month: nextMonthComponents.month!,
+        day: endDay
+      ).addingTimeInterval(-86400)
     }
     
     return (incomeStartDate, incomeEndDate)
