@@ -66,9 +66,18 @@ final class CalendarViewModel {
   
   var hasExpenseMissingDays: Bool {
     guard let budget = state.currentBudget else { return false }
-    return !budget.dailyBudgets.filter {
-      $0.date < Date().formattedDate && $0.expense == nil
-    }.isEmpty
+    let today = Date().formattedDate
+    let previousDailyBudgets = budget.dailyBudgets.filter { $0.date < today }
+    
+    if previousDailyBudgets.allSatisfy({ $0.harubee == 0 }) {
+      return false
+    }
+    
+    if previousDailyBudgets.contains(where: { $0.expense != nil }) {
+      return false
+    }
+    
+    return true
   }
   
   var periodTitle: String {

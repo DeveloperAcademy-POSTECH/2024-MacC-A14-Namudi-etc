@@ -10,7 +10,7 @@ import SwiftUI
 
 // MARK: - DailyCalendarView
 struct DailyCalendarView: View {
-  let viewModel: CalendarViewModel
+  @Bindable var viewModel: CalendarViewModel
   let initialDate: Date
   
   @State private var activeSheet: SheetType?
