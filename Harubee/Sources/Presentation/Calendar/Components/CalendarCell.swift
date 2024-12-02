@@ -14,13 +14,21 @@ struct CalendarCell: View {
   let defaultHarubee: Int
   let dailyBudget: DailyBudget?
   let onSelect: (Date) -> Void
+  private var isOnboardingPreviousDay: Bool {
+    dailyBudget?.harubee == -1 && dailyBudget?.expense == -1
+  }
   
   // MARK: - UI Components
   var body: some View {
     VStack(spacing: 0) {
-      dateLabel
-      iconSection
-      amountLabel
+      if isOnboardingPreviousDay {
+        EmptyView()
+      }
+      else {
+        dateLabel
+        iconSection
+        amountLabel
+      }
     }
     .frame(height: 90)
     .frame(maxWidth: .infinity)
@@ -29,6 +37,7 @@ struct CalendarCell: View {
       onSelect(date)
     }
     .padding(.vertical, 10)
+    .disabled(isOnboardingPreviousDay)
   }
   
   private var dateLabel: some View {

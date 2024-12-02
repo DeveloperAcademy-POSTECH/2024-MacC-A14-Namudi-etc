@@ -73,9 +73,9 @@ final class BudgetUseCaseImpl: BudgetUseCase {
       return DailyBudget(
         id: UUID().uuidString,
         date: date,
-        harubee: date < today ? 0 : nil,
+        harubee: date < today ? -1 : nil,
         memo: [],
-        expense: nil,
+        expense: date < today ? -1 : nil,
         income: nil
       )
     }
