@@ -14,13 +14,22 @@ struct CalendarCell: View {
   let defaultHarubee: Int
   let dailyBudget: DailyBudget?
   let onSelect: (Date) -> Void
+  private var isOnboardingPreviousDay: Bool {
+    dailyBudget?.harubee == -1 && dailyBudget?.expense == -1
+  }
   
   // MARK: - UI Components
   var body: some View {
     VStack(spacing: 0) {
-      dateLabel
-      iconSection
-      amountLabel
+      if isOnboardingPreviousDay {
+        dateLabel
+        Spacer()
+      }
+      else {
+        dateLabel
+        iconSection
+        amountLabel
+      }
     }
     .frame(height: 90)
     .frame(maxWidth: .infinity)
@@ -29,6 +38,7 @@ struct CalendarCell: View {
       onSelect(date)
     }
     .padding(.vertical, 10)
+//    .disabled(isOnboardingPreviousDay)
   }
   
   private var dateLabel: some View {
@@ -91,7 +101,7 @@ struct CalendarCell: View {
     } else if date.isToday {
       // 오늘: 실제 지출이 있으면 textBlack, 없으면 하루비 조정 여부로 색상 결정
       if dailyBudget?.expense != nil {
-        return .textBlack
+        return .textBrighter
       }
       return dailyBudget?.harubee != nil ? .main : .textBlack
     } else {
