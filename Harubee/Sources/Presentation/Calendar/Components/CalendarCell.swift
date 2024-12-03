@@ -22,7 +22,8 @@ struct CalendarCell: View {
   var body: some View {
     VStack(spacing: 0) {
       if isOnboardingPreviousDay {
-        EmptyView()
+        dateLabel
+        Spacer()
       }
       else {
         dateLabel
@@ -37,7 +38,7 @@ struct CalendarCell: View {
       onSelect(date)
     }
     .padding(.vertical, 10)
-    .disabled(isOnboardingPreviousDay)
+//    .disabled(isOnboardingPreviousDay)
   }
   
   private var dateLabel: some View {
@@ -100,7 +101,7 @@ struct CalendarCell: View {
     } else if date.isToday {
       // 오늘: 실제 지출이 있으면 textBlack, 없으면 하루비 조정 여부로 색상 결정
       if dailyBudget?.expense != nil {
-        return .textBlack
+        return .textBrighter
       }
       return dailyBudget?.harubee != nil ? .main : .textBlack
     } else {
