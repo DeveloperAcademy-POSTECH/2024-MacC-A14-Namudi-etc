@@ -609,6 +609,9 @@ private struct StreakGroupView: View {
 private struct StreakCell: View {
   
   let dailyStreak: DailyStreak
+  private var isCellHidden: Bool {
+    dailyStreak.harubee == -1 && dailyStreak.isOverHarubee == false
+  }
   
   var hexagonImage: Image {
     switch(dailyStreak.isOverHarubee) {
@@ -656,6 +659,7 @@ private struct StreakCell: View {
           .resizable()
           .frame(width: 23, height: 23)
           .padding(.bottom, 10)
+          .opacity(isCellHidden ? 0 : 1)
       }
     }
     .padding(.top, 10)

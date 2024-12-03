@@ -173,7 +173,6 @@ private struct FixedExpenseListView: View {
         Image(systemName: "plus")
           .frame(width: 30, height: 21)
       }
-      .padding(.trailing, 10)
     }
   }
   
