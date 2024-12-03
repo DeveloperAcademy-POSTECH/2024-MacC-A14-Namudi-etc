@@ -11,13 +11,12 @@ import SwiftUI
 struct Onboarding5View: View {
   private var viewModel: OnboardingViewModel
   
-  @State private var fixedExpenses: [TransactionItem]
+  @State private var fixedExpenses: [TransactionItem] = []
   
   @State private var isPresented: Bool = false
   
   init(viewModel: OnboardingViewModel) {
     self.viewModel = viewModel
-    self._fixedExpenses = .init(initialValue: viewModel.state.fixedExpenses)
   }
   
   var body: some View {
@@ -40,6 +39,10 @@ struct Onboarding5View: View {
       MainColorBottomButton(title: "다음으로") {
         self.isPresented = true
       }
+    }
+    .onAppear {
+      viewModel.send(.onAppearOnboardingStep5)
+      self.fixedExpenses = viewModel.state.fixedExpenses
     }
     .onChange(of: fixedExpenses, { _, _ in
       viewModel.send(.updateFixedExpenses(fixedExpenses))
