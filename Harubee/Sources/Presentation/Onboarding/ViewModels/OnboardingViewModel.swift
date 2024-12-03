@@ -13,7 +13,7 @@ final class OnboardingViewModel {
   struct State {
     var incomeDay: Int = 5 // 고정 수입일
     var incomeAmount: Int? = 2_500_000 // 한달 수입금
-    var currentBalance: Int? = 2_450_000 // 현재 잔액
+    var currentBalance: Int? = 2_500_000 // 현재 잔액
     var fixedExpenses: [TransactionItem] = [] // 고정 지출 내역
     var averageHarubee: Int = 0 // 평균 하루비
     
@@ -51,7 +51,7 @@ final class OnboardingViewModel {
     case .onAppearOnboardingStep5:
       self.state.fixedExpenses = [
         .init(date: .now.addingTimeInterval(86400 * TimeInterval(5)), name: "유튜브 프리미엄", price: 14_900),
-        .init(date: .now.addingTimeInterval(86400 * TimeInterval(6)), name: "저축", price: 700_000),
+        .init(date: .now.addingTimeInterval(86400 * TimeInterval(6)), name: "저축", price: 500_000),
         .init(date: .now.addingTimeInterval(86400 * TimeInterval(11)), name: "통신비", price: 65_000),
         .init(date: .now.addingTimeInterval(86400 * TimeInterval(17)), name: "보험료", price: 150_000),
         .init(date: .now.addingTimeInterval(86400 * TimeInterval(17)), name: "주택청약", price: 250_000),
