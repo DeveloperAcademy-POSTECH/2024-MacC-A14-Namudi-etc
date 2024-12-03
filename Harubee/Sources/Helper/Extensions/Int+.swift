@@ -35,7 +35,7 @@ extension Int {
    }
   
   var amountFormat: String {
-    if self >= 100000 {
+    if self >= 100000 || self <= -100000{
       return String(format: "%d만", self / 10000)
     } else {
       return self.decimal
