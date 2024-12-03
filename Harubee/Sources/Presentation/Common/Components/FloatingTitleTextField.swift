@@ -62,6 +62,7 @@ struct FloatingTitleNumberField: View {
   let textSize: TextSize
   @Binding var text: String
   @Binding var isFocused: Bool
+  var isErrorTextVisible: Bool? = nil
   
   private var textFont: Font {
     if textSize == .large {
@@ -79,7 +80,11 @@ struct FloatingTitleNumberField: View {
         .foregroundStyle(
           text.isEmpty
           ? .clear
-          : (isFocused ? .main : .textBright)
+          : (
+            isFocused
+            ? (isErrorTextVisible ?? false ? .redDefault : .main)
+            : .textBright
+          )
         )
         .offset(y: !text.isEmpty ? -2 : 0)
         .animation(.easeOut(duration: 0.2), value: !text.isEmpty)
@@ -95,12 +100,37 @@ struct FloatingTitleNumberField: View {
       Rectangle()
         .frame(height: isFocused ? 2 : 1)
         .foregroundStyle(
-          isFocused ? .mainBright : .textBrighter
+          isFocused
+          ? (isErrorTextVisible ?? false
+             ? .redDefault
+             : .mainBright)
+          : .textBrighter
         )
         .padding(.top, isFocused ? 7 : 8)
+      
+      if isErrorTextVisible ?? false {
+        errorText
+          .foregroundStyle(
+            text.isEmpty
+            ? .clear
+            : .redDefault
+          )
+          .offset(y: !text.isEmpty ? 4 : 0)
+          .animation(.easeOut(duration: 0.2), value: !text.isEmpty)
+          .padding(.leading, 4)
+      }
     }
     .frame(maxWidth: .infinity)
     .contentShape(Rectangle())
+  }
+  
+  private var errorText: some View {
+    HStack(spacing: 2) {
+      Image(systemName: "exclamationmark.circle")
+        .font(.system(size: 12, weight: .regular))
+      Text("0보다 큰 금액을 입력해주세요")
+        .font(.pretendardSemibold_12)
+    }
   }
 }
 

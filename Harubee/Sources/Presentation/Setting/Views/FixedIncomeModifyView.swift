@@ -15,6 +15,10 @@ struct FixedIncomeModifyView: View {
   
   private let editFixedIncomeAmount: (String) -> Void
   
+  private var isErrorTextVisible: Bool {
+    fixedIncomeAmount.isEmpty || (fixedIncomeAmount.numberFormat ?? 0 <= 0)
+  }
+  
   init(
     fixedIncomeAmount: String,
     editFixedIncomeAmount: @escaping (String) -> Void
@@ -30,7 +34,8 @@ struct FixedIncomeModifyView: View {
           title: "금액",
           textSize: .medium,
           text: $fixedIncomeAmount,
-          isFocused: $isFocused
+          isFocused: $isFocused,
+          isErrorTextVisible: isErrorTextVisible
         )
         .padding(.top, 38)
         .padding(.horizontal, 16)
@@ -43,7 +48,7 @@ struct FixedIncomeModifyView: View {
         
         MainColorBottomButton(
           title: "완료하기",
-          isEnabled: .constant(true)
+          isEnabled: .constant(!isErrorTextVisible)
         ) {
           editFixedIncomeAmount(fixedIncomeAmount)
           dismiss()

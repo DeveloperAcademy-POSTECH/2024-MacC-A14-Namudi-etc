@@ -251,12 +251,7 @@ final class BudgetUseCaseImpl: BudgetUseCase {
     // 1. 새로운 잔액 = oldBalance - (기존 월급 - 새로운 월급)
     let newBalance = salaryBudget.balance - (salaryBudget.fixedIncome - newIncome)
     
-    // 2. 잔액이 음수가 되는지 체크하기
-    guard newBalance >= 0 else {
-      throw DomainError.invalidAmount
-    }
-    
-    // 5. 기본 하루비 다시 계산하기
+    // 2. 기본 하루비 다시 계산하기
     let defaultHarubee = self.calculateDefaultHarubee(
       salaryBudget: SalaryBudget(
         startDate: salaryBudget.startDate,
@@ -270,7 +265,7 @@ final class BudgetUseCaseImpl: BudgetUseCase {
       anchorDate: .now
     )
     
-    // 6. Repository 통해 저장하기
+    // 3. Repository 통해 저장하기
     do {
       return try salaryBudgetRepository.updateSalaryBudget(
         salaryBudget.id,
