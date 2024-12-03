@@ -51,8 +51,9 @@ final class OnboardingViewModel {
     case .onAppearOnboardingStep5:
       self.state.fixedExpenses = [
         .init(date: .now.addingTimeInterval(86400 * TimeInterval(5)), name: "유튜브 프리미엄", price: 14_900),
+        .init(date: .now.addingTimeInterval(86400 * TimeInterval(6)), name: "저축", price: 700_000),
         .init(date: .now.addingTimeInterval(86400 * TimeInterval(11)), name: "통신비", price: 65_000),
-        .init(date: .now.addingTimeInterval(86400 * TimeInterval(17)), name: "보험료", price: 230_000),
+        .init(date: .now.addingTimeInterval(86400 * TimeInterval(17)), name: "보험료", price: 150_000),
         .init(date: .now.addingTimeInterval(86400 * TimeInterval(17)), name: "주택청약", price: 250_000),
         .init(date: .now.addingTimeInterval(86400 * TimeInterval(20)), name: "월세", price: 600_000)
       ]
