@@ -48,6 +48,7 @@ final class DailyBudgetRepositoryImpl: DailyBudgetRepository {
     if case .set(let income) = income { model.income = income }
     if case .set(let memo) = memo { model.memo = memo }
     
+    try? modelContext.save()
     return model.toEntity()
   }
   
@@ -58,6 +59,7 @@ final class DailyBudgetRepositoryImpl: DailyBudgetRepository {
     guard let model = try readById(id) else { throw SwiftDataError.modelNotFound }
     model.harubee = harubee
     
+    try? modelContext.save()
     return model.toEntity()
   }
   
@@ -73,6 +75,7 @@ final class DailyBudgetRepositoryImpl: DailyBudgetRepository {
     model.expense = expense
     model.income = income
     
+    try? modelContext.save()
     return model.toEntity()
   }
   
@@ -83,6 +86,7 @@ final class DailyBudgetRepositoryImpl: DailyBudgetRepository {
     guard let model = try readById(id) else { throw SwiftDataError.modelNotFound }
     model.memo = memo
     
+    try? modelContext.save()
     return model.toEntity()
   }
 }

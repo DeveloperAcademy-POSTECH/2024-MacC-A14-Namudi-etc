@@ -22,6 +22,8 @@ final class SalaryBudgetRepositoryImpl: SalaryBudgetRepository {
     
     let model = SalaryBudgetDTO(salaryBudget)
     modelContext.insert(model)
+    
+    try? modelContext.save()
   }
   
   func readAll() throws -> [SalaryBudget] {
@@ -88,6 +90,7 @@ final class SalaryBudgetRepositoryImpl: SalaryBudgetRepository {
       model.defaultHarubee = defaultHarubee
     }
     
+    try? modelContext.save()
     return model.toEntity()
   }
   
@@ -101,6 +104,7 @@ final class SalaryBudgetRepositoryImpl: SalaryBudgetRepository {
     guard let model = try readById(id) else { throw SwiftDataError.modelNotFound }
     model.fixedIncome = fixedIncome
     
+    try? modelContext.save()
     return model.toEntity()
   }
   
@@ -115,6 +119,7 @@ final class SalaryBudgetRepositoryImpl: SalaryBudgetRepository {
     model.fixedExpenses.forEach { modelContext.delete($0) }
     model.fixedExpenses = fixedExpenses.map { TransactionItemDTO($0) }
     
+    try? modelContext.save()
     return model.toEntity()
   }
   
@@ -125,6 +130,7 @@ final class SalaryBudgetRepositoryImpl: SalaryBudgetRepository {
     guard let model = try readById(id) else { throw SwiftDataError.modelNotFound }
     model.balance = balance
     
+    try? modelContext.save()
     return model.toEntity()
   }
   
@@ -138,6 +144,7 @@ final class SalaryBudgetRepositoryImpl: SalaryBudgetRepository {
     guard let model = try readById(id) else { throw SwiftDataError.modelNotFound }
     model.defaultHarubee = defaultHarubee
     
+    try? modelContext.save()
     return model.toEntity()
   }
   
