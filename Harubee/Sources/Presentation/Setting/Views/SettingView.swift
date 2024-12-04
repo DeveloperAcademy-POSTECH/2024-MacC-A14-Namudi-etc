@@ -67,18 +67,18 @@ struct SettingView: View {
     .navigationBarStyle(.white(title: "설정", backTitle: "뒤로"))
     .font(.pretendardMedium_18)
     .foregroundStyle(Color.textBlack)
-    .alert("초기화한다?", isPresented: $isAlert) {
+    .alert("초기화를 하시겠습니까?", isPresented: $isAlert) {
       Button(role: .destructive) {
         settingViewModel.send(.reset)
         appRootManager.changeRootViewToOnboarding()
       } label: {
-        Text("네")
+        Text("예")
       }
       
       Button(role: .cancel) {
         
       } label: {
-        Text("아니")
+        Text("아니오")
       }
 
     }
@@ -91,7 +91,7 @@ struct SettingView: View {
           .font(.pretendardSemibold_18)
           .foregroundStyle(Color.textBlack)
         
-        Text("v\(Bundle.main.shortVersionString)")
+        Text("showcase")
           .font(.pretendardMedium_14)
           .foregroundStyle(Color.textBlack30)
       }.frame(maxWidth: .infinity, alignment: .leading)

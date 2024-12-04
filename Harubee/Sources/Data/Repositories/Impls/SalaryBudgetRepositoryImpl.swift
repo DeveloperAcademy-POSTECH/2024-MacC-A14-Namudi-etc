@@ -150,6 +150,8 @@ final class SalaryBudgetRepositoryImpl: SalaryBudgetRepository {
   
   func reset() {
     try? modelContext.delete(model: SalaryBudgetDTO.self)
+    
+    try? modelContext.save()
   }
 }
 

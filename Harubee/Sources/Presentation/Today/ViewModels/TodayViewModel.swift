@@ -262,9 +262,9 @@ extension TodayViewModel {
         let newDailyStreak = DailyStreak(
           date: currentDate,
           isAfterToday: currentDate > today,
-          harubee: harubee,
+          harubee: -1,
           isHarubeeAdjusted: false,
-          isOverHarubee: nil
+          isOverHarubee: false
         )
         
         weeklyStreaks.append(newDailyStreak)
