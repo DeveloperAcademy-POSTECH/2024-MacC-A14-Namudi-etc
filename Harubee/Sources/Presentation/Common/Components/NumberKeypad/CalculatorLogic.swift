@@ -234,14 +234,6 @@ struct CalculatorLogic {
     
     var numberString = newExpression[(currentIndex)...] // 포멧할 숫자(decimal) 문자열
     
-//    if let number = numberString.numberFormat {
-//      newExpression[(currentIndex)...] = number.decimal // 기존 표현식에서 마지막 숫자 문자열 부분을 교체
-//    } else {
-//      let _ = numberString.popLast()
-//      let number = numberString.numberFormat!
-//      newExpression[(currentIndex)...] = number.decimal // 기존 표현식에서 마지막 숫자 문자열 부분을 교체
-//    }
-    
     var number: Int? = numberString.numberFormat
     while number == nil {
       let _ = numberString.popLast()

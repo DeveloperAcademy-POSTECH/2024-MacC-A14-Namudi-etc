@@ -20,9 +20,7 @@ struct TransactionInputView: View {
   @State private var transactionFocusType: TransactionFocusType
   
   @State private var isUpdated: Bool = false
-  @State private var isAlert: Bool = false
   @State private var isFocused: Bool = true
-  @State private var alertTitle: String = ""
   
   @State private var expense: String
   @State private var income: String
@@ -68,7 +66,8 @@ struct TransactionInputView: View {
           title: "저장하기",
           isEnabled: $isUpdated
         ) {
-          self.saveButtonTapped()
+          self.viewModel.send(.saveButtonTapped)
+          self.dismiss()
         }
       }
       .frame(maxWidth: .infinity)
@@ -102,35 +101,6 @@ struct TransactionInputView: View {
           isUpdated = true
         }
       }
-    }
-    .alert(
-      "\(alertTitle)이 입력되지 않았어요",
-      isPresented: $isAlert
-    ) {
-      Button(role: .cancel) {
-        
-      } label: {
-        Text("취소")
-      }
-
-      Button {
-        self.viewModel.send(.saveButtonTapped)
-        self.dismiss()
-      } label: {
-        Text("확인")
-      }
-    } message: {
-      Text("\(alertTitle)을 0원으로 저장하시겠습니까?")
-    }
-  }
-  
-  private func saveButtonTapped() {
-    if expense.isEmpty || income.isEmpty {
-      self.isAlert = true
-      self.alertTitle = expense.isEmpty ? "지출" : "수입"
-    } else {
-      self.viewModel.send(.saveButtonTapped)
-      self.dismiss()
     }
   }
 }
