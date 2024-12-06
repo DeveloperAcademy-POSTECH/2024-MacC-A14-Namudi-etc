@@ -34,6 +34,10 @@ struct FixedExpenseManageView: View {
   @State private var isNumberFieldFocused: Bool = false
   
   private let beforeSelectedDay: Int
+  private var isErrorTextVisible: Bool {
+    fixedExpenseAmount.isEmpty
+    || (fixedExpenseAmount.numberFormat ?? 0 <= 0)
+  }
   
   init(
     mode: Mode,
@@ -57,7 +61,8 @@ struct FixedExpenseManageView: View {
           fixedExpenseName: $fixedExpenseName,
           fixedExpenseAmount: $fixedExpenseAmount,
           selectedDay: $selectedDay,
-          isNumberFieldFocused: $isNumberFieldFocused
+          isNumberFieldFocused: $isNumberFieldFocused,
+          isErrorTextVisible: isErrorTextVisible
         )
 
         .padding(.top, 37)
@@ -83,7 +88,7 @@ struct FixedExpenseManageView: View {
     .navigationBarStyle(.sheet(title: "고정지출 내역"))
     .onChange(of: selectedDay) { _, newValue in
       if mode == .modify {
-        if beforeSelectedDay == newValue {
+        if beforeSelectedDay == newValue && isErrorTextVisible {
           isEnabled = false
         } else {
           updateIsEnabled()
@@ -103,7 +108,8 @@ struct FixedExpenseManageView: View {
   private func updateIsEnabled() {
     if !fixedExpenseName.isEmpty
         && !fixedExpenseAmount.isEmpty
-        && fixedExpenseAmount != "0" {
+        && fixedExpenseAmount != "0"
+        && !isErrorTextVisible {
       isEnabled = true
     } else {
       isEnabled = false
@@ -119,6 +125,8 @@ private struct BodyView: View {
   @Binding var isNumberFieldFocused: Bool
   
   @State private var showDayPicker: Bool = false
+  
+  var isErrorTextVisible: Bool
   
   var body: some View {
     VStack(spacing: 0) {
@@ -140,7 +148,8 @@ private struct BodyView: View {
         title: "금액",
         textSize: .medium,
         text: $fixedExpenseAmount,
-        isFocused: $isNumberFieldFocused
+        isFocused: $isNumberFieldFocused,
+        isErrorTextVisible: isErrorTextVisible
       )
       .padding(.horizontal, 16)
       .padding(.top, 22)

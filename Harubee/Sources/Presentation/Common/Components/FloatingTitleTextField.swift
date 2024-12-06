@@ -101,7 +101,7 @@ struct FloatingTitleNumberField: View {
         .frame(height: isFocused ? 2 : 1)
         .foregroundStyle(
           isFocused
-          ? (isErrorTextVisible ?? false
+          ? (isErrorTextVisible ?? false && !text.isEmpty
              ? .redDefault
              : .mainBright)
           : .textBrighter
