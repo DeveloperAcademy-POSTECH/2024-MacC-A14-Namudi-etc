@@ -25,8 +25,6 @@ struct FloatingTitleNumberField: View {
         floatingTitle
         
         numberTextField
-        
-        
       }
       .frame(maxWidth: .infinity)
       
@@ -34,9 +32,7 @@ struct FloatingTitleNumberField: View {
         errorText
           .offset(y: 16)
       }
-        
     }
-    
     .contentShape(Rectangle())
   }
   
