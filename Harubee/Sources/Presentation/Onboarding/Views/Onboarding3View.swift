@@ -58,11 +58,15 @@ struct Onboarding3View: View {
       viewModel.send(.updateFixedIncomeDay(incomeDay))
     })
     .onChange(of: incomeAmount, { _, _ in
-      if !incomeAmount.isEmpty {
+      // 수입 금액이 입력된 상태이면서 0보다 큰 금액인 경우 활성화
+      if !incomeAmount.isEmpty
+          && incomeAmount.numberFormat ?? 0 > 0 {
         viewModel.send(.updateFixedIncomeAmount(
           incomeAmount.numberFormat ?? 0
         ))
         self.isEnabled = true
+      } else {
+        self.isEnabled = false
       }
     })
     .navigationDestination(isPresented: $isPresented) {
@@ -131,9 +135,6 @@ private struct OnboardingBodyView: View {
         .padding(.top, 16)
       }
       .padding(.horizontal, 20)
-    }
-    .onChange(of: incomeAmount) { _, _ in
-      incomeAmount = (incomeAmount.numberFormat ?? 0).decimal
     }
     .onChange(of: showDayPicker) {
       if $1 { isFocused = false }

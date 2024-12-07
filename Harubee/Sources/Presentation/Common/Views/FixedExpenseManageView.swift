@@ -34,10 +34,8 @@ struct FixedExpenseManageView: View {
   @State private var isNumberFieldFocused: Bool = false
   
   private let beforeSelectedDay: Int
-  private var isErrorTextVisible: Bool {
-    fixedExpenseAmount.isEmpty
-    || (fixedExpenseAmount.numberFormat ?? 0 <= 0)
-  }
+  private let beforeExpenseName: String
+  private let beforeExpenseAmount: String
   
   init(
     mode: Mode,
@@ -52,6 +50,8 @@ struct FixedExpenseManageView: View {
     self._fixedExpenseName = State(initialValue: fixedExpenseName)
     self._fixedExpenseAmount = State(initialValue: fixedExpenseAmount)
     self.beforeSelectedDay = selectedDay
+    self.beforeExpenseName = fixedExpenseName
+    self.beforeExpenseAmount = fixedExpenseAmount
   }
   
   var body: some View {
@@ -61,8 +61,7 @@ struct FixedExpenseManageView: View {
           fixedExpenseName: $fixedExpenseName,
           fixedExpenseAmount: $fixedExpenseAmount,
           selectedDay: $selectedDay,
-          isNumberFieldFocused: $isNumberFieldFocused,
-          isErrorTextVisible: isErrorTextVisible
+          isNumberFieldFocused: $isNumberFieldFocused
         )
 
         .padding(.top, 37)
@@ -88,7 +87,7 @@ struct FixedExpenseManageView: View {
     .navigationBarStyle(.sheet(title: "고정지출 내역"))
     .onChange(of: selectedDay) { _, newValue in
       if mode == .modify {
-        if beforeSelectedDay == newValue && isErrorTextVisible {
+        if beforeSelectedDay == newValue {
           isEnabled = false
         } else {
           updateIsEnabled()
@@ -108,8 +107,7 @@ struct FixedExpenseManageView: View {
   private func updateIsEnabled() {
     if !fixedExpenseName.isEmpty
         && !fixedExpenseAmount.isEmpty
-        && fixedExpenseAmount != "0"
-        && !isErrorTextVisible {
+        && fixedExpenseAmount != "0" {
       isEnabled = true
     } else {
       isEnabled = false
@@ -125,8 +123,6 @@ private struct BodyView: View {
   @Binding var isNumberFieldFocused: Bool
   
   @State private var showDayPicker: Bool = false
-  
-  var isErrorTextVisible: Bool
   
   var body: some View {
     VStack(spacing: 0) {
@@ -148,8 +144,7 @@ private struct BodyView: View {
         title: "금액",
         textSize: .medium,
         text: $fixedExpenseAmount,
-        isFocused: $isNumberFieldFocused,
-        isErrorTextVisible: isErrorTextVisible
+        isFocused: $isNumberFieldFocused
       )
       .padding(.horizontal, 16)
       .padding(.top, 22)
@@ -160,9 +155,6 @@ private struct BodyView: View {
           isNumberFieldFocused = true
         }
       }
-    }
-    .onChange(of: fixedExpenseAmount) { _, _ in
-      fixedExpenseAmount = (fixedExpenseAmount.numberFormat ?? 0).decimal
     }
     .onChange(of: keyboardObserver.isKeyboardVisible) {
       if $1 {
