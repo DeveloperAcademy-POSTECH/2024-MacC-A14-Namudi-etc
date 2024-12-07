@@ -141,7 +141,8 @@ private struct BalanceAdjustField: View {
         title: "실제 잔액",
         textSize: .medium,
         text: $realBalance,
-        isFocused: $isFocused
+        isFocused: $isFocused,
+        minimum: .minimumZero
       )
       .onTapGesture {
         isFocused = true

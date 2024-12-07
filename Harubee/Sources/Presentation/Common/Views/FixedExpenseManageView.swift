@@ -33,6 +33,7 @@ struct FixedExpenseManageView: View {
   @State private var isEnabled: Bool = false
   @State private var isNumberFieldFocused: Bool = false
   
+  // TODO: 버튼 활성화 로직 구현 필요
   private let beforeSelectedDay: Int
   private let beforeExpenseName: String
   private let beforeExpenseAmount: String
@@ -144,7 +145,8 @@ private struct BodyView: View {
         title: "금액",
         textSize: .medium,
         text: $fixedExpenseAmount,
-        isFocused: $isNumberFieldFocused
+        isFocused: $isNumberFieldFocused,
+        minimum: .overZero
       )
       .padding(.horizontal, 16)
       .padding(.top, 22)

@@ -147,7 +147,8 @@ private struct HarubeeAdjustField: View {
         title: "이 날의 하루비",
         textSize: .large,
         text: $harubee,
-        isFocused: $isFocused
+        isFocused: $isFocused,
+        minimum: .minimumZero
       )
       .overlay(alignment: .trailing, content: {
         resetHarubeeButton

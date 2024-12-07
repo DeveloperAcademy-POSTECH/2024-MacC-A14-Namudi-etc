@@ -32,7 +32,8 @@ struct FixedIncomeModifyView: View {
           title: "금액",
           textSize: .medium,
           text: $fixedIncomeAmount,
-          isFocused: $isFocused
+          isFocused: $isFocused,
+          minimum: .overZero
         )
         .padding(.top, 38)
         .padding(.horizontal, 16)
