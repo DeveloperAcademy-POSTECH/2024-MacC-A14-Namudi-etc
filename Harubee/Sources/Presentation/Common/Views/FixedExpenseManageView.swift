@@ -27,13 +27,12 @@ struct FixedExpenseManageView: View {
   let action: ((Int, String, String) -> Void)
   
   @Environment(\.dismiss) private var dismiss
-  @State private var selectedDay: Int
-  @State private var fixedExpenseName: String
-  @State private var fixedExpenseAmount: String
+  @State private var selectedDay: Int = 1
+  @State private var fixedExpenseName: String = ""
+  @State private var fixedExpenseAmount: String = ""
   @State private var isEnabled: Bool = false
   @State private var isNumberFieldFocused: Bool = false
   
-  // TODO: 버튼 활성화 로직 구현 필요
   private let beforeSelectedDay: Int
   private let beforeExpenseName: String
   private let beforeExpenseAmount: String
@@ -47,9 +46,6 @@ struct FixedExpenseManageView: View {
   ) {
     self.mode = mode
     self.action = action
-    self._selectedDay = State(initialValue: selectedDay)
-    self._fixedExpenseName = State(initialValue: fixedExpenseName)
-    self._fixedExpenseAmount = State(initialValue: fixedExpenseAmount)
     self.beforeSelectedDay = selectedDay
     self.beforeExpenseName = fixedExpenseName
     self.beforeExpenseAmount = fixedExpenseAmount
@@ -86,16 +82,13 @@ struct FixedExpenseManageView: View {
       }
     }
     .navigationBarStyle(.sheet(title: "고정지출 내역"))
-    .onChange(of: selectedDay) { _, newValue in
-      if mode == .modify {
-        if beforeSelectedDay == newValue {
-          isEnabled = false
-        } else {
-          updateIsEnabled()
-        }
-      } else {
-        updateIsEnabled()
-      }
+    .onAppear {
+      self.selectedDay = beforeSelectedDay
+      self.fixedExpenseName = beforeExpenseName
+      self.fixedExpenseAmount = beforeExpenseAmount
+    }
+    .onChange(of: selectedDay) { _, _ in
+      updateIsEnabled()
     }
     .onChange(of: fixedExpenseName) { _, _ in
       updateIsEnabled()
@@ -106,12 +99,32 @@ struct FixedExpenseManageView: View {
   }
   
   private func updateIsEnabled() {
-    if !fixedExpenseName.isEmpty
-        && !fixedExpenseAmount.isEmpty
-        && fixedExpenseAmount != "0" {
-      isEnabled = true
+    
+    let isUpdatedDay = (
+      mode != .modify
+      || beforeSelectedDay != selectedDay
+    )
+    let isUpdatedName = fixedExpenseName != beforeExpenseName
+    let isUpdatedAmount = fixedExpenseAmount != beforeExpenseAmount
+
+    let isValidAmount = (
+      !fixedExpenseAmount.isEmpty
+      && (fixedExpenseAmount.numberFormat ?? 0) > 0
+    )
+    let isValidName = !fixedExpenseName.isEmpty
+
+    if isValidName && isValidAmount {
+        if mode == .add {
+            isEnabled = true
+        } else {
+            isEnabled = (
+              isUpdatedDay
+              || isUpdatedName
+              || isUpdatedAmount
+            )
+        }
     } else {
-      isEnabled = false
+        isEnabled = false
     }
   }
 }
