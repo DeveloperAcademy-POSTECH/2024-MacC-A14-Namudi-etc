@@ -104,7 +104,7 @@ private struct FixedExpenseListView: View {
         mode: self.manageMode,
         selectedDay: selectedItem?.date.day ?? 1,
         fixedExpenseName: selectedItem?.name ?? "",
-        fixedExpenseAmount: selectedItem?.price.decimal ?? ""
+        fixedExpenseAmount: selectedItem?.price.decimalWithWon ?? ""
       ) { day, name, price in
         saveFixedExpense(
           day: day,
@@ -116,11 +116,6 @@ private struct FixedExpenseListView: View {
       .presentationCornerRadius(20)
     }
     .onChange(of: selectedItem) { _, _ in }
-    .onChange(of: fixedExpenses) { _, _ in
-      fixedExpenses.sort(by: {
-        $0.date.day < $1.date.day
-      })
-    }
   }
   
   private var listHeaderView: some View {

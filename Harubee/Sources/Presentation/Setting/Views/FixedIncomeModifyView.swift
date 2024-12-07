@@ -11,19 +11,17 @@ import SwiftUI
 struct FixedIncomeModifyView: View {
   @Environment(\.dismiss) private var dismiss
   @State private var isFocused: Bool = false
-  @State private var fixedIncomeAmount: String
+  @State private var isEnabled: Bool = false
+  @State private var fixedIncomeAmount: String = ""
   
-  private let editFixedIncomeAmount: (String) -> Void
-  
-  private var isErrorTextVisible: Bool {
-    fixedIncomeAmount.isEmpty || (fixedIncomeAmount.numberFormat ?? 0 <= 0)
-  }
+  let beforeFixedIncomeAmount: String
+  let editFixedIncomeAmount: (String) -> Void
   
   init(
     fixedIncomeAmount: String,
     editFixedIncomeAmount: @escaping (String) -> Void
   ) {
-    self._fixedIncomeAmount = State(initialValue: fixedIncomeAmount)
+    self.beforeFixedIncomeAmount = fixedIncomeAmount
     self.editFixedIncomeAmount = editFixedIncomeAmount
   }
   
@@ -34,8 +32,7 @@ struct FixedIncomeModifyView: View {
           title: "금액",
           textSize: .medium,
           text: $fixedIncomeAmount,
-          isFocused: $isFocused,
-          isErrorTextVisible: isErrorTextVisible
+          isFocused: $isFocused
         )
         .padding(.top, 38)
         .padding(.horizontal, 16)
@@ -48,7 +45,7 @@ struct FixedIncomeModifyView: View {
         
         MainColorBottomButton(
           title: "완료하기",
-          isEnabled: .constant(!isErrorTextVisible)
+          isEnabled: $isEnabled
         ) {
           editFixedIncomeAmount(fixedIncomeAmount)
           dismiss()
@@ -62,6 +59,18 @@ struct FixedIncomeModifyView: View {
       }
     }
     .navigationBarStyle(.sheet(title: "고정수입 금액 입력"))
+    .onAppear {
+      self.fixedIncomeAmount = beforeFixedIncomeAmount
+    }
+    .onChange(of: fixedIncomeAmount) { oldValue, newValue in
+      // 변경한 금액이 이전 금액과 같지 않고, 금액이 0보다 큰 경우 활성화
+      if newValue != beforeFixedIncomeAmount
+          && newValue.numberFormat ?? 0 > 0 {
+        isEnabled = true
+      } else {
+        isEnabled = false
+      }
+    }
   }
 }
 

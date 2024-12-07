@@ -136,7 +136,7 @@ private struct FixedExpenseListView: View {
         mode: self.manageMode,
         selectedDay: selectedItem?.date.day ?? 1,
         fixedExpenseName: selectedItem?.name ?? "",
-        fixedExpenseAmount: selectedItem?.price.decimal ?? ""
+        fixedExpenseAmount: selectedItem?.price.decimalWithWon ?? ""
       ) { day, name, price in
         saveFixedExpense(
           day: day,
