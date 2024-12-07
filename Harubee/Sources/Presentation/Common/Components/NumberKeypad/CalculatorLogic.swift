@@ -163,7 +163,7 @@ struct CalculatorLogic {
         current = ""
         op = char
         
-      // 현재 문자가 숫자 또는 ,인 경우
+        // 현재 문자가 숫자 또는 ,인 경우
       } else { current.append(char) }
       
       index += 1
@@ -177,9 +177,13 @@ struct CalculatorLogic {
       )
     }
     
-    return before < maxNumber
-    ? before.decimalWithWon
-    : maxNumber.decimalWithWon
+    if before >= maxNumber {
+      return maxNumber.decimalWithWon
+    } else if before <= -maxNumber {
+      return (-maxNumber).decimalWithWon
+    } else {
+      return before.decimalWithWon
+    }
   }
   
   // MARK: - processExpression
@@ -234,13 +238,12 @@ struct CalculatorLogic {
     
     var numberString = newExpression[(currentIndex)...] // 포멧할 숫자(decimal) 문자열
     
-    if let number = numberString.numberFormat {
-      newExpression[(currentIndex)...] = number.decimal // 기존 표현식에서 마지막 숫자 문자열 부분을 교체
-    } else {
+    var number: Int? = numberString.numberFormat
+    while number == nil {
       let _ = numberString.popLast()
-      let number = numberString.numberFormat!
-      newExpression[(currentIndex)...] = number.decimal // 기존 표현식에서 마지막 숫자 문자열 부분을 교체
+      number = numberString.numberFormat
     }
+    newExpression[(currentIndex)...] = number!.decimal // 기존 표현식에서 마지막 숫자 문자열 부분을 교체
     
     return newExpression
   }
