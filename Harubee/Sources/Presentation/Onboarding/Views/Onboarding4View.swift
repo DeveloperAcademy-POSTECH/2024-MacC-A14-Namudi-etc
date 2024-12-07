@@ -132,7 +132,8 @@ private struct OnboardingBodyView: View {
         title: "금액",
         textSize: .medium,
         text: $currentBalance,
-        isFocused: $isFocused
+        isFocused: $isFocused,
+        minimum: .minimumZero
       )
       .onTapGesture {
         isFocused = true
