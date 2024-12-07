@@ -64,15 +64,25 @@ struct HarubeeAdjustView: View {
       
       if isFocused {
         NumberKeypadView(amount: $harubee) {
-          self.isFocused = false
-          
-          viewModel.send(.doneButtonTapped(harubee.numberFormat ?? 0))
+          doneButtonTapped()
         }
       }
     }
     .navigationBarStyle(.sheet(title: "하루비 조정"))
-    .onChange(of: isFocused) { _, _ in
-      self.isUpdated = beforeHarubee == harubee.numberFormat ? false : true
+  }
+  
+  private func doneButtonTapped() {
+    self.isFocused = false
+    
+    // 변경된 하루비가 이전과 같지 않고, 0 이상인 경우 활성화
+    let amount = harubee.numberFormat ?? 0
+    self.isUpdated = (
+      amount == beforeHarubee
+      || amount < 0
+    ) ? false : true
+    
+    if isUpdated {
+      viewModel.send(.doneButtonTapped(harubee.numberFormat))
     }
   }
 }
