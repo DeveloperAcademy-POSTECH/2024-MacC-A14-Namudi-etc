@@ -50,24 +50,12 @@ struct Onboarding3View: View {
       
       if isFocused {
         NumberKeypadView(amount: $incomeAmount) {
-          self.isFocused = false
+          doneButtonTapped()
         }
       }
     }
     .onChange(of: incomeDay, { _, _ in
       viewModel.send(.updateFixedIncomeDay(incomeDay))
-    })
-    .onChange(of: incomeAmount, { _, _ in
-      // 수입 금액이 입력된 상태이면서 0보다 큰 금액인 경우 활성화
-      if !incomeAmount.isEmpty
-          && incomeAmount.numberFormat ?? 0 > 0 {
-        viewModel.send(.updateFixedIncomeAmount(
-          incomeAmount.numberFormat ?? 0
-        ))
-        self.isEnabled = true
-      } else {
-        self.isEnabled = false
-      }
     })
     .navigationDestination(isPresented: $isPresented) {
       Onboarding4View(viewModel: viewModel)
@@ -93,6 +81,21 @@ struct Onboarding3View: View {
       Rectangle().fill(Color.main).ignoresSafeArea()
     )
 
+  }
+  
+  private func doneButtonTapped() {
+    self.isFocused = false
+    
+    // 수입 금액이 입력된 상태이면서 0보다 큰 금액인 경우 활성화
+    if !incomeAmount.isEmpty
+        && incomeAmount.numberFormat ?? 0 > 0 {
+      viewModel.send(.updateFixedIncomeAmount(
+        incomeAmount.numberFormat ?? 0
+      ))
+      self.isEnabled = true
+    } else {
+      self.isEnabled = false
+    }
   }
 }
 

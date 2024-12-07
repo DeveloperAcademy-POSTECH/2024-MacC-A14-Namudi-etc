@@ -55,7 +55,7 @@ struct FixedIncomeModifyView: View {
       
       if isFocused {
         NumberKeypadView(amount: $fixedIncomeAmount) {
-          isFocused = false
+          doneButtonTapped()
         }
       }
     }
@@ -63,20 +63,23 @@ struct FixedIncomeModifyView: View {
     .onAppear {
       self.fixedIncomeAmount = beforeFixedIncomeAmount
     }
-    .onChange(of: fixedIncomeAmount) { oldValue, newValue in
-      // 변경한 금액이 이전 금액과 같지 않고, 금액이 0보다 큰 경우 활성화
-      if newValue != beforeFixedIncomeAmount
-          && newValue.numberFormat ?? 0 > 0 {
-        isEnabled = true
-      } else {
-        isEnabled = false
-      }
+  }
+  
+  private func doneButtonTapped() {
+    isFocused = false
+    
+    // 변경한 금액이 이전 금액과 같지 않고, 금액이 0보다 큰 경우 활성화
+    if fixedIncomeAmount != beforeFixedIncomeAmount
+        && fixedIncomeAmount.numberFormat ?? 0 > 0 {
+      isEnabled = true
+    } else {
+      isEnabled = false
     }
   }
 }
 
 #Preview {
-  FixedIncomeModifyView(fixedIncomeAmount: "") {_ in
+  FixedIncomeModifyView(fixedIncomeAmount: "3원") {_ in
     print("button tapped")
   }
 }

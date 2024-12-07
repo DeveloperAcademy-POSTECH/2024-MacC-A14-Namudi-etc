@@ -68,21 +68,27 @@ struct BalanceAdjustView: View {
         NumberKeypadView(
           amount: $realBalance
         ) {
-          self.isFocused = false
-          
-          viewModel
-            .send(
-              .doneButtonTapped(
-                realBalance.numberFormat ?? 0
-              )
-            )
+          doneButtonTapped()
         }
       }
     }
     .navigationBarStyle(.sheet(title: "쓸 수 있는 돈 조정"))
-    .onChange(of: isFocused) { _, _ in
-      self.isUpdated = beforeRealBalance == realBalance.numberFormat ? false : true
-    }
+  }
+  
+  private func doneButtonTapped() {
+    self.isFocused = false
+    
+    self.isUpdated = (
+      beforeRealBalance == realBalance.numberFormat
+      || realBalance.numberFormat ?? 0 < 0
+      ) ? false : true
+    
+    viewModel
+      .send(
+        .doneButtonTapped(
+          realBalance.numberFormat ?? 0
+        )
+      )
   }
 }
 

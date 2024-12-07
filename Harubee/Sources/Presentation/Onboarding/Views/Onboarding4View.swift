@@ -58,13 +58,7 @@ struct Onboarding4View: View {
       
       if isFocused {
         NumberKeypadView(amount: $currentBalanceAmount) {
-          self.isFocused = false
-          if !currentBalanceAmount.isEmpty {
-            viewModel.send(.updateCurrentBalance(
-              currentBalanceAmount.numberFormat ?? 0
-            ))
-            self.isEnabled = true
-          }
+          doneButtonTapped()
         }
       }
     }
@@ -74,6 +68,19 @@ struct Onboarding4View: View {
     .navigationDestination(isPresented: $isPresented) {
       Onboarding5View(viewModel: viewModel)
         .navigationBarBackButtonHidden()
+    }
+  }
+  
+  private func doneButtonTapped() {
+    self.isFocused = false
+    if !currentBalanceAmount.isEmpty
+        && currentBalanceAmount.numberFormat ?? 0 >= 0 {
+      viewModel.send(.updateCurrentBalance(
+        currentBalanceAmount.numberFormat ?? 0
+      ))
+      self.isEnabled = true
+    } else {
+      self.isEnabled = false
     }
   }
 }
@@ -128,6 +135,16 @@ private struct OnboardingBodyView: View {
         .foregroundStyle(Color.textBlack)
         .padding(.horizontal, 20)
       
+      VStack(alignment: .leading, spacing: 2) {
+        Text("*신용카드 사용 등의 이유로 잔액 파악이 어렵다면")
+        Text("수입금에서 지출 금액을 빼서 계산하는 방법도 있어요!")
+      }
+      .frame(maxWidth: .infinity, alignment: .leading)
+      .foregroundStyle(Color.textBlack30)
+      .font(.pretendardMedium_12)
+      .padding(.top, 6)
+      .padding(.horizontal, 20)
+      
       FloatingTitleNumberField(
         title: "금액",
         textSize: .medium,
@@ -139,17 +156,7 @@ private struct OnboardingBodyView: View {
         isFocused = true
       }
       .padding(.horizontal, 16)
-      .padding(.top, 16)
-      
-      VStack(alignment: .leading, spacing: 2) {
-        Text("*신용카드 사용 등의 이유로 잔액 파악이 어렵다면")
-        Text("수입금에서 지출 금액을 빼서 계산하는 방법도 있어요!")
-      }
-      .frame(maxWidth: .infinity, alignment: .leading)
-      .foregroundStyle(Color.textBlack30)
-      .font(.pretendardMedium_12)
-      .padding(.top, 10)
-      .padding(.horizontal, 20)
+      .padding(.top, 32)
     }
     .padding(.top, 30)
     .frame(maxHeight: .infinity, alignment: .top)

@@ -20,16 +20,23 @@ struct FloatingTitleNumberField: View {
   }
   
   var body: some View {
-    VStack(alignment: .leading, spacing: 0) {
-      floatingTitle
-      
-      numberTextField
+    ZStack(alignment: .bottomLeading) {
+      VStack(alignment: .leading, spacing: 0) {
+        floatingTitle
+        
+        numberTextField
+        
+        
+      }
+      .frame(maxWidth: .infinity)
       
       if isErrorTextVisible {
         errorText
+          .offset(y: 16)
       }
+        
     }
-    .frame(maxWidth: .infinity)
+    
     .contentShape(Rectangle())
   }
   
