@@ -69,14 +69,17 @@ final class CalendarViewModel {
     let today = Date().formattedDate
     let previousDailyBudgets = budget.dailyBudgets.filter { $0.date < today }
     
-    if previousDailyBudgets.allSatisfy({ $0.harubee == 0 }) {
+    // 온보딩 직후의 셀 제외
+    let filteredBudgets = previousDailyBudgets.filter {
+      !($0.harubee == -1 && $0.expense == -1)
+    }
+    
+    // 나머지 셀들이 모두 지출이 존재하면 false
+    if filteredBudgets.allSatisfy({ $0.expense != nil }) {
       return false
     }
     
-    if previousDailyBudgets.contains(where: { $0.expense != nil }) {
-      return false
-    }
-    
+    // 일부만 지출이 존재하거나 지출이 없으면 true
     return true
   }
   
@@ -122,21 +125,15 @@ final class CalendarViewModel {
   
   // MARK: - Private Methods
   private func handleLoadInitialData() {
-    do {
-      allSalaryBudgets = try loadBudgets()
-      let today = Date().formattedDate
-      
-      guard let currentBudget = allSalaryBudgets.first(where: { $0.contains(date: today) })
-      else {
-        return
-      }
-      
-      state.currentBudget = currentBudget
-      state.error = nil
-      
-    } catch {
-      state.error = error
+    allSalaryBudgets = loadBudgets()
+    let today = Date().formattedDate
+    
+    guard let currentBudget = allSalaryBudgets.first(where: { $0.contains(date: today) })
+    else {
+      return
     }
+    
+    state.currentBudget = currentBudget
   }
   
   private func handleUpdateCurrentData() {
@@ -148,13 +145,14 @@ final class CalendarViewModel {
   }
   
   private func handleMovePeriod(_ direction: PeriodDirection) {
+    allSalaryBudgets = loadBudgets()
+    
     guard let current = state.currentBudget else { return }
     
     let nextBudget = findBudget(from: current, direction: direction)
     state.currentBudget = nextBudget
     
-    if let budget = nextBudget,
-       budget.contains(date: Date()) {
+    if let budget = nextBudget, budget.contains(date: Date()) {
       state.selectedDate = Date().formattedDate
     }
   }
@@ -215,9 +213,14 @@ final class CalendarViewModel {
   }
   
   // MARK: - Helper Methods
-  private func loadBudgets() throws -> [SalaryBudget] {
-    let budgets = try budgetUseCase.getAllSalaryBudget()
-    return budgets.sorted { $0.startDate < $1.startDate }
+  private func loadBudgets() -> [SalaryBudget] {
+    do {
+      let budgets = try budgetUseCase.getAllSalaryBudget()
+      return budgets.sorted { $0.startDate < $1.startDate }
+    } catch {
+      state.error = error
+      return []
+    }
   }
   
   private func findBudget(from current: SalaryBudget, direction: PeriodDirection) -> SalaryBudget? {
