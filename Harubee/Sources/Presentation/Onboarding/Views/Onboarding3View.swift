@@ -9,22 +9,14 @@
 import SwiftUI
 
 struct Onboarding3View: View {
-  private var viewModel: OnboardingViewModel
+  let viewModel: OnboardingViewModel
   
   @State private var isPresented: Bool = false
-  @State private var isEnabled: Bool
+  @State private var isEnabled: Bool = false
   @State private var isFocused: Bool = false
   @State private var showDayPicker: Bool = false
-  @State private var incomeDay: Int
-  @State private var incomeAmount: String
-  
-  init(viewModel: OnboardingViewModel) {
-    self.viewModel = viewModel
-    self._incomeDay = .init(initialValue: viewModel.state.incomeDay)
-    self._incomeAmount = .init(initialValue: viewModel.state.incomeAmount?.decimal ?? "")
-    
-    self._isEnabled = .init(initialValue: viewModel.state.incomeAmount == nil ? false : true)
-  }
+  @State private var incomeDay: Int = 1
+  @State private var incomeAmount: String = ""
   
   var body: some View {
     ZStack(alignment: .bottom) {
@@ -44,6 +36,7 @@ struct Onboarding3View: View {
           title: "다음으로",
           isEnabled: $isEnabled
         ) {
+          viewModel.send(.naviateToOnboardingStep3)
           self.isPresented = true
         }
       }
@@ -58,7 +51,10 @@ struct Onboarding3View: View {
       viewModel.send(.updateFixedIncomeDay(incomeDay))
     })
     .navigationDestination(isPresented: $isPresented) {
-      Onboarding4View(viewModel: viewModel)
+      Onboarding4View(
+        viewModel: viewModel,
+        currentBalanceAmount: viewModel.state.currentBalance?.decimalWithWon ?? ""
+      )
         .navigationBarBackButtonHidden()
     }
   }

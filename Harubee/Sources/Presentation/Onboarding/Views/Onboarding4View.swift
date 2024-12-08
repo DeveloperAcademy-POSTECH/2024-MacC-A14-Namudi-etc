@@ -9,31 +9,12 @@
 import SwiftUI
 
 struct Onboarding4View: View {
-  private var viewModel: OnboardingViewModel
+  let viewModel: OnboardingViewModel
   
-  @State private var currentBalanceAmount: String
-  @State private var isEnabled: Bool
+  @State var currentBalanceAmount: String
+  @State private var isEnabled: Bool = true
   @State private var isFocused: Bool = true
   @State private var isPresented: Bool = false
-  
-  init(viewModel: OnboardingViewModel) {
-    self.viewModel = viewModel
-    
-    if let currentBalance = viewModel.state.currentBalance {
-      self._currentBalanceAmount = .init(
-        initialValue: currentBalance.decimalWithWon
-      )
-    } else {
-      self._currentBalanceAmount = .init(
-        initialValue: viewModel.state.incomeAmount?.decimalWithWon ?? ""
-      )
-    }
-    
-    self._isEnabled = .init(
-      initialValue: viewModel.state.currentBalance == nil
-      ? false : true
-    )
-  }
   
   var body: some View {
     ZStack(alignment: .bottom) {
@@ -62,11 +43,11 @@ struct Onboarding4View: View {
         }
       }
     }
-    .onAppear {
-      viewModel.send(.onAppearOnboardingStep3)
-    }
     .navigationDestination(isPresented: $isPresented) {
-      Onboarding5View(viewModel: viewModel)
+      Onboarding5View(
+        viewModel: viewModel,
+        fixedExpenses: viewModel.state.fixedExpenses
+      )
         .navigationBarBackButtonHidden()
     }
   }
@@ -86,11 +67,7 @@ struct Onboarding4View: View {
 }
 
 private struct OnboardingHeaderView: View {
-  private let averageHarubee: Int
-  
-  init(averageHarubee: Int) {
-    self.averageHarubee = averageHarubee
-  }
+  let averageHarubee: Int
   
   var body: some View {
     VStack(spacing: 28) {
@@ -164,5 +141,8 @@ private struct OnboardingBodyView: View {
 }
 
 #Preview {
-  Onboarding4View(viewModel: DIContainer.shared.makeOnboardingViewModel())
+  Onboarding4View(
+    viewModel: DIContainer.shared.makeOnboardingViewModel(),
+    currentBalanceAmount: ""
+  )
 }
