@@ -81,7 +81,7 @@ struct FixedExpenseManageView: View {
         }
       }
     }
-    .navigationBarStyle(.sheet(title: "고정지출 내역"))
+    .navigationBarStyle(.sheet(title: "고정지출 내역 \(mode.title)"))
     .onAppear {
       self.selectedDay = beforeSelectedDay
       self.fixedExpenseName = beforeExpenseName

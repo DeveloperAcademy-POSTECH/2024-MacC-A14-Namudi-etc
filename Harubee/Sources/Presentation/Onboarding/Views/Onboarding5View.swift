@@ -9,16 +9,11 @@
 import SwiftUI
 
 struct Onboarding5View: View {
-  private var viewModel: OnboardingViewModel
+  let viewModel: OnboardingViewModel
   
-  @State private var fixedExpenses: [TransactionItem]
-  
+  @State var fixedExpenses: [TransactionItem]
+
   @State private var isPresented: Bool = false
-  
-  init(viewModel: OnboardingViewModel) {
-    self.viewModel = viewModel
-    self._fixedExpenses = .init(initialValue: viewModel.state.fixedExpenses)
-  }
   
   var body: some View {
     VStack(spacing: 0) {
@@ -62,11 +57,7 @@ struct Onboarding5View: View {
 }
 
 private struct OnboardingHeaderView: View {
-  private let harubee: Int
-  
-  init(harubee: Int) {
-    self.harubee = harubee
-  }
+  let harubee: Int
   
   var body: some View {
     VStack(spacing: 28) {
@@ -102,7 +93,6 @@ private struct OnboardingHeaderView: View {
 private struct FixedExpenseListView: View {
   let viewModel: OnboardingViewModel
   
-  @State private var manageMode: Mode = .add
   @State private var selectedItem: TransactionItem?
   @State private var isPresented: Bool = false
   @Binding var fixedExpenses: [TransactionItem]
@@ -120,7 +110,6 @@ private struct FixedExpenseListView: View {
           ForEach(fixedExpenses, id: \.id) { item in
             fixedExpensesRow(for: item)
               .onTapGesture {
-                self.manageMode = .modify
                 self.selectedItem = item
                 self.isPresented = true
               }
@@ -133,7 +122,7 @@ private struct FixedExpenseListView: View {
     }
     .sheet(isPresented: $isPresented) {
       FixedExpenseManageView(
-        mode: self.manageMode,
+        mode: selectedItem == nil ? .add : .modify,
         selectedDay: selectedItem?.date.day ?? 1,
         fixedExpenseName: selectedItem?.name ?? "",
         fixedExpenseAmount: selectedItem?.price.decimalWithWon ?? ""
@@ -163,7 +152,6 @@ private struct FixedExpenseListView: View {
       Spacer()
       
       Button {
-        self.manageMode = .add
         self.selectedItem = nil
         self.isPresented = true
       } label: {
@@ -241,5 +229,8 @@ private struct FixedExpenseListView: View {
 }
 
 #Preview {
-  Onboarding5View(viewModel: DIContainer.shared.makeOnboardingViewModel())
+  Onboarding5View(
+    viewModel: DIContainer.shared.makeOnboardingViewModel(),
+    fixedExpenses: []
+  )
 }

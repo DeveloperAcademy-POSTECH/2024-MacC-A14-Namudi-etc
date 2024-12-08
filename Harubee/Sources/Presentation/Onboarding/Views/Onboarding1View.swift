@@ -10,13 +10,9 @@ import SwiftUI
 import Lottie
 
 struct Onboarding1View: View {
-  @State private var viewModel: OnboardingViewModel
+  @State var viewModel: OnboardingViewModel
   @State private var isVisible: Bool = false
   @State private var isPresented: Bool = false
-  
-  init(viewModel: OnboardingViewModel) {
-    self.viewModel = viewModel
-  }
   
   var body: some View {
     ZStack(alignment: .bottom) {

@@ -9,12 +9,8 @@
 import SwiftUI
 
 struct Onboarding2View: View {
-  private var viewModel: OnboardingViewModel
+  let viewModel: OnboardingViewModel
   @State private var isPresented: Bool = false
-  
-  init(viewModel: OnboardingViewModel) {
-    self.viewModel = viewModel
-  }
   
   var body: some View {
     ZStack {

@@ -9,11 +9,7 @@
 import SwiftUI
 
 struct Onboarding6View: View {
-  private var viewModel: OnboardingViewModel
-  
-  init(viewModel: OnboardingViewModel) {
-    self.viewModel = viewModel
-  }
+  let viewModel: OnboardingViewModel
   
   var body: some View {
     ZStack {
@@ -44,7 +40,6 @@ struct Onboarding6View: View {
             incomeAmount: viewModel.state.incomeAmount ?? 0,
             currentBalance: viewModel.state.currentBalance ?? 0,
             fixedExpenses: viewModel.state.fixedExpenses,
-            startDate: viewModel.state.incomeStartDate,
             endDate: viewModel.state.incomeEndDate
           )
             .padding(.top, 26)
@@ -75,11 +70,7 @@ struct Onboarding6View: View {
 }
 
 private struct CurrentHarubeeView: View {
-  private let harubee: Int
-  
-  init(harubee: Int) {
-    self.harubee = harubee
-  }
+  let harubee: Int
   
   var body: some View {
     VStack(alignment: .leading, spacing: 6) {
@@ -115,24 +106,37 @@ private struct CurrentHarubeeView: View {
 
 private struct UserInfoView: View {
   
-  private let incomeAmount: Int
-  private let currentBalance: Int
-  private let fixedExpenses: [TransactionItem]
-  private let startDate: Date
-  private let endDate: Date
+  private let incomeAmount: Int // 수입 금액
+  private let currentBalance: Int // 현재 잔액
+  private let fixedExpensesCount: Int // 고정 지출 내역 개수
+  private let fixedExpensesTotalAmount: Int // 고정 지출 내역 총합
+  private let futureExpensesCount: Int // 예정된 고정지출 내역 개수
+  private let futureExpensesTotalAmount: Int // 예정된 고정지출 내역 총합
+  private let remainingDays: Int // 남은 기간
   
   init(
     incomeAmount: Int,
     currentBalance: Int,
     fixedExpenses: [TransactionItem],
-    startDate: Date,
     endDate: Date
   ) {
     self.incomeAmount = incomeAmount
     self.currentBalance = currentBalance
-    self.fixedExpenses = fixedExpenses
-    self.startDate = startDate
-    self.endDate = endDate
+    
+    self.fixedExpensesCount = fixedExpenses.count
+    self.fixedExpensesTotalAmount = fixedExpenses.reduce(0) {
+      $0 + $1.price
+    }
+    
+    self.futureExpensesCount = fixedExpenses.filter {
+      $0.date > .now.formattedDate
+    }.count
+    
+    self.futureExpensesTotalAmount = fixedExpenses
+      .filter { $0.date > .now.formattedDate }
+      .reduce(0) { $0 + $1.price }
+    
+    self.remainingDays = (Int(endDate.timeIntervalSince(.now.formattedDate) + 86400.0)) / 86400
   }
   
   var body: some View {
@@ -149,39 +153,29 @@ private struct UserInfoView: View {
       )
       
       UserInfoItemView(
-        title: "고정 지출 (총 \(fixedExpenses.count)건) 중",
-        content: "\(fixedExpenses.reduce(0) { $0 + $1.price }.decimalWithWon)",
+        title: "고정 지출 (총 \(fixedExpensesCount)건) 중",
+        content: "\(fixedExpensesTotalAmount.decimalWithWon)",
         contentColor: .whiteDeep50
       )
       
       UserInfoItemView(
-        title: "예정된 고정 지출 (총 \(fixedExpenses.filter { $0.date > .now.formattedDate }.count)건)",
-        content: "- \(fixedExpenses.filter { $0.date > .now.formattedDate }.reduce(0) { $0 + $1.price }.decimalWithWon)"
+        title: "예정된 고정 지출 (총 \(futureExpensesCount)건)",
+        content: "- \(futureExpensesTotalAmount.decimalWithWon)"
       )
       .padding(.leading, 14)
       
       UserInfoItemView(
         title: "다음 수입일까지 남은 기간",
-        content: "÷ \((Int(endDate.timeIntervalSince(.now.formattedDate) + 86400.0)) / 86400)일"
+        content: "÷ \(remainingDays)일"
       )
     }
   }
 }
 
 private struct UserInfoItemView: View {
-  private var title: String
-  private var content: String
-  private var contentColor: Color
-  
-  init(
-    title: String,
-    content: String,
-    contentColor: Color = .whiteDefault
-  ) {
-    self.title = title
-    self.content = content
-    self.contentColor = contentColor
-  }
+  let title: String
+  let content: String
+  var contentColor: Color = .whiteDefault
   
   var body: some View {
     HStack(spacing: 0) {
