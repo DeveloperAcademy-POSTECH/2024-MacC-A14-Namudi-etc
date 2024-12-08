@@ -38,7 +38,7 @@ struct CalendarCell: View {
       onSelect(date)
     }
     .padding(.vertical, 10)
-//    .disabled(isOnboardingPreviousDay)
+    .disabled(isOnboardingPreviousDay)
   }
   
   private var dateLabel: some View {
