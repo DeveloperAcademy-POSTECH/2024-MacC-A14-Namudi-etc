@@ -12,15 +12,16 @@ struct FixedIncomeModifyView: View {
   @Environment(\.dismiss) private var dismiss
   @State private var isFocused: Bool = false
   @State private var isEnabled: Bool = false
-  @State private var fixedIncomeAmount: String = ""
+  @State private var fixedIncomeAmount: String
   
-  let beforeFixedIncomeAmount: String
-  let editFixedIncomeAmount: (String) -> Void
+  private let beforeFixedIncomeAmount: String
+  private let editFixedIncomeAmount: (String) -> Void
   
   init(
     fixedIncomeAmount: String,
     editFixedIncomeAmount: @escaping (String) -> Void
   ) {
+    self._fixedIncomeAmount = State(initialValue: fixedIncomeAmount)
     self.beforeFixedIncomeAmount = fixedIncomeAmount
     self.editFixedIncomeAmount = editFixedIncomeAmount
   }
@@ -60,9 +61,6 @@ struct FixedIncomeModifyView: View {
       }
     }
     .navigationBarStyle(.sheet(title: "고정수입 금액 입력"))
-    .onAppear {
-      self.fixedIncomeAmount = beforeFixedIncomeAmount
-    }
   }
   
   private func doneButtonTapped() {

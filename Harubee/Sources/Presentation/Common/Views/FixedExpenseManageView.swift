@@ -23,19 +23,18 @@ enum Mode {
 }
 
 struct FixedExpenseManageView: View {
-  let mode: Mode
-  let action: ((Int, String, String) -> Void)
-  
   @Environment(\.dismiss) private var dismiss
-  @State private var selectedDay: Int = 1
-  @State private var fixedExpenseName: String = ""
-  @State private var fixedExpenseAmount: String = ""
+  @State private var selectedDay: Int
+  @State private var fixedExpenseName: String
+  @State private var fixedExpenseAmount: String
   @State private var isEnabled: Bool = false
   @State private var isNumberFieldFocused: Bool = false
   
+  private let mode: Mode
   private let beforeSelectedDay: Int
   private let beforeExpenseName: String
   private let beforeExpenseAmount: String
+  private let action: ((Int, String, String) -> Void)
   
   init(
     mode: Mode,
@@ -49,6 +48,10 @@ struct FixedExpenseManageView: View {
     self.beforeSelectedDay = selectedDay
     self.beforeExpenseName = fixedExpenseName
     self.beforeExpenseAmount = fixedExpenseAmount
+    
+    self._selectedDay = State(initialValue: selectedDay)
+    self._fixedExpenseName = State(initialValue: fixedExpenseName)
+    self._fixedExpenseAmount = State(initialValue: fixedExpenseAmount)
   }
   
   var body: some View {
@@ -82,11 +85,6 @@ struct FixedExpenseManageView: View {
       }
     }
     .navigationBarStyle(.sheet(title: "고정지출 내역 \(mode.title)"))
-    .onAppear {
-      self.selectedDay = beforeSelectedDay
-      self.fixedExpenseName = beforeExpenseName
-      self.fixedExpenseAmount = beforeExpenseAmount
-    }
     .onChange(of: selectedDay) { _, _ in
       updateIsEnabled()
     }
