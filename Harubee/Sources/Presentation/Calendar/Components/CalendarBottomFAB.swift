@@ -13,7 +13,7 @@ struct CalendarBottomFAB: View {
   let title: String
   let titleColor: Color
   let backgroundColor: Color
-  let icon: Image
+  let icon: Image?
   let action: () -> Void
   
   var body: some View {
@@ -38,7 +38,7 @@ struct CalendarBottomFAB: View {
         )
       }
       .padding(.bottom, 14)
-      .disabled(icon == Image(systemName: ""))
+      .disabled(icon == nil)
     }
   }
 }

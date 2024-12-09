@@ -139,14 +139,21 @@ final class CalendarViewModel {
   private func handleUpdateCurrentData() {
     do {
       state.currentBudget = try budgetUseCase.getCurrentSalaryBudget(date: state.selectedDate)
+      
+      if let updatedBudget = state.currentBudget {
+        if let index = allSalaryBudgets.firstIndex(where: { $0.id == updatedBudget.id }) {
+          allSalaryBudgets[index] = updatedBudget
+        } else {
+          allSalaryBudgets.append(updatedBudget)
+          allSalaryBudgets.sort { $0.startDate < $1.startDate }
+        }
+      }
     } catch {
       state.error = error
     }
   }
   
   private func handleMovePeriod(_ direction: PeriodDirection) {
-    allSalaryBudgets = loadBudgets()
-    
     guard let current = state.currentBudget else { return }
     
     let nextBudget = findBudget(from: current, direction: direction)

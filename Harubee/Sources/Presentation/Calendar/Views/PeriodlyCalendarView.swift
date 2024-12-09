@@ -56,7 +56,7 @@ struct PeriodlyCalendarView: View {
           title: "아직 지출 및 수입을 입력하지 않은 날이 있어요",
           titleColor: .main,
           backgroundColor: .whiteDeep,
-          icon: Image(systemName: ""),
+          icon: nil,
           action: {}
         )
       }
