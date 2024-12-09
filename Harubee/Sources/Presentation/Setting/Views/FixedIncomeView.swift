@@ -9,7 +9,7 @@
 import SwiftUI
 
 struct FixedIncomeView: View {
-  let settingViewModel: SettingViewModel
+  private let settingViewModel: SettingViewModel
   
   @Environment(\.dismiss) private var dismiss
   @State private var selectedDay: Int
@@ -158,7 +158,7 @@ private struct FixedIncomeBodyView: View {
         }
         .sheet(isPresented: $showingSheet) {
           FixedIncomeModifyView(
-            fixedIncomeAmount: fixedIncomeAmount.decimal
+            fixedIncomeAmount: fixedIncomeAmount.decimalWithWon
           ) { updatedAmount in
             fixedIncomeAmount = updatedAmount.numberFormat ?? 0
           }

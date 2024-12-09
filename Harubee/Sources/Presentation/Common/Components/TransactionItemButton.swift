@@ -10,22 +10,10 @@ import SwiftUI
 
 struct TransactionItemButton: View {
   
-  private let title: String
-  private let amount: Int?
-  private let textColor: Color
-  private let backgroundColor: Color
-  
-  init(
-    title: String,
-    amount: Int?,
-    textColor: Color = Color.textBlack,
-    backgroundColor: Color = Color.textBrighter30
-  ) {
-    self.title = title
-    self.amount = amount
-    self.textColor = textColor
-    self.backgroundColor = backgroundColor
-  }
+  let title: String
+  let amount: Int?
+  var textColor: Color = .textBlack
+  var backgroundColor: Color = .textBrighter30
   
   var body: some View {
     VStack(spacing: 16) {

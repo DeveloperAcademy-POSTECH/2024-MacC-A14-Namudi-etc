@@ -28,11 +28,7 @@ enum OnboardingPage {
 struct OnboardingNavigationHeaderView: View {
   @Environment(\.dismiss) private var dismiss
   
-  private var onboardingPage: OnboardingPage
-  
-  init(onboardingPage: OnboardingPage) {
-    self.onboardingPage = onboardingPage
-  }
+  let onboardingPage: OnboardingPage
   
   var body: some View {
     HStack(spacing: 0) {
