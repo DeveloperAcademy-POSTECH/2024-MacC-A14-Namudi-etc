@@ -42,7 +42,7 @@ struct CalendarCell: View {
   }
   
   private var dateLabel: some View {
-    Text(date.calendarDayText)
+    Text(date.formattedDateToString(.emphasizedFirstDay))
       .font(.pretendardSemibold_14)
       .foregroundStyle(Color.textBlack)
       .padding(.top, 5)

@@ -8,40 +8,53 @@
 
 import Foundation
 
+
+// MARK: - Properties
 extension Date {
-  private var configuredCalendar: Calendar {
+  
+  static private let configuredCalendar: Calendar = {
     var calendar = Calendar.current
     calendar.locale = .current
     calendar.timeZone = .current
     return calendar
-  }
+  }()
   
-  /// 캘린더 셀에 표시되는 날짜 텍스트
-  /// 1일인 경우 "M/d" 형태로, 나머지는 "d" 형태로 반환
-  var calendarDayText: String {
-    let day = configuredCalendar.component(.day, from: self)
-    let month = configuredCalendar.component(.month, from: self)
-    return day == 1 ? "\(month)/\(day)" : "\(day)"
-  }
-}
-
-// MARK: - Date Operations
-extension Date {
+//  /// 캘린더 셀에 표시되는 날짜 텍스트
+//  /// 1일인 경우 "M/d" 형태로, 나머지는 "d" 형태로 반환
+//  var calendarDayText: String {
+//    let day = Self.configuredCalendar.component(.day, from: self)
+//    let month = Self.configuredCalendar.component(.month, from: self)
+//    return day == 1 ? "\(month)/\(day)" : "\(day)"
+//  }
+  
   /// 년, 월, 일 값만 사용하기 위한 Date 형식 - [Ex. 2024-10-31 15:00:00 +0000]
   var formattedDate: Date {
-    let dateComponent = configuredCalendar.dateComponents([.year, .month, .day], from: self)
-    return configuredCalendar.date(from: dateComponent) ?? self
+    let dateComponent = self.getDateComponents([.year, .month, .day])
+    return Self.configuredCalendar.date(from: dateComponent) ?? self
   }
   
   /// 오늘 날짜인지 확인
   var isToday: Bool {
-    configuredCalendar.isDateInToday(self)
+    Self.configuredCalendar.isDateInToday(self)
   }
   
-  /// 두 날짜가 같은 날인지 확인
-  func isSameDay(as date: Date) -> Bool {
-    configuredCalendar.isDate(self, inSameDayAs: date)
+  /// Date의 day를 불러옴
+  var day: Int {
+    return Self.configuredCalendar.component(.day, from: self)
   }
+  
+  /// 해당 날짜 Month의 마지막 Day를 불러옴
+  var lastDayOfMonth: Int {
+    Self.configuredCalendar.range(
+      of: .day, in: .month, for: self
+    )!.upperBound - 1
+  }
+}
+
+
+
+// MARK: - Functions
+extension Date {
   
   /// 연, 월, 일을 지정하여 Date 생성
   static func create(year: Int, month: Int, day: Int) -> Date {
@@ -55,21 +68,6 @@ extension Date {
     
     return Calendar.current.date(from: components)?.formattedDate ?? Date().formattedDate
   }
-  
-  var day: Int {
-    return configuredCalendar.component(.day, from: self)
-  }
-  
-  /// Date를 String Format으로 변환합니다
-  /// - Parameter dateFormatType: 변환하고 싶은 dateFormat 타입
-  /// - Returns: 변환된 String 값
-  func formattedDateToString(_ dateFormatType: DateFormatType) -> String {
-    let formatter = DateFormatter()
-    formatter.dateFormat = dateFormatType.rawValue
-    formatter.locale = Locale(identifier: "ko_KR")
-    return formatter.string(from: self)
-  }
-  
   
   // TODO: 수정 필요
   /// 수입일을 기준으로 이번 월급 기간을 계산해줍니다.
@@ -141,8 +139,38 @@ extension Date {
     
     return (incomeStartDate, incomeEndDate)
   }
+  
+  /// Date를 String Format으로 변환합니다
+  /// - Parameter dateFormatType: 변환하고 싶은 dateFormat 타입
+  /// - Returns: 변환된 String 값
+  func formattedDateToString(_ dateFormatType: DateFormatType) -> String {
+    switch dateFormatType {
+    case .emphasizedFirstDay:
+      let day = Self.configuredCalendar.component(.day, from: self)
+      let month = Self.configuredCalendar.component(.month, from: self)
+      return day == 1 ? "\(month)/\(day)" : "\(day)"
+    default:
+      let formatter = DateFormatter()
+      formatter.dateFormat = dateFormatType.rawValue
+      formatter.locale = Locale(identifier: "ko_KR")
+      return formatter.string(from: self)
+    }
+  }
+  
+  /// 두 날짜가 같은 날인지 확인
+  func isSameDay(as date: Date) -> Bool {
+    Self.configuredCalendar.isDate(self, inSameDayAs: date)
+  }
+  
+  /// 해당 날짜에서 원하는 DateComponent를 반환
+  func getDateComponents(
+    _ components: Set<Calendar.Component>
+  ) -> DateComponents {
+    Self.configuredCalendar.dateComponents(
+      components, from: self
+    )
+  }
 }
-
 
 // MARK: - Types
 enum DateFormatType: String {
@@ -153,4 +181,5 @@ enum DateFormatType: String {
   case day_kr = "d일"
   case dayWeekday = "d(EEE)"
   case time_kr = "a h:mm"
+  case emphasizedFirstDay = ""
 }
