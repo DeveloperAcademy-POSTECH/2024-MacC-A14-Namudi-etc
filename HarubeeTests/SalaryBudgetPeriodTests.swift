@@ -24,6 +24,17 @@ struct SalaryBudgetPeriodTests {
     #expect(result.0 == expectedStart)
     #expect(result.1 == expectedEnd)
   }
+  
+  @Test(arguments: testObjects)
+  func checkStartDate(object: TestObject) async throws {
+    let startDate = calculateStartDate(
+      from: object.incomeDay,
+      target: object.currentDate
+    )
+    let expectedStart = object.expectedStart
+    
+    #expect(startDate == expectedStart)
+  }
 }
 
 
@@ -55,6 +66,7 @@ func calculateStartAndEndDateForTest(
     
     
     if incomeDay > currentMonthLastDay {
+      print("1")
       return Date.create(
         year: todayComponents.year!,
         month: todayComponents.month!,
@@ -62,19 +74,21 @@ func calculateStartAndEndDateForTest(
       )
       
     } else if incomeDay <= todayComponents.day! {
+      print("2")
       return Date.create(
         year: todayComponents.year!,
         month: todayComponents.month!,
         day: incomeDay
       )
     } else {
+      
       let previousMonthFromToday = calendar.date(
         byAdding: .month, value: -1, to: today
       )!
       let previousMonthComponents = calendar.dateComponents(
         [.year, .month, .day], from: previousMonthFromToday
       )
-      
+      print(previousMonthComponents.year!, previousMonthComponents.month!, incomeDay)
       return Date.create(
         year: previousMonthComponents.year!,
         month: previousMonthComponents.month!,
@@ -105,6 +119,64 @@ func calculateStartAndEndDateForTest(
   }
   
   return (incomeStartDate, incomeEndDate)
+}
+
+func calculateStartDate(
+  from incomeDay: Int,
+  target: Date
+) -> Date {
+  
+  let targetComponents = target.getDateComponents([.year, .month, .day])
+  
+  // 수입일 <= 기준 날짜 Day : 기준 날짜 Month의 수입일을 시작으로
+  if incomeDay <= targetComponents.day! {
+    return Date.create(
+      year: targetComponents.year!,
+      month: targetComponents.month!,
+      day: incomeDay
+    )
+  
+  // 수입일 > 기준 날짜 Day
+  } else {
+    let lastDayOfMonth = target.lastDayOfMonth
+    
+    // 기준 날짜 Day가 월의 마지막 날인 경우 : 기준 날짜 Month의 마지막 날을 시작으로
+    if targetComponents.day! == lastDayOfMonth {
+      return Date.create(
+        year: targetComponents.year!,
+        month: targetComponents.month!,
+        day: lastDayOfMonth
+      )
+      
+    // 기준 날짜 Day가 월의 마지막 날이 아닌 경우 : 전달의 min(전달의 마지막 날, 수입일)을 시작으로
+    } else {
+      let previousDate: Date
+      if targetComponents.month == 1 {
+        previousDate = Date.create(
+          year: targetComponents.year! - 1,
+          month: 12,
+          day: 1
+        )
+      } else {
+        previousDate = Date.create(
+          year: targetComponents.year!,
+          month: targetComponents.month! - 1,
+          day: 1
+        )
+      }
+      
+      let previousLastDayOfMonth = previousDate.lastDayOfMonth
+      
+      var previousComponents = previousDate.getDateComponents([.year, .month, .day])
+      previousComponents.day = min(previousLastDayOfMonth, incomeDay)
+      
+      return Date.create(
+        year: previousComponents.year!,
+        month: previousComponents.month!,
+        day: previousComponents.day!
+      )
+    }
+  }
 }
 
 func createTestObjects() -> [TestObject] {
@@ -162,6 +234,14 @@ func createTestObjects() -> [TestObject] {
       expectedEnd: Date.create(year: 2024, month: 5, day: 14)
     ),
     
+    // 4. 수입일이 1일로 설정되있는 경우 -> 시작: 2024년 4월 1일, 종료: 2024년 4월 30일
+    TestObject(
+      incomeDay: 1,
+      currentDate: Date.create(year: 2024, month: 4, day: 30),
+      expectedStart: Date.create(year: 2024, month: 4, day: 1),
+      expectedEnd: Date.create(year: 2024, month: 4, day: 30)
+    ),
+    
     
     // MARK: - Case 3. 현재 2024년 5월 31일
     
@@ -214,6 +294,17 @@ func createTestObjects() -> [TestObject] {
       currentDate: Date.create(year: 2024, month: 3, day: 1),
       expectedStart: Date.create(year: 2024, month: 3, day: 1),
       expectedEnd: Date.create(year: 2024, month: 3, day: 31)
+    ),
+    
+    
+    // MARK: - Case 5. 현재 2024년 1월 1일
+    
+    // 1. 수입일이 31일로 설정되있는 경우 -> 시작: 2023년 12월 31일, 종료: 2024년 1월 30일
+    TestObject(
+      incomeDay: 31,
+      currentDate: Date.create(year: 2024, month: 1, day: 1),
+      expectedStart: Date.create(year: 2023, month: 12, day: 31),
+      expectedEnd: Date.create(year: 2024, month: 1, day: 30)
     ),
   ]
 }
