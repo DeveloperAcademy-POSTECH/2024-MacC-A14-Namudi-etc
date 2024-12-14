@@ -35,6 +35,17 @@ struct SalaryBudgetPeriodTests {
     
     #expect(startDate == expectedStart)
   }
+  
+  @Test(arguments: testObjects)
+  func checkEndDate(object: TestObject) async throws {
+    let endDate = calculateEndDate(
+      from: object.incomeDay,
+      target: object.currentDate
+    )
+    let expectedEnd = object.expectedEnd
+    
+    #expect(endDate == expectedEnd)
+  }
 }
 
 
@@ -165,9 +176,9 @@ func calculateStartDate(
         )
       }
       
-      let previousLastDayOfMonth = previousDate.lastDayOfMonth
-      
       var previousComponents = previousDate.getDateComponents([.year, .month, .day])
+      
+      let previousLastDayOfMonth = previousDate.lastDayOfMonth
       previousComponents.day = min(previousLastDayOfMonth, incomeDay)
       
       return Date.create(
@@ -176,6 +187,51 @@ func calculateStartDate(
         day: previousComponents.day!
       )
     }
+  }
+}
+
+func calculateEndDate(
+  from incomeDay: Int,
+  target: Date
+) -> Date {
+  let targetComponents = target.getDateComponents([.year, .month, .day])
+  
+  // 기준 날짜 Day < 수입일 : 이번달을 종료로
+  if targetComponents.day! < incomeDay
+      && targetComponents.day! != target.lastDayOfMonth {
+    let lastDayOfMonth = target.lastDayOfMonth
+    
+    return Date.create(
+      year: targetComponents.year!,
+      month: targetComponents.month!,
+      day: min(lastDayOfMonth, incomeDay) - 1
+    )
+    
+  // 기준 날짜 Day >= 수입일 : 다음달을 종료로
+  } else {
+    let nextDate: Date
+    if targetComponents.month! == 12 {
+      nextDate = Date.create(
+        year: targetComponents.year! + 1,
+        month: 1,
+        day: 1
+      )
+    } else {
+      nextDate = Date.create(
+        year: targetComponents.year!,
+        month: targetComponents.month! + 1,
+        day: 1
+      )
+    }
+    
+    let nextComponents = nextDate.getDateComponents([.year, .month, .day])
+    let nextLastDayOfMonth = nextDate.lastDayOfMonth
+    
+    return Date.create(
+      year: nextComponents.year!,
+      month: nextComponents.month!,
+      day: min(nextLastDayOfMonth, incomeDay) - 1
+    )
   }
 }
 
@@ -305,6 +361,25 @@ func createTestObjects() -> [TestObject] {
       currentDate: Date.create(year: 2024, month: 1, day: 1),
       expectedStart: Date.create(year: 2023, month: 12, day: 31),
       expectedEnd: Date.create(year: 2024, month: 1, day: 30)
+    ),
+    
+    
+    // MARK: - Case 6. 현재 2024년 12월 31일
+    
+    // 1. 수입일이 31일로 설정되있는 경우 -> 시작: 2024년 12월 31일, 종료: 2025년 1월 30일
+    TestObject(
+      incomeDay: 31,
+      currentDate: Date.create(year: 2024, month: 12, day: 31),
+      expectedStart: Date.create(year: 2024, month: 12, day: 31),
+      expectedEnd: Date.create(year: 2025, month: 1, day: 30)
+    ),
+    
+    // 2. 수입일이 30일로 설정되있는 경우 -> 시작: 2023년 12월 30일, 종료: 2024년 1월 29일
+    TestObject(
+      incomeDay: 30,
+      currentDate: Date.create(year: 2024, month: 12, day: 31),
+      expectedStart: Date.create(year: 2024, month: 12, day: 30),
+      expectedEnd: Date.create(year: 2025, month: 1, day: 29)
     ),
   ]
 }
