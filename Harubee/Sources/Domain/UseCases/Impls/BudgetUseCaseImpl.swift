@@ -499,7 +499,7 @@ final class BudgetUseCaseImpl: BudgetUseCase {
     // 2. UserDefaults에 설정하기
     try userDefaultsRepository.saveIncomeDay(day)
     
-    let (startDate, endDate) = Date.calculateStartAndEndDate(from: day)
+    let (startDate, endDate) = Date.calculateStartAndEndDate(from: day, anchor: .now)
     
     // 4.  기존 salaryBudget 삭제하기
     try salaryBudgetRepository.deleteById(salaryBudget.id)
