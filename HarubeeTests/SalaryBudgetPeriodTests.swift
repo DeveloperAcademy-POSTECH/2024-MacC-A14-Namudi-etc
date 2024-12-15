@@ -16,7 +16,7 @@ struct SalaryBudgetPeriodTests {
     
     let result = calculateStartAndEndDateForTest(
       from: object.incomeDay,
-      current: object.currentDate
+      anchor: object.currentDate
     )
     let expectedStart = object.expectedStart
     let expectedEnd = object.expectedEnd
@@ -29,7 +29,7 @@ struct SalaryBudgetPeriodTests {
   func checkStartDate(object: TestObject) async throws {
     let startDate = calculateStartDate(
       from: object.incomeDay,
-      target: object.currentDate
+      anchor: object.currentDate
     )
     let expectedStart = object.expectedStart
     
@@ -40,7 +40,7 @@ struct SalaryBudgetPeriodTests {
   func checkEndDate(object: TestObject) async throws {
     let endDate = calculateEndDate(
       from: object.incomeDay,
-      target: object.currentDate
+      anchor: object.currentDate
     )
     let expectedEnd = object.expectedEnd
     
@@ -61,175 +61,95 @@ let testObjects: [TestObject] = createTestObjects()
 
 func calculateStartAndEndDateForTest(
   from incomeDay: Int,
-  current: Date
+  anchor date: Date
 ) -> (Date, Date) {
-  let calendar = Calendar.current
-  let today = current
   
-  var incomeStartDate: Date {
-    
-    let todayComponents = calendar.dateComponents(
-      [.year, .month, .day], from: today
-    )
-    let currentMonthLastDay = calendar.range(
-      of: .day, in: .month, for: today
-    )!.upperBound - 1
-    
-    
-    if incomeDay > currentMonthLastDay {
-      print("1")
-      return Date.create(
-        year: todayComponents.year!,
-        month: todayComponents.month!,
-        day: currentMonthLastDay
-      )
-      
-    } else if incomeDay <= todayComponents.day! {
-      print("2")
-      return Date.create(
-        year: todayComponents.year!,
-        month: todayComponents.month!,
-        day: incomeDay
-      )
-    } else {
-      
-      let previousMonthFromToday = calendar.date(
-        byAdding: .month, value: -1, to: today
-      )!
-      let previousMonthComponents = calendar.dateComponents(
-        [.year, .month, .day], from: previousMonthFromToday
-      )
-      print(previousMonthComponents.year!, previousMonthComponents.month!, incomeDay)
-      return Date.create(
-        year: previousMonthComponents.year!,
-        month: previousMonthComponents.month!,
-        day: incomeDay
-      )
-    }
-  }
-  
-  var incomeEndDate: Date {
-    let nextMonthFromStartDate = calendar.date(
-      byAdding: .month,
-      value: 1,
-      to: incomeStartDate
-    )!
-    let nextMonthComponents = calendar.dateComponents(
-      [.year, .month, .day], from: nextMonthFromStartDate
-    )
-    let nextMonthLastDay = calendar.range(
-      of: .day, in: .month, for: nextMonthFromStartDate
-    )!.upperBound - 1
-    let endDay = min(incomeDay, nextMonthLastDay)
-    
-    return Date.create(
-      year: nextMonthComponents.year!,
-      month: nextMonthComponents.month!,
-      day: endDay
-    ).addingTimeInterval(-86400)
-  }
+  let incomeStartDate = calculateStartDate(from: incomeDay, anchor: date)
+  let incomeEndDate = calculateEndDate(from: incomeDay, anchor: date)
   
   return (incomeStartDate, incomeEndDate)
 }
 
 func calculateStartDate(
   from incomeDay: Int,
-  target: Date
+  anchor date: Date
 ) -> Date {
+  let date = date.formattedDate
+  let dateComponents = date.getDateComponents([.year, .month, .day])
+  let lastDayOfMonth = date.lastDayOfMonth
   
-  let targetComponents = target.getDateComponents([.year, .month, .day])
-  
-  // 수입일 <= 기준 날짜 Day : 기준 날짜 Month의 수입일을 시작으로
-  if incomeDay <= targetComponents.day! {
-    return Date.create(
-      year: targetComponents.year!,
-      month: targetComponents.month!,
-      day: incomeDay
-    )
-  
-  // 수입일 > 기준 날짜 Day
-  } else {
-    let lastDayOfMonth = target.lastDayOfMonth
+  // 전달이 시작 날짜인 경우
+  // -> 수입일 <= 기준 날짜의 Day || 기준 날짜의 Day가 마지막 날
+  if incomeDay <= dateComponents.day!
+      || lastDayOfMonth == dateComponents.day! {
     
-    // 기준 날짜 Day가 월의 마지막 날인 경우 : 기준 날짜 Month의 마지막 날을 시작으로
-    if targetComponents.day! == lastDayOfMonth {
-      return Date.create(
-        year: targetComponents.year!,
-        month: targetComponents.month!,
-        day: lastDayOfMonth
-      )
-      
-    // 기준 날짜 Day가 월의 마지막 날이 아닌 경우 : 전달의 min(전달의 마지막 날, 수입일)을 시작으로
-    } else {
-      let previousDate: Date
-      if targetComponents.month == 1 {
-        previousDate = Date.create(
-          year: targetComponents.year! - 1,
-          month: 12,
-          day: 1
-        )
-      } else {
-        previousDate = Date.create(
-          year: targetComponents.year!,
-          month: targetComponents.month! - 1,
-          day: 1
-        )
-      }
-      
-      var previousComponents = previousDate.getDateComponents([.year, .month, .day])
-      
-      let previousLastDayOfMonth = previousDate.lastDayOfMonth
-      previousComponents.day = min(previousLastDayOfMonth, incomeDay)
-      
-      return Date.create(
-        year: previousComponents.year!,
-        month: previousComponents.month!,
-        day: previousComponents.day!
-      )
-    }
+    return Date.create(
+      year: dateComponents.year!,
+      month: dateComponents.month!,
+      day: min(incomeDay, lastDayOfMonth)
+    )
+    
+  // 이번달이 시작 날짜인 경우
+  // -> 수입일 > 기준 날짜의 Day && 기준 날짜의 Day가 마지막 날이 아님
+  } else {
+    
+    let year = dateComponents.year!
+    let month = dateComponents.month!
+    let previousDate = Date.create(
+      year: month == 1 ? year - 1 : year,
+      month: month == 1 ? 12 : month - 1,
+      day: 1
+    )
+    
+    let previousComponents = previousDate.getDateComponents([.year, .month, .day])
+    let previousLastDayOfMonth = previousDate.lastDayOfMonth
+    
+    return Date.create(
+      year: previousComponents.year!,
+      month: previousComponents.month!,
+      day: min(previousLastDayOfMonth, incomeDay)
+    )
   }
 }
 
 func calculateEndDate(
   from incomeDay: Int,
-  target: Date
+  anchor date: Date
 ) -> Date {
-  let targetComponents = target.getDateComponents([.year, .month, .day])
+  let date = date.formattedDate
+  let dateComponents = date.getDateComponents([.year, .month, .day])
+  let lastDayOfMonth = date.lastDayOfMonth
   
-  // 기준 날짜 Day < 수입일 : 이번달을 종료로
-  if targetComponents.day! < incomeDay
-      && targetComponents.day! != target.lastDayOfMonth {
-    let lastDayOfMonth = target.lastDayOfMonth
+  // 이번달이 종료 날짜인 경우
+  // -> 기준 날짜의 Day < 수입일 && 기준 날짜의 Day가 마지막 날이 아님
+  if dateComponents.day! < incomeDay
+      && dateComponents.day! != lastDayOfMonth {
     
     return Date.create(
-      year: targetComponents.year!,
-      month: targetComponents.month!,
+      year: dateComponents.year!,
+      month: dateComponents.month!,
       day: min(lastDayOfMonth, incomeDay) - 1
     )
     
-  // 기준 날짜 Day >= 수입일 : 다음달을 종료로
+  // 다음달이 종료 날짜인 경우
+  // 기준 날짜의 Day >= 수입일 || 기준 날짜의 Day가 마지막 날
   } else {
-    let nextDate: Date
-    if targetComponents.month! == 12 {
-      nextDate = Date.create(
-        year: targetComponents.year! + 1,
-        month: 1,
-        day: 1
-      )
-    } else {
-      nextDate = Date.create(
-        year: targetComponents.year!,
-        month: targetComponents.month! + 1,
-        day: 1
-      )
-    }
     
-    let nextComponents = nextDate.getDateComponents([.year, .month, .day])
+    let year = dateComponents.year!
+    let month = dateComponents.month!
+    
+    let nextDate = Date.create(
+      year: month == 12 ? year + 1 : year,
+      month: month == 12 ? 1 : month + 1,
+      day: 1
+    )
+    
+    let nextDateComponents = nextDate.getDateComponents([.year, .month, .day])
     let nextLastDayOfMonth = nextDate.lastDayOfMonth
     
     return Date.create(
-      year: nextComponents.year!,
-      month: nextComponents.month!,
+      year: nextDateComponents.year!,
+      month: nextDateComponents.month!,
       day: min(nextLastDayOfMonth, incomeDay) - 1
     )
   }
