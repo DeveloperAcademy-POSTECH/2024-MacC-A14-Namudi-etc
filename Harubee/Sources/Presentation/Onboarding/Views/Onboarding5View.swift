@@ -215,9 +215,10 @@ private struct FixedExpenseListView: View {
     name: String,
     price: String
   ) {
-    let date = day.convertDateBetweenStartAndEnd(
+    let date = Date.convertDateBetweenStartAndEnd(
       start: viewModel.state.incomeStartDate,
-      end: viewModel.state.incomeEndDate
+      end: viewModel.state.incomeEndDate,
+      day: day
     )
     
     if let item = selectedItem,
