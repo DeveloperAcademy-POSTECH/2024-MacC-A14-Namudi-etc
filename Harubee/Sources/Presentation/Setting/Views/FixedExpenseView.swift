@@ -179,9 +179,10 @@ private struct FixedExpenseListView: View {
     name: String,
     price: String
   ) {
-    let date = day.convertDateBetweenStartAndEnd(
+    let date = Date.convertDateBetweenStartAndEnd(
       start: settingViewModel.state.salaryBudget.startDate,
-      end: settingViewModel.state.salaryBudget.endDate
+      end: settingViewModel.state.salaryBudget.endDate,
+      day: day
     )
     
     if let item = selectedItem,

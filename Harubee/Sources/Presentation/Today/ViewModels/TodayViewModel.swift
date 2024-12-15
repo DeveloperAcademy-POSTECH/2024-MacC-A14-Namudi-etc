@@ -89,9 +89,10 @@ extension TodayViewModel {
       )
       
       let newFixedExpenses = recentSalaryBudget.fixedExpenses.map {
-        let date = $0.date.day.convertDateBetweenStartAndEnd(
+        let date = Date.convertDateBetweenStartAndEnd(
           start: newStartDate,
-          end: newEndDate
+          end: newEndDate,
+          day: $0.date.day
         )
         return TransactionItem(date: date, name: $0.name, price: $0.price)
       }

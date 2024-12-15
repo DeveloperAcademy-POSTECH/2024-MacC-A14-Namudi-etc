@@ -109,6 +109,31 @@ extension Date {
     
     return (incomeStartDate, incomeEndDate)
   }
+  
+  static func convertDateBetweenStartAndEnd(
+    start: Date,
+    end: Date,
+    day: Int
+  ) -> Date {
+    
+    var current = start
+    
+    while current <= end {
+      if current.day == day { return current }
+      
+      current.addTimeInterval(86400)
+    }
+    
+    // 해당 날짜가 기간 사이에 존재하지 않는 경우는 시작 날짜의 달의 마지막 날을 리턴
+    let startComponents = start.getDateComponents([.year, .month])
+    let lastDay = start.lastDayOfMonth
+    
+    return Date.create(
+      year: startComponents.year!,
+      month: startComponents.month!,
+      day: lastDay
+    )
+  }
 
   static private func calculateStartDate(
     from incomeDay: Int,
