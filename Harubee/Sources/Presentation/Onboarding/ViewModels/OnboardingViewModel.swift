@@ -37,7 +37,7 @@ final class OnboardingViewModel {
   init(budgetUseCase: BudgetUseCase) {
     self.budgetUseCase = budgetUseCase
     
-    let (start, end) = Date.calculateStartAndEndDate(from: 1)
+    let (start, end) = Date.calculateStartAndEndDate(from: 1, anchor: .now)
     self.state = .init(incomeStartDate: start, incomeEndDate: end)
   }
   
@@ -50,7 +50,7 @@ final class OnboardingViewModel {
     case let .updateFixedIncomeDay(day):
       self.state.incomeDay = day
       
-      let (start, end) = Date.calculateStartAndEndDate(from: day)
+      let (start, end) = Date.calculateStartAndEndDate(from: day, anchor: .now)
       self.state.incomeStartDate = start
       self.state.incomeEndDate = end
       

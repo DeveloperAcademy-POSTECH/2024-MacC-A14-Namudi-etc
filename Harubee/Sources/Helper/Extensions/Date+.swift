@@ -19,14 +19,6 @@ extension Date {
     return calendar
   }()
   
-//  /// 캘린더 셀에 표시되는 날짜 텍스트
-//  /// 1일인 경우 "M/d" 형태로, 나머지는 "d" 형태로 반환
-//  var calendarDayText: String {
-//    let day = Self.configuredCalendar.component(.day, from: self)
-//    let month = Self.configuredCalendar.component(.month, from: self)
-//    return day == 1 ? "\(month)/\(day)" : "\(day)"
-//  }
-  
   /// 년, 월, 일 값만 사용하기 위한 Date 형식 - [Ex. 2024-10-31 15:00:00 +0000]
   var formattedDate: Date {
     let dateComponent = self.getDateComponents([.year, .month, .day])
@@ -69,77 +61,6 @@ extension Date {
     return Calendar.current.date(from: components)?.formattedDate ?? Date().formattedDate
   }
   
-  // TODO: 수정 필요
-  /// 수입일을 기준으로 이번 월급 기간을 계산해줍니다.
-  /// - Parameter incomeDay: 수입일
-  /// - Returns: 이번 월급 기간의 시작 및 종료 날짜
-  static func calculateStartAndEndDate(from incomeDay: Int) -> (Date, Date) {
-    let calendar = Calendar.current
-    let today = Date()
-    
-    var incomeStartDate: Date {
-      
-      let todayComponents = calendar.dateComponents(
-        [.year, .month, .day], from: today
-      )
-      let currentMonthLastDay = calendar.range(
-        of: .day, in: .month, for: today
-      )!.upperBound - 1
-      
-      
-      if incomeDay > currentMonthLastDay {
-        return create(
-          year: todayComponents.year!,
-          month: todayComponents.month!,
-          day: currentMonthLastDay
-        )
-        
-      } else if incomeDay <= todayComponents.day! {
-        return create(
-          year: todayComponents.year!,
-          month: todayComponents.month!,
-          day: incomeDay
-        )
-      } else {
-        let previousMonthFromToday = calendar.date(
-          byAdding: .month, value: -1, to: today
-        )!
-        let previousMonthComponents = calendar.dateComponents(
-          [.year, .month, .day], from: previousMonthFromToday
-        )
-        
-        return create(
-          year: previousMonthComponents.year!,
-          month: previousMonthComponents.month!,
-          day: incomeDay
-        )
-      }
-    }
-    
-    var incomeEndDate: Date {
-      let nextMonthFromStartDate = calendar.date(
-        byAdding: .month,
-        value: 1,
-        to: incomeStartDate
-      )!
-      let nextMonthComponents = calendar.dateComponents(
-        [.year, .month, .day], from: nextMonthFromStartDate
-      )
-      let nextMonthLastDay = calendar.range(
-        of: .day, in: .month, for: nextMonthFromStartDate
-      )!.upperBound - 1
-      let endDay = min(incomeDay, nextMonthLastDay)
-      
-      return create(
-        year: nextMonthComponents.year!,
-        month: nextMonthComponents.month!,
-        day: endDay
-      ).addingTimeInterval(-86400)
-    }
-    
-    return (incomeStartDate, incomeEndDate)
-  }
-  
   /// Date를 String Format으로 변환합니다
   /// - Parameter dateFormatType: 변환하고 싶은 dateFormat 타입
   /// - Returns: 변환된 String 값
@@ -171,6 +92,110 @@ extension Date {
     )
   }
 }
+
+
+// MARK: - Period Operator
+extension Date {
+  /// 수입일을 기준으로 이번 월급 기간을 계산해줍니다.
+  /// - Parameter incomeDay: 수입일
+  /// - Returns: 이번 월급 기간의 시작 및 종료 날짜
+  static func calculateStartAndEndDate(
+    from incomeDay: Int,
+    anchor date: Date
+  ) -> (Date, Date) {
+    
+    let incomeStartDate = calculateStartDate(from: incomeDay, anchor: date)
+    let incomeEndDate = calculateEndDate(from: incomeDay, anchor: date)
+    
+    return (incomeStartDate, incomeEndDate)
+  }
+
+  static private func calculateStartDate(
+    from incomeDay: Int,
+    anchor date: Date
+  ) -> Date {
+    let date = date.formattedDate
+    let dateComponents = date.getDateComponents([.year, .month, .day])
+    let lastDayOfMonth = date.lastDayOfMonth
+    
+    // 전달이 시작 날짜인 경우
+    // -> 수입일 <= 기준 날짜의 Day || 기준 날짜의 Day가 마지막 날
+    if incomeDay <= dateComponents.day!
+        || lastDayOfMonth == dateComponents.day! {
+      
+      return Date.create(
+        year: dateComponents.year!,
+        month: dateComponents.month!,
+        day: min(incomeDay, lastDayOfMonth)
+      )
+      
+    // 이번달이 시작 날짜인 경우
+    // -> 수입일 > 기준 날짜의 Day && 기준 날짜의 Day가 마지막 날이 아님
+    } else {
+      
+      let year = dateComponents.year!
+      let month = dateComponents.month!
+      let previousDate = Date.create(
+        year: month == 1 ? year - 1 : year,
+        month: month == 1 ? 12 : month - 1,
+        day: 1
+      )
+      
+      let previousComponents = previousDate.getDateComponents([.year, .month, .day])
+      let previousLastDayOfMonth = previousDate.lastDayOfMonth
+      
+      return Date.create(
+        year: previousComponents.year!,
+        month: previousComponents.month!,
+        day: min(previousLastDayOfMonth, incomeDay)
+      )
+    }
+  }
+
+  static private func calculateEndDate(
+    from incomeDay: Int,
+    anchor date: Date
+  ) -> Date {
+    let date = date.formattedDate
+    let dateComponents = date.getDateComponents([.year, .month, .day])
+    let lastDayOfMonth = date.lastDayOfMonth
+    
+    // 이번달이 종료 날짜인 경우
+    // -> 기준 날짜의 Day < 수입일 && 기준 날짜의 Day가 마지막 날이 아님
+    if dateComponents.day! < incomeDay
+        && dateComponents.day! != lastDayOfMonth {
+      
+      return Date.create(
+        year: dateComponents.year!,
+        month: dateComponents.month!,
+        day: min(lastDayOfMonth, incomeDay) - 1
+      )
+      
+    // 다음달이 종료 날짜인 경우
+    // 기준 날짜의 Day >= 수입일 || 기준 날짜의 Day가 마지막 날
+    } else {
+      
+      let year = dateComponents.year!
+      let month = dateComponents.month!
+      
+      let nextDate = Date.create(
+        year: month == 12 ? year + 1 : year,
+        month: month == 12 ? 1 : month + 1,
+        day: 1
+      )
+      
+      let nextDateComponents = nextDate.getDateComponents([.year, .month, .day])
+      let nextLastDayOfMonth = nextDate.lastDayOfMonth
+      
+      return Date.create(
+        year: nextDateComponents.year!,
+        month: nextDateComponents.month!,
+        day: min(nextLastDayOfMonth, incomeDay) - 1
+      )
+    }
+  }
+}
+
 
 // MARK: - Types
 enum DateFormatType: String {
