@@ -76,6 +76,8 @@
 				Resources/Images.xcassets,
 				Sources/App/DI/StorageProvider.swift,
 				Sources/Data/DTOs/DailyBudgetDTO.swift,
+				Sources/Data/DTOs/Migration/MigrationPlan.swift,
+				Sources/Data/DTOs/Migration/SchemaVersion.swift,
 				Sources/Data/DTOs/SalaryBudgetDTO.swift,
 				Sources/Data/DTOs/TransactionItemDTO.swift,
 				Sources/Data/Errors/SwiftDataError.swift,
