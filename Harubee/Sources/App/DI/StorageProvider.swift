@@ -25,6 +25,7 @@ final class StorageProvider {
     do {
       let container = try ModelContainer(
         for: schema,
+        migrationPlan: MigrationPlan.self,
         configurations: configuration
       )
       return container

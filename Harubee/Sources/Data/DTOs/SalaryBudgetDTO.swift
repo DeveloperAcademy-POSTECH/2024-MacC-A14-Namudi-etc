@@ -9,48 +9,105 @@
 import Foundation
 import SwiftData
 
-@Model
-final class SalaryBudgetDTO {
-  @Attribute(.unique) var identifier: String
-  var startDate: Date
-  var endDate: Date
-  var fixedIncome: Int
-  @Relationship(deleteRule: .cascade) var fixedExpenses: [TransactionItemDTO]
-  var balance: Int
-  var defaultHarubee: Double
-  @Relationship(deleteRule: .cascade) var dailyBudgets: [DailyBudgetDTO]
-  
-  init(
-    id: String,
-    startDate: Date,
-    endDate: Date,
-    fixedIncome: Int,
-    fixedExpenses: [TransactionItem],
-    balance: Int,
-    defaultHarubee: Double,
-    dailyBudgets: [DailyBudget]
-  ) {
-    self.identifier = id
-    self.startDate = startDate
-    self.endDate = endDate
-    self.fixedIncome = fixedIncome
-    self.fixedExpenses = fixedExpenses.map { TransactionItemDTO($0) }
-    self.balance = balance
-    self.defaultHarubee = defaultHarubee
-    self.dailyBudgets = dailyBudgets.map { DailyBudgetDTO($0) }
+typealias SalaryBudgetDTO = SchemaV2.SalaryBudgetDTO
+
+extension SchemaV2 {
+  @Model
+  final class SalaryBudgetDTO {
+    @Attribute(.unique) var identifier: String
+    var startDate: Date
+    var endDate: Date
+    var fixedIncome: Int
+    @Relationship(deleteRule: .cascade) var fixedExpenses: [TransactionItemDTO]
+    var balance: Int
+    var defaultHarubee: Double
+    @Relationship(deleteRule: .cascade) var dailyBudgets: [DailyBudgetDTO]
+    
+    init(
+      id: String,
+      startDate: Date,
+      endDate: Date,
+      fixedIncome: Int,
+      fixedExpenses: [TransactionItem],
+      balance: Int,
+      defaultHarubee: Double,
+      dailyBudgets: [DailyBudget]
+    ) {
+      self.identifier = id
+      self.startDate = startDate
+      self.endDate = endDate
+      self.fixedIncome = fixedIncome
+      self.fixedExpenses = fixedExpenses.map { TransactionItemDTO($0) }
+      self.balance = balance
+      self.defaultHarubee = defaultHarubee
+      self.dailyBudgets = dailyBudgets.map { DailyBudgetDTO($0) }
+    }
+    
+    convenience init(_ data: SalaryBudget) {
+      self.init(
+        id: data.id,
+        startDate: data.startDate,
+        endDate: data.endDate,
+        fixedIncome: data.fixedIncome,
+        fixedExpenses: data.fixedExpenses,
+        balance: data.balance,
+        defaultHarubee: data.defaultHarubee,
+        dailyBudgets: data.dailyBudgets
+      )
+    }
   }
-  
-  convenience init(_ data: SalaryBudget) {
-    self.init(
-      id: data.id,
-      startDate: data.startDate,
-      endDate: data.endDate,
-      fixedIncome: data.fixedIncome,
-      fixedExpenses: data.fixedExpenses,
-      balance: data.balance,
-      defaultHarubee: data.defaultHarubee,
-      dailyBudgets: data.dailyBudgets
-    )
+}
+
+
+
+extension SchemaV1 {
+  @Model
+  final class SalaryBudgetDTO {
+    @Attribute(.unique) var identifier: String
+    var startDate: Date
+    var endDate: Date
+    var fixedIncome: Int
+    @Relationship(deleteRule: .cascade) var fixedExpenses: [TransactionItemDTO]
+    var balance: Int
+    var defaultHarubee: Double
+    @Relationship(deleteRule: .cascade) var dailyBudgets: [DailyBudgetDTO]
+    
+    init(
+      id: String,
+      startDate: Date,
+      endDate: Date,
+      fixedIncome: Int,
+      fixedExpenses: [TransactionItem],
+      balance: Int,
+      defaultHarubee: Double,
+      dailyBudgets: [DailyBudget]
+    ) {
+      self.identifier = id
+      self.startDate = startDate
+      self.endDate = endDate
+      self.fixedIncome = fixedIncome
+      self.fixedExpenses = fixedExpenses.map {
+        TransactionItemDTO($0)
+      }
+      self.balance = balance
+      self.defaultHarubee = defaultHarubee
+      self.dailyBudgets = dailyBudgets.map {
+        DailyBudgetDTO($0)
+      }
+    }
+    
+    convenience init(_ data: SalaryBudget) {
+      self.init(
+        id: data.id,
+        startDate: data.startDate,
+        endDate: data.endDate,
+        fixedIncome: data.fixedIncome,
+        fixedExpenses: data.fixedExpenses,
+        balance: data.balance,
+        defaultHarubee: data.defaultHarubee,
+        dailyBudgets: data.dailyBudgets
+      )
+    }
   }
 }
 
@@ -63,7 +120,7 @@ extension SalaryBudgetDTO {
       fixedIncome: self.fixedIncome,
       fixedExpenses: self.fixedExpenses
         .map { $0.toEntity() }
-        .sorted { $0.date < $1.date },
+        .sorted { $0.day < $1.day },
       balance: self.balance,
       defaultHarubee: self.defaultHarubee,
       dailyBudgets: self.dailyBudgets
