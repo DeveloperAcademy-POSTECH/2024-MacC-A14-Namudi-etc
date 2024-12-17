@@ -11,6 +11,9 @@ import SwiftData
 
 typealias SalaryBudgetDTO = SchemaV2.SalaryBudgetDTO
 
+
+// MARK: - SchemaV2
+
 extension SchemaV2 {
   @Model
   final class SalaryBudgetDTO {
@@ -58,7 +61,7 @@ extension SchemaV2 {
   }
 }
 
-
+// MARK: - SchemaV1
 
 extension SchemaV1 {
   @Model
@@ -110,6 +113,9 @@ extension SchemaV1 {
     }
   }
 }
+
+
+// MARK: - toEntity()
 
 extension SalaryBudgetDTO {
   func toEntity() -> SalaryBudget {

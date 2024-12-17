@@ -11,6 +11,9 @@ import SwiftData
 
 typealias DailyBudgetDTO = SchemaV2.DailyBudgetDTO
 
+
+// MARK: - SchemaV2
+
 extension SchemaV2 {
   @Model
   final class DailyBudgetDTO {
@@ -50,6 +53,8 @@ extension SchemaV2 {
   }
 }
 
+// MARK: - SchemaV1
+
 extension SchemaV1 {
   @Model
   final class DailyBudgetDTO {
@@ -88,6 +93,9 @@ extension SchemaV1 {
     }
   }
 }
+
+
+// MARK: - toEntity()
 
 extension DailyBudgetDTO {
   func toEntity() -> DailyBudget {
