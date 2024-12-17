@@ -494,17 +494,33 @@ final class BudgetUseCaseImpl: BudgetUseCase {
     // 2. UserDefaults에 설정하기
     try userDefaultsRepository.saveIncomeDay(day)
     
+    // 3. 새로운 수입일에 맞춰 월급 기간 구하기
     let (startDate, endDate) = Date.calculateStartAndEndDate(from: day, anchor: .now)
     
     // 4.  기존 salaryBudget 삭제하기
     try salaryBudgetRepository.deleteById(salaryBudget.id)
     
-    // 5. 새로운 SalaryBudget 생성
+    // 5. 새로운 수입일에 맞춰 고정 지출 날짜 새롭게 계산
+    let newFixedExpenses = salaryBudget.fixedExpenses.map {
+      let date = Date.convertDateBetweenStartAndEnd(
+        start: startDate,
+        end: endDate,
+        day: $0.day
+      )
+      return TransactionItem(
+        date: date,
+        day: $0.day,
+        name: $0.name,
+        price: $0.price
+      )
+    }
+    
+    // 6. 새로운 SalaryBudget 생성
     return try self.createSalaryBudget(
       startDate: startDate,
       endDate: endDate,
       fixedIncome: salaryBudget.fixedIncome,
-      fixedExpenses: salaryBudget.fixedExpenses
+      fixedExpenses: newFixedExpenses
     )
   }
   
