@@ -214,7 +214,7 @@ private struct HarubeeHexagon: View {
   
   private let fillPercentage: Double
   private let isTodayExpenseEntered: Bool
-  private let waveTimer = Timer.publish(
+  @State private var waveTimer = Timer.publish(
     every: 0.03, on: .main, in: .common
   ).autoconnect()
 
@@ -300,6 +300,14 @@ private struct HarubeeHexagon: View {
         }
         
       }
+    }
+    .onAppear {
+      self.waveTimer = Timer.publish(
+        every: 0.03, on: .main, in: .common
+      ).autoconnect()
+    }
+    .onDisappear {
+      self.waveTimer.upstream.connect().cancel()
     }
     .onReceive(waveTimer) { _ in
 
