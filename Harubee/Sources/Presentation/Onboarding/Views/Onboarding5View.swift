@@ -139,7 +139,7 @@ private struct FixedExpenseListView: View {
     .onChange(of: selectedItem) { _, _ in }
     .onChange(of: fixedExpenses) { _, _ in
       fixedExpenses.sort(by: {
-        $0.date.day < $1.date.day
+        $0.day < $1.day
       })
     }
   }
@@ -172,7 +172,7 @@ private struct FixedExpenseListView: View {
     for item: TransactionItem
   ) -> some View {
     HStack(spacing: 0) {
-      Text("매달 \(item.date.formattedDateToString(.day_kr))")
+      Text("매달 \(item.day)일")
         .font(.pretendardMedium_16)
         .foregroundStyle(Color.textBlack)
         .padding(.vertical, 6)
@@ -213,11 +213,13 @@ private struct FixedExpenseListView: View {
          $0.id == item.id
        }) {
       fixedExpenses[index].date = date
+      fixedExpenses[index].day = day
       fixedExpenses[index].name = name
       fixedExpenses[index].price = price.numberFormat ?? 0
     } else {
       fixedExpenses.append(.init(
         date: date,
+        day: day,
         name: name,
         price: price.numberFormat ?? 0
       ))

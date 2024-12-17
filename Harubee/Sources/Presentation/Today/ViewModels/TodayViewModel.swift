@@ -92,9 +92,14 @@ extension TodayViewModel {
         let date = Date.convertDateBetweenStartAndEnd(
           start: newStartDate,
           end: newEndDate,
-          day: $0.date.day
+          day: $0.day
         )
-        return TransactionItem(date: date, name: $0.name, price: $0.price)
+        return TransactionItem(
+          date: date,
+          day: $0.day,
+          name: $0.name,
+          price: $0.price
+        )
       }
       
       // 4. 새로운 SalaryBudget 생성
