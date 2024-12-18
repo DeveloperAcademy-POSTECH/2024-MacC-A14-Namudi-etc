@@ -9,6 +9,7 @@
 import SwiftUI
 
 struct Onboarding6View: View {
+  // TODO: Environment로 전달 받기
   let viewModel: OnboardingViewModel
   
   var body: some View {

@@ -9,6 +9,7 @@
 import SwiftUI
 
 struct Onboarding4View: View {
+  // TODO: Environment로 전달 받기
   let viewModel: OnboardingViewModel
   
   @State var currentBalanceAmount: String

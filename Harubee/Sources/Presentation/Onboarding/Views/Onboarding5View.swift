@@ -9,6 +9,7 @@
 import SwiftUI
 
 struct Onboarding5View: View {
+  // TODO: Environment로 전달 받기
   let viewModel: OnboardingViewModel
   
   @State var fixedExpenses: [TransactionItem]
@@ -122,7 +123,6 @@ private struct FixedExpenseListView: View {
     }
     .sheet(isPresented: $isPresented) {
       FixedExpenseManageView(
-        mode: selectedItem == nil ? .add : .modify,
         selectedDay: selectedItem?.date.day ?? 1,
         fixedExpenseName: selectedItem?.name ?? "",
         fixedExpenseAmount: selectedItem?.price.decimalWithWon ?? ""

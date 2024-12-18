@@ -10,6 +10,7 @@ import SwiftUI
 import Lottie
 
 struct Onboarding1View: View {
+  // TODO: Environment로 전달 받기
   @State var viewModel: OnboardingViewModel
   @State private var isVisible: Bool = false
   @State private var isPresented: Bool = false
