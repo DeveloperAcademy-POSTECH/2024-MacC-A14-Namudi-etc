@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-enum Mode {
+private enum Mode {
   case add
   case modify
   
@@ -37,13 +37,12 @@ struct FixedExpenseManageView: View {
   private let action: ((Int, String, String) -> Void)
   
   init(
-    mode: Mode,
     selectedDay: Int = 1,
     fixedExpenseName: String = "",
     fixedExpenseAmount: String = "",
     action: @escaping (Int, String, String) -> Void
   ) {
-    self.mode = mode
+    self.mode = fixedExpenseName.isEmpty && fixedExpenseAmount.isEmpty ? .add : .modify
     self.action = action
     self.beforeSelectedDay = selectedDay
     self.beforeExpenseName = fixedExpenseName
@@ -185,6 +184,6 @@ private struct BodyView: View {
 }
 
 #Preview {
-  FixedExpenseManageView(mode: .add) { _, _, _ in
+  FixedExpenseManageView { _, _, _ in
   }
 }

@@ -9,6 +9,7 @@
 import SwiftUI
 
 struct FixedIncomeView: View {
+  // TODO: Environment로 전달 받기
   private let settingViewModel: SettingViewModel
   
   @Environment(\.dismiss) private var dismiss

@@ -9,6 +9,7 @@
 import SwiftUI
 
 struct FixedExpenseView: View {
+  // TODO: Environment로 전달 받기
   let settingViewModel: SettingViewModel
   
   @State private var isInfoBubbleVisible: Bool = false
@@ -69,7 +70,6 @@ private struct FixedExpenseHeaderView: View {
 private struct FixedExpenseListView: View {
   let settingViewModel: SettingViewModel
   
-  @State private var manageMode: Mode = .add
   @State private var selectedItem: TransactionItem?
   @State private var isPresented: Bool = false
   @Binding var fixedExpenses: [TransactionItem]
@@ -88,7 +88,6 @@ private struct FixedExpenseListView: View {
           ForEach(fixedExpenses, id: \.id) { item in
             fixedExpensesRow(for: item)
               .onTapGesture {
-                self.manageMode = .modify
                 self.selectedItem = item
                 self.isPresented = true
               }
@@ -101,7 +100,6 @@ private struct FixedExpenseListView: View {
     }
     .sheet(isPresented: $isPresented) {
       FixedExpenseManageView(
-        mode: self.manageMode,
         selectedDay: selectedItem?.date.day ?? 1,
         fixedExpenseName: selectedItem?.name ?? "",
         fixedExpenseAmount: selectedItem?.price.decimalWithWon ?? ""
@@ -126,7 +124,6 @@ private struct FixedExpenseListView: View {
       Spacer()
       
       Button {
-        self.manageMode = .add
         self.selectedItem = nil
         self.isPresented = true
       } label: {
