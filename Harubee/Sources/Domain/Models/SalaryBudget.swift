@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct SalaryBudget: Identifiable {
+struct SalaryBudget: Identifiable, Hashable {
   let id: String
   let startDate: Date
   let endDate: Date
