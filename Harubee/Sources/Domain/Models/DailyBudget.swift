@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct DailyBudget: Identifiable {
+struct DailyBudget: Identifiable, Hashable {
   let id: String
   let date: Date
   var harubee: Int?
