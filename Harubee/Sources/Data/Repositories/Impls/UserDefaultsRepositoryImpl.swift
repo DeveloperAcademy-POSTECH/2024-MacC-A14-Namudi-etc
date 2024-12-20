@@ -24,7 +24,7 @@ final class UserDefaultsRepositoryImpl: UserDefaultsRepository {
     self.userDefaults = userDefaults
   }
   
-  func saveIncomeDay(_ day: Int) throws {
+  func saveIncomeDay(_ day: Int) {
     userDefaults.set(day, forKey: Keys.incomeDay)
   }
   
@@ -32,7 +32,7 @@ final class UserDefaultsRepositoryImpl: UserDefaultsRepository {
     userDefaults.object(forKey: Keys.incomeDay) as? Int
   }
   
-  func saveTodayHarubeeNotificationTime(_ time: Date) throws {
+  func saveTodayHarubeeNotificationTime(_ time: Date) {
     userDefaults.set(time, forKey: Keys.harubeeNotificationTime)
   }
 
@@ -40,7 +40,7 @@ final class UserDefaultsRepositoryImpl: UserDefaultsRepository {
     userDefaults.object(forKey: Keys.harubeeNotificationTime) as? Date
   }
 
-  func saveExpenseNotificationTime(_ time: Date) throws {
+  func saveExpenseNotificationTime(_ time: Date) {
     userDefaults.set(time, forKey: Keys.expenseNotificationTime)
   }
 
@@ -48,7 +48,7 @@ final class UserDefaultsRepositoryImpl: UserDefaultsRepository {
     userDefaults.object(forKey: Keys.expenseNotificationTime) as? Date
   }
   
-  func saveTodayHarubeeNotificationStatus(_ isEnabled: Bool) throws {
+  func saveTodayHarubeeNotificationStatus(_ isEnabled: Bool) {
     userDefaults.set(isEnabled, forKey: Keys.harubeeNotificationStatus)
   }
 
@@ -56,7 +56,7 @@ final class UserDefaultsRepositoryImpl: UserDefaultsRepository {
     return userDefaults.bool(forKey: Keys.harubeeNotificationStatus)
   }
 
-  func saveExpenseNotificationStatus(_ isEnabled: Bool) throws {
+  func saveExpenseNotificationStatus(_ isEnabled: Bool) {
     userDefaults.set(isEnabled, forKey: Keys.expenseNotificationStatus)
   }
 
