@@ -9,8 +9,7 @@
 import SwiftUI
 
 struct Onboarding6View: View {
-  // TODO: Environment로 전달 받기
-  let viewModel: OnboardingViewModel
+  @Environment(OnboardingViewModel.self) private var viewModel
   
   var body: some View {
     ZStack {
@@ -192,7 +191,7 @@ private struct UserInfoItemView: View {
 }
 
 private struct OnboardingFooterView: View {
-  @Environment(AppRootManager.self) private var appRootManager
+  @Environment(RootViewSwitcher.self) private var rootViewSwitcher
   let viewModel: OnboardingViewModel
   
   var body: some View {
@@ -204,7 +203,7 @@ private struct OnboardingFooterView: View {
       Button {
         viewModel.send(.finishOnboardingSetting)
         
-        appRootManager.changeRootViewToToday()
+        rootViewSwitcher.switchRootView()
       } label: {
         HStack {
           Text("하루비 시작하기")
@@ -226,6 +225,7 @@ private struct OnboardingFooterView: View {
 }
 
 #Preview {
-  Onboarding6View(viewModel: DIContainer.shared.makeOnboardingViewModel())
-    .environment(AppRootManager())
+  Onboarding6View()
+    .environment(RootViewSwitcher())
+    .environment(DIContainer.shared.makeOnboardingViewModel())
 }

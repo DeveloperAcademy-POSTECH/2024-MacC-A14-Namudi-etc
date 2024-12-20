@@ -9,8 +9,7 @@
 import SwiftUI
 
 struct Onboarding2View: View {
-  // TODO: Environment로 전달 받기
-  let viewModel: OnboardingViewModel
+  @Environment(OnboardingViewModel.self) private var viewModel
   @State private var isPresented: Bool = false
   
   var body: some View {
@@ -37,7 +36,7 @@ struct Onboarding2View: View {
       .frame(maxHeight: .infinity, alignment: .top)
       .padding(.top, 76)
       .navigationDestination(isPresented: $isPresented) {
-        Onboarding3View(viewModel: viewModel)
+        Onboarding3View()
           .navigationBarBackButtonHidden()
       }
     }
@@ -111,5 +110,6 @@ struct Onboarding2View: View {
 }
 
 #Preview {
-  Onboarding2View(viewModel: DIContainer.shared.makeOnboardingViewModel())
+  Onboarding2View()
+    .environment(DIContainer.shared.makeOnboardingViewModel())
 }

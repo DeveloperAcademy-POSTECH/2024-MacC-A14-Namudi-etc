@@ -9,8 +9,7 @@
 import SwiftUI
 
 struct Onboarding5View: View {
-  // TODO: Environment로 전달 받기
-  let viewModel: OnboardingViewModel
+  @Environment(OnboardingViewModel.self) private var viewModel
   
   @State var fixedExpenses: [TransactionItem]
 
@@ -41,7 +40,7 @@ struct Onboarding5View: View {
       viewModel.send(.updateFixedExpenses(fixedExpenses))
     })
     .navigationDestination(isPresented: $isPresented) {
-      Onboarding6View(viewModel: viewModel)
+      Onboarding6View()
         .navigationBarBackButtonHidden()
     }
   }
@@ -233,7 +232,7 @@ private struct FixedExpenseListView: View {
 
 #Preview {
   Onboarding5View(
-    viewModel: DIContainer.shared.makeOnboardingViewModel(),
     fixedExpenses: []
   )
+  .environment(DIContainer.shared.makeOnboardingViewModel())
 }

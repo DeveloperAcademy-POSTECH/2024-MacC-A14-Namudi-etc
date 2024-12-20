@@ -1,48 +1,37 @@
 //
-//  Coordinator.swift
+//  MainCoordinator.swift
 //  Harubee
 //
-//  Created by 이정동 on 12/18/24.
+//  Created by 이정동 on 12/20/24.
 //
 
 import SwiftUI
 
-enum AppPage: Hashable {
-  // Onboarding
-  case onboarding1, onboarding2, onboarding3
-  case onboarding4(currentBalanceAmount: String)
-  case onboarding5(fixedExpenses: [TransactionItem])
-  case onboarding6
-  
-  // Main
-  case today
-  case periodlyCalendar
-  case dailyCalendar(initialDate: Date)
-  case setting(salaryBudget: SalaryBudget)
-  case fixedExpense
-  case fixedIncome
-}
-
-enum Sheet: Identifiable {
-  case harubeeAdjust(salaryBudget: SalaryBudget, dailyBudget: DailyBudget)
-  case transactionInput(salaryBudget: SalaryBudget, dailyBudget: DailyBudget)
-  case balanceAdjust(salaryBudget: SalaryBudget, dailyBudget: DailyBudget)
-  case fixedExpenseManage(day: Int, name: String, amount: String) // 콜백 필요
-  case fixedIncomeModify(fixedIncomeAmount: String)  // 콜백 필요
-  case dailyMemo(memo: String? = nil) // 콜백 필요
-  
-  var id: String { UUID().uuidString }
-}
-
-enum Root {
-  case onboarding
-  case main
-}
+typealias MainCoordinatorProtocol = Navigatable & SheetPresentable
+typealias MainAppPage = MainCoordinator.AppPage
 
 @Observable
-final class Coordinator {
+final class MainCoordinator: MainCoordinatorProtocol {
+  enum AppPage: Hashable {
+    case today
+    case periodlyCalendar
+    case dailyCalendar(initialDate: Date)
+    case setting(salaryBudget: SalaryBudget)
+    case fixedExpense
+    case fixedIncome
+  }
   
-  private(set) var root: Root
+  enum Sheet: Identifiable {
+    case harubeeAdjust(salaryBudget: SalaryBudget, dailyBudget: DailyBudget)
+    case transactionInput(salaryBudget: SalaryBudget, dailyBudget: DailyBudget)
+    case balanceAdjust(salaryBudget: SalaryBudget, dailyBudget: DailyBudget)
+    case fixedExpenseManage(day: Int, name: String, amount: String) // 콜백 필요
+    case fixedIncomeModify(fixedIncomeAmount: String)  // 콜백 필요
+    case dailyMemo(memo: String? = nil) // 콜백 필요
+    
+    var id: UUID { UUID() }
+  }
+  
   var path: [AppPage] = []
   var sheet: Sheet?
   
@@ -53,28 +42,7 @@ final class Coordinator {
   // 일별 메모 화면에서 호출될 콜백 함수
   private var dailyMemoCompletion: ((String) -> Void)?
   
-  init() {
-    let isOnboarding = UserDefaults.standard.object(forKey: "isOnboarding") as? Bool ?? true
-    self.root = isOnboarding ? .onboarding : .main
-  }
-  
-  func switchRootView() {
-    switch root {
-    case .onboarding:
-      root = .main
-      UserDefaults.standard.set(false, forKey: "isOnboarding")
-    case .main:
-      root = .onboarding
-      UserDefaults.standard.set(true, forKey: "isOnboarding")
-    }
-    
-    path.removeAll()
-  }
-}
-
-// MARK: - Navigation Method
-extension Coordinator {
-  func push(page: AppPage) {
+  func push(_ page: AppPage) {
     path.append(page)
   }
   
@@ -85,35 +53,9 @@ extension Coordinator {
   func popToRoot() {
     path.removeAll()
   }
-}
-
-// MARK: - Sheet Method
-extension Coordinator {
   
-  private func presentSheet(_ sheet: Sheet) {
+  func presentSheet(_ sheet: Sheet) {
     self.sheet = sheet
-  }
-  
-  /// 위젯을 통해서 지출 입력 화면으로 이동합니다
-  /// - Parameters:
-  ///   - salaryBudget: 이번 기간의 SalaryBudget
-  ///   - dailyBudget: 오늘 날짜의 DailyBudget
-  func presentTransactionInputSheetFromWidget(
-    salaryBudget: SalaryBudget,
-    dailyBudget: DailyBudget
-  ) {
-    switch root {
-    case .onboarding: return
-    case .main:
-      path.removeAll()
-      
-      DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-        self.sheet = .transactionInput(
-          salaryBudget: salaryBudget,
-          dailyBudget: dailyBudget
-        )
-      }
-    }
   }
   
   /// 지출 입력 화면으로 이동합니다
@@ -200,5 +142,48 @@ extension Coordinator {
   
   func dismissSheet() {
     self.sheet = nil
+  }
+  
+  func dismissHarubeeAdjustSheet() {
+    self.dismissSheet()
+  }
+  
+  func dismissTransactionInputSheet() {
+    self.dismissSheet()
+  }
+  
+  func dismissBalanceAdjustSheet() {
+    self.dismissSheet()
+  }
+  
+  func dismissFixedExpenseManageSheet(
+    day: Int,
+    name: String,
+    amount: String
+  ) {
+    self.fixedExpenseManageCompletion?(day, name, amount)
+    self.dismissSheet()
+  }
+  
+  func dismissFixedIncomeModifySheet(
+    fixedIncomeAmount: String
+  ) {
+    self.fixedIncomeModifyCompletion?(fixedIncomeAmount)
+    self.dismissSheet()
+  }
+  
+  func dismissDailyMemoSheet(
+    memo: String
+  ) {
+    self.dailyMemoCompletion?(memo)
+    self.dismissSheet()
+  }
+  
+  func buildPage(_ page: AppPage) -> some View {
+    EmptyView()
+  }
+  
+  func buildSheet(_ sheet: Sheet) -> some View {
+    EmptyView()
   }
 }

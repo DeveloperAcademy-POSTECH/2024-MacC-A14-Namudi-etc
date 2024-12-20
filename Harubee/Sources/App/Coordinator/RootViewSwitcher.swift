@@ -9,10 +9,10 @@
 import Foundation
 
 @Observable
-final class AppRootManager {
+final class RootViewSwitcher {
   enum Root {
     case onboarding
-    case today
+    case main
   }
   
   private(set) var root: Root
@@ -20,11 +20,17 @@ final class AppRootManager {
   init() {
     let isOnboarding = UserDefaults.standard.object(forKey: "isOnboarding") as? Bool ?? true
     
-    root = isOnboarding ? .onboarding : .today
+    root = isOnboarding ? .onboarding : .main
   }
   
-  func changeRootViewToToday() {
-    self.root = .today
-    UserDefaults.standard.set(false, forKey: "isOnboarding")
+  func switchRootView() {
+    switch root {
+    case .onboarding:
+      root = .main
+      UserDefaults.standard.set(false, forKey: "isOnboarding")
+    case .main:
+      root = .onboarding
+      UserDefaults.standard.set(true, forKey: "isOnboarding")
+    }
   }
 }

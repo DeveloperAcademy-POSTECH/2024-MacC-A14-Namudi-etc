@@ -9,8 +9,7 @@
 import SwiftUI
 
 struct Onboarding3View: View {
-  // TODO: Environment로 전달 받기
-  let viewModel: OnboardingViewModel
+  @Environment(OnboardingViewModel.self) private var viewModel
   
   @State private var isPresented: Bool = false
   @State private var isEnabled: Bool = false
@@ -53,7 +52,6 @@ struct Onboarding3View: View {
     })
     .navigationDestination(isPresented: $isPresented) {
       Onboarding4View(
-        viewModel: viewModel,
         currentBalanceAmount: viewModel.state.currentBalance?.decimalWithWon ?? ""
       )
         .navigationBarBackButtonHidden()
@@ -144,5 +142,6 @@ private struct OnboardingBodyView: View {
 }
 
 #Preview {
-  Onboarding3View(viewModel: DIContainer.shared.makeOnboardingViewModel())
+  Onboarding3View()
+    .environment(DIContainer.shared.makeOnboardingViewModel())
 }
