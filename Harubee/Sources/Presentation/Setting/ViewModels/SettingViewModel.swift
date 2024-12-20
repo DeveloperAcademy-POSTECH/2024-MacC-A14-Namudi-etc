@@ -136,7 +136,7 @@ final class SettingViewModel {
   
   private func updateFixedIncomeDay(_ incomeDay: Int) {
     do {
-      let newSalaryBudget = try budgetUseCase.setIncomeDay(
+      let newSalaryBudget = try budgetUseCase.updateIncomeDay(
         day: incomeDay,
         salaryBudget: self.state.salaryBudget
       )

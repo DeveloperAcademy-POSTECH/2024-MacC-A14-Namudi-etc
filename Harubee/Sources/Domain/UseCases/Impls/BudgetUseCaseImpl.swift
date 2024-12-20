@@ -481,7 +481,7 @@ final class BudgetUseCaseImpl: BudgetUseCase {
   }
   
   
-  func setIncomeDay(
+  func updateIncomeDay(
     day: Int,
     salaryBudget: SalaryBudget
   ) throws -> SalaryBudget {
@@ -524,16 +524,12 @@ final class BudgetUseCaseImpl: BudgetUseCase {
     )
   }
   
+  func setIncomeDay(day: Int) throws {
+    try userDefaultsRepository.saveIncomeDay(day)
+  }
   
-  func getIncomeDay() throws -> Int {
-    
-    // 1. 월급일을 가져오고 저장된 월급일이 없으면 기본값 1로 설정하기
-    guard let incomeDay = userDefaultsRepository.readIncomeDay() else {
-      try userDefaultsRepository.saveIncomeDay(1)
-      return 1
-    }
-    
-    return incomeDay
+  func getIncomeDay() throws -> Int? {
+    return userDefaultsRepository.readIncomeDay()
   }
   
   func setTodayHarubeeNotificationTime(time: Date) {

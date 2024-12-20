@@ -76,18 +76,22 @@ extension TodayViewModel {
       ) else { return }
       
       // 3. 새로운 시작일과 종료일 계산
-      // TODO: 수정 필요
-      let (newStartDate, newEndDate) = calculateNewSalaryBudgetDates(
-        referenceStartDay: Calendar.current.component(
-          .day,
-          from: recentSalaryBudget.startDate
-        ),
-        today: Calendar.current.component(
-          .day,
-          from: state.todayDate
-        )
+      var incomeDay = try? budgetUseCase.getIncomeDay()
+      
+      // 온보딩이 끝날 때 수입일을 저장해야하는걸 까먹고 못했습니다..
+      // 그래서 UserDefaults에 nil로 저장이 돼있을 수 있기 때문에 다음과 같은 코드를 추가했습니다.
+      // 현재는 추가된 상태이고, 따라서 2월쯤에는 아래 코드는 지워도 될 거 같습니다.
+      if incomeDay == nil {
+        try? budgetUseCase.setIncomeDay(day: recentSalaryBudget.startDate.day)
+        incomeDay = recentSalaryBudget.startDate.day
+      }
+      
+      let (newStartDate, newEndDate) = Date.calculateStartAndEndDate(
+        from: incomeDay!,
+        anchor: .now
       )
       
+      // 4. 새로운 수입일에 맞춰 고정 지출 날짜 새롭게 계산
       let newFixedExpenses = recentSalaryBudget.fixedExpenses.map {
         let date = Date.convertDateBetweenStartAndEnd(
           start: newStartDate,
@@ -102,7 +106,7 @@ extension TodayViewModel {
         )
       }
       
-      // 4. 새로운 SalaryBudget 생성
+      // 5. 새로운 SalaryBudget 생성
       if let newSalaryBudget = try? budgetUseCase.createSalaryBudget(
         startDate: newStartDate,
         endDate: newEndDate,
@@ -113,63 +117,6 @@ extension TodayViewModel {
       }
     } catch {
       print("other error: \(error)")
-    }
-  }
-  
-  private func calculateNewSalaryBudgetDates(
-    referenceStartDay: Int, today: Int
-  ) -> (Date, Date) {
-    let calendar = Calendar.current
-    
-    if today < referenceStartDay {
-      let previousMonthDate = calendar.date(
-        byAdding: .month,
-        value: -1,
-        to: state.todayDate
-      )!
-      
-      let newStartDate = calendar.date(
-        from: DateComponents(
-          year: calendar.component(.year, from: previousMonthDate),
-          month: calendar.component(.month, from: previousMonthDate),
-          day: referenceStartDay
-        )
-      )!
-      
-      let newEndDate = calendar.date(
-        from: DateComponents(
-          year: calendar.component(.year, from: state.todayDate),
-          month: calendar.component(.month, from: state.todayDate),
-          day: referenceStartDay - 1
-        )
-      )!
-      
-      return (newStartDate, newEndDate)
-      
-    } else {
-      let nextMonthDate = calendar.date(
-        byAdding: .month,
-        value: 1,
-        to: state.todayDate
-      )!
-      
-      let newStartDate = calendar.date(
-        from: DateComponents(
-          year: calendar.component(.year, from: state.todayDate),
-          month: calendar.component(.month, from: state.todayDate),
-          day: referenceStartDay
-        )
-      )!
-      
-      let newEndDate = calendar.date(
-        from: DateComponents(
-          year: calendar.component(.year, from: nextMonthDate),
-          month: calendar.component(.month, from: nextMonthDate),
-          day: referenceStartDay - 1
-        )
-      )!
-      
-      return (newStartDate, newEndDate)
     }
   }
   
