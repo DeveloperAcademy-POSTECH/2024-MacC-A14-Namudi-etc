@@ -15,10 +15,10 @@ final class MainCoordinator: MainCoordinatorProtocol {
   enum AppPage: Hashable {
     case today
     case periodlyCalendar
-    case dailyCalendar(initialDate: Date)
+    case dailyCalendar(calendarViewModel: CalendarViewModel, initialDate: Date)
     case setting(salaryBudget: SalaryBudget)
-    case fixedExpense
-    case fixedIncome
+    case fixedExpense(settingViewModel: SettingViewModel)
+    case fixedIncome(settingViewModel: SettingViewModel)
   }
   
   enum Sheet: Identifiable {
@@ -177,14 +177,14 @@ final class MainCoordinator: MainCoordinatorProtocol {
       TodayView(todayViewModel: DIContainer.shared.makeTodayViewModel())
     case .periodlyCalendar:
       PeriodlyCalendarView(viewModel: DIContainer.shared.makeCalendarViewModel())
-    case .dailyCalendar(let initialDate):
-      EmptyView()
-    case .setting(let salaryBudget):
-      EmptyView()
-    case .fixedExpense:
-      EmptyView()
-    case .fixedIncome:
-      EmptyView()
+    case let .dailyCalendar(viewModel, initialDate):
+      DailyCalendarView(viewModel: viewModel, initialDate: initialDate)
+    case let .setting(salaryBudget):
+      SettingView(settingViewModel: DIContainer.shared.makeSettingViewModel(salaryBudget: salaryBudget))
+    case let .fixedExpense(viewModel):
+      FixedExpenseView(settingViewModel: viewModel)
+    case let .fixedIncome(viewModel):
+      FixedIncomeView(settingViewModel: viewModel)
     }
   }
   

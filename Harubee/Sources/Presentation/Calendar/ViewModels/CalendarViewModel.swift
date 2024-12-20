@@ -295,3 +295,16 @@ enum PeriodDirection {
     }
   }
 }
+
+// MARK: - Hashable
+extension CalendarViewModel: Hashable {
+  var id: UUID { UUID() }
+  
+  static func == (lhs: CalendarViewModel, rhs: CalendarViewModel) -> Bool {
+    lhs.id == rhs.id
+  }
+  
+  func hash(into hasher: inout Hasher) {
+    hasher.combine(id)
+  }
+}

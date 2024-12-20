@@ -230,3 +230,16 @@ extension SettingViewModel {
     }
   }
 }
+
+// MARK: - Hashable
+extension SettingViewModel: Hashable {
+  var id: UUID { UUID() }
+  
+  static func == (lhs: SettingViewModel, rhs: SettingViewModel) -> Bool {
+    lhs.id == rhs.id
+  }
+  
+  func hash(into hasher: inout Hasher) {
+    hasher.combine(id)
+  }
+}
