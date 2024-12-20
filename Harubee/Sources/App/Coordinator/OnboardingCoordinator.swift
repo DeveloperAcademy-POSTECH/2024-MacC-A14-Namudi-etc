@@ -44,10 +44,6 @@ final class OnboardingCoordinator: OnboardingCoordinatorProtocol {
     path.removeAll()
   }
   
-  func presentSheet(_ sheet: Sheet) {
-    self.sheet = sheet
-  }
-  
   /// 고정 지출 관리 화면으로 이동합니다
   /// - Parameters:
   ///   - day: 현재 고정 지출 일자
@@ -62,10 +58,6 @@ final class OnboardingCoordinator: OnboardingCoordinatorProtocol {
   ) {
     self.fixedExpenseManageCompletion = completion
     self.presentSheet(.fixedExpenseManage(day: day, name: name, amount: amount))
-  }
-  
-  func dismissSheet() {
-    self.sheet = nil
   }
   
   func dismissFixedExpenseManageSheet(
