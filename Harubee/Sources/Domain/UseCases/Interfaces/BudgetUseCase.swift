@@ -180,19 +180,22 @@ protocol BudgetUseCase {
   ) throws -> DailyBudget
   
   
-  /// 고정 수입일을 설정합니다.
+  /// 고정 수입일을 수정합니다.
   /// - Parameter day: 1-31 사이의 일자
   /// - Throws:
   ///   - `DomainError.dateOutOfRange`: 유효하지 않은 일자인 경우
-  func setIncomeDay(
+  func updateIncomeDay(
     day: Int,
     salaryBudget: SalaryBudget
   ) throws -> SalaryBudget
   
+  /// 고정 수입일을 저장합니다.
+  /// - Parameter day: 1-31 사이의 일자
+  func setIncomeDay(day: Int) throws
   
   /// 저장된 고정 수입일을 조회합니다.
   /// - Returns: 1-31 사이의 고정 수입일
-  func getIncomeDay() throws -> Int
+  func getIncomeDay() throws -> Int?
   
   /// 오늘의 하루비 알림을 보여주는 시간을 설정합니다
   func setTodayHarubeeNotificationTime(time: Date)
