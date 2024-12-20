@@ -12,6 +12,7 @@ typealias MainAppPage = MainCoordinator.AppPage
 
 @Observable
 final class MainCoordinator: MainCoordinatorProtocol {
+  // MARK: - Enum
   enum AppPage: Hashable {
     case today
     case periodlyCalendar
@@ -22,9 +23,19 @@ final class MainCoordinator: MainCoordinatorProtocol {
   }
   
   enum Sheet: Identifiable {
-    case harubeeAdjust(salaryBudget: SalaryBudget, dailyBudget: DailyBudget)
-    case transactionInput(salaryBudget: SalaryBudget, dailyBudget: DailyBudget)
-    case balanceAdjust(salaryBudget: SalaryBudget, dailyBudget: DailyBudget)
+    case harubeeAdjust(
+      salaryBudget: SalaryBudget,
+      dailyBudget: DailyBudget
+    )
+    case transactionInput(
+      salaryBudget: SalaryBudget,
+      dailyBudget: DailyBudget,
+      focus: TransactionFocusType = .expense
+    )
+    case balanceAdjust(
+      salaryBudget: SalaryBudget,
+      dailyBudget: DailyBudget
+    )
     case fixedExpenseManage(day: Int, name: String, amount: String) // 콜백 필요
     case fixedIncomeModify(fixedIncomeAmount: String)  // 콜백 필요
     case dailyMemo(memo: String? = nil) // 콜백 필요
@@ -32,6 +43,8 @@ final class MainCoordinator: MainCoordinatorProtocol {
     var id: UUID { UUID() }
   }
   
+  
+  // MARK: - Properties
   var path: [AppPage] = []
   var sheet: Sheet?
   
@@ -42,6 +55,8 @@ final class MainCoordinator: MainCoordinatorProtocol {
   // 일별 메모 화면에서 호출될 콜백 함수
   private var dailyMemoCompletion: ((String) -> Void)?
   
+  
+  // MARK: - Navigation Methods
   func push(_ page: AppPage) {
     path.append(page)
   }
@@ -54,6 +69,8 @@ final class MainCoordinator: MainCoordinatorProtocol {
     path.removeAll()
   }
   
+  
+  // MARK: - Sheet Methods
   /// 지출 입력 화면으로 이동합니다
   /// - Parameters:
   ///   - salaryBudget: 이번 기간의 SalaryBudget
@@ -171,16 +188,25 @@ final class MainCoordinator: MainCoordinatorProtocol {
     self.dismissSheet()
   }
   
+  
+  // MARK: - View Build Methods
+  
   func buildPage(_ page: AppPage) -> some View {
     switch page {
     case .today:
       TodayView(todayViewModel: DIContainer.shared.makeTodayViewModel())
     case .periodlyCalendar:
-      PeriodlyCalendarView(viewModel: DIContainer.shared.makeCalendarViewModel())
+      PeriodlyCalendarView(
+        viewModel: DIContainer.shared.makeCalendarViewModel()
+      )
     case let .dailyCalendar(viewModel, initialDate):
       DailyCalendarView(viewModel: viewModel, initialDate: initialDate)
     case let .setting(salaryBudget):
-      SettingView(settingViewModel: DIContainer.shared.makeSettingViewModel(salaryBudget: salaryBudget))
+      SettingView(
+        settingViewModel: DIContainer.shared.makeSettingViewModel(
+          salaryBudget: salaryBudget
+        )
+      )
     case let .fixedExpense(viewModel):
       FixedExpenseView(settingViewModel: viewModel)
     case let .fixedIncome(viewModel):
@@ -189,6 +215,46 @@ final class MainCoordinator: MainCoordinatorProtocol {
   }
   
   func buildSheet(_ sheet: Sheet) -> some View {
-    EmptyView()
+    switch sheet {
+    case let .harubeeAdjust(salaryBudget, dailyBudget):
+      HarubeeAdjustView(
+        viewModel: DIContainer.shared.makeHarubeeAdjustViewModel(
+          salaryBudget: salaryBudget,
+          dailyBudget: dailyBudget
+        )
+      )
+    case let .transactionInput(salaryBudget, dailyBudget, focus):
+      TransactionInputView(
+        viewModel: DIContainer.shared.makeTransactionInputViewModel(
+          salaryBudget: salaryBudget,
+          dailyBudget: dailyBudget
+        ),
+        transactionFocusType: focus
+      )
+    case let .balanceAdjust(salaryBudget, dailyBudget):
+      BalanceAdjustView(
+        viewModel: DIContainer.shared.makeBalanceAdjustViewModel(
+          salaryBudget: salaryBudget,
+          dailyBudget: dailyBudget
+        )
+      )
+    case let .fixedExpenseManage(day, name, amount):
+      FixedExpenseManageView(
+        selectedDay: day,
+        fixedExpenseName: name,
+        fixedExpenseAmount: amount,
+        action: fixedExpenseManageCompletion ?? { _, _, _ in }
+      )
+    case let .fixedIncomeModify(fixedIncomeAmount):
+      FixedIncomeModifyView(
+        fixedIncomeAmount: fixedIncomeAmount,
+        editFixedIncomeAmount: fixedIncomeModifyCompletion ?? { _ in }
+      )
+    case let .dailyMemo(memo):
+      DailyMemoView(
+        existingMemo: memo,
+        onComplete: dailyMemoCompletion ?? { _ in }
+      )
+    }
   }
 }
