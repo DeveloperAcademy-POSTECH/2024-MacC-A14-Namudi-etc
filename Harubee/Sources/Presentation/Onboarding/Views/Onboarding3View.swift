@@ -9,9 +9,9 @@
 import SwiftUI
 
 struct Onboarding3View: View {
+  @Environment(OnboardingCoordinator.self) private var coordinator
   @Environment(OnboardingViewModel.self) private var viewModel
   
-  @State private var isPresented: Bool = false
   @State private var isEnabled: Bool = false
   @State private var isFocused: Bool = false
   @State private var showDayPicker: Bool = false
@@ -37,7 +37,11 @@ struct Onboarding3View: View {
           isEnabled: $isEnabled
         ) {
           viewModel.send(.naviateToOnboardingStep3)
-          self.isPresented = true
+          coordinator.push(
+            .onboarding4(
+              currentBalanceAmount: viewModel.state.currentBalance?.decimalWithWon ?? ""
+            )
+          )
         }
       }
       
@@ -50,12 +54,6 @@ struct Onboarding3View: View {
     .onChange(of: incomeDay, { _, _ in
       viewModel.send(.updateFixedIncomeDay(incomeDay))
     })
-    .navigationDestination(isPresented: $isPresented) {
-      Onboarding4View(
-        currentBalanceAmount: viewModel.state.currentBalance?.decimalWithWon ?? ""
-      )
-        .navigationBarBackButtonHidden()
-    }
   }
   
   private var onboardingHeaderView: some View {
@@ -144,4 +142,5 @@ private struct OnboardingBodyView: View {
 #Preview {
   Onboarding3View()
     .environment(DIContainer.shared.makeOnboardingViewModel())
+    .environment(OnboardingCoordinator())
 }

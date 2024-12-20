@@ -8,9 +8,15 @@
 import SwiftUI
 
 struct CoordinatorView: View {
-  @State private var onboardingCoordinator = OnboardingCoordinator()
-  @State private var mainCoordinator = MainCoordinator()
   @State private var rootSwitcher = RootViewSwitcher()
+  
+  // Onboarding
+  @State private var onboardingCoordinator = OnboardingCoordinator()
+  @State private var onboardingViewModel = DIContainer.shared.makeOnboardingViewModel()
+  
+  // Main
+  @State private var mainCoordinator = MainCoordinator()
+  @State private var todayViewModel = DIContainer.shared.makeTodayViewModel()
   
   var body: some View {
     Group {
@@ -41,7 +47,7 @@ struct CoordinatorView: View {
         }
     }
     .environment(onboardingCoordinator)
-    .environment(DIContainer.shared.makeOnboardingViewModel())
+    .environment(onboardingViewModel)
   }
   
   @ViewBuilder

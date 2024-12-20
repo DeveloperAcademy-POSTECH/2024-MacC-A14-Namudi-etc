@@ -9,12 +9,12 @@
 import SwiftUI
 
 struct Onboarding4View: View {
+  @Environment(OnboardingCoordinator.self) private var coordinator
   @Environment(OnboardingViewModel.self) private var viewModel
   
   @State var currentBalanceAmount: String
   @State private var isEnabled: Bool = true
   @State private var isFocused: Bool = true
-  @State private var isPresented: Bool = false
   
   var body: some View {
     ZStack(alignment: .bottom) {
@@ -33,7 +33,9 @@ struct Onboarding4View: View {
           title: "다음으로",
           isEnabled: $isEnabled
         ) {
-          self.isPresented = true
+          coordinator.push(
+            .onboarding5(fixedExpenses: viewModel.state.fixedExpenses)
+          )
         }
       }
       
@@ -42,12 +44,6 @@ struct Onboarding4View: View {
           doneButtonTapped()
         }
       }
-    }
-    .navigationDestination(isPresented: $isPresented) {
-      Onboarding5View(
-        fixedExpenses: viewModel.state.fixedExpenses
-      )
-        .navigationBarBackButtonHidden()
     }
   }
   
@@ -144,4 +140,5 @@ private struct OnboardingBodyView: View {
     currentBalanceAmount: ""
   )
   .environment(DIContainer.shared.makeOnboardingViewModel())
+  .environment(OnboardingCoordinator())
 }

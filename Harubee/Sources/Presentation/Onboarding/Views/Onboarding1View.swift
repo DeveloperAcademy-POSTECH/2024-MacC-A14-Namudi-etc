@@ -10,9 +10,9 @@ import SwiftUI
 import Lottie
 
 struct Onboarding1View: View {
+  @Environment(OnboardingCoordinator.self) private var coordinator
   @Environment(OnboardingViewModel.self) private var viewModel
   @State private var isVisible: Bool = false
-  @State private var isPresented: Bool = false
   
   var body: some View {
     ZStack(alignment: .bottom) {
@@ -43,11 +43,9 @@ struct Onboarding1View: View {
       }
     }
     .onTapGesture {
-      self.isPresented = isVisible
-    }
-    .navigationDestination(isPresented: $isPresented) {
-      Onboarding2View()
-        .navigationBarBackButtonHidden()
+      if isVisible {
+        coordinator.push(.onboarding2)
+      }
     }
   }
 }
@@ -55,4 +53,5 @@ struct Onboarding1View: View {
 #Preview {
   Onboarding1View()
     .environment(DIContainer.shared.makeOnboardingViewModel())
+    .environment(OnboardingCoordinator())
 }
