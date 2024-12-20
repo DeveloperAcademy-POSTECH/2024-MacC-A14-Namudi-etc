@@ -123,10 +123,10 @@ final class SettingViewModel {
   
   private func fetchNotificationData() {
 
-    let harubeeNotificationTime = try? budgetUseCase.getTodayHarubeeNotificationTime()
-    let expenseNotificationTime = try? budgetUseCase.getExpenseNotificationTime()
-    let harubeeNotificationStatus = try? budgetUseCase.getTodayHarubeeNotificationStatus()
-    let expenseNotificationStatus = try? budgetUseCase.getExpenseNotificationStatus()
+    let harubeeNotificationTime = budgetUseCase.getTodayHarubeeNotificationTime()
+    let expenseNotificationTime = budgetUseCase.getExpenseNotificationTime()
+    let harubeeNotificationStatus = budgetUseCase.getTodayHarubeeNotificationStatus()
+    let expenseNotificationStatus = budgetUseCase.getExpenseNotificationStatus()
     
     self.harubeeNotificationTime = harubeeNotificationTime ?? Date()
     self.expenseNotificationTime = expenseNotificationTime ?? Date()

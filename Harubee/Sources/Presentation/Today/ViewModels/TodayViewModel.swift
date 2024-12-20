@@ -76,13 +76,13 @@ extension TodayViewModel {
       ) else { return }
       
       // 3. 새로운 시작일과 종료일 계산
-      var incomeDay = try? budgetUseCase.getIncomeDay()
+      var incomeDay = budgetUseCase.getIncomeDay()
       
       // 온보딩이 끝날 때 수입일을 저장해야하는걸 까먹고 못했습니다..
       // 그래서 UserDefaults에 nil로 저장이 돼있을 수 있기 때문에 다음과 같은 코드를 추가했습니다.
       // 현재는 추가된 상태이고, 따라서 2월쯤에는 아래 코드는 지워도 될 거 같습니다.
       if incomeDay == nil {
-        try? budgetUseCase.setIncomeDay(day: recentSalaryBudget.startDate.day)
+        budgetUseCase.setIncomeDay(day: recentSalaryBudget.startDate.day)
         incomeDay = recentSalaryBudget.startDate.day
       }
       

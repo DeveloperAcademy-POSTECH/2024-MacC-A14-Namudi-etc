@@ -191,39 +191,39 @@ protocol BudgetUseCase {
   
   /// 고정 수입일을 저장합니다.
   /// - Parameter day: 1-31 사이의 일자
-  func setIncomeDay(day: Int) throws
+  func setIncomeDay(day: Int)
   
   /// 저장된 고정 수입일을 조회합니다.
   /// - Returns: 1-31 사이의 고정 수입일
-  func getIncomeDay() throws -> Int?
+  func getIncomeDay() -> Int?
   
   /// 오늘의 하루비 알림을 보여주는 시간을 설정합니다
   func setTodayHarubeeNotificationTime(time: Date)
   
   /// 저장된 오늘의 하루비 알림 시간을 조회합니다.
   /// - Returns: 0~24시 0~60분
-  func getTodayHarubeeNotificationTime() throws -> Date?
+  func getTodayHarubeeNotificationTime() -> Date?
   
   /// 실제 지출을 입력하는 알림을 보여주는 시간을 설정합니다
   func setExpenseNotificationTime(time: Date)
   
   /// 저장된 실제 지출을 입력하는 알림 시간을 조회합니다.
   /// - Returns: 0~24시 0~60분
-  func getExpenseNotificationTime() throws -> Date?
+  func getExpenseNotificationTime() -> Date?
   
   /// 오늘의 하루비 알림 활성화 상태를 설정합니다
   func setTodayHarubeeNotificationStatus(_ isEnabled: Bool)
   
   /// 오늘의 하루비 알림 활성화 상태를 조회합니다
   /// - Returns: 알림 활성화 상태
-  func getTodayHarubeeNotificationStatus() throws -> Bool?
+  func getTodayHarubeeNotificationStatus() -> Bool?
   
   /// 실제 지출 입력 알림 활성화 상태를 설정합니다
   func setExpenseNotificationStatus(_ isEnabled: Bool)
   
   /// 실제 지출 입력 알림 활성화 상태를 조회합니다
   /// - Returns: 알림 활성화 상태
-  func getExpenseNotificationStatus() throws -> Bool?
+  func getExpenseNotificationStatus() -> Bool?
   
   /// 오늘날짜 이전에 해당하는 DailyBudget에 하루비가 저장되지 않았는지 확인 후 값을 넣어줍니다.
   /// - Parameter salaryBudget: 이번 기간의 SalaryBudget

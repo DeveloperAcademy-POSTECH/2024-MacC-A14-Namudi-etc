@@ -492,7 +492,7 @@ final class BudgetUseCaseImpl: BudgetUseCase {
     }
     
     // 2. UserDefaults에 설정하기
-    try userDefaultsRepository.saveIncomeDay(day)
+    userDefaultsRepository.saveIncomeDay(day)
     
     // 3. 새로운 수입일에 맞춰 월급 기간 구하기
     let (startDate, endDate) = Date.calculateStartAndEndDate(from: day, anchor: .now)
@@ -524,16 +524,16 @@ final class BudgetUseCaseImpl: BudgetUseCase {
     )
   }
   
-  func setIncomeDay(day: Int) throws {
-    try userDefaultsRepository.saveIncomeDay(day)
+  func setIncomeDay(day: Int) {
+    userDefaultsRepository.saveIncomeDay(day)
   }
   
-  func getIncomeDay() throws -> Int? {
+  func getIncomeDay() -> Int? {
     return userDefaultsRepository.readIncomeDay()
   }
   
   func setTodayHarubeeNotificationTime(time: Date) {
-    try? userDefaultsRepository.saveTodayHarubeeNotificationTime(time)
+    userDefaultsRepository.saveTodayHarubeeNotificationTime(time)
   }
 
   func getTodayHarubeeNotificationTime() -> Date? {
@@ -549,7 +549,7 @@ final class BudgetUseCaseImpl: BudgetUseCase {
       dateComponents.timeZone = TimeZone.current
       
       let defaultDate = calendar.date(from: dateComponents)
-      try? userDefaultsRepository.saveTodayHarubeeNotificationTime(defaultDate!)
+      userDefaultsRepository.saveTodayHarubeeNotificationTime(defaultDate!)
       
       return defaultDate
     }
@@ -558,7 +558,7 @@ final class BudgetUseCaseImpl: BudgetUseCase {
   }
 
   func setExpenseNotificationTime(time: Date) {
-    try? userDefaultsRepository.saveExpenseNotificationTime(time)
+    userDefaultsRepository.saveExpenseNotificationTime(time)
   }
 
   func getExpenseNotificationTime() -> Date? {
@@ -574,7 +574,7 @@ final class BudgetUseCaseImpl: BudgetUseCase {
       dateComponents.timeZone = TimeZone.current
       
       let defaultDate = calendar.date(from: dateComponents)
-      try? userDefaultsRepository.saveExpenseNotificationTime(defaultDate!)
+      userDefaultsRepository.saveExpenseNotificationTime(defaultDate!)
       
       return defaultDate
     }
@@ -583,26 +583,26 @@ final class BudgetUseCaseImpl: BudgetUseCase {
   }
   
   func setTodayHarubeeNotificationStatus(_ isEnabled: Bool) {
-    try? userDefaultsRepository.saveTodayHarubeeNotificationStatus(isEnabled)
+    userDefaultsRepository.saveTodayHarubeeNotificationStatus(isEnabled)
   }
 
-  func getTodayHarubeeNotificationStatus() throws -> Bool? {
+  func getTodayHarubeeNotificationStatus() -> Bool? {
     guard let status = userDefaultsRepository.readTodayHarubeeNotificationStatus()
     else {
-      try? userDefaultsRepository.saveTodayHarubeeNotificationStatus(false)
+      userDefaultsRepository.saveTodayHarubeeNotificationStatus(false)
       return false
     }
     return status
   }
 
   func setExpenseNotificationStatus(_ isEnabled: Bool) {
-    try? userDefaultsRepository.saveExpenseNotificationStatus(isEnabled)
+    userDefaultsRepository.saveExpenseNotificationStatus(isEnabled)
   }
 
-  func getExpenseNotificationStatus() throws -> Bool? {
+  func getExpenseNotificationStatus() -> Bool? {
     guard let status = userDefaultsRepository.readExpenseNotificationStatus()
     else {
-      try? userDefaultsRepository.saveTodayHarubeeNotificationStatus(false)
+      userDefaultsRepository.saveTodayHarubeeNotificationStatus(false)
       return false
     }
     return status

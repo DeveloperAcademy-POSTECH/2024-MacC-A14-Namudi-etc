@@ -72,7 +72,7 @@ final class OnboardingViewModel {
         fixedExpenses: self.state.fixedExpenses
       )
       
-      try? budgetUseCase.setIncomeDay(day: self.state.incomeStartDate.day)
+      budgetUseCase.setIncomeDay(day: self.state.incomeStartDate.day)
     }
     
     self.state.averageHarubee = self.calculateAverageHarubee()
