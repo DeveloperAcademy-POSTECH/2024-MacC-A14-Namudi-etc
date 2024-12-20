@@ -54,10 +54,6 @@ final class MainCoordinator: MainCoordinatorProtocol {
     path.removeAll()
   }
   
-  func presentSheet(_ sheet: Sheet) {
-    self.sheet = sheet
-  }
-  
   /// 지출 입력 화면으로 이동합니다
   /// - Parameters:
   ///   - salaryBudget: 이번 기간의 SalaryBudget
@@ -140,10 +136,6 @@ final class MainCoordinator: MainCoordinatorProtocol {
     self.presentSheet(.dailyMemo(memo: memo))
   }
   
-  func dismissSheet() {
-    self.sheet = nil
-  }
-  
   func dismissHarubeeAdjustSheet() {
     self.dismissSheet()
   }
@@ -180,7 +172,20 @@ final class MainCoordinator: MainCoordinatorProtocol {
   }
   
   func buildPage(_ page: AppPage) -> some View {
-    EmptyView()
+    switch page {
+    case .today:
+      TodayView(todayViewModel: DIContainer.shared.makeTodayViewModel())
+    case .periodlyCalendar:
+      PeriodlyCalendarView(viewModel: DIContainer.shared.makeCalendarViewModel())
+    case .dailyCalendar(let initialDate):
+      EmptyView()
+    case .setting(let salaryBudget):
+      EmptyView()
+    case .fixedExpense:
+      EmptyView()
+    case .fixedIncome:
+      EmptyView()
+    }
   }
   
   func buildSheet(_ sheet: Sheet) -> some View {

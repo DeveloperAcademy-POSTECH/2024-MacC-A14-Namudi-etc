@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-protocol Navigatable {
+protocol Navigatable: AnyObject {
   associatedtype AppPage: Hashable
   associatedtype ContentView: View
   
@@ -21,15 +21,22 @@ protocol Navigatable {
   func buildPage(_ page: AppPage) -> ContentView
 }
 
-protocol SheetPresentable {
+protocol SheetPresentable: AnyObject {
   associatedtype Sheet: Identifiable
   associatedtype SheetView: View
   
   var sheet: Sheet? { get set }
   
-  func presentSheet(_ sheet: Sheet)
-  func dismissSheet()
-  
   @ViewBuilder
   func buildSheet(_ sheet: Sheet) -> SheetView
+}
+
+extension SheetPresentable {
+  func presentSheet(_ sheet: Sheet) {
+    self.sheet = sheet
+  }
+  
+  func dismissSheet() {
+    self.sheet = nil
+  }
 }
