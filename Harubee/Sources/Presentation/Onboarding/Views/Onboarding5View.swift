@@ -9,12 +9,11 @@
 import SwiftUI
 
 struct Onboarding5View: View {
+  @Environment(OnboardingCoordinator.self) private var coordinator
   @Environment(OnboardingViewModel.self) private var viewModel
   
   @State var fixedExpenses: [TransactionItem]
 
-  @State private var isPresented: Bool = false
-  
   var body: some View {
     VStack(spacing: 0) {
       OnboardingHeaderView(harubee: viewModel.state.averageHarubee)
@@ -33,16 +32,12 @@ struct Onboarding5View: View {
       Spacer()
       
       MainColorBottomButton(title: "다음으로") {
-        self.isPresented = true
+        coordinator.push(.onboarding6)
       }
     }
     .onChange(of: fixedExpenses, { _, _ in
       viewModel.send(.updateFixedExpenses(fixedExpenses))
     })
-    .navigationDestination(isPresented: $isPresented) {
-      Onboarding6View()
-        .navigationBarBackButtonHidden()
-    }
   }
   
   private var onboardingBodyTitleView: some View {
@@ -235,4 +230,5 @@ private struct FixedExpenseListView: View {
     fixedExpenses: []
   )
   .environment(DIContainer.shared.makeOnboardingViewModel())
+  .environment(OnboardingCoordinator())
 }

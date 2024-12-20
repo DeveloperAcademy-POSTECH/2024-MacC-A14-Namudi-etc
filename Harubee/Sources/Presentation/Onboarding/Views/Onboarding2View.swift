@@ -9,8 +9,8 @@
 import SwiftUI
 
 struct Onboarding2View: View {
+  @Environment(OnboardingCoordinator.self) private var coordinator
   @Environment(OnboardingViewModel.self) private var viewModel
-  @State private var isPresented: Bool = false
   
   var body: some View {
     ZStack {
@@ -29,16 +29,13 @@ struct Onboarding2View: View {
         
         MainColorBottomButton(
           title: "다음으로",
-          isReverseColor: true) {
-            isPresented = true
-          }
+          isReverseColor: true
+        ) {
+          coordinator.push(.onboarding3)
+        }
       }
       .frame(maxHeight: .infinity, alignment: .top)
       .padding(.top, 76)
-      .navigationDestination(isPresented: $isPresented) {
-        Onboarding3View()
-          .navigationBarBackButtonHidden()
-      }
     }
   }
   
@@ -112,4 +109,5 @@ struct Onboarding2View: View {
 #Preview {
   Onboarding2View()
     .environment(DIContainer.shared.makeOnboardingViewModel())
+    .environment(OnboardingCoordinator())
 }

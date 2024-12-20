@@ -78,10 +78,37 @@ final class OnboardingCoordinator: OnboardingCoordinatorProtocol {
   }
   
   func buildPage(_ page: AppPage) -> some View {
-    EmptyView()
+    switch page {
+    case .onboarding1:
+      Onboarding1View()
+        .navigationBarBackButtonHidden()
+    case .onboarding2:
+      Onboarding2View()
+        .navigationBarBackButtonHidden()
+    case .onboarding3:
+      Onboarding3View()
+        .navigationBarBackButtonHidden()
+    case .onboarding4(let currentBalanceAmount):
+      Onboarding4View(currentBalanceAmount: currentBalanceAmount)
+        .navigationBarBackButtonHidden()
+    case .onboarding5(let fixedExpenses):
+      Onboarding5View(fixedExpenses: fixedExpenses)
+        .navigationBarBackButtonHidden()
+    case .onboarding6:
+      Onboarding6View()
+        .navigationBarBackButtonHidden()
+    }
   }
   
   func buildSheet(_ sheet: Sheet) -> some View {
-    EmptyView()
+    switch sheet {
+    case .fixedExpenseManage(let day, let name, let amount):
+      return FixedExpenseManageView(
+        selectedDay: day,
+        fixedExpenseName: name,
+        fixedExpenseAmount: amount,
+        action: fixedExpenseManageCompletion ?? ({ _, _, _ in })
+      )
+    }
   }
 }
