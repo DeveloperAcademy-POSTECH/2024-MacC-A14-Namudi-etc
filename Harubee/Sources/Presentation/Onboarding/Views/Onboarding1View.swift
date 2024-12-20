@@ -10,8 +10,7 @@ import SwiftUI
 import Lottie
 
 struct Onboarding1View: View {
-  // TODO: Environment로 전달 받기
-  @State var viewModel: OnboardingViewModel
+  @Environment(OnboardingViewModel.self) private var viewModel
   @State private var isVisible: Bool = false
   @State private var isPresented: Bool = false
   
@@ -47,12 +46,13 @@ struct Onboarding1View: View {
       self.isPresented = isVisible
     }
     .navigationDestination(isPresented: $isPresented) {
-      Onboarding2View(viewModel: viewModel)
+      Onboarding2View()
         .navigationBarBackButtonHidden()
     }
   }
 }
 
 #Preview {
-  Onboarding1View(viewModel: DIContainer.shared.makeOnboardingViewModel())
+  Onboarding1View()
+    .environment(DIContainer.shared.makeOnboardingViewModel())
 }
