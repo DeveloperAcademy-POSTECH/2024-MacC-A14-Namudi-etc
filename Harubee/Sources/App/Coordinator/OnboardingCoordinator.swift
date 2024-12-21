@@ -103,8 +103,7 @@ final class OnboardingCoordinator: OnboardingCoordinatorProtocol {
       return FixedExpenseManageView(
         selectedDay: day,
         fixedExpenseName: name,
-        fixedExpenseAmount: amount,
-        action: fixedExpenseManageCompletion ?? ({ _, _, _ in })
+        fixedExpenseAmount: amount
       )
     }
   }

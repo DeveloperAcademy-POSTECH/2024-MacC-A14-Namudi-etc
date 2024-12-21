@@ -23,7 +23,9 @@ private enum Mode {
 }
 
 struct FixedExpenseManageView: View {
-  @Environment(\.dismiss) private var dismiss
+  @Environment(RootViewSwitcher.self) private var rootViewSwitcher
+  @Environment(OnboardingCoordinator.self) private var onboardingCoordinator
+  @Environment(MainCoordinator.self) private var mainCoordinator
   @State private var selectedDay: Int
   @State private var fixedExpenseName: String
   @State private var fixedExpenseAmount: String
@@ -34,16 +36,13 @@ struct FixedExpenseManageView: View {
   private let beforeSelectedDay: Int
   private let beforeExpenseName: String
   private let beforeExpenseAmount: String
-  private let action: ((Int, String, String) -> Void)
   
   init(
     selectedDay: Int = 1,
     fixedExpenseName: String = "",
-    fixedExpenseAmount: String = "",
-    action: @escaping (Int, String, String) -> Void
+    fixedExpenseAmount: String = ""
   ) {
     self.mode = fixedExpenseName.isEmpty && fixedExpenseAmount.isEmpty ? .add : .modify
-    self.action = action
     self.beforeSelectedDay = selectedDay
     self.beforeExpenseName = fixedExpenseName
     self.beforeExpenseAmount = fixedExpenseAmount
@@ -71,7 +70,6 @@ struct FixedExpenseManageView: View {
           title: "저장하기",
           isEnabled: $isEnabled
         ) {
-          self.action(selectedDay, fixedExpenseName, fixedExpenseAmount)
           self.dismiss()
         }
       }
@@ -122,6 +120,23 @@ struct FixedExpenseManageView: View {
         }
     } else {
         isEnabled = false
+    }
+  }
+  
+  private func dismiss() {
+    switch rootViewSwitcher.root {
+    case .onboarding:
+      onboardingCoordinator.dismissFixedExpenseManageSheet(
+        day: selectedDay,
+        name: fixedExpenseName,
+        amount: fixedExpenseAmount
+      )
+    case .main:
+      mainCoordinator.dismissFixedExpenseManageSheet(
+        day: selectedDay,
+        name: fixedExpenseName,
+        amount: fixedExpenseAmount
+      )
     }
   }
 }
@@ -184,6 +199,5 @@ private struct BodyView: View {
 }
 
 #Preview {
-  FixedExpenseManageView { _, _, _ in
-  }
+  FixedExpenseManageView()
 }

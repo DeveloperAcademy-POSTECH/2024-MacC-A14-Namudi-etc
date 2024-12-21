@@ -10,7 +10,7 @@ import SwiftUI
 
 // MARK: - BalanceAdjustView
 struct BalanceAdjustView: View {
-  @Environment(\.dismiss) private var dismiss
+  @Environment(MainCoordinator.self) private var coordinator
   @State private var viewModel: BalanceAdjustViewModel
   
   @State private var realBalance: String // 변경할 실제 잔액
@@ -59,7 +59,7 @@ struct BalanceAdjustView: View {
           isEnabled: $isUpdated
         ) {
           self.viewModel.send(.saveButtonTapped)
-          self.dismiss()
+          self.coordinator.dismissBalanceAdjustSheet()
         }
       }
       .frame(maxWidth: .infinity)

@@ -15,7 +15,7 @@ enum TransactionFocusType {
 }
 
 struct TransactionInputView: View {
-  @Environment(\.dismiss) private var dismiss
+  @Environment(MainCoordinator.self) private var coordinator
   @State private var viewModel: TransactionInputViewModel
   @State private var transactionFocusType: TransactionFocusType
   
@@ -67,7 +67,7 @@ struct TransactionInputView: View {
           isEnabled: $isUpdated
         ) {
           self.viewModel.send(.saveButtonTapped)
-          self.dismiss()
+          self.coordinator.dismissTransactionInputSheet()
         }
       }
       .frame(maxWidth: .infinity)
@@ -125,7 +125,7 @@ private struct TransactionBodyItemView: View {
             ? 2 : 0
           )
       )
-      .onTapGesture {
+      .tapFeedback(tappedBackgroundColor: .clear) {
         transactionFocusType = .income
       }
       
@@ -141,7 +141,7 @@ private struct TransactionBodyItemView: View {
             ? 2 : 0
           )
       )
-      .onTapGesture {
+      .tapFeedback(tappedBackgroundColor: .clear) {
         transactionFocusType = .expense
       }
     }

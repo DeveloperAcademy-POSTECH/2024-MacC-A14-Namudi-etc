@@ -278,8 +278,7 @@ final class MainCoordinator: MainCoordinatorProtocol {
       FixedExpenseManageView(
         selectedDay: day,
         fixedExpenseName: name,
-        fixedExpenseAmount: amount,
-        action: fixedExpenseManageCompletion ?? { _, _, _ in }
+        fixedExpenseAmount: amount
       )
     case let .fixedIncomeModify(fixedIncomeAmount):
       FixedIncomeModifyView(
