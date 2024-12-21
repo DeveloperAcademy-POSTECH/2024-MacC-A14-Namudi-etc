@@ -9,7 +9,6 @@
 import SwiftUI
 
 struct FixedExpenseView: View {
-  // TODO: Environment로 전달 받기
   let settingViewModel: SettingViewModel
   
   @State private var isInfoBubbleVisible: Bool = false

@@ -9,10 +9,9 @@
 import SwiftUI
 
 struct SettingView: View {
+  @Environment(MainCoordinator.self) private var coordinator
   @State var settingViewModel: SettingViewModel
   
-  @State private var navigateFixedExpense: Bool = false
-  @State private var navigateFixedIncome: Bool = false
   
   private var salaryBudget: SalaryBudget? {
     settingViewModel.state.salaryBudget
@@ -30,22 +29,16 @@ struct SettingView: View {
             title: "고정지출 관리",
             previewText: "총 \(salaryBudget?.fixedExpenses.count ?? 0)건 / \(salaryBudget?.fixedExpenses.reduce(0) { $0 + $1.price }.decimalWithWon ?? 0.decimalWithWon)"
           )
-          .onTapGesture { navigateFixedExpense = true }
-          .navigationDestination(
-            isPresented: $navigateFixedExpense
-          ) {
-            FixedExpenseView(settingViewModel: settingViewModel)
+          .onTapGesture {
+            coordinator.push(.fixedExpense(settingViewModel: settingViewModel))
           }
           
           SettingItem(
             title: "고정수입 관리",
             previewText: "매달 \(salaryBudget?.startDate.formattedDateToString(.day_kr) ?? "1일") / \(salaryBudget?.fixedIncome.decimalWithWon ?? "")"
           )
-          .onTapGesture { navigateFixedIncome = true }
-          .navigationDestination(
-            isPresented: $navigateFixedIncome
-          ) {
-            FixedIncomeView(settingViewModel: settingViewModel)
+          .onTapGesture {
+            coordinator.push(.fixedIncome(settingViewModel: settingViewModel))
           }
         }
         settingFooterView
