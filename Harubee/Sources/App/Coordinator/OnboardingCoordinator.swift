@@ -23,7 +23,12 @@ final class OnboardingCoordinator: OnboardingCoordinatorProtocol {
   enum Sheet: Identifiable {
     case fixedExpenseManage(day: Int, name: String, amount: String) // 콜백 필요
     
-    var id: UUID { UUID() }
+    var id: String {
+      switch self {
+      case .fixedExpenseManage:
+        return "fixedExpenseManage"
+      }
+    }
   }
   
   var path: [AppPage] = []
