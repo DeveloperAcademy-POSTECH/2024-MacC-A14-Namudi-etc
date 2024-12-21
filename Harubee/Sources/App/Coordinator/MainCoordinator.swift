@@ -12,6 +12,7 @@ typealias MainAppPage = MainCoordinator.AppPage
 
 @Observable
 final class MainCoordinator: MainCoordinatorProtocol {
+  
   // MARK: - Enum
   enum AppPage: Hashable {
     case today
@@ -93,6 +94,15 @@ final class MainCoordinator: MainCoordinatorProtocol {
   
   
   // MARK: - Sheet Methods
+  
+  func presentSheet(_ sheet: Sheet) {
+    self.sheet = sheet
+  }
+  
+  func dismissSheet() {
+    self.sheet = nil
+  }
+  
   /// 지출 입력 화면으로 이동합니다
   /// - Parameters:
   ///   - salaryBudget: 이번 기간의 SalaryBudget

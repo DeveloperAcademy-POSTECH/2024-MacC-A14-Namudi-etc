@@ -13,6 +13,7 @@ typealias OnboardingAppPage = OnboardingCoordinator.AppPage
 @Observable
 final class OnboardingCoordinator: OnboardingCoordinatorProtocol {
   
+  // MARK: - Enum
   enum AppPage: Hashable {
     case onboarding1, onboarding2, onboarding3
     case onboarding4(currentBalanceAmount: String)
@@ -31,11 +32,17 @@ final class OnboardingCoordinator: OnboardingCoordinatorProtocol {
     }
   }
   
+  
+  // MARK: - Properties
+  
   var path: [AppPage] = []
   var sheet: Sheet?
   
   // 고정 지출 관리 화면에서 호출될 콜백 함수
   private var fixedExpenseManageCompletion: ((Int, String, String) -> Void)?
+  
+  
+  // MARK: - Navigate Methods
   
   func push(_ page: AppPage) {
     path.append(page)
@@ -47,6 +54,16 @@ final class OnboardingCoordinator: OnboardingCoordinatorProtocol {
   
   func popToRoot() {
     path.removeAll()
+  }
+  
+  // MARK: - Sheet Methods
+  
+  func presentSheet(_ sheet: Sheet) {
+    self.sheet = sheet
+  }
+  
+  func dismissSheet() {
+    self.sheet = nil
   }
   
   /// 고정 지출 관리 화면으로 이동합니다
@@ -73,6 +90,9 @@ final class OnboardingCoordinator: OnboardingCoordinatorProtocol {
     self.fixedExpenseManageCompletion?(day, name, amount)
     self.dismissSheet()
   }
+  
+  
+  // MARK: - View Build Methods
   
   func buildPage(_ page: AppPage) -> some View {
     switch page {
