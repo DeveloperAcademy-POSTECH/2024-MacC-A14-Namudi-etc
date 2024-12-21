@@ -10,6 +10,7 @@ import SwiftUI
 
 // MARK: - DailyCalendarView
 struct DailyCalendarView: View {
+  @Environment(MainCoordinator.self) private var coordinator
   let viewModel: CalendarViewModel
   let initialDate: Date
   
@@ -89,57 +90,49 @@ struct DailyCalendarView: View {
         }
       }
     }
-    .sheet(
-      item: $activeSheet,
-      onDismiss: { viewModel.send(.updateCurrentData) }
-    ) { type in
-      switch type {
+    .onChange(of: activeSheet) { _, _ in
+      switch activeSheet {
       case .harubeeAdjust:
-        HarubeeAdjustView(
-          viewModel: DIContainer.shared.makeHarubeeAdjustViewModel(
-            salaryBudget: viewModel.state.currentBudget!, dailyBudget: viewModel.selectedDailyBudget!
-          )
+        coordinator.presentHarubeeAdjustSheet(
+          salaryBudget: viewModel.state.currentBudget!,
+          dailyBudget: viewModel.selectedDailyBudget!,
+          comletion: { viewModel.send(.updateCurrentData) }
         )
-        .presentationDetents([.height(600)])
       case .transactionIncome:
-        TransactionInputView(
-          viewModel: DIContainer.shared.makeTransactionInputViewModel(
-            salaryBudget: viewModel.state.currentBudget!,
-            dailyBudget: viewModel.selectedDailyBudget!
-          ),
-          transactionFocusType: .income
+        coordinator.presentTransactionInputSheet(
+          salaryBudget: viewModel.state.currentBudget!,
+          dailyBudget: viewModel.selectedDailyBudget!,
+          focus: .income,
+          comletion: { viewModel.send(.updateCurrentData) }
         )
-        .presentationDetents([.height(600)])
       case .transactionExpense:
-        TransactionInputView(
-          viewModel: DIContainer.shared.makeTransactionInputViewModel(
-            salaryBudget: viewModel.state.currentBudget!,
-            dailyBudget: viewModel.selectedDailyBudget!
-          ),
-          transactionFocusType: .expense
+        coordinator.presentTransactionInputSheet(
+          salaryBudget: viewModel.state.currentBudget!,
+          dailyBudget: viewModel.selectedDailyBudget!,
+          focus: .expense,
+          comletion: { viewModel.send(.updateCurrentData) }
         )
-        .presentationDetents([.height(600)])
       case .addMemo:
-        DailyMemoView { memo in
+        coordinator.presentDailyMemoSheet { memo in
           viewModel.send(.updateMemo(.init(oldMemo: nil, newMemo: memo)))
-          activeSheet = nil
         }
-        .presentationDetents([.fraction(0.25)])
       case .editMemo(let oldMemo):
-        DailyMemoView(existingMemo: oldMemo) { newMemo in
+        coordinator.presentDailyMemoSheet(memo: oldMemo) { memo in
           viewModel.send(.updateMemo(
-            .init(oldMemo: oldMemo, newMemo: newMemo))
+            .init(oldMemo: oldMemo, newMemo: memo))
           )
-          activeSheet = nil
         }
-        .presentationDetents([.fraction(0.25)])
+      case nil:
+        break
       }
+      
+      activeSheet = nil
     }
     .applyNavigationBarStyle(infoBubbleVisible: $infoBubbleVisible)
   }
 }
 
-private enum SheetType: Identifiable {
+private enum SheetType: Identifiable, Equatable {
   case harubeeAdjust
   case transactionIncome
   case transactionExpense

@@ -10,8 +10,9 @@ import SwiftUI
 
 // MARK: - Periodly Calendar View
 struct PeriodlyCalendarView: View {
+  @Environment(MainCoordinator.self) private var coordinator
   @State private var viewModel: CalendarViewModel
-  @State private var navigateToDailyView: Bool = false
+  
   @State private var infoBubbleVisible: Bool = false
   
   // MARK: - Initialization
@@ -72,20 +73,17 @@ struct PeriodlyCalendarView: View {
     }
     .applyNavigationBarStyle(infoBubbleVisible: $infoBubbleVisible)
     .errorAlert(error: viewModel.state.error)
-    .navigationDestination(isPresented: $navigateToDailyView) {
-      if let selectedDate = viewModel.state.selectedDate {
-        DailyCalendarView(
-          viewModel: viewModel,
-          initialDate: selectedDate
-        )
-      }
-    }
   }
   
   // MARK: - Action Handlers
   private func handleDateSelection(_ date: Date) {
     viewModel.send(.selectDate(date))
-    navigateToDailyView = true
+    if let selectedDate = viewModel.state.selectedDate {
+      coordinator.push(.dailyCalendar(
+        calendarViewModel: viewModel,
+        initialDate: selectedDate
+      ))
+    }
   }
 }
 
