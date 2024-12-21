@@ -10,7 +10,7 @@ import SwiftUI
 
 // MARK: - HarubeeAdjustView
 struct HarubeeAdjustView: View {
-  @Environment(\.dismiss) private var dismiss
+  @Environment(MainCoordinator.self) private var coordinator
   @State private var viewModel: HarubeeAdjustViewModel
   
   @State private var harubee: String // 변경할 하루비
@@ -57,7 +57,7 @@ struct HarubeeAdjustView: View {
           isEnabled: $isUpdated
         ) {
           self.viewModel.send(.saveButtonTapped)
-          self.dismiss()
+          self.coordinator.dismissHarubeeAdjustSheet()
         }
       }
       .frame(maxWidth: .infinity)

@@ -86,10 +86,10 @@ private struct OnboardingHeaderView: View {
 }
 
 private struct FixedExpenseListView: View {
+  @Environment(OnboardingCoordinator.self) private var coordinator
   let viewModel: OnboardingViewModel
   
   @State private var selectedItem: TransactionItem?
-  @State private var isPresented: Bool = false
   @Binding var fixedExpenses: [TransactionItem]
   
   var body: some View {
@@ -104,9 +104,15 @@ private struct FixedExpenseListView: View {
         List {
           ForEach(fixedExpenses, id: \.id) { item in
             fixedExpensesRow(for: item)
-              .onTapGesture {
+              .tapFeedback(tappedBackgroundColor: .clear) {
                 self.selectedItem = item
-                self.isPresented = true
+                coordinator.presentFixedExpenseManageSheet(
+                  day: item.day,
+                  name: item.name,
+                  amount: item.price.decimalWithWon
+                ) { day, name, price in
+                  saveFixedExpense(day: day, name: name, price: price)
+                }
               }
           }
           .onDelete(perform: removeList)
@@ -115,22 +121,6 @@ private struct FixedExpenseListView: View {
         .scrollBounceBehavior(.basedOnSize)
       }
     }
-    .sheet(isPresented: $isPresented) {
-      FixedExpenseManageView(
-        selectedDay: selectedItem?.date.day ?? 1,
-        fixedExpenseName: selectedItem?.name ?? "",
-        fixedExpenseAmount: selectedItem?.price.decimalWithWon ?? ""
-      ) { day, name, price in
-        saveFixedExpense(
-          day: day,
-          name: name,
-          price: price
-        )
-      }
-      .presentationDetents([.large])
-      .presentationCornerRadius(20)
-    }
-    .onChange(of: selectedItem) { _, _ in }
     .onChange(of: fixedExpenses) { _, _ in
       fixedExpenses.sort(by: {
         $0.day < $1.day
@@ -146,8 +136,14 @@ private struct FixedExpenseListView: View {
       Spacer()
       
       Button {
-        self.selectedItem = nil
-        self.isPresented = true
+        selectedItem = nil
+        coordinator.presentFixedExpenseManageSheet(
+          day: 1,
+          name: "",
+          amount: ""
+        ) { day, name, price in
+          saveFixedExpense(day: day, name: name, price: price)
+        }
       } label: {
         Image(systemName: "plus")
           .frame(width: 30, height: 21)

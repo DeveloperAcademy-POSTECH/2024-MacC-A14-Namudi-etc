@@ -28,6 +28,8 @@ struct CoordinatorView: View {
       }
     }
     .environment(rootSwitcher)
+    .environment(mainCoordinator)
+    .environment(onboardingCoordinator)
     .onChange(of: rootSwitcher.root) { oldValue, _ in
       switch oldValue {
       case .onboarding:
@@ -45,8 +47,10 @@ struct CoordinatorView: View {
         .navigationDestination(for: OnboardingAppPage.self) { page in
           onboardingCoordinator.buildPage(page)
         }
+        .sheet(item: $onboardingCoordinator.sheet) { sheet in
+          onboardingCoordinator.buildSheet(sheet)
+        }
     }
-    .environment(onboardingCoordinator)
     .environment(onboardingViewModel)
   }
   
@@ -61,7 +65,6 @@ struct CoordinatorView: View {
           mainCoordinator.buildSheet(sheet)
         }
     }
-    .environment(mainCoordinator)
   }
 }
 
