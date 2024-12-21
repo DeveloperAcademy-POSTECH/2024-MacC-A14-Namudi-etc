@@ -24,12 +24,7 @@ final class OnboardingCoordinator: OnboardingCoordinatorProtocol {
   enum Sheet: Identifiable {
     case fixedExpenseManage(day: Int, name: String, amount: String) // 콜백 필요
     
-    var id: String {
-      switch self {
-      case .fixedExpenseManage:
-        return "fixedExpenseManage"
-      }
-    }
+    var id: String { String(describing: self) }
   }
   
   

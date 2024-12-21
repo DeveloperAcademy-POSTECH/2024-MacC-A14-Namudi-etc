@@ -41,22 +41,7 @@ final class MainCoordinator: MainCoordinatorProtocol {
     case fixedIncomeModify(fixedIncomeAmount: String)  // 콜백 필요
     case dailyMemo(memo: String? = nil) // 콜백 필요
     
-    var id: String {
-      switch self {
-      case .balanceAdjust:
-        "balanceAdjust"
-      case .harubeeAdjust:
-        "harubeeAdjust"
-      case .transactionInput:
-        "transactionInput"
-      case .fixedExpenseManage:
-        "fixedExpenseManage"
-      case .fixedIncomeModify:
-        "fixedIncomeModify"
-      case .dailyMemo:
-        "dailyMemo"
-      }
-    }
+    var id: String { String(describing: self) }
   }
   
   
