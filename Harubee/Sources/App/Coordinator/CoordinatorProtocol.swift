@@ -27,16 +27,9 @@ protocol SheetPresentable: AnyObject {
   
   var sheet: Sheet? { get set }
   
+  func presentSheet(_ sheet: Sheet)
+  func dismissSheet()
+  
   @ViewBuilder
   func buildSheet(_ sheet: Sheet) -> SheetView
-}
-
-extension SheetPresentable {
-  func presentSheet(_ sheet: Sheet) {
-    self.sheet = sheet
-  }
-  
-  func dismissSheet() {
-    self.sheet = nil
-  }
 }
