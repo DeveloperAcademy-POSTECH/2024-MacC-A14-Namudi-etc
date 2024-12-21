@@ -100,12 +100,14 @@ final class MainCoordinator: MainCoordinatorProtocol {
   func presentTransactionInputSheet(
     salaryBudget: SalaryBudget,
     dailyBudget: DailyBudget,
+    focus: TransactionFocusType = .expense,
     comletion: @escaping () -> Void
   ) {
     self.transactionInputCompletion = comletion
     self.presentSheet(.transactionInput(
       salaryBudget: salaryBudget,
-      dailyBudget: dailyBudget
+      dailyBudget: dailyBudget,
+      focus: focus
     ))
   }
   
@@ -118,7 +120,6 @@ final class MainCoordinator: MainCoordinatorProtocol {
     dailyBudget: DailyBudget,
     comletion: @escaping () -> Void
   ) {
-    print(#function)
     self.harubeeAdjustCompletion = comletion
     self.presentSheet(.harubeeAdjust(
       salaryBudget: salaryBudget,

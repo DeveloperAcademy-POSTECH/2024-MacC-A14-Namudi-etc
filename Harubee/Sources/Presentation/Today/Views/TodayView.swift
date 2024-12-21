@@ -11,10 +11,9 @@ import SwiftUI
 
 // MARK: - TodayView
 struct TodayView: View {
-  
+  @Environment(MainCoordinator.self) private var coordinator
   @State private var todayViewModel: TodayViewModel
   @State private var isInfoBubbleVisible = false
-  @State private var navigateToSettingView = false
   private var screenSize: CGRect
   
   init(todayViewModel: TodayViewModel) {
@@ -59,6 +58,14 @@ struct TodayView: View {
       todayViewModel.send(.viewDidLoad)
       NotificationManager.shared.reqNotificationPermission()
     }
+    .onOpenURL { url in
+      coordinator.popToRoot()
+      coordinator.presentTransactionInputSheet(
+        salaryBudget: todayViewModel.state.salaryBudget!,
+        dailyBudget: todayViewModel.state.todayDailyBudget!,
+        comletion: { todayViewModel.send(.viewDidLoad) }
+      )
+    }
     .toolbar {
       ToolbarItem(placement: .topBarTrailing) {
         Image(systemName: "questionmark.circle")
@@ -74,16 +81,10 @@ struct TodayView: View {
         Image(systemName: "gearshape")
           .font(Font.system(size: 18, weight: .regular))
           .foregroundStyle(Color.whiteDefault)
-          .navigationDestination(isPresented: $navigateToSettingView) {
-            SettingView(
-              settingViewModel: DIContainer.shared.makeSettingViewModel(
-                salaryBudget: todayViewModel.state.salaryBudget
-                ?? SalaryBudget.default
-              )
-            )
-          }
           .tapFeedback {
-            navigateToSettingView = true
+            coordinator.push(.setting(
+              salaryBudget: todayViewModel.state.salaryBudget!
+            ))
           }
       }
     }
@@ -126,6 +127,7 @@ private struct TodayPrimaryLayerView: View {
 
 // MARK: - Honeycomb(Primary Layer)
 private struct Honeycomb: View {
+  @Environment(MainCoordinator.self) private var coordinator
   
   // MARK: Public Properties
   @Binding var isInfoBubbleVisible: Bool
@@ -156,6 +158,13 @@ private struct Honeycomb: View {
                  isTodayHarubee: true,
                  hexgonSize: hexgonSize
               )
+              .tapFeedback(tappedBackgroundColor: .clear) {
+                coordinator.presentHarubeeAdjustSheet(
+                  salaryBudget: todayViewModel.state.salaryBudget!,
+                  dailyBudget: todayViewModel.state.todayDailyBudget!,
+                  comletion: { todayViewModel.send(.viewDidLoad) }
+                )
+              }
             } else if row == 2 && col == 1 {
               HarubeeHexagon(
                 isInfoBubbleVisible: $isInfoBubbleVisible,
@@ -163,6 +172,13 @@ private struct Honeycomb: View {
                 isTodayHarubee: false,
                 hexgonSize: hexgonSize
               )
+              .tapFeedback(tappedBackgroundColor: .clear) {
+                coordinator.presentBalanceAdjustSheet(
+                  salaryBudget: todayViewModel.state.salaryBudget!,
+                  dailyBudget: todayViewModel.state.todayDailyBudget!,
+                  comletion: { todayViewModel.send(.viewDidLoad) }
+                )
+              }
             } else {
               RoundedHexagon()
                 .stroke(
@@ -193,7 +209,7 @@ private struct HarubeeHexagon: View {
   @State private var firstWaveOffset: CGFloat
   @State private var secondWaveOffset: CGFloat
   @State private var animatedFillPercentage: CGFloat
-  @State private var isPresented: Bool = false
+  
   private let fillPercentage: Double
   private let isTodayExpenseEntered: Bool
   private let waveTimer = Timer.publish(
@@ -283,9 +299,6 @@ private struct HarubeeHexagon: View {
         
       }
     }
-    .tapFeedback(tappedBackgroundColor: .clear) {
-      self.isPresented = true
-    }
     .onReceive(waveTimer) { _ in
 
       firstWaveOffset -= 1
@@ -300,28 +313,6 @@ private struct HarubeeHexagon: View {
     }
     .onChange(of: fillPercentage) { _, newPercentage in
       animatedFillPercentage = CGFloat(newPercentage)
-    }
-    .sheet(isPresented: $isPresented) {
-      todayViewModel.send(.viewDidLoad)
-    } content: {
-      if isTodayHarubee {
-        HarubeeAdjustView(
-          viewModel: DIContainer.shared.makeHarubeeAdjustViewModel(
-            salaryBudget: todayViewModel.state.salaryBudget!,
-            dailyBudget: todayViewModel.state.todayDailyBudget!
-          )
-        )
-        .presentationDetents([.height(600)])
-      } else {
-        BalanceAdjustView(
-          viewModel: DIContainer.shared.makeBalanceAdjustViewModel(
-            salaryBudget: todayViewModel.state.salaryBudget!,
-            dailyBudget: todayViewModel.state.todayDailyBudget!
-          )
-        )
-        .presentationDetents([.height(600)])
-      }
-      
     }
   }
   
@@ -432,13 +423,11 @@ private struct TodayHeaderView: View {
 
 // MARK: - TodayFooterView(Secondary Layer)
 private struct TodayFooterView: View {
+  @Environment(MainCoordinator.self) private var coordinator
   
   // MARK: Public Properties
   let todayViewModel: TodayViewModel
   @Binding var isInfoBubbleVisible: Bool
-  
-  // MARK: Internal Properties
-  @State private var isPresented: Bool = false
   
   var body: some View {
     VStack(spacing: 16) {
@@ -450,7 +439,11 @@ private struct TodayFooterView: View {
       .padding(.horizontal, 16)
       
       MainColorBottomButton(title: "실제 지출 및 수입 입력하기") {
-        self.isPresented = true
+        coordinator.presentTransactionInputSheet(
+          salaryBudget: todayViewModel.state.salaryBudget!,
+          dailyBudget: todayViewModel.state.todayDailyBudget!,
+          comletion: { todayViewModel.send(.viewDidLoad) }
+        )
       }
       .infoBubble(isVisible: $isInfoBubbleVisible) {
         VStack(alignment: .leading, spacing: 2) {
@@ -463,34 +456,16 @@ private struct TodayFooterView: View {
     }
     .frame(maxWidth: .infinity, maxHeight: 196, alignment: .top)
     .background(Color.whiteDefault)
-    .sheet(isPresented: $isPresented) {
-      todayViewModel.send(.viewDidLoad)
-    } content: {
-      TransactionInputView(
-        viewModel: DIContainer.shared.makeTransactionInputViewModel(
-          salaryBudget: todayViewModel.state.salaryBudget!,
-          dailyBudget: todayViewModel.state.todayDailyBudget!
-        ),
-        transactionFocusType: .expense
-      )
-      .presentationDetents([.height(600)])
-    }
-    .onOpenURL { url in
-      self.isPresented = url == WidgetURL.transactionInput.url
-    }
   }
 }
 
 // MARK: - CalendarStreakView(Secondary Layer)
 private struct CalendarStreakView: View {
+  @Environment(MainCoordinator.self) private var coordinator
   
   // MARK: Public Properties
   let todayViewModel: TodayViewModel
   @Binding var isInfoBubbleVisible: Bool
-  
-  // MARK: Internal Properties
-  @State private var navigateToCalendarView: Bool = false
-  
   
   var body: some View {
     
@@ -565,18 +540,13 @@ private struct CalendarStreakView: View {
         
       }
       .tapFeedback {
-        navigateToCalendarView = true
+        coordinator.push(.periodlyCalendar)
       }
     }
     .padding(.top, 10)
     .contentShape(Rectangle())
-    .navigationDestination(isPresented: $navigateToCalendarView) {
-      PeriodlyCalendarView(
-        viewModel: DIContainer.shared.makeCalendarViewModel()
-      )
-    }
-    .onTapGesture {
-      navigateToCalendarView = true
+    .tapFeedback {
+      coordinator.push(.periodlyCalendar)
     }
   }
 }
