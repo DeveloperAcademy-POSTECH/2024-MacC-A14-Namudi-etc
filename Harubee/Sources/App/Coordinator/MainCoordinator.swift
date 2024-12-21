@@ -280,6 +280,7 @@ final class MainCoordinator: MainCoordinatorProtocol {
         fixedExpenseName: name,
         fixedExpenseAmount: amount
       )
+      .presentationDetents([.large])
     case let .fixedIncomeModify(fixedIncomeAmount):
       FixedIncomeModifyView(
         fixedIncomeAmount: fixedIncomeAmount,
@@ -287,10 +288,7 @@ final class MainCoordinator: MainCoordinatorProtocol {
       )
       .presentationDetents([.height(497)])
     case let .dailyMemo(memo):
-      DailyMemoView(
-        existingMemo: memo,
-        onComplete: dailyMemoCompletion ?? { _ in }
-      )
+      DailyMemoView(existingMemo: memo)
       .presentationDetents([.fraction(0.25)])
     }
   }

@@ -24,23 +24,18 @@ struct DailyMemoView: View {
   }
   
   // MARK: - Properties
-  @Environment(\.dismiss) private var dismiss
+  @Environment(MainCoordinator.self) private var coordinator
   @State private var memo: String
   @State private var memoStringCount: Int
   
   private let mode: Mode
-  private let onComplete: (String) -> Void
   private var isEmptyMemo: Bool {
       memo.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
   }
   
   // MARK: - Initialization
-  init(
-    existingMemo: String? = nil,
-    onComplete: @escaping (String) -> Void
-  ) {
+  init(existingMemo: String? = nil) {
     self.mode = existingMemo.map(Mode.edit) ?? .add
-    self.onComplete = onComplete
     _memo = State(initialValue: existingMemo ?? "")
     _memoStringCount = State(initialValue: existingMemo?.count ?? 0)
   }
@@ -77,7 +72,9 @@ struct DailyMemoView: View {
   }
   
   private var saveButton: some View {
-    Button(action: handleSave) {
+    Button {
+      coordinator.dismissDailyMemoSheet(memo: memo)
+    } label: {
       Text("저장하기")
         .font(.pretendardMedium_18)
         .padding(.vertical, 20)
@@ -89,25 +86,15 @@ struct DailyMemoView: View {
     }
     .disabled(isEmptyMemo)
   }
-  
-  // MARK: - Actions
-  private func handleSave() {
-    onComplete(memo)
-    dismiss()
-  }
 }
 
 // MARK: - Preview
 #Preview {
   Group {
-    DailyMemoView { memo in
-      print("Added memo: \(memo)")
-    }
+    DailyMemoView()
     
     DailyMemoView(
       existingMemo: "기존 메모 내용"
-    ) { memo in
-      print("Updated memo: \(memo)")
-    }
+    )
   }
 }
