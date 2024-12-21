@@ -9,10 +9,9 @@
 import SwiftUI
 
 struct FixedIncomeView: View {
-  // TODO: Environment로 전달 받기
   private let settingViewModel: SettingViewModel
   
-  @Environment(\.dismiss) private var dismiss
+  @Environment(MainCoordinator.self) private var coordinator
   @State private var selectedDay: Int
   @State private var fixedIncomeAmount: Int
   @State private var isUpdated: Bool = false
@@ -60,7 +59,7 @@ struct FixedIncomeView: View {
             settingViewModel.send(
               .fixedIncomeSaveButtonTapped(nil, fixedIncomeAmount)
             )
-            dismiss()
+            coordinator.pop()
           }
         }
       }
@@ -94,7 +93,7 @@ struct FixedIncomeView: View {
             selectedDay,
             fixedIncomeAmount
           ))
-          dismiss()
+          coordinator.pop()
         }
       )
     }
@@ -123,9 +122,9 @@ struct FixedIncomeView: View {
 }
 
 private struct FixedIncomeBodyView: View {
+  @Environment(MainCoordinator.self) private var coordinator
   let settingViewModel: SettingViewModel
   
-  @State private var showingSheet: Bool = false
   @State private var showDayPicker: Bool = false
   @Binding var selectedDay: Int
   @Binding var fixedIncomeAmount: Int
@@ -146,7 +145,11 @@ private struct FixedIncomeBodyView: View {
         Spacer()
         
         Button {
-          showingSheet.toggle()
+          coordinator.presentFixedIncomeModifySheet(
+            fixedIncomeAmount: fixedIncomeAmount.decimalWithWon
+          ) { updatedAmount in
+            fixedIncomeAmount = updatedAmount.numberFormat ?? 0
+          }
         } label: {
           HStack(spacing: 3) {
             Text(fixedIncomeAmount.decimalWithWon)
@@ -156,15 +159,6 @@ private struct FixedIncomeBodyView: View {
               .font(.system(size: 20))
               .foregroundStyle(Color.textBlack30)
           }
-        }
-        .sheet(isPresented: $showingSheet) {
-          FixedIncomeModifyView(
-            fixedIncomeAmount: fixedIncomeAmount.decimalWithWon
-          ) { updatedAmount in
-            fixedIncomeAmount = updatedAmount.numberFormat ?? 0
-          }
-          .presentationDetents([.height(497)])
-          .presentationCornerRadius(20)
         }
       }
       .padding(.horizontal, 20)

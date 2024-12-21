@@ -282,10 +282,7 @@ final class MainCoordinator: MainCoordinatorProtocol {
       )
       .presentationDetents([.large])
     case let .fixedIncomeModify(fixedIncomeAmount):
-      FixedIncomeModifyView(
-        fixedIncomeAmount: fixedIncomeAmount,
-        editFixedIncomeAmount: fixedIncomeModifyCompletion ?? { _ in }
-      )
+      FixedIncomeModifyView(fixedIncomeAmount: fixedIncomeAmount)
       .presentationDetents([.height(497)])
     case let .dailyMemo(memo):
       DailyMemoView(existingMemo: memo)
