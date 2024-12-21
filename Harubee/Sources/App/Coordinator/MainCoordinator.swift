@@ -26,21 +26,36 @@ final class MainCoordinator: MainCoordinatorProtocol {
     case harubeeAdjust(
       salaryBudget: SalaryBudget,
       dailyBudget: DailyBudget
-    )
+    )  // 콜백 필요
     case transactionInput(
       salaryBudget: SalaryBudget,
       dailyBudget: DailyBudget,
       focus: TransactionFocusType = .expense
-    )
+    )  // 콜백 필요
     case balanceAdjust(
       salaryBudget: SalaryBudget,
       dailyBudget: DailyBudget
-    )
+    )  // 콜백 필요
     case fixedExpenseManage(day: Int, name: String, amount: String) // 콜백 필요
     case fixedIncomeModify(fixedIncomeAmount: String)  // 콜백 필요
     case dailyMemo(memo: String? = nil) // 콜백 필요
     
-    var id: UUID { UUID() }
+    var id: String {
+      switch self {
+      case .balanceAdjust:
+        "balanceAdjust"
+      case .harubeeAdjust:
+        "harubeeAdjust"
+      case .transactionInput:
+        "transactionInput"
+      case .fixedExpenseManage:
+        "fixedExpenseManage"
+      case .fixedIncomeModify:
+        "fixedIncomeModify"
+      case .dailyMemo:
+        "dailyMemo"
+      }
+    }
   }
   
   
@@ -48,11 +63,18 @@ final class MainCoordinator: MainCoordinatorProtocol {
   var path: [AppPage] = []
   var sheet: Sheet?
   
-  // 고정 지출 관리 화면에서 호출될 콜백 함수
+  
+  // HarubeeAdjustView 콜백 함수
+  private var harubeeAdjustCompletion: (() -> Void)?
+  // TransactionInputView 콜백 함수
+  private var transactionInputCompletion: (() -> Void)?
+  // BalanceAdjustView 콜백 함수
+  private var balanceAdjustCompletion: (() -> Void)?
+  // FixedExpenseManageView 콜백 함수
   private var fixedExpenseManageCompletion: ((Int, String, String) -> Void)?
-  // 고정 수입 화면에서 호출될 콜백 함수
+  // FixedIncomeModifyView 콜백 함수
   private var fixedIncomeModifyCompletion: ((String) -> Void)?
-  // 일별 메모 화면에서 호출될 콜백 함수
+  // DailyMemoView 콜백 함수
   private var dailyMemoCompletion: ((String) -> Void)?
   
   
@@ -77,12 +99,14 @@ final class MainCoordinator: MainCoordinatorProtocol {
   ///   - dailyBudget: 오늘 날짜의 DailyBudget
   func presentTransactionInputSheet(
     salaryBudget: SalaryBudget,
-    dailyBudget: DailyBudget
+    dailyBudget: DailyBudget,
+    comletion: @escaping () -> Void
   ) {
-    self.sheet = .transactionInput(
+    self.transactionInputCompletion = comletion
+    self.presentSheet(.transactionInput(
       salaryBudget: salaryBudget,
       dailyBudget: dailyBudget
-    )
+    ))
   }
   
   /// 하루비 조정 화면으로 이동합니다
@@ -91,12 +115,15 @@ final class MainCoordinator: MainCoordinatorProtocol {
   ///   - dailyBudget: 오늘 날짜의 DailyBudget
   func presentHarubeeAdjustSheet(
     salaryBudget: SalaryBudget,
-    dailyBudget: DailyBudget
+    dailyBudget: DailyBudget,
+    comletion: @escaping () -> Void
   ) {
-    self.sheet = .harubeeAdjust(
+    print(#function)
+    self.harubeeAdjustCompletion = comletion
+    self.presentSheet(.harubeeAdjust(
       salaryBudget: salaryBudget,
       dailyBudget: dailyBudget
-    )
+    ))
   }
   
   /// 쓸 수 있는 돈 조정 화면으로 이동합니다
@@ -105,12 +132,14 @@ final class MainCoordinator: MainCoordinatorProtocol {
   ///   - dailyBudget: 오늘 날짜의 DailyBudget
   func presentBalanceAdjustSheet(
     salaryBudget: SalaryBudget,
-    dailyBudget: DailyBudget
+    dailyBudget: DailyBudget,
+    comletion: @escaping () -> Void
   ) {
-    self.sheet = .balanceAdjust(
+    self.balanceAdjustCompletion = comletion
+    self.presentSheet(.balanceAdjust(
       salaryBudget: salaryBudget,
       dailyBudget: dailyBudget
-    )
+    ))
   }
   
   /// 고정 지출 관리 화면으로 이동합니다
@@ -154,14 +183,17 @@ final class MainCoordinator: MainCoordinatorProtocol {
   }
   
   func dismissHarubeeAdjustSheet() {
+    self.harubeeAdjustCompletion?()
     self.dismissSheet()
   }
   
   func dismissTransactionInputSheet() {
+    self.transactionInputCompletion?()
     self.dismissSheet()
   }
   
   func dismissBalanceAdjustSheet() {
+    self.balanceAdjustCompletion?()
     self.dismissSheet()
   }
   
@@ -223,6 +255,7 @@ final class MainCoordinator: MainCoordinatorProtocol {
           dailyBudget: dailyBudget
         )
       )
+      .presentationDetents([.height(600)])
     case let .transactionInput(salaryBudget, dailyBudget, focus):
       TransactionInputView(
         viewModel: DIContainer.shared.makeTransactionInputViewModel(
@@ -231,6 +264,7 @@ final class MainCoordinator: MainCoordinatorProtocol {
         ),
         transactionFocusType: focus
       )
+      .presentationDetents([.height(600)])
     case let .balanceAdjust(salaryBudget, dailyBudget):
       BalanceAdjustView(
         viewModel: DIContainer.shared.makeBalanceAdjustViewModel(
@@ -238,6 +272,7 @@ final class MainCoordinator: MainCoordinatorProtocol {
           dailyBudget: dailyBudget
         )
       )
+      .presentationDetents([.height(600)])
     case let .fixedExpenseManage(day, name, amount):
       FixedExpenseManageView(
         selectedDay: day,
@@ -250,11 +285,13 @@ final class MainCoordinator: MainCoordinatorProtocol {
         fixedIncomeAmount: fixedIncomeAmount,
         editFixedIncomeAmount: fixedIncomeModifyCompletion ?? { _ in }
       )
+      .presentationDetents([.height(497)])
     case let .dailyMemo(memo):
       DailyMemoView(
         existingMemo: memo,
         onComplete: dailyMemoCompletion ?? { _ in }
       )
+      .presentationDetents([.fraction(0.25)])
     }
   }
 }
