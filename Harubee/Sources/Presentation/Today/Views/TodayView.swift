@@ -60,11 +60,13 @@ struct TodayView: View {
     }
     .onOpenURL { url in
       coordinator.popToRoot()
-      coordinator.presentTransactionInputSheet(
-        salaryBudget: todayViewModel.state.salaryBudget!,
-        dailyBudget: todayViewModel.state.todayDailyBudget!,
-        comletion: { todayViewModel.send(.viewDidLoad) }
-      )
+      DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+        coordinator.presentTransactionInputSheet(
+          salaryBudget: todayViewModel.state.salaryBudget!,
+          dailyBudget: todayViewModel.state.todayDailyBudget!,
+          comletion: { todayViewModel.send(.viewDidLoad) }
+        )
+      }
     }
     .toolbar {
       ToolbarItem(placement: .topBarTrailing) {
