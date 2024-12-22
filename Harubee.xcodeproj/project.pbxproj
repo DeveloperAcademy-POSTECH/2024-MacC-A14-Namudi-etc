@@ -485,7 +485,7 @@
 		57322DB22CEDE9FA0075D1B1 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-Winter";
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = Harubee/Resources/Harubee.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
@@ -530,7 +530,7 @@
 		57322DB32CEDE9FA0075D1B1 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-Winter";
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = Harubee/Resources/Harubee.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
