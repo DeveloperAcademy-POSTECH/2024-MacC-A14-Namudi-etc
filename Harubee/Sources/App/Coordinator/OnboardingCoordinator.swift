@@ -115,7 +115,7 @@ final class OnboardingCoordinator: OnboardingCoordinatorProtocol {
   func buildSheet(_ sheet: Sheet) -> some View {
     switch sheet {
     case .fixedExpenseManage(let day, let name, let amount):
-      return FixedExpenseManageView(
+      FixedExpenseManageView(
         selectedDay: day,
         fixedExpenseName: name,
         fixedExpenseAmount: amount
