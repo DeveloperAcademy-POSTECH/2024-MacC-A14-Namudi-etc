@@ -51,16 +51,9 @@ private struct ExpressionView: View {
   
   let doneAction: () -> Void
   
-  private let scrollPositionID = "target"
-  
   var body: some View {
-    HStack(spacing: 20) {
-      ViewThatFits {
-        Text(expression)
-          .lineLimit(1)
-        
-        scrollText
-      }
+    HStack(spacing: 10) {
+      ExpressionText(expression: $expression)
 
       Spacer()
       
@@ -75,25 +68,67 @@ private struct ExpressionView: View {
     .font(.pretendardMedium_16)
     .foregroundStyle(.textBlack)
   }
+}
+
+// MARK: - ExpressionText
+private struct ExpressionText: View {
+  @State private var timer = Timer.publish(
+    every: 0.5, on: .main, in: .common
+  ).autoconnect()
+  @State private var isVisible: Bool = true
+  @State private var isExpressionChanging: Bool = false
   
-  private var scrollText: some View {
-    ScrollViewReader { proxy in
-      ScrollView(.horizontal) {
-        HStack(spacing: 0) {
-          Text(expression)
-            .lineLimit(1)
-            
-          Image(systemName: "poweron")
-            .resizable()
-            .frame(maxWidth: 2, maxHeight: 20)
-            .foregroundStyle(.main)
-            .id(scrollPositionID)
+  @Binding var expression: String
+  
+  private let scrollPositionID = "target"
+  
+  var body: some View {
+    ViewThatFits {
+      expressionText
+        .onChange(of: expression) { _, _ in
+          temporarilyPauseCursorBlinking()
+        }
+      
+      ScrollViewReader { proxy in
+        ScrollView(.horizontal) {
+          expressionText
+        }
+        .scrollIndicators(.never)
+        .onChange(of: expression, initial: true) { _, _ in
+          proxy.scrollTo(scrollPositionID, anchor: .trailing)
+          temporarilyPauseCursorBlinking()
         }
       }
-      .scrollIndicators(.never)
-      .onChange(of: expression, initial: true) { _, _ in
-        proxy.scrollTo(scrollPositionID, anchor: .trailing)
-      }
+    }
+  }
+  
+  private var expressionText: some View {
+    HStack(spacing: 0) {
+      Text(expression)
+        .lineLimit(1)
+      
+      Image(systemName: "poweron")
+        .resizable()
+        .frame(maxWidth: 2, maxHeight: 20)
+        .foregroundStyle(
+          isExpressionChanging || isVisible ? .main : .clear
+        )
+        .id(scrollPositionID)
+        .onReceive(timer) { _ in
+          if !isExpressionChanging {
+            withAnimation {
+              isVisible.toggle()
+            }
+          }
+        }
+    }
+  }
+  
+  private func temporarilyPauseCursorBlinking() {
+    self.isExpressionChanging = true
+    self.isVisible = true
+    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+      self.isExpressionChanging = false
     }
   }
 }
@@ -160,7 +195,14 @@ private struct NumberKeypadButton: View {
 
 // MARK: - Preview
 #Preview {
-  @Previewable @State var amount: String = "10000000"
+  @Previewable @State var amount: String = 
+  """
+  1,000,000,000,000+1,000,000,000+1,000,000
+  """
+  @Previewable @State var amount1: String =
+  """
+  1,000,000,000
+  """
   @Previewable @State var isVisible: Bool = false
   
   VStack {
@@ -172,6 +214,12 @@ private struct NumberKeypadButton: View {
     
     NumberKeypadView(
       amount: $amount
+    ) {
+      print("Tap")
+    }
+    
+    NumberKeypadView(
+      amount: $amount1
     ) {
       print("Tap")
     }

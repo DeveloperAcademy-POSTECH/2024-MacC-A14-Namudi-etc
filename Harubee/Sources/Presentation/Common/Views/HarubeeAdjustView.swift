@@ -220,4 +220,5 @@ private struct HarubeeAdjustField: View {
       dailyBudget: DailyBudget.default
     )
   )
+  .environment(MainCoordinator())
 }
