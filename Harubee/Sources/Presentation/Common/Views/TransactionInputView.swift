@@ -156,4 +156,5 @@ private struct TransactionBodyItemView: View {
     ),
     transactionFocusType: .none
   )
+  .environment(MainCoordinator())
 }

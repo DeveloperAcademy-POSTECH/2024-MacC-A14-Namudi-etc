@@ -29,8 +29,7 @@ struct TransactionItemButton: View {
     }
     .padding(14)
     .background(backgroundColor)
-    .clipShape(RoundedRectangle(cornerRadius: 5))
-    
+    .clipShape(RoundedRectangle(cornerRadius: 8))
   }
 }
 
