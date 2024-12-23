@@ -247,7 +247,7 @@ private struct TransactionCard: View {
   
   var body: some View {
     ZStack {
-      RoundedRectangle(cornerRadius: 5)
+      RoundedRectangle(cornerRadius: 8)
         .fill(style.backgroundColor)
       
       VStack(spacing: 16) {

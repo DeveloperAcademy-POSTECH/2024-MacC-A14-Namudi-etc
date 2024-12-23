@@ -197,6 +197,7 @@ private struct HarubeeAdjustField: View {
     HStack(spacing: 3) {
       Image(systemName: "arrow.clockwise")
         .font(.pretendardSemibold_14)
+        .offset(y: -1)
       Text("기본 하루비로 변경")
         .font(.pretendardMedium_14)
     }
