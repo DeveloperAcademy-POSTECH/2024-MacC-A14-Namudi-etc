@@ -12,6 +12,7 @@ import SwiftUI
 // MARK: - TodayView
 struct TodayView: View {
   @Environment(MainCoordinator.self) private var coordinator
+  @AppStorage("isFirstTodayView") private var isFirstTodayView = true
   @State private var todayViewModel: TodayViewModel
   @State private var isInfoBubbleVisible = false
   private var screenSize: CGRect
@@ -19,14 +20,14 @@ struct TodayView: View {
   init(todayViewModel: TodayViewModel) {
     self.todayViewModel = todayViewModel
     
-    guard
-      let window = UIApplication.shared.connectedScenes.first as? UIWindowScene
+    guard let window = UIApplication.shared.connectedScenes.first
+                                                as? UIWindowScene
     else {
       self.screenSize = .zero
       return
     }
-    
     self.screenSize = window.screen.bounds
+    
   }
   
   var body: some View {
@@ -57,6 +58,12 @@ struct TodayView: View {
     .onAppear {
       todayViewModel.send(.viewDidLoad)
       NotificationManager.shared.reqNotificationPermission()
+      if isFirstTodayView {
+        isInfoBubbleVisible = true
+      }
+    }
+    .onDisappear {
+      isFirstTodayView = false
     }
     .onOpenURL { url in
       coordinator.popToRoot()
