@@ -95,15 +95,22 @@ private struct ExpressionText: View {
         }
         .scrollIndicators(.never)
         .onChange(of: expression, initial: true) { _, _ in
-          proxy.scrollTo(scrollPositionID, anchor: .trailing)
           temporarilyPauseCursorBlinking()
+          proxy.scrollTo(scrollPositionID, anchor: .trailing)
+        }
+      }
+    }
+    .onReceive(timer) { _ in
+      if !isExpressionChanging {
+        withAnimation {
+          isVisible.toggle()
         }
       }
     }
   }
   
   private var expressionText: some View {
-    HStack(spacing: 0) {
+    HStack(spacing: 1) {
       Text(expression)
         .lineLimit(1)
       
@@ -114,13 +121,6 @@ private struct ExpressionText: View {
           isExpressionChanging || isVisible ? .main : .clear
         )
         .id(scrollPositionID)
-        .onReceive(timer) { _ in
-          if !isExpressionChanging {
-            withAnimation {
-              isVisible.toggle()
-            }
-          }
-        }
     }
   }
   
@@ -212,11 +212,11 @@ private struct NumberKeypadButton: View {
       Text("Button")
     }
     
-    NumberKeypadView(
-      amount: $amount
-    ) {
-      print("Tap")
-    }
+//    NumberKeypadView(
+//      amount: $amount
+//    ) {
+//      print("Tap")
+//    }
     
     NumberKeypadView(
       amount: $amount1
