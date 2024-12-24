@@ -41,7 +41,6 @@ struct DayPickerView: View {
           selectedDay: $selectedDay
         )
       }
-      .padding(.horizontal, 20)
       
       if showDayPicker { dayPicker }
     }

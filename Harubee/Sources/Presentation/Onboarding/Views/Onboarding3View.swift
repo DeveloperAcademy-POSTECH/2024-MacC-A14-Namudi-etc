@@ -131,8 +131,8 @@ private struct OnboardingBodyView: View {
         }
         .padding(.top, 16)
       }
-      .padding(.horizontal, 20)
     }
+    .padding(.horizontal, 20)
     .onChange(of: showDayPicker) {
       if $1 { isFocused = false }
     }

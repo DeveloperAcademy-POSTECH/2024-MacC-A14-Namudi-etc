@@ -158,6 +158,7 @@ private struct BodyView: View {
         showDayPicker: $showDayPicker,
         selectedDay: $selectedDay
       )
+      .padding(.horizontal, 20)
       
       FloatingTitleTextField(
         title: "이름",
@@ -200,4 +201,7 @@ private struct BodyView: View {
 
 #Preview {
   FixedExpenseManageView()
+    .environment(MainCoordinator())
+    .environment(OnboardingCoordinator())
+    .environment(RootViewSwitcher())
 }
