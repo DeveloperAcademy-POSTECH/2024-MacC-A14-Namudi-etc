@@ -14,14 +14,26 @@ struct SettingView: View {
   
   var body: some View {
     ZStack(alignment: .top) {
-      Color.textBlack5.edgesIgnoringSafeArea(.bottom)
-      VStack(spacing: 6) {
-        
+      Color.whiteDefault.ignoresSafeArea()
+      
+      VStack(spacing: 0) {
+        // 알림 설정
         NotificationManageView(settingViewModel: settingViewModel)
         
+        SectionDivider()
+        
+        // 고정 지출, 수입 관리
         FixedAmountManageView(settingViewModel: settingViewModel)
         
+        SectionDivider()
+        
+        // 문의하기, 개발 로드맵, 앱 버전
         SettingInformationView()
+        
+        SectionDivider()
+        
+        // 데이터 초기화
+        DataResetView()
       }
     }
     .navigationBarStyle(.white(title: "설정", backTitle: "뒤로"))
@@ -36,7 +48,7 @@ private struct NotificationManageView: View {
   @State private var showExpensePicker: Bool = false
 
   var body: some View {
-    VStack(spacing: 24) {
+    SectionContainer(spacing: 24) {
       TimePickerView(
         title: "오늘의 하루비 알림",
         isToggleOn: settingViewModel.binding(.harubeeNotificationStatus),
@@ -51,10 +63,8 @@ private struct NotificationManageView: View {
         showPicker: $showExpensePicker
       )
     }
-    .padding(.top, 44)
-    .padding(.bottom, 27)
-    .background(Color.whiteDefault)
-    .shadow(color: Color.textBlack5, radius: 3, x: 0, y: 1)
+    // TODO: 수정 필요
+    .padding(.horizontal, -20)
     .onChange(of: showHarubeePicker) {
       if showHarubeePicker && showExpensePicker {
         showExpensePicker = false
@@ -67,8 +77,6 @@ private struct NotificationManageView: View {
     }
   }
 }
-
-
 
 // MARK: - FixedAmountManageView
 private struct FixedAmountManageView: View {
@@ -129,23 +137,74 @@ private struct SettingInformationView: View {
   }
 }
 
+// MARK: - DataResetView
+private struct DataResetView: View {
+  @Environment(RootViewSwitcher.self) private var rootViewSwitcher
+  
+  @State private var isAlertPresented: Bool = false
+  
+  var body: some View {
+    SectionContainer {
+      Button {
+        isAlertPresented = true
+      } label: {
+        Text("데이터 초기화")
+        .foregroundStyle(.redDefault)
+        .font(.pretendardSemibold_18)
+      }
+      .frame(maxWidth: .infinity, alignment: .leading)
+    }
+    .alert(
+      "데이터를 초기화 하시겠어요?",
+      isPresented: $isAlertPresented
+    ) {
+      Button(role: .cancel) {
+      } label: {
+        Text("취소")
+      }
+
+      Button(role: .destructive) {
+        rootViewSwitcher.switchRootView()
+      } label: {
+        Text("확인")
+      }
+    } message: {
+      Text("앱에 저장된 모든 데이터가 초기화됩니다.")
+    }
+  }
+}
+
+// MARK: - SectionDivider
+private struct SectionDivider: View {
+  
+  var body: some View {
+    Rectangle()
+      .frame(maxWidth: .infinity, maxHeight: 6)
+      .foregroundStyle(
+        .textBlack5.shadow(.inner(radius: 3, x: 0, y: 1))
+      )
+  }
+}
 
 // MARK: - SectionContainer
 private struct SectionContainer<Content: View>: View {
+  private let spacing: CGFloat
   private let content: () -> Content
   
-  init(@ViewBuilder content: @escaping () -> Content) {
+  init(
+    spacing: CGFloat = 34,
+    @ViewBuilder content: @escaping () -> Content
+  ) {
     self.content = content
+    self.spacing = spacing
   }
   
   var body: some View {
-    VStack(spacing: 34) {
+    VStack(spacing: spacing) {
       content()
     }
     .padding(EdgeInsets(top: 32, leading: 18, bottom: 32, trailing: 18))
     .frame(maxWidth: .infinity)
-    .background(Color.whiteDefault)
-    .shadow(color: Color.textBlack5, radius: 3, x: 0, y: 1)
   }
 }
 
