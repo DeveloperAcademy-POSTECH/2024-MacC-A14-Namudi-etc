@@ -12,62 +12,24 @@ struct SettingView: View {
   @Environment(MainCoordinator.self) private var coordinator
   @State var settingViewModel: SettingViewModel
   
-  
-  private var salaryBudget: SalaryBudget? {
-    settingViewModel.state.salaryBudget
-  }
-  
   var body: some View {
     ZStack(alignment: .top) {
       Color.textBlack5.edgesIgnoringSafeArea(.bottom)
       VStack(spacing: 6) {
         
-        SettingHeaderView(settingViewModel: settingViewModel)
+        NotificationManageView(settingViewModel: settingViewModel)
         
-        SectionContainer {
-          SettingItem(
-            title: "고정지출 관리",
-            previewText: "총 \(salaryBudget?.fixedExpenses.count ?? 0)건 / \(salaryBudget?.fixedExpenses.reduce(0) { $0 + $1.price }.decimalWithWon ?? 0.decimalWithWon)"
-          )
-          .onTapGesture {
-            coordinator.push(.fixedExpense(settingViewModel: settingViewModel))
-          }
-          
-          SettingItem(
-            title: "고정수입 관리",
-            previewText: "매달 \(salaryBudget?.startDate.formattedDateToString(.day_kr) ?? "1일") / \(salaryBudget?.fixedIncome.decimalWithWon ?? "")"
-          )
-          .onTapGesture {
-            coordinator.push(.fixedIncome(settingViewModel: settingViewModel))
-          }
-        }
-        settingFooterView
+        FixedAmountManageView(settingViewModel: settingViewModel)
+        
+        SettingInformationView()
       }
     }
     .navigationBarStyle(.white(title: "설정", backTitle: "뒤로"))
-    .font(.pretendardMedium_18)
-    .foregroundStyle(Color.textBlack)
-  }
-  
-  private var settingFooterView: some View {
-    SectionContainer {
-      VStack(alignment: .leading, spacing: 6) {
-        Text("앱 버전")
-          .font(.pretendardSemibold_18)
-          .foregroundStyle(Color.textBlack)
-        
-        Text("v\(Bundle.main.shortVersionString)")
-          .font(.pretendardMedium_14)
-          .foregroundStyle(Color.textBlack30)
-      }.frame(maxWidth: .infinity, alignment: .leading)
-      
-      //      SettingItem(title: "개발자 정보", previewText: "")
-    }
   }
 }
 
-// MARK: - SettingHeaderView
-private struct SettingHeaderView: View {
+// MARK: - NotificationManageView
+private struct NotificationManageView: View {
   let settingViewModel: SettingViewModel
   
   @State private var showHarubeePicker: Bool = false
@@ -106,8 +68,89 @@ private struct SettingHeaderView: View {
   }
 }
 
+
+
+// MARK: - FixedAmountManageView
+private struct FixedAmountManageView: View {
+  @Environment(MainCoordinator.self) private var coordinator
+  let settingViewModel: SettingViewModel
+  
+  private var salaryBudget: SalaryBudget {
+    settingViewModel.state.salaryBudget
+  }
+  
+  var body: some View {
+    SectionContainer {
+      SectionItem(
+        title: "고정지출 관리",
+        previewText: "총 \(salaryBudget.fixedExpenses.count)건 / \(salaryBudget.fixedExpenses.reduce(0) { $0 + $1.price }.decimalWithWon)"
+      )
+      .onTapGesture {
+        coordinator.push(.fixedExpense(
+          settingViewModel: settingViewModel
+        ))
+      }
+      
+      SectionItem(
+        title: "고정수입 관리",
+        previewText: "매달 \(salaryBudget.startDate.formattedDateToString(.day_kr)) / \(salaryBudget.fixedIncome.decimalWithWon)"
+      )
+      .onTapGesture {
+        coordinator.push(.fixedIncome(
+          settingViewModel: settingViewModel
+        ))
+      }
+    }
+  }
+}
+
+// MARK: - SettingInformationView
+private struct SettingInformationView: View {
+  
+  var body: some View {
+    SectionContainer {
+      SectionItem(title: "문의하기", previewText: "")
+      SectionItem(title: "개발 로드맵", previewText: "")
+      appVersionSection
+    }
+  }
+  
+  private var appVersionSection: some View {
+    VStack(alignment: .leading, spacing: 6) {
+      Text("앱 버전")
+        .font(.pretendardSemibold_18)
+        .foregroundStyle(Color.textBlack)
+      
+      Text("v\(Bundle.main.shortVersionString)")
+        .font(.pretendardMedium_14)
+        .foregroundStyle(Color.textBlack30)
+    }
+    .frame(maxWidth: .infinity, alignment: .leading)
+  }
+}
+
+
+// MARK: - SectionContainer
+private struct SectionContainer<Content: View>: View {
+  private let content: () -> Content
+  
+  init(@ViewBuilder content: @escaping () -> Content) {
+    self.content = content
+  }
+  
+  var body: some View {
+    VStack(spacing: 34) {
+      content()
+    }
+    .padding(EdgeInsets(top: 32, leading: 18, bottom: 32, trailing: 18))
+    .frame(maxWidth: .infinity)
+    .background(Color.whiteDefault)
+    .shadow(color: Color.textBlack5, radius: 3, x: 0, y: 1)
+  }
+}
+
 // MARK: - SettingItem
-private struct SettingItem: View {
+private struct SectionItem: View {
   let title: String
   let previewText: String
   
@@ -132,29 +175,13 @@ private struct SettingItem: View {
 }
 
 
-// MARK: - SectionContainer
-private struct SectionContainer<Content: View>: View {
-  private let content: () -> Content
-  
-  init(@ViewBuilder content: @escaping () -> Content) {
-    self.content = content
-  }
-  
-  var body: some View {
-    VStack(spacing: 34) {
-      content()
-    }
-    .padding(EdgeInsets(top: 32, leading: 18, bottom: 32, trailing: 18))
-    .frame(maxWidth: .infinity)
-    .background(Color.whiteDefault)
-    .shadow(color: Color.textBlack5, radius: 3, x: 0, y: 1)
-  }
-}
-
+// MARK: - Preview
 #Preview {
   SettingView(
     settingViewModel: DIContainer.shared.makeSettingViewModel(
       salaryBudget: SalaryBudget.default
     )
   )
+  .environment(MainCoordinator())
+  .environment(RootViewSwitcher())
 }
