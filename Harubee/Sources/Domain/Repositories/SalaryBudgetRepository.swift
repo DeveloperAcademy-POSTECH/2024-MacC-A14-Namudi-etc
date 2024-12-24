@@ -83,6 +83,9 @@ protocol SalaryBudgetRepository {
   func updateDefaultHarubee(_ id: String, defaultHarubee: Double) throws -> SalaryBudget
   
   
+  /// 저장된 모든 SalaryBudget을 삭제합니다.
+  func deleteAll() throws
+  
   /// DB에서 SalaryBudget을 삭제합니다.
   /// - Parameter id: 삭제할 SalaryBudget의 ID
   func deleteById(_ id: String) throws

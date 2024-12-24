@@ -141,6 +141,10 @@ final class SalaryBudgetRepositoryImpl: SalaryBudgetRepository {
     return model.toEntity()
   }
   
+  func deleteAll() throws {
+    try modelContext.delete(model: SalaryBudgetDTO.self)
+  }
+  
   func deleteById(_ id: String) throws {
     print("Impl:", #function)
 

@@ -23,6 +23,7 @@ final class SettingViewModel {
   enum Action {
     case fixedIncomeSaveButtonTapped(Int?, Int?)
     case updateFixedExpenses([TransactionItem])
+    case resetDataButtonTapped
   }
   
   private(set) var state: State
@@ -56,6 +57,13 @@ final class SettingViewModel {
       
     case let .updateFixedExpenses(items):
       self.updateFixedExpenses(items)
+      
+    case .resetDataButtonTapped:
+      do {
+        try budgetUseCase.deleteAllSalaryBudgets()
+      } catch {
+        print("Reset Data Error: \(error.localizedDescription)")
+      }
     }
   }
   

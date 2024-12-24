@@ -117,14 +117,8 @@ protocol BudgetUseCase {
   ) -> Double
   
   
-  /// 평균 하루비를 계산합니다.
-  /// - Parameters:
-  ///   - endDate: 월급 끝 날짜
-  ///   - balance: 잔액
-  /// - Returns: 계산된 평균 하루비
-  func calculateAverageHarubee(
-    endDate: Date, balance: Int
-  ) -> Double
+  /// 저장된 모든 SalaryBudget을 삭제합니다
+  func deleteAllSalaryBudgets() throws
   
   
   /// 특정 날짜의 DailyBudget을 조회합니다.

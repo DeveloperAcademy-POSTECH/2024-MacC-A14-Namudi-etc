@@ -33,7 +33,7 @@ struct SettingView: View {
         SectionDivider()
         
         // 데이터 초기화
-        DataResetView()
+        DataResetView(settingViewModel: settingViewModel)
       }
     }
     .navigationBarStyle(.white(title: "설정", backTitle: "뒤로"))
@@ -140,7 +140,7 @@ private struct SettingInformationView: View {
 // MARK: - DataResetView
 private struct DataResetView: View {
   @Environment(RootViewSwitcher.self) private var rootViewSwitcher
-  
+  let settingViewModel: SettingViewModel
   @State private var isAlertPresented: Bool = false
   
   var body: some View {
@@ -164,6 +164,7 @@ private struct DataResetView: View {
       }
 
       Button(role: .destructive) {
+        settingViewModel.send(.resetDataButtonTapped)
         rootViewSwitcher.switchRootView()
       } label: {
         Text("확인")
