@@ -161,8 +161,8 @@ private struct FixedIncomeBodyView: View {
           }
         }
       }
-      .padding(.horizontal, 20)
     }
+    .padding(.horizontal, 20)
   }
 }
 
@@ -206,4 +206,5 @@ private extension View {
       salaryBudget: SalaryBudget.default
     )
   )
+  .environment(MainCoordinator())
 }

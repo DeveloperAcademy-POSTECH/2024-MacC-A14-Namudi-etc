@@ -63,8 +63,6 @@ private struct NotificationManageView: View {
         showPicker: $showExpensePicker
       )
     }
-    // TODO: 수정 필요
-    .padding(.horizontal, -20)
     .onChange(of: showHarubeePicker) {
       if showHarubeePicker && showExpensePicker {
         showExpensePicker = false

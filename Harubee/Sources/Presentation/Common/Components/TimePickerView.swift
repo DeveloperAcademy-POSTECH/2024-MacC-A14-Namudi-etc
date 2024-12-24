@@ -35,7 +35,6 @@ struct TimePickerView: View {
           .padding(.leading, 14)
           .tint(.main)
       }
-      .padding(.horizontal, 20)
 
       if showPicker {
         Rectangle()
