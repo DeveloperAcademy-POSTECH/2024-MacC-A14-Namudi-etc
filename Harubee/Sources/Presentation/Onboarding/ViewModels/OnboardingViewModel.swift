@@ -86,7 +86,7 @@ extension OnboardingViewModel {
       fixedExpenses: self.state.fixedExpenses
     )
     
-    let averageHarubee = budgetUseCase.calculateAverageHarubee(
+    let averageHarubee = self.calculateAverageHarubee(
       endDate: self.state.incomeEndDate,
       balance: balance
     )
@@ -101,5 +101,14 @@ extension OnboardingViewModel {
     let now = Date().formattedDate
     let totalExpenses = fixedExpenses.filter { $0.date > now }.reduce(0) { $0 + $1.price }
     return currentBalance - totalExpenses
+  }
+  
+  private func calculateAverageHarubee(endDate: Date, balance: Int) -> Double {
+    let currentDate = Date().formattedDate
+    
+    let secondsInDay = 86400.0
+    let remain = endDate.timeIntervalSince(currentDate) / secondsInDay + 1
+    
+    return Double(balance) / remain
   }
 }

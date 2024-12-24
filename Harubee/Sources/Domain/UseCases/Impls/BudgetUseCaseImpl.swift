@@ -353,19 +353,9 @@ final class BudgetUseCaseImpl: BudgetUseCase {
     return nilCount == 0.0 ? newBalance : newBalance / nilCount
   }
   
-  func calculateAverageHarubee(endDate: Date, balance: Int) -> Double {
-    let currentDate = calendar.date(
-      from:calendar.dateComponents(
-        [.year, .month, .day],
-        from: Date()
-      )
-    )!
-    let secondsInDay = 86400.0
-    let remain = endDate.timeIntervalSince(currentDate) / secondsInDay + 1
-    
-    return Double(balance) / remain
+  func deleteAllSalaryBudgets() throws {
+    try salaryBudgetRepository.deleteAll()
   }
-  
   
   func getDailyBudget(
     date: Date
