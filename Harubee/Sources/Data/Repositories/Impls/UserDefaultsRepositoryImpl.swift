@@ -16,6 +16,7 @@ final class UserDefaultsRepositoryImpl: UserDefaultsRepository {
     static let expenseNotificationTime = "expense_notification_time"
     static let harubeeNotificationStatus = "harubee_notification_status"
     static let expenseNotificationStatus = "expense_notification_status"
+    static let lastAccessDate = "last_access_date"
   }
   
   private let userDefaults: UserDefaults
@@ -62,5 +63,13 @@ final class UserDefaultsRepositoryImpl: UserDefaultsRepository {
 
   func readExpenseNotificationStatus() -> Bool? {
     return userDefaults.bool(forKey: Keys.expenseNotificationStatus)
+  }
+  
+  func saveLastAccessDate(_ date: Date) {
+    userDefaults.set(date, forKey: Keys.lastAccessDate)
+  }
+  
+  func readLastAccessDate() -> Date? {
+    userDefaults.object(forKey: Keys.lastAccessDate) as? Date
   }
 }
