@@ -96,21 +96,21 @@ struct DailyCalendarView: View {
         coordinator.presentHarubeeAdjustSheet(
           salaryBudget: viewModel.state.currentBudget!,
           dailyBudget: viewModel.selectedDailyBudget!,
-          comletion: { viewModel.send(.updateCurrentData) }
+          completion: { viewModel.send(.updateCurrentData) }
         )
       case .transactionIncome:
         coordinator.presentTransactionInputSheet(
           salaryBudget: viewModel.state.currentBudget!,
           dailyBudget: viewModel.selectedDailyBudget!,
           focus: .income,
-          comletion: { viewModel.send(.updateCurrentData) }
+          completion: { viewModel.send(.updateCurrentData) }
         )
       case .transactionExpense:
         coordinator.presentTransactionInputSheet(
           salaryBudget: viewModel.state.currentBudget!,
           dailyBudget: viewModel.selectedDailyBudget!,
           focus: .expense,
-          comletion: { viewModel.send(.updateCurrentData) }
+          completion: { viewModel.send(.updateCurrentData) }
         )
       case .addMemo:
         coordinator.presentDailyMemoSheet { memo in
