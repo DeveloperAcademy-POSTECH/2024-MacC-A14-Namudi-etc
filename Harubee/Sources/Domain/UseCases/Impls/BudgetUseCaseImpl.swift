@@ -606,12 +606,10 @@ final class BudgetUseCaseImpl: BudgetUseCase {
     var index = 0
     
     // 1. 최근 접속 날짜 불러오기
-    let recentAccessDay = UserDefaults.standard.object(
-      forKey: "recentAccessDay"
-    ) as? Date ?? today
+    let recentAccessDay = userDefaultsRepository.readLastAccessDate() ?? today
     
     // 최근 접속 날짜 업데이트
-    UserDefaults.standard.set(today, forKey: "recentAccessDay")
+    userDefaultsRepository.saveLastAccessDate(today)
     
     // 2. 최근 접속 날짜가 오늘 날짜와 일치한 경우, 기존 salaryBudget 리턴
     if recentAccessDay.isToday { return salaryBudget }
