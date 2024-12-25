@@ -11,6 +11,7 @@ import SwiftUI
 
 // MARK: - TodayView
 struct TodayView: View {
+  @Environment(\.scenePhase) private var scenePhase
   @Environment(MainCoordinator.self) private var coordinator
   @AppStorage("isFirstTodayView") private var isFirstTodayView = true
   @State private var todayViewModel: TodayViewModel
@@ -55,6 +56,7 @@ struct TodayView: View {
           }
       }
     }
+    .navigationBarStyle(.clear)
     .onAppear {
       todayViewModel.send(.viewDidLoad)
       NotificationManager.shared.reqNotificationPermission()
@@ -78,7 +80,11 @@ struct TodayView: View {
     .toolbar {
       toolbarItems
     }
-    .navigationBarStyle(.clear)
+    .onChange(of: scenePhase) {
+      if case ScenePhase.active = $1 {
+        todayViewModel.send(.viewDidLoad)
+      }
+    }
   }
   
   @ToolbarContentBuilder
