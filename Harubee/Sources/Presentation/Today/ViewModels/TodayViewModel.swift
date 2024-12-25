@@ -49,6 +49,7 @@ final class TodayViewModel {
   func send(_ action: Action) {
     switch action {
     case .viewDidLoad:
+      self.state.todayDate = .now
       fetchSalaryBudget()
     }
   }
