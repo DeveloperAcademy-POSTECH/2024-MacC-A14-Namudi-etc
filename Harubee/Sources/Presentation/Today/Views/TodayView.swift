@@ -76,28 +76,33 @@ struct TodayView: View {
       }
     }
     .toolbar {
-      ToolbarItem(placement: .topBarTrailing) {
-        Image(systemName: "questionmark.circle")
-          .font(Font.system(size: 18, weight: .regular))
-          .foregroundStyle(Color.whiteDefault)
-          .tapFeedback {
-            isInfoBubbleVisible.toggle()
-          }
-          .padding(.trailing, 8)
-      }
-      
-      ToolbarItem(placement: .topBarTrailing) {
-        Image(systemName: "gearshape")
-          .font(Font.system(size: 18, weight: .regular))
-          .foregroundStyle(Color.whiteDefault)
-          .tapFeedback {
-            coordinator.push(.setting(
-              salaryBudget: todayViewModel.state.salaryBudget!
-            ))
-          }
-      }
+      toolbarItems
     }
     .navigationBarStyle(.clear)
+  }
+  
+  @ToolbarContentBuilder
+  private var toolbarItems: some ToolbarContent {
+    ToolbarItem(placement: .topBarTrailing) {
+      Image(systemName: "questionmark.circle")
+        .font(Font.system(size: 18, weight: .regular))
+        .foregroundStyle(Color.whiteDefault)
+        .tapFeedback {
+          isInfoBubbleVisible.toggle()
+        }
+        .padding(.trailing, 8)
+    }
+    
+    ToolbarItem(placement: .topBarTrailing) {
+      Image(systemName: "gearshape")
+        .font(Font.system(size: 18, weight: .regular))
+        .foregroundStyle(Color.whiteDefault)
+        .tapFeedback {
+          coordinator.push(.setting(
+            salaryBudget: todayViewModel.state.salaryBudget!
+          ))
+        }
+    }
   }
 }
 
