@@ -64,7 +64,7 @@ struct TodayView: View {
         coordinator.presentTransactionInputSheet(
           salaryBudget: todayViewModel.state.salaryBudget!,
           dailyBudget: todayViewModel.state.todayDailyBudget!,
-          comletion: { todayViewModel.send(.viewDidLoad) }
+          completion: { todayViewModel.send(.viewDidLoad) }
         )
       }
     }
@@ -164,7 +164,7 @@ private struct Honeycomb: View {
                 coordinator.presentHarubeeAdjustSheet(
                   salaryBudget: todayViewModel.state.salaryBudget!,
                   dailyBudget: todayViewModel.state.todayDailyBudget!,
-                  comletion: { todayViewModel.send(.viewDidLoad) }
+                  completion: { todayViewModel.send(.viewDidLoad) }
                 )
               }
             } else if row == 2 && col == 1 {
@@ -178,7 +178,7 @@ private struct Honeycomb: View {
                 coordinator.presentBalanceAdjustSheet(
                   salaryBudget: todayViewModel.state.salaryBudget!,
                   dailyBudget: todayViewModel.state.todayDailyBudget!,
-                  comletion: { todayViewModel.send(.viewDidLoad) }
+                  completion: { todayViewModel.send(.viewDidLoad) }
                 )
               }
             } else {
@@ -452,7 +452,7 @@ private struct TodayFooterView: View {
         coordinator.presentTransactionInputSheet(
           salaryBudget: todayViewModel.state.salaryBudget!,
           dailyBudget: todayViewModel.state.todayDailyBudget!,
-          comletion: { todayViewModel.send(.viewDidLoad) }
+          completion: { todayViewModel.send(.viewDidLoad) }
         )
       }
       .infoBubble(isVisible: $isInfoBubbleVisible) {

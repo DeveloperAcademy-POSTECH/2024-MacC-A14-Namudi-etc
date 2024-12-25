@@ -96,9 +96,9 @@ final class MainCoordinator: MainCoordinatorProtocol {
     salaryBudget: SalaryBudget,
     dailyBudget: DailyBudget,
     focus: TransactionFocusType = .expense,
-    comletion: @escaping () -> Void
+    completion: @escaping () -> Void
   ) {
-    self.transactionInputCompletion = comletion
+    self.transactionInputCompletion = completion
     self.presentSheet(.transactionInput(
       salaryBudget: salaryBudget,
       dailyBudget: dailyBudget,
@@ -113,9 +113,9 @@ final class MainCoordinator: MainCoordinatorProtocol {
   func presentHarubeeAdjustSheet(
     salaryBudget: SalaryBudget,
     dailyBudget: DailyBudget,
-    comletion: @escaping () -> Void
+    completion: @escaping () -> Void
   ) {
-    self.harubeeAdjustCompletion = comletion
+    self.harubeeAdjustCompletion = completion
     self.presentSheet(.harubeeAdjust(
       salaryBudget: salaryBudget,
       dailyBudget: dailyBudget
@@ -129,9 +129,9 @@ final class MainCoordinator: MainCoordinatorProtocol {
   func presentBalanceAdjustSheet(
     salaryBudget: SalaryBudget,
     dailyBudget: DailyBudget,
-    comletion: @escaping () -> Void
+    completion: @escaping () -> Void
   ) {
-    self.balanceAdjustCompletion = comletion
+    self.balanceAdjustCompletion = completion
     self.presentSheet(.balanceAdjust(
       salaryBudget: salaryBudget,
       dailyBudget: dailyBudget
