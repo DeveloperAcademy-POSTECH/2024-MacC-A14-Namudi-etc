@@ -14,49 +14,47 @@ struct Onboarding6View: View {
   var body: some View {
     ZStack {
       Color.main.ignoresSafeArea()
+      
       VStack(spacing: 0) {
-        OnboardingNavigationHeaderView(onboardingPage: .last)
-          .padding(.horizontal, 20)
+        titleView
+          .padding(.top, 22)
+          .padding(.horizontal, 4)
         
-        VStack(spacing: 0) {
-          titleView
-            .padding(.top, 22)
-            .padding(.horizontal, 4)
-          
-          Rectangle()
-            .frame(height: 1)
-            .foregroundStyle(Color.textBrighter30)
-            .padding(.top, 12)
-          
-          CurrentHarubeeView(harubee: viewModel.state.averageHarubee)
-            .padding(.top, 36)
-          
-          Rectangle()
-            .frame(height: 1)
-            .foregroundStyle(Color.textBrighter30)
-            .padding(.top, 28)
-          
-          UserInfoView(
-            incomeAmount: viewModel.state.incomeAmount ?? 0,
-            currentBalance: viewModel.state.currentBalance ?? 0,
-            fixedExpenses: viewModel.state.fixedExpenses,
-            endDate: viewModel.state.incomeEndDate
-          )
-            .padding(.top, 26)
-            .padding(.horizontal, 4)
-          
-          Spacer()
-          
-          OnboardingFooterView(viewModel: viewModel)
-            .padding(.bottom, 9)
-        }
-        .padding(.horizontal, 16)
+        Rectangle()
+          .frame(height: 1)
+          .foregroundStyle(Color.textBrighter30)
+          .padding(.top, 12)
         
+        CurrentHarubeeView(harubee: viewModel.state.averageHarubee)
+          .padding(.top, 36)
+        
+        Rectangle()
+          .frame(height: 1)
+          .foregroundStyle(Color.textBrighter30)
+          .padding(.top, 28)
+        
+        UserInfoView(
+          incomeAmount: viewModel.state.incomeAmount ?? 0,
+          currentBalance: viewModel.state.currentBalance ?? 0,
+          fixedExpenses: viewModel.state.fixedExpenses,
+          endDate: viewModel.state.incomeEndDate
+        )
+        .padding(.top, 26)
+        .padding(.horizontal, 4)
+        
+        Spacer()
+        
+        OnboardingFooterView(viewModel: viewModel)
+          .padding(.bottom, 9)
       }
+      .padding(.horizontal, 16)
+      
       .frame(maxWidth: .infinity, alignment: .top)
       
     }
+    .navigationBarStyle(.onboarding)
   }
+  
   
   private var titleView: some View {
     VStack(alignment: .leading, spacing: 0) {

@@ -35,6 +35,13 @@ struct Onboarding5View: View {
         coordinator.push(.onboarding6)
       }
     }
+    .navigationBarStyle(.onboarding, toolbar: {
+      ToolbarItem(placement: .topBarTrailing) {
+        Text("3/3")
+          .font(.pretendardSemibold_22)
+          .foregroundStyle(Color.whiteDeep50)
+      }
+    })
     .onChange(of: fixedExpenses, { _, _ in
       viewModel.send(.updateFixedExpenses(fixedExpenses))
     })
@@ -55,33 +62,28 @@ private struct OnboardingHeaderView: View {
   let harubee: Int
   
   var body: some View {
-    VStack(spacing: 28) {
-      OnboardingNavigationHeaderView(onboardingPage: .third)
-      
-      VStack(alignment: .leading, spacing: 6) {
-        Text("현재 계산된 하루비는")
-        HStack(spacing: 0) {
-          Image(.harubeeWhite)
-            .resizable()
-            .frame(width: 20, height: 20)
-          HStack(alignment: .bottom, spacing: 0) {
-            Text(harubee.decimalWithWon)
-              .padding(.leading, 6)
-              .font(.pretendardSemibold_28)
-            Text("입니다")
-              .padding(.bottom, 1)
-          }
+    VStack(alignment: .leading, spacing: 6) {
+      Text("현재 계산된 하루비는")
+      HStack(spacing: 0) {
+        Image(.harubeeWhite)
+          .resizable()
+          .frame(width: 20, height: 20)
+        HStack(alignment: .bottom, spacing: 0) {
+          Text(harubee.decimalWithWon)
+            .padding(.leading, 6)
+            .font(.pretendardSemibold_28)
+          Text("입니다")
+            .padding(.bottom, 1)
         }
       }
-      .frame(maxWidth: .infinity, alignment: .leading)
-      .font(.pretendardSemibold_24)
-      .foregroundStyle(Color.whiteDefault)
     }
+    .frame(maxWidth: .infinity, alignment: .leading)
+    .font(.pretendardSemibold_24)
+    .foregroundStyle(Color.whiteDefault)
+    .padding(.top, 28)
     .padding(.horizontal, 20)
     .padding(.bottom, 26)
-    .background(
-      Rectangle().fill(Color.main).ignoresSafeArea()
-    )
+    .background(.main)
   }
 }
 
