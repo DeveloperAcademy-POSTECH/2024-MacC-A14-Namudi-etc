@@ -39,7 +39,8 @@ struct NavigationBarStyleModifier: ViewModifier {
           ToolbarItem(placement: .navigationBarLeading) {
             HStack(spacing: 4) {
               Image(systemName: "chevron.left")
-                .font(.system(size: 17))
+                .font(.sfPro(size: 17))
+                .fontWeight(.semibold)
               Text(style.backTitle)
                 .font(.pretendardMedium_18)
             }

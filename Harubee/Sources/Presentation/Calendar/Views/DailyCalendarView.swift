@@ -176,7 +176,7 @@ private struct HarubeeSection: View {
         
         if budget.date >= Date().formattedDate {
           Image(systemName: "pencil")
-            .font(.custom("SF Pro", size: 16))
+            .font(.sfPro(size: 16))
             .foregroundStyle(Color.mainBright)
         }
       }
@@ -299,13 +299,13 @@ private struct ComparisonLabel: View {
         .font(.pretendardMedium_14)
       
       Image(
-        systemName: isOverBudget 
+        systemName: isOverBudget
         ? "arrowtriangle.up.fill"
         : "arrowtriangle.down.fill"
       )
-        .font(.custom("SF Pro", size: 10))
-        .foregroundStyle(isOverBudget ? Color.redDefault : Color.main)
-        .padding(.trailing, -4)
+      .font(.sfPro(size: 10))
+      .foregroundStyle(isOverBudget ? Color.redDefault : Color.main)
+      .padding(.trailing, -4)
       
       Text(" \(abs(harubee - expense))원")
         .font(.pretendardSemibold_14)

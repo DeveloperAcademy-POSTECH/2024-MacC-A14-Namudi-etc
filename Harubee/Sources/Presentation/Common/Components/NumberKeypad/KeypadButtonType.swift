@@ -91,7 +91,7 @@ enum KeypadButtonType: Int {
     case .one, .two, .three, .four, .five, .six, .seven, .eight, .nine, .zero, .doubleZero, .tripleZero:
       return .pretendardMedium_24
     case .delete:
-      return .custom("SF Pro", size: 22)
+      return .sfPro(size: 22)
     case .plus, .minus:
       return .pretendardMedium_20
     case .clear:

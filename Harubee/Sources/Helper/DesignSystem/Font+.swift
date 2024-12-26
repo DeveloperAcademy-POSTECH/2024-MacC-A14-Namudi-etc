@@ -52,3 +52,9 @@ extension Font {
   // MARK: - Pretendard Regular
   static let pretendardRegular_22 = Pretendard.regular.swiftUIFont(size: 22)
 }
+
+extension Font {
+  static func sfPro(size: CGFloat) -> Font {
+    return .custom("SF Pro", size: size)
+  }
+}
