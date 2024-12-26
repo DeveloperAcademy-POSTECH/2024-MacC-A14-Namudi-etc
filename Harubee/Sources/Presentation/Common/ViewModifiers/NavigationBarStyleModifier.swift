@@ -35,7 +35,7 @@ struct NavigationBarStyleModifier: ViewModifier {
             .foregroundStyle(style.titleColor)
         }
         
-        if !style.backTitle.isEmpty {
+        if (!style.backTitle.isEmpty) || (style == .onboarding) {
           ToolbarItem(placement: .navigationBarLeading) {
             HStack(spacing: 4) {
               Image(systemName: "chevron.left")
@@ -85,7 +85,8 @@ extension View {
   }
 }
 
-enum NavigationBarStyle {
+enum NavigationBarStyle: Equatable {
+  case onboarding
   case main(title: String, backTitle: String)
   case white(title: String, backTitle: String)
   case sheet(title: String)
@@ -93,6 +94,7 @@ enum NavigationBarStyle {
   
   var tintColor: Color {
     switch self {
+    case .onboarding: return .whiteDefault
     case .main: return .whiteDefault
     case .white: return .main
     case .sheet: return .main
@@ -102,6 +104,7 @@ enum NavigationBarStyle {
   
   var titleColor: Color {
     switch self {
+    case .onboarding: return .clear
     case .main: return .whiteDefault
     case .white: return .textBlack
     case .sheet: return .textBlack
@@ -111,6 +114,7 @@ enum NavigationBarStyle {
   
   var colorScheme: ColorScheme {
     switch self {
+    case .onboarding: return .dark
     case .main: return .dark
     case .white: return .light
     case .sheet: return .light
@@ -124,7 +128,8 @@ enum NavigationBarStyle {
         .white(let title, _),
         .sheet(let title):
       return title
-    case .clear:
+    case .onboarding,
+        .clear:
       return ""
     }
   }
@@ -136,7 +141,8 @@ enum NavigationBarStyle {
       return backTitle
     case .sheet:
       return "취소"
-    case .clear:
+    case .onboarding,
+        .clear:
       return ""
     }
   }
