@@ -79,7 +79,16 @@ struct FixedIncomeView: View {
       }
       
     }
-    .applyNavigationBarStyle(isInfoBubbleVisible: $isInfoBubbleVisible)
+    .navigationBarStyle(
+      .white(title: "고정수입 관리", backTitle: "뒤로"),
+      toolbar: {
+        ToolbarItem(placement: .topBarTrailing) {
+          HelpButton(
+            infoBubbleVisible: $isInfoBubbleVisible,
+            buttonColor: .textBlack
+          )
+        }
+    })
     .alert(isPresented: $isAlertPresented) {
       Alert(
         title: Text("수입일을 \(selectedDay)일로 바꾸시겠어요?"),
@@ -163,24 +172,6 @@ private struct FixedIncomeBodyView: View {
       }
     }
     .padding(.horizontal, 20)
-  }
-}
-
-// MARK: - View Modifiers
-private extension View {
-  func applyNavigationBarStyle(
-    isInfoBubbleVisible: Binding<Bool>
-  ) -> some View {
-    self
-      .navigationBarStyle(.white(title: "고정수입 관리", backTitle: "뒤로"))
-      .toolbar {
-        ToolbarItem(placement: .topBarTrailing) {
-          HelpButton(
-            infoBubbleVisible: isInfoBubbleVisible,
-            buttonColor: .textBlack
-          )
-        }
-      }
   }
 }
 

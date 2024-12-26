@@ -56,7 +56,6 @@ struct TodayView: View {
           }
       }
     }
-    .navigationBarStyle(.clear)
     .onAppear {
       todayViewModel.send(.viewDidLoad)
       NotificationManager.shared.reqNotificationPermission()
@@ -66,6 +65,11 @@ struct TodayView: View {
     }
     .onDisappear {
       isFirstTodayView = false
+    }
+    .onChange(of: scenePhase) {
+      if case ScenePhase.active = $1 {
+        todayViewModel.send(.viewDidLoad)
+      }
     }
     .onOpenURL { url in
       coordinator.popToRoot()
@@ -77,13 +81,8 @@ struct TodayView: View {
         )
       }
     }
-    .toolbar {
+    .navigationBarStyle(.clear) {
       toolbarItems
-    }
-    .onChange(of: scenePhase) {
-      if case ScenePhase.active = $1 {
-        todayViewModel.send(.viewDidLoad)
-      }
     }
   }
   

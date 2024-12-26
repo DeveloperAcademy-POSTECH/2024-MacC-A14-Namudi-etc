@@ -71,7 +71,16 @@ struct PeriodlyCalendarView: View {
           }
       }
     }
-    .applyNavigationBarStyle(infoBubbleVisible: $infoBubbleVisible)
+    .navigationBarStyle(
+      .main(title: "캘린더", backTitle: "뒤로"),
+      toolbar: {
+        ToolbarItem(placement: .topBarTrailing) {
+          HelpButton(
+            infoBubbleVisible: $infoBubbleVisible,
+            buttonColor: .whiteDefault
+          )
+        }
+      })
     .errorAlert(error: viewModel.state.error)
   }
   
@@ -207,20 +216,6 @@ private struct CalendarContent: View {
 
 // MARK: - View Modifiers
 private extension View {
-  func applyNavigationBarStyle(
-    infoBubbleVisible: Binding<Bool>
-  ) -> some View {
-    self.navigationBarStyle(.main(title: "캘린더", backTitle: "뒤로"))
-      .toolbar {
-        ToolbarItem(placement: .topBarTrailing) {
-          HelpButton(
-            infoBubbleVisible: infoBubbleVisible,
-            buttonColor: .whiteDefault
-          )
-        }
-      }
-  }
-  
   func errorAlert(error: Error?) -> some View {
     alert("오류", isPresented: .constant(error != nil)) {
       Button("확인", role: .cancel) {
