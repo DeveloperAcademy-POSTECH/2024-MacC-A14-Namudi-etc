@@ -84,11 +84,9 @@ private struct OnboardingHeaderView: View {
           .font(.pretendardSemibold_24)
       }
     }
-    .frame(maxWidth: .infinity, alignment: .leading)
+    .frame(maxWidth: .infinity, maxHeight: 120, alignment: .leading)
     .foregroundStyle(Color.whiteDefault)
-    .padding(.top, 28)
     .padding(.horizontal, 20)
-    .padding(.bottom, 26)
     .background(.main)
   }
 }
