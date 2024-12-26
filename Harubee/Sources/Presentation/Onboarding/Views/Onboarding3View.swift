@@ -21,7 +21,7 @@ struct Onboarding3View: View {
   var body: some View {
     ZStack(alignment: .bottom) {
       VStack(spacing: 0) {
-        onboardingHeaderView
+        OnboardingHeaderView()
         
         OnboardingBodyView(
           incomeDay: $incomeDay,
@@ -63,20 +63,6 @@ struct Onboarding3View: View {
     })
   }
   
-  private var onboardingHeaderView: some View {
-    VStack(alignment: .leading, spacing: 6) {
-      Text("먼저, 하루비를 계산하기 위한")
-      Text("기본 정보를 입력해주세요")
-    }
-    .frame(maxWidth: .infinity, alignment: .leading)
-    .font(.pretendardSemibold_24)
-    .foregroundStyle(Color.whiteDefault)
-    .padding(.top, 28)
-    .padding(.horizontal, 20)
-    .padding(.bottom, 30)
-    .background(.main)
-  }
-  
   private func doneButtonTapped() {
     self.isFocused = false
     
@@ -90,6 +76,21 @@ struct Onboarding3View: View {
     } else {
       self.isEnabled = false
     }
+  }
+}
+
+private struct OnboardingHeaderView: View {
+  
+  var body: some View {
+    VStack(alignment: .leading, spacing: 6) {
+      Text("먼저, 하루비를 계산하기 위한")
+      Text("기본 정보를 입력해주세요")
+    }
+    .frame(maxWidth: .infinity, maxHeight: 120, alignment: .leading)
+    .font(.pretendardSemibold_24)
+    .foregroundStyle(Color.whiteDefault)
+    .padding(.horizontal, 20)
+    .background(.main)
   }
 }
 
