@@ -8,9 +8,10 @@
 
 import SwiftUI
 
-struct NavigationBarStyleModifier: ViewModifier {
+struct NavigationBarStyleModifier<ToolbarItems: ToolbarContent>: ViewModifier {
   @Environment(\.dismiss) private var dismiss
   let style: NavigationBarStyle
+  let toolbar: () -> ToolbarItems
   
   func body(content: Content) -> some View {
     if case .sheet = style {
@@ -50,6 +51,8 @@ struct NavigationBarStyleModifier: ViewModifier {
             }
           }
         }
+        
+        toolbar()
       }
   }
   
@@ -80,8 +83,16 @@ struct NavigationBarStyleModifier: ViewModifier {
 }
 
 extension View {
-  func navigationBarStyle(_ style: NavigationBarStyle) -> some View {
-    modifier(NavigationBarStyleModifier(style: style))
+  func navigationBarStyle<ToolbarItems: ToolbarContent>(
+    _ style: NavigationBarStyle,
+    @ToolbarContentBuilder toolbar: @escaping () -> ToolbarItems = {
+      ToolbarItem {}
+    }
+  ) -> some View {
+    modifier(NavigationBarStyleModifier(
+      style: style,
+      toolbar: toolbar
+    ))
   }
 }
 

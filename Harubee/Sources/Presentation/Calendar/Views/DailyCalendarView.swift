@@ -128,7 +128,14 @@ struct DailyCalendarView: View {
       
       activeSheet = nil
     }
-    .applyNavigationBarStyle(infoBubbleVisible: $infoBubbleVisible)
+    .navigationBarStyle(.main(title: "", backTitle: "뒤로"), toolbar: {
+      ToolbarItem(placement: .topBarTrailing) {
+        HelpButton(
+          infoBubbleVisible: $infoBubbleVisible,
+          buttonColor: .whiteDefault
+        )
+      }
+    })
   }
 }
 
@@ -455,20 +462,6 @@ private struct FixedExpenseSection: View {
 
 // MARK: - View Modifiers
 private extension View {
-  func applyNavigationBarStyle(
-    infoBubbleVisible: Binding<Bool>
-  ) -> some View {
-    self.navigationBarStyle(.main(title: "", backTitle: "뒤로"))
-      .toolbar {
-        ToolbarItem(placement: .topBarTrailing) {
-          HelpButton(
-            infoBubbleVisible: infoBubbleVisible,
-            buttonColor: .whiteDefault
-          )
-        }
-      }
-  }
-  
   func errorAlert(error: Error?) -> some View {
     alert("오류", isPresented: .constant(error != nil)) {
       Button("확인", role: .cancel) {}

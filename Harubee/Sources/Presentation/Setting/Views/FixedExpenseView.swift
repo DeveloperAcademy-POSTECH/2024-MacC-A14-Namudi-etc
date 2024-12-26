@@ -45,7 +45,16 @@ struct FixedExpenseView: View {
           .onTapGesture { isInfoBubbleVisible.toggle() }
       }
     }
-    .applyNavigationBarStyle(isInfoBubbleVisible: $isInfoBubbleVisible)
+    .navigationBarStyle(
+      .white(title: "고정지출 관리", backTitle: "뒤로")
+    ) {
+      ToolbarItem(placement: .topBarTrailing) {
+        HelpButton(
+          infoBubbleVisible: $isInfoBubbleVisible,
+          buttonColor: .textBlack
+        )
+      }
+    }
   }
 }
 
@@ -209,23 +218,6 @@ private struct FixedExpenseListView: View {
   }
 }
 
-// MARK: - View Modifiers
-private extension View {
-  func applyNavigationBarStyle(
-    isInfoBubbleVisible: Binding<Bool>
-  ) -> some View {
-    self
-      .navigationBarStyle(.white(title: "고정지출 관리", backTitle: "뒤로"))
-      .toolbar {
-        ToolbarItem(placement: .topBarTrailing) {
-          HelpButton(
-            infoBubbleVisible: isInfoBubbleVisible,
-            buttonColor: .textBlack
-          )
-        }
-      }
-  }
-}
 
 // MARK: - InfoBubbles Modifiers
 private extension View {
