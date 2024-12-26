@@ -51,29 +51,30 @@ struct Onboarding3View: View {
         }
       }
     }
+    .navigationBarStyle(.onboarding, toolbar: {
+      ToolbarItem(placement: .topBarTrailing) {
+        Text("1/3")
+          .font(.pretendardSemibold_22)
+          .foregroundStyle(Color.whiteDeep50)
+      }
+    })
     .onChange(of: incomeDay, { _, _ in
       viewModel.send(.updateFixedIncomeDay(incomeDay))
     })
   }
   
   private var onboardingHeaderView: some View {
-    VStack(spacing: 30) {
-      OnboardingNavigationHeaderView(onboardingPage: .first)
-      
-      VStack(alignment: .leading, spacing: 6) {
-        Text("먼저, 하루비를 계산하기 위한")
-        Text("기본 정보를 입력해주세요")
-      }
-      .frame(maxWidth: .infinity, alignment: .leading)
-      .font(.pretendardSemibold_24)
-      .foregroundStyle(Color.whiteDefault)
+    VStack(alignment: .leading, spacing: 6) {
+      Text("먼저, 하루비를 계산하기 위한")
+      Text("기본 정보를 입력해주세요")
     }
+    .frame(maxWidth: .infinity, alignment: .leading)
+    .font(.pretendardSemibold_24)
+    .foregroundStyle(Color.whiteDefault)
+    .padding(.top, 28)
     .padding(.horizontal, 20)
     .padding(.bottom, 30)
-    .background(
-      Rectangle().fill(Color.main).ignoresSafeArea()
-    )
-
+    .background(.main)
   }
   
   private func doneButtonTapped() {
@@ -140,7 +141,9 @@ private struct OnboardingBodyView: View {
 }
 
 #Preview {
-  Onboarding3View()
-    .environment(DIContainer.shared.makeOnboardingViewModel())
-    .environment(OnboardingCoordinator())
+  NavigationStack {
+    Onboarding3View()
+      .environment(DIContainer.shared.makeOnboardingViewModel())
+      .environment(OnboardingCoordinator())
+  }
 }

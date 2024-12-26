@@ -45,6 +45,13 @@ struct Onboarding4View: View {
         }
       }
     }
+    .navigationBarStyle(.onboarding, toolbar: {
+      ToolbarItem(placement: .topBarTrailing) {
+        Text("2/3")
+          .font(.pretendardSemibold_22)
+          .foregroundStyle(Color.whiteDeep50)
+      }
+    })
   }
   
   private func doneButtonTapped() {
@@ -65,27 +72,24 @@ private struct OnboardingHeaderView: View {
   let averageHarubee: Int
   
   var body: some View {
-    VStack(spacing: 28) {
-      OnboardingNavigationHeaderView(onboardingPage: .second)
+    
+    VStack(alignment: .leading, spacing: 6) {
+      Text("현재 하루비는")
+        .font(.pretendardSemibold_24)
       
-      VStack(alignment: .leading, spacing: 6) {
-        Text("현재 하루비는")
-        
-        HStack(alignment: .firstTextBaseline, spacing: 0) {
-          Text(averageHarubee.decimalWithWon)
-            .font(.pretendardSemibold_30)
-          Text("입니다")
-        }
+      HStack(alignment: .firstTextBaseline, spacing: 0) {
+        Text(averageHarubee.decimalWithWon)
+          .font(.pretendardSemibold_28)
+        Text("입니다")
+          .font(.pretendardSemibold_24)
       }
-      .frame(maxWidth: .infinity, alignment: .leading)
-      .font(.pretendardSemibold_24)
-      .foregroundStyle(Color.whiteDefault)
     }
+    .frame(maxWidth: .infinity, alignment: .leading)
+    .foregroundStyle(Color.whiteDefault)
+    .padding(.top, 28)
     .padding(.horizontal, 20)
-    .padding(.bottom, 23)
-    .background(
-      Rectangle().fill(Color.main).ignoresSafeArea()
-    )
+    .padding(.bottom, 26)
+    .background(.main)
   }
 }
 
@@ -136,9 +140,11 @@ private struct OnboardingBodyView: View {
 }
 
 #Preview {
-  Onboarding4View(
-    currentBalanceAmount: ""
-  )
-  .environment(DIContainer.shared.makeOnboardingViewModel())
-  .environment(OnboardingCoordinator())
+//  NavigationStack {
+    Onboarding4View(
+      currentBalanceAmount: ""
+    )
+    .environment(DIContainer.shared.makeOnboardingViewModel())
+    .environment(OnboardingCoordinator())
+//  }
 }
