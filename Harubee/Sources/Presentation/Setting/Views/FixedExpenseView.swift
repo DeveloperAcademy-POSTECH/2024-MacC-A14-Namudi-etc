@@ -228,7 +228,7 @@ private extension View {
           Text("저축, 구독비, 보험료, 월세, 카드 할부금 등")
           Text("매달 고정으로 나가는 지출을 추가할 수 있어요")
         }
-        .font(.pretendardSemibold_12)
+        .font(.pretendardSemibold_14)
         .foregroundStyle(Color.textBlack)
       }
   }

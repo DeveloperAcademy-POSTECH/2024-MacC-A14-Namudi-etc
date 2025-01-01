@@ -363,16 +363,16 @@ private struct HarubeeHexagon: View {
   private var infoBubbleText: Text {
     Text(
       isTodayHarubee
-      ? "오늘의 하루비를\n바로 조정할 수 있어요"
+      ? """
+        오늘의 하루비를
+        바로 조정할 수 있어요
+        """
       : """
-        쓸 수 있는 돈은 현재 잔액에서
-        예정된 고정지출과 실제 지출을 뺀 금액이에요
-        
-        현재 잔액을 확인하고, 실제 잔액과 다르다면
-        조정하여 더 정확한 하루비를 계산할 수 있어요
+        현재 잔액을 조정해서
+        더 정확한 하루비를 계산할 수 있어요
         """
     )
-    .font(.pretendardSemibold_12)
+    .font(.pretendardSemibold_14)
     .foregroundStyle(Color.textBlack)
   }
   
@@ -477,7 +477,7 @@ private struct TodayFooterView: View {
           Text("실제 지출 및 수입을 매일 입력해야")
           Text("더 정확한 하루비를 확인할 수 있어요")
         }
-        .font(.pretendardSemibold_12)
+        .font(.pretendardSemibold_14)
         .foregroundStyle(Color.textBlack)
       }
     }
@@ -524,7 +524,7 @@ private struct CalendarStreakView: View {
               Text("캘린더에서 다른 날짜들의")
               Text("하루비를 확인하고 조정해요")
             }
-            .font(.pretendardSemibold_12)
+            .font(.pretendardSemibold_14)
             .foregroundStyle(Color.textBlack)
           }
         

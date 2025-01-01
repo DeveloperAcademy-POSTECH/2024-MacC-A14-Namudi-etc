@@ -86,8 +86,8 @@ struct DailyCalendarView: View {
           titleColor: .whiteDefault,
           backgroundColor: .mainBright,
           icon: Image(systemName: "arrow.clockwise")) {
-          viewModel.send(.selectDate(Date()))
-        }
+            viewModel.send(.selectDate(Date()))
+          }
       }
     }
     .onChange(of: activeSheet) { _, _ in
@@ -478,8 +478,8 @@ private extension View {
   func harubeeInfoBubble(_ isVisible: Binding<Bool>) -> some View {
     self
       .infoBubble(isVisible: isVisible, alignment: .bottom) {
-        Text("오늘과 미래의 하루비를 확인하고 조정할 수 있어요")
-          .font(.pretendardMedium_12)
+        Text("이날의 하루비를 확인하고 조정할 수 있어요")
+          .font(.pretendardSemibold_14)
           .foregroundStyle(Color.textBlack)
       }
   }
@@ -489,8 +489,8 @@ private extension View {
       .background(
         Color.clear
           .infoBubble(isVisible: isVisible, alignment: .bottom) {
-            Text("실제 수입과 지출을 입력할 수 있어요")
-              .font(.pretendardMedium_12)
+            Text("이날의 수입과 지출을 입력할 수 있어요")
+              .font(.pretendardSemibold_14)
               .foregroundStyle(Color.textBlack)
           })
   }
@@ -498,9 +498,14 @@ private extension View {
   func memoInfoBubble(_ isVisible: Binding<Bool>) -> some View {
     self
       .infoBubble(isVisible: isVisible, alignment: .bottomTrailing) {
-        Text("하루비 조정 이유, 이 날의 일정, 지출 일기 등\n자유롭게 메모를 작성할 수 있어요")
-          .font(.pretendardMedium_12)
-          .foregroundStyle(Color.textBlack)
+        Text(
+          """
+          하루비 조정 이유, 이날의 일정, 지출 일기 등
+          자유롭게 메모를 작성할 수 있어요
+          """
+        )
+        .font(.pretendardSemibold_14)
+        .foregroundStyle(Color.textBlack)
       }
   }
 }

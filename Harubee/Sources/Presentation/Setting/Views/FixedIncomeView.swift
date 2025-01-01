@@ -184,7 +184,7 @@ private extension View {
           Text("하루비는 고정수입 날짜와 금액을 기준으로 계산돼요")
           Text("원활한 서비스 사용을 위해, 정확한 정보를 입력해주세요")
         }
-        .font(.pretendardSemibold_12)
+        .font(.pretendardSemibold_14)
         .foregroundStyle(Color.textBlack)
       }
   }

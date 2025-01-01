@@ -26,6 +26,9 @@ extension Font {
     }
   }
   
+  // MARK: - Pretendard ExtraBold
+  static let pretendardExtraBold_14 = Pretendard.extraBold.swiftUIFont(size: 14)
+  
   // MARK: - Pretendard SemiBold
   static let pretendardSemibold_11 = Pretendard.semiBold.swiftUIFont(size: 11)
   static let pretendardSemibold_12 = Pretendard.semiBold.swiftUIFont(size: 12)

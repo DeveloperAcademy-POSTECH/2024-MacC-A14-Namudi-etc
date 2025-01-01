@@ -238,9 +238,9 @@ private extension View {
         alignment: .bottom
       ) {
         VStack {
-          Text("하루비의 캘린더는 수입일부터 다음 수입일까지로 구성돼요")
+          Text("하루비의 캘린더는\n수입일부터 다음 수입일까지로 구성돼요")
         }
-        .font(.pretendardMedium_12)
+        .font(.pretendardSemibold_14)
         .foregroundStyle(Color.textBlack)
       }
   }
@@ -250,16 +250,14 @@ private extension View {
       .overlay(alignment: .top) {
         Color.clear
           .frame(width: 55, height: 10)
-          .padding(.top, 165)
+          .padding(.top, 185)
           .infoBubble(
             isVisible: isVisible,
             alignment: .bottom
           ) {
             VStack(spacing: 0) {
               HStack(spacing: 0) {
-                Text(
-                  "실제 지출을 입력하면 하루비 대신\n실제 지출이 표시되고, 체크 표시가 나타나요"
-                )
+                Text("과거 날짜에 표시된 금액은 이날의 실제 지출이에요")
                 Spacer()
               }
               .padding(.bottom, 8)
@@ -268,28 +266,28 @@ private extension View {
                 
                 Text("하루비보다 많이 지출했다면 ")
                 Text("빨간색 체크")
-                  .font(.pretendardSemibold_12)
+                  .font(.pretendardExtraBold_14)
                   .foregroundStyle(Color.redDefault)
                 Image(.hexagonBad)
                   .resizable()
-                  .frame(width: 12, height: 12)
+                  .frame(width: 14, height: 14)
                   .scaledToFit()
                 Spacer()
               }
               HStack(spacing: 0) {
                 Text("적게 지출했다면 ")
                 Text("파란색 체크")
-                  .font(.pretendardSemibold_12)
+                  .font(.pretendardExtraBold_14)
                   .foregroundStyle(Color.main)
                 Image(.hexagonGood)
                   .resizable()
-                  .frame(width: 12, height: 12)
+                  .frame(width: 14, height: 14)
                   .scaledToFit()
-                Text(" 로 표시돼요")
+                Text("로 표시돼요")
                 Spacer()
               }
             }
-            .font(.pretendardMedium_12)
+            .font(.pretendardSemibold_14)
             .foregroundStyle(Color.textBlack)
           }
       }
@@ -307,22 +305,22 @@ private extension View {
           ) {
             VStack {
               HStack(spacing: 0) {
-                Text("미래의 날짜 밑에 있는 숫자들은 이 날의 하루비를 의미해요")
+                Text("미래 날짜에 표시된 금액은 이날의 하루비를 의미해요")
                 Spacer()
               }
               HStack(spacing: 0) {
                 Text("기본 하루비는")
                 Text(" 검정색")
-                  .font(.pretendardSemibold_12)
+                  .font(.pretendardExtraBold_14)
                 Text(", 조정된 하루비는 ")
                 Text("파란색")
-                  .font(.pretendardSemibold_12)
+                  .font(.pretendardExtraBold_14)
                   .foregroundStyle(Color.main)
                 Text("으로 표시돼요")
                 Spacer()
               }
             }
-            .font(.pretendardMedium_12)
+            .font(.pretendardSemibold_14)
             .foregroundStyle(Color.textBlack)
           }
       }
@@ -332,7 +330,9 @@ private extension View {
 // MARK: - Preview
 #Preview {
   NavigationStack {
-    PeriodlyCalendarView(viewModel: DIContainer.shared.makeCalendarViewModel()
+    PeriodlyCalendarView(
+      viewModel: DIContainer.shared.makeCalendarViewModel()
     )
+    .environment(MainCoordinator())
   }
 }
