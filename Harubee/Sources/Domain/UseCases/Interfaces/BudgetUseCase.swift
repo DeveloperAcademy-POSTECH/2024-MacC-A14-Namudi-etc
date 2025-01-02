@@ -1,5 +1,5 @@
 //
-//  budgetUseCase.swift
+//  BudgetUseCase.swift
 //  Harubee-iOS
 //
 //  Created by 신승재 on 11/6/24.
@@ -34,6 +34,14 @@ protocol BudgetUseCase {
     fixedIncome: Int,
     fixedExpenses: [TransactionItem]
   ) throws -> SalaryBudget
+  
+  
+  /// 다음 월급 달의 SalaryBudget을 생성합니다.
+  /// - Parameter salaryBudget: 현재 SalaryBudget
+  /// - `DomainError.dataNotFound`: IncomeDay를 찾을 수 없는 경우
+  func createNextSalaryBudgetIfNeeded(
+    salaryBudget: SalaryBudget
+  ) throws
   
   
   /// 모든 SalaryBudget을 가져옵니다.
