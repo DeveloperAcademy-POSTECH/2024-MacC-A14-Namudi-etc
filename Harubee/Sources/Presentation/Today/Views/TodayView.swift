@@ -89,24 +89,32 @@ struct TodayView: View {
   @ToolbarContentBuilder
   private var toolbarItems: some ToolbarContent {
     ToolbarItem(placement: .topBarTrailing) {
-      Image(systemName: "questionmark.circle")
-        .font(Font.system(size: 18, weight: .regular))
-        .foregroundStyle(Color.whiteDefault)
-        .tapFeedback {
-          isInfoBubbleVisible.toggle()
-        }
-        .padding(.trailing, 8)
+      Button {
+        isInfoBubbleVisible.toggle()
+      } label: {
+        Image(systemName: "questionmark.circle")
+          .font(Font.system(size: 18, weight: .regular))
+          .foregroundStyle(Color.whiteDefault)
+          .padding(.trailing, 8)
+      }
+      .buttonStyle(TapFeedbackButtonStyle(
+        haptic: .none
+      ))
     }
     
     ToolbarItem(placement: .topBarTrailing) {
-      Image(systemName: "gearshape")
-        .font(Font.system(size: 18, weight: .regular))
-        .foregroundStyle(Color.whiteDefault)
-        .tapFeedback {
-          coordinator.push(.setting(
-            salaryBudget: todayViewModel.state.salaryBudget!
-          ))
-        }
+      Button {
+        coordinator.push(.setting(
+          salaryBudget: todayViewModel.state.salaryBudget!
+        ))
+      } label: {
+        Image(systemName: "gearshape")
+          .font(Font.system(size: 18, weight: .regular))
+          .foregroundStyle(Color.whiteDefault)
+      }
+      .buttonStyle(TapFeedbackButtonStyle(
+        haptic: .none
+      ))
     }
   }
 }
@@ -171,33 +179,41 @@ private struct Honeycomb: View {
         HStack(spacing: honeycombSpace - 2) {
           ForEach(hexGrid[row].indices, id: \.self) { col in
             if row == 1 && col == 1 {
-              HarubeeHexagon(
-                isInfoBubbleVisible: $isInfoBubbleVisible,
-                 todayViewModel: todayViewModel,
-                 isTodayHarubee: true,
-                 hexgonSize: hexgonSize
-              )
-              .tapFeedback(tappedBackgroundColor: .clear) {
+              Button {
                 coordinator.presentHarubeeAdjustSheet(
                   salaryBudget: todayViewModel.state.salaryBudget!,
                   dailyBudget: todayViewModel.state.todayDailyBudget!,
                   completion: { todayViewModel.send(.viewDidLoad) }
                 )
+              } label: {
+                HarubeeHexagon(
+                  isInfoBubbleVisible: $isInfoBubbleVisible,
+                  todayViewModel: todayViewModel,
+                  isTodayHarubee: true,
+                  hexgonSize: hexgonSize
+                )
               }
+              .buttonStyle(TapFeedbackButtonStyle(
+                haptic: .tap
+              ))
             } else if row == 2 && col == 1 {
-              HarubeeHexagon(
-                isInfoBubbleVisible: $isInfoBubbleVisible,
-                todayViewModel: todayViewModel,
-                isTodayHarubee: false,
-                hexgonSize: hexgonSize
-              )
-              .tapFeedback(tappedBackgroundColor: .clear) {
+              Button {
                 coordinator.presentBalanceAdjustSheet(
                   salaryBudget: todayViewModel.state.salaryBudget!,
                   dailyBudget: todayViewModel.state.todayDailyBudget!,
                   completion: { todayViewModel.send(.viewDidLoad) }
                 )
+              } label: {
+                HarubeeHexagon(
+                  isInfoBubbleVisible: $isInfoBubbleVisible,
+                  todayViewModel: todayViewModel,
+                  isTodayHarubee: false,
+                  hexgonSize: hexgonSize
+                )
               }
+              .buttonStyle(TapFeedbackButtonStyle(
+                haptic: .tap
+              ))
             } else {
               RoundedHexagon()
                 .stroke(
@@ -537,44 +553,45 @@ private struct CalendarStreakView: View {
       }
       .padding(.horizontal, 4)
       
-      HStack(spacing: 7) {
-        
-        StreakGroupView(streaks: firstStreakGroup)
-        
-        ZStack {
-          RoundedRectangle(cornerRadius: 8)
-            .fill(Color.whiteDeep50)
-            .stroke(Color.mainBright, lineWidth: 2)
-            .foregroundStyle(Color.whiteDeep50)
-            .frame(maxWidth: 50, maxHeight: 72)
-          
-          VStack {
-            Text("오늘")
-              .font(.pretendardSemibold_12)
-              .foregroundStyle(Color.main)
-              .padding(.top, 10)
-            
-            Spacer()
-            
-            hexagonImage
-              .resizable()
-              .frame(width: 23, height: 23)
-              .padding(.bottom, 10)
-          }
-        }
-        
-        StreakGroupView(streaks: secondStreakGroup)
-        
-      }
-      .tapFeedback {
+      Button {
         coordinator.push(.periodlyCalendar)
+      } label: {
+        HStack(spacing: 7) {
+          
+          StreakGroupView(streaks: firstStreakGroup)
+          
+          ZStack {
+            RoundedRectangle(cornerRadius: 8)
+              .fill(Color.whiteDeep50)
+              .stroke(Color.mainBright, lineWidth: 2)
+              .foregroundStyle(Color.whiteDeep50)
+              .frame(maxWidth: 50, maxHeight: 72)
+            
+            VStack {
+              Text("오늘")
+                .font(.pretendardSemibold_12)
+                .foregroundStyle(Color.main)
+                .padding(.top, 10)
+              
+              Spacer()
+              
+              hexagonImage
+                .resizable()
+                .frame(width: 23, height: 23)
+                .padding(.bottom, 10)
+            }
+          }
+          
+          StreakGroupView(streaks: secondStreakGroup)
+          
+        }
       }
     }
     .padding(.top, 10)
     .contentShape(Rectangle())
-    .tapFeedback {
-      coordinator.push(.periodlyCalendar)
-    }
+    .buttonStyle(TapFeedbackButtonStyle(
+      haptic: .tap
+    ))
   }
 }
 
