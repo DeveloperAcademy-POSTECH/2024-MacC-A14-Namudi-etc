@@ -57,10 +57,11 @@ private struct ExpressionView: View {
 
       Spacer()
       
-      Text("완료")
-        .tapFeedback {
-          self.doneAction()
-        }
+      Button {
+        self.doneAction()
+      } label: {
+        Text("완료")
+      }
     }
     .frame(maxWidth: .infinity, maxHeight: 50)
     .padding(.horizontal, 22)
@@ -169,26 +170,31 @@ private struct NumberKeypadButton: View {
   
   @ViewBuilder
   private func keypadButton(_ keypad: KeypadButtonType) -> some View {
-    Group {
-      if keypad.style == .text {
-        Text(keypad.title)
-      } else {
-        keypad.image
-      }
-    }
-    .frame(maxWidth: .infinity, maxHeight: 60)
-    .foregroundStyle(keypad.foregroundColor)
-    .font(keypad.font)
-    .clipShape(RoundedRectangle(cornerRadius: 10))
-    .contentShape(Rectangle())
-    .tapFeedback(haptic: .soft) {
+    Button {
       let (newExpression, newAmount) = calculator.processKeypad(
         keypad,
         expression: expression
       )
       self.expression = newExpression
       self.amount = newAmount
+    } label: {
+      Group {
+        if keypad.style == .text {
+          Text(keypad.title)
+        } else {
+          keypad.image
+        }
+      }
+      .frame(maxWidth: .infinity, maxHeight: 60)
+      .foregroundStyle(keypad.foregroundColor)
+      .font(keypad.font)
+      .clipShape(RoundedRectangle(cornerRadius: 10))
+      .contentShape(Rectangle())
     }
+    .buttonStyle(TapFeedbackButtonStyle(
+      tappedBackgroundColor: .textBright.opacity(0.3),
+      cornerRadius: 12
+    ))
   }
 }
 
