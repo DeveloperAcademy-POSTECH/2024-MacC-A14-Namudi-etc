@@ -173,15 +173,17 @@ private struct PeriodDirectionButton: View {
   let onTap: (PeriodDirection) -> Void
   
   var body: some View {
-    Image(systemName: direction.imageName)
-      .font(.system(size: 16))
-      .foregroundStyle(isEnabled ? Color.whiteDefault : Color.textBrighter30)
-      .frame(width: 44, height: 44)
-      .contentShape(Rectangle())
-      .tapFeedback {
-        onTap(direction)
-      }
-      .disabled(!isEnabled)
+    Button {
+      onTap(direction)
+    } label: {
+      Image(systemName: direction.imageName)
+        .font(.system(size: 16))
+        .foregroundStyle(isEnabled ? Color.whiteDefault : Color.textBrighter30)
+        .frame(width: 44, height: 44)
+        .contentShape(Rectangle())
+        .disabled(!isEnabled)
+    }
+    .buttonStyle(TapFeedbackButtonStyle())
   }
 }
 
