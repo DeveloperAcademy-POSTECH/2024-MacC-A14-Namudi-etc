@@ -106,17 +106,21 @@ private struct FixedExpenseListView: View {
       } else {
         List {
           ForEach(fixedExpenses, id: \.id) { item in
-            fixedExpensesRow(for: item)
-              .tapFeedback(tappedBackgroundColor: .clear) {
-                self.selectedItem = item
-                coordinator.presentFixedExpenseManageSheet(
-                  day: item.day,
-                  name: item.name,
-                  amount: item.price.decimalWithWon
-                ) { day, name, price in
-                  saveFixedExpense(day: day, name: name, price: price)
-                }
+            Button {
+              self.selectedItem = item
+              coordinator.presentFixedExpenseManageSheet(
+                day: item.day,
+                name: item.name,
+                amount: item.price.decimalWithWon
+              ) { day, name, price in
+                saveFixedExpense(day: day, name: name, price: price)
               }
+            } label: {
+              fixedExpensesRow(for: item)
+            }
+            .buttonStyle(TapFeedbackButtonStyle(
+              haptic: .tap
+            ))
           }
           .onDelete(perform: removeList)
         }
@@ -151,6 +155,9 @@ private struct FixedExpenseListView: View {
         Image(systemName: "plus")
           .frame(width: 30, height: 21)
       }
+      .buttonStyle(TapFeedbackButtonStyle(
+        haptic: .tap
+      ))
     }
   }
   

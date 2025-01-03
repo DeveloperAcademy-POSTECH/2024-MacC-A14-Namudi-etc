@@ -14,10 +14,14 @@ struct HelpButton: View {
   let buttonColor: Color
   
   var body: some View {
-    Image(systemName: "questionmark.circle")
-      .foregroundStyle(buttonColor)
-      .tapFeedback {
-        infoBubbleVisible.toggle()
-      }
+    Button {
+      infoBubbleVisible.toggle()
+    } label: {
+      Image(systemName: "questionmark.circle")
+        .foregroundStyle(buttonColor)
+    }
+    .buttonStyle(TapFeedbackButtonStyle(
+      haptic: .none
+    ))
   }
 }

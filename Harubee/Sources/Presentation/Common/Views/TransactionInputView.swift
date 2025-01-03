@@ -112,37 +112,39 @@ private struct TransactionBodyItemView: View {
   @Binding var transactionFocusType: TransactionFocusType
   
   var body: some View {
-    HStack(spacing: 9) {
-      TransactionItemButton(
-        title: "수입",
-        amount: income.numberFormat
-      )
-      .overlay(
-        RoundedRectangle(cornerRadius: 5)
-          .stroke(
-            Color.mainBright,
-            lineWidth: transactionFocusType == .income
-            ? 2 : 0
-          )
-      )
-      .tapFeedback(tappedBackgroundColor: .clear) {
-        transactionFocusType = .income
+    Button {
+      transactionFocusType = .income
+    } label: {
+      HStack(spacing: 9) {
+        TransactionItemButton(
+          title: "수입",
+          amount: income.numberFormat
+        )
+        .overlay(
+          RoundedRectangle(cornerRadius: 5)
+            .stroke(
+              Color.mainBright,
+              lineWidth: transactionFocusType == .income
+              ? 2 : 0
+            )
+        )
       }
       
-      TransactionItemButton(
-        title: "지출",
-        amount: expense.numberFormat
-      )
-      .overlay(
-        RoundedRectangle(cornerRadius: 5)
-          .stroke(
-            Color.mainBright,
-            lineWidth: transactionFocusType == .expense
-            ? 2 : 0
-          )
-      )
-      .tapFeedback(tappedBackgroundColor: .clear) {
+      Button {
         transactionFocusType = .expense
+      } label: {
+        TransactionItemButton(
+          title: "지출",
+          amount: expense.numberFormat
+        )
+        .overlay(
+          RoundedRectangle(cornerRadius: 5)
+            .stroke(
+              Color.mainBright,
+              lineWidth: transactionFocusType == .expense
+              ? 2 : 0
+            )
+        )
       }
     }
   }

@@ -37,29 +37,35 @@ struct MainColorBottomButton: View {
   }
   
   var body: some View {
-    HStack {
-      Text(title)
-        .font(.pretendardSemibold_18)
-        .foregroundStyle(
-          isEnabled
-          ? foregroundColor
-          : Color.whiteDeep
-        )
-        .padding(.vertical, 20)
-    }
-    .frame(maxWidth: .infinity)
-    .background(
-      isEnabled
-      ? backgroundColor
-      : Color.main30
-    )
-    .clipShape(RoundedRectangle(cornerRadius: 10))
-    .tapFeedback(haptic: .none) {
+    Button {
       action()
+    } label: {
+      HStack {
+        Text(title)
+          .font(.pretendardSemibold_18)
+          .foregroundStyle(
+            isEnabled
+            ? foregroundColor
+            : Color.whiteDeep
+          )
+          .padding(.vertical, 20)
+      }
+      .frame(maxWidth: .infinity)
+      .background(
+        isEnabled
+        ? backgroundColor
+        : Color.main30
+      )
+      .clipShape(RoundedRectangle(cornerRadius: 10))
+      .padding(.horizontal, 16)
+      .padding(.bottom, 9)
     }
     .disabled(!isEnabled)
-    .padding(.horizontal, 16)
-    .padding(.bottom, 9)
+    .buttonStyle(
+      TapFeedbackButtonStyle(
+        haptic: title == "저장하기" ? .success : .soft
+      )
+    )
   }
 }
 
