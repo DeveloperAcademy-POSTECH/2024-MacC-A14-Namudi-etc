@@ -38,16 +38,17 @@ struct NavigationBarStyleModifier<ToolbarItems: ToolbarContent>: ViewModifier {
         
         if (!style.backTitle.isEmpty) || (style == .onboarding) {
           ToolbarItem(placement: .navigationBarLeading) {
-            HStack(spacing: 4) {
-              Image(systemName: "chevron.left")
-                .font(.sfPro(size: 17))
-                .fontWeight(.semibold)
-              Text(style.backTitle)
-                .font(.pretendardMedium_18)
-            }
-            .foregroundStyle(style.tintColor)
-            .tapFeedback(haptic: .none) {
+            Button {
               dismiss()
+            } label: {
+              HStack(spacing: 4) {
+                Image(systemName: "chevron.left")
+                  .font(.sfPro(size: 17))
+                  .fontWeight(.semibold)
+                Text(style.backTitle)
+                  .font(.pretendardMedium_18)
+              }
+              .foregroundStyle(style.tintColor)
             }
           }
         }

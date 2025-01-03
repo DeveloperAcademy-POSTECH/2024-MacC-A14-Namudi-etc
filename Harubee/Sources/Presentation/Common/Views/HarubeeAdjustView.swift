@@ -194,21 +194,22 @@ private struct HarubeeAdjustField: View {
   }
   
   private var resetHarubeeButton: some View {
-    HStack(spacing: 3) {
-      Image(systemName: "arrow.clockwise")
-        .font(.pretendardSemibold_14)
-        .offset(y: -1)
-      Text("기본 하루비로 변경")
-        .font(.pretendardMedium_14)
-    }
-    .foregroundStyle(.main)
-    .padding(.horizontal, 8)
-    .padding(.vertical, 6)
-    .background(.whiteDeep)
-    .clipShape(RoundedRectangle(cornerRadius: 5))
-    .tapFeedback {
+    Button {
       viewModel.send(.resetButtonTapped)
       self.isAlert = true
+    } label: {
+      HStack(spacing: 3) {
+        Image(systemName: "arrow.clockwise")
+          .font(.pretendardSemibold_14)
+          .offset(y: -1)
+        Text("기본 하루비로 변경")
+          .font(.pretendardMedium_14)
+      }
+      .foregroundStyle(.main)
+      .padding(.horizontal, 8)
+      .padding(.vertical, 6)
+      .background(.whiteDeep)
+      .clipShape(RoundedRectangle(cornerRadius: 5))
     }
   }
 }

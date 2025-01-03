@@ -192,7 +192,7 @@ private struct NumberKeypadButton: View {
       .contentShape(Rectangle())
     }
     .buttonStyle(TapFeedbackButtonStyle(
-      tappedBackgroundColor: .textBright.opacity(0.3),
+      tappedBackgroundColor: .textBright.opacity(0.7),
       cornerRadius: 12
     ))
   }

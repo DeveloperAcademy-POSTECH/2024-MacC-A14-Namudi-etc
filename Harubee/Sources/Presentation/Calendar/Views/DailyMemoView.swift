@@ -84,6 +84,12 @@ struct DailyMemoView: View {
           Color.main.opacity(isEmptyMemo ? 0.3 : 1)
         )
     }
+    .buttonStyle(
+      TapFeedbackButtonStyle(
+        scale: 1.0,
+        haptic: .success
+      )
+    )
     .disabled(isEmptyMemo)
   }
 }

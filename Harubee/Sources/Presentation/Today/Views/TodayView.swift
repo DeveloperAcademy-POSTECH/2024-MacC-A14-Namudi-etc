@@ -89,17 +89,10 @@ struct TodayView: View {
   @ToolbarContentBuilder
   private var toolbarItems: some ToolbarContent {
     ToolbarItem(placement: .topBarTrailing) {
-      Button {
-        isInfoBubbleVisible.toggle()
-      } label: {
-        Image(systemName: "questionmark.circle")
-          .font(Font.system(size: 18, weight: .regular))
-          .foregroundStyle(Color.whiteDefault)
-          .padding(.trailing, 8)
-      }
-      .buttonStyle(TapFeedbackButtonStyle(
-        haptic: .none
-      ))
+      HelpButton(
+        infoBubbleVisible: $isInfoBubbleVisible,
+        buttonColor: .whiteDefault
+      )
     }
     
     ToolbarItem(placement: .topBarTrailing) {
@@ -590,6 +583,7 @@ private struct CalendarStreakView: View {
     .padding(.top, 10)
     .contentShape(Rectangle())
     .buttonStyle(TapFeedbackButtonStyle(
+      tappedBackgroundColor: .textBright.opacity(0.5),
       haptic: .tap
     ))
   }

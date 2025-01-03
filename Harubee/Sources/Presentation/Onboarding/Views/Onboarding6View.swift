@@ -211,10 +211,13 @@ private struct OnboardingFooterView: View {
         }
         .frame(maxWidth: .infinity)
         .background(Color.whiteDefault)
+        .clipShape(
+          RoundedRectangle(cornerRadius: 10)
+        )
       }
-      .clipShape(
-        RoundedRectangle(cornerRadius: 10)
-      )
+      .buttonStyle(TapFeedbackButtonStyle(
+        haptic: .success
+      ))
       .padding(.top, 10)
       .padding(.bottom, 9)
       .padding(.horizontal, 16)
