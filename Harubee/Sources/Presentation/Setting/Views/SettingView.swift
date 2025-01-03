@@ -151,6 +151,9 @@ private struct DataResetView: View {
         .font(.pretendardSemibold_18)
       }
       .frame(maxWidth: .infinity, alignment: .leading)
+      .buttonStyle(TapFeedbackButtonStyle(
+        haptic: .warning
+      ))
     }
     .alert(
       "데이터를 초기화 하시겠어요?",
