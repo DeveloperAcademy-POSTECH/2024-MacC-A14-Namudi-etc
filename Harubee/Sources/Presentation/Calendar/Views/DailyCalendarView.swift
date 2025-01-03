@@ -156,44 +156,48 @@ private struct HarubeeSection: View {
   let onEdit: () -> Void
   
   var body: some View {
-    ZStack {
-      RoundedRectangle(cornerRadius: 5)
-        .stroke(
-          budget.date >= Date().formattedDate ? Color.mainBright : Color.textBrighter,
-          lineWidth: 1
-        )
-        .frame(height: 53)
-      
-      HStack(spacing: 0) {
-        Text(budget.date.isToday ? "오늘의 하루비" : "이 날의 하루비")
-          .font(.pretendardSemibold_16)
-          .foregroundStyle(Color.textBlack)
-        
-        Spacer()
-        
-        Text("\(budget.harubee ?? defaultHarubee)원")
-          .font(.pretendardSemibold_18)
-          .foregroundStyle(
-            budget.date >= Date().formattedDate
-            ? Color.main
-            : Color.textBlack
-          )
-          .frame(maxWidth: .infinity, alignment: .trailing)
-          .padding(.trailing, 3)
-        
-        if budget.date >= Date().formattedDate {
-          Image(systemName: "pencil")
-            .font(.sfPro(size: 16))
-            .foregroundStyle(Color.mainBright)
-        }
-      }
-      .padding(.horizontal, 14)
-    }
-    .tapFeedback {
+    Button {
       onEdit()
+    } label: {
+      ZStack {
+        RoundedRectangle(cornerRadius: 5)
+          .stroke(
+            budget.date >= Date().formattedDate ? Color.mainBright : Color.textBrighter,
+            lineWidth: 1
+          )
+          .frame(height: 53)
+        
+        HStack(spacing: 0) {
+          Text(budget.date.isToday ? "오늘의 하루비" : "이 날의 하루비")
+            .font(.pretendardSemibold_16)
+            .foregroundStyle(Color.textBlack)
+          
+          Spacer()
+          
+          Text("\(budget.harubee ?? defaultHarubee)원")
+            .font(.pretendardSemibold_18)
+            .foregroundStyle(
+              budget.date >= Date().formattedDate
+              ? Color.main
+              : Color.textBlack
+            )
+            .frame(maxWidth: .infinity, alignment: .trailing)
+            .padding(.trailing, 3)
+          
+          if budget.date >= Date().formattedDate {
+            Image(systemName: "pencil")
+              .font(.sfPro(size: 16))
+              .foregroundStyle(Color.mainBright)
+          }
+        }
+        .padding(.horizontal, 14)
+      }
+      .padding(.horizontal, 16)
     }
     .disabled(budget.date < Date().formattedDate)
-    .padding(.horizontal, 16)
+    .buttonStyle(TapFeedbackButtonStyle(
+      haptic: .tap
+    ))
   }
 }
 
@@ -253,25 +257,29 @@ private struct TransactionCard: View {
   let action: () -> Void
   
   var body: some View {
-    ZStack {
-      RoundedRectangle(cornerRadius: 8)
-        .fill(style.backgroundColor)
-      
-      VStack(spacing: 16) {
-        Text(title)
-          .font(.pretendardSemibold_16)
-          .frame(maxWidth: .infinity, alignment: .leading)
-        
-        Text("\(amount?.formatted(.number) ?? "- ")원")
-          .font(.pretendardSemibold_18)
-          .frame(maxWidth: .infinity, alignment: .trailing)
-      }
-      .padding(.horizontal, 14)
-      .foregroundStyle(style.textColor)
-    }
-    .tapFeedback {
+    Button {
       action()
+    } label: {
+      ZStack {
+        RoundedRectangle(cornerRadius: 8)
+          .fill(style.backgroundColor)
+        
+        VStack(spacing: 16) {
+          Text(title)
+            .font(.pretendardSemibold_16)
+            .frame(maxWidth: .infinity, alignment: .leading)
+          
+          Text("\(amount?.formatted(.number) ?? "- ")원")
+            .font(.pretendardSemibold_18)
+            .frame(maxWidth: .infinity, alignment: .trailing)
+        }
+        .padding(.horizontal, 14)
+        .foregroundStyle(style.textColor)
+      }
     }
+    .buttonStyle(TapFeedbackButtonStyle(
+      haptic: .tap
+    ))
   }
 }
 
@@ -349,24 +357,30 @@ private struct MemoSection: View {
           
           Spacer()
           
-          HStack {
-            Image(systemName: "plus")
-              .frame(width: 30)
-              .memoInfoBubble($infoBubbleVisible)
-          }
-          .frame(width: 44, height: 21)
-          .tapFeedback {
+          Button {
             onAdd()
+          } label: {
+            HStack {
+              Image(systemName: "plus")
+                .frame(width: 30)
+                .memoInfoBubble($infoBubbleVisible)
+            }
+            .frame(width: 44, height: 21)
           }
+          .buttonStyle(TapFeedbackButtonStyle(
+            haptic: .tap
+          ))
         }
         .zIndex(1)
         .foregroundStyle(Color.textBlack)
+        .padding(.leading, 22)
         
         Group {
           if memos.isEmpty {
             Text("입력된 메모가 없어요")
               .font(.pretendardMedium_16)
               .foregroundStyle(Color.textBlack30)
+              .padding(.leading, 22)
               .padding(.vertical, 8)
           } else {
             MemoList(
@@ -378,7 +392,6 @@ private struct MemoSection: View {
         }
       }
       .padding(.top, 20)
-      .padding(.horizontal, 22)
     }
   }
 }
@@ -391,30 +404,31 @@ private struct MemoList: View {
   var body: some View {
     List {
       ForEach(memos, id: \.self) { memo in
-        Text(memo)
-          .font(.pretendardMedium_16)
-          .foregroundStyle(Color.textBlack)
-          .listRowInsets(
-            EdgeInsets(top: 8, leading: 0, bottom: 8, trailing: 0)
-          )
-          .swipeActions(edge: .trailing, allowsFullSwipe: true) {
-            Button(role: .destructive) {
-              onDelete(memo)
-            } label: {
-              Text("삭제")
-                .font(.pretendardMedium_14)
+        Button {
+          onEdit(memo)
+        } label: {
+          Text(memo)
+            .font(.pretendardMedium_16)
+            .foregroundStyle(Color.textBlack)
+            .listRowInsets(
+              EdgeInsets(top: 8, leading: 0, bottom: 8, trailing: 0)
+            )
+            .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+              Button(role: .destructive) {
+                onDelete(memo)
+              } label: {
+                Text("삭제")
+                  .font(.pretendardMedium_14)
+              }
+              
+              Button {
+                onEdit(memo)
+              } label: {
+                Text("수정")
+                  .font(.pretendardMedium_14)
+              }
             }
-            
-            Button {
-              onEdit(memo)
-            } label: {
-              Text("수정")
-                .font(.pretendardMedium_14)
-            }
-          }
-          .tapFeedback {
-            onEdit(memo)
-          }
+        }
       }
     }
     .listStyle(.plain)

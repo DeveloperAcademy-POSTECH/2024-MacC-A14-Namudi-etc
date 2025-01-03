@@ -9,9 +9,9 @@ import SwiftUI
 
 struct TapFeedbackButtonStyle: ButtonStyle {
   // MARK: - Properties
-  var scale: CGFloat = 0.95
-  var duration: TimeInterval = 0.1
-  var animation: Animation = .spring(response: 0.2, dampingFraction: 0.6)
+  var scale: CGFloat = 0.9
+  var duration: TimeInterval = 0
+  var animation: Animation = .easeOut(duration: 0.5)
   var backgroundColor: Color = .clear
   var tappedBackgroundColor: Color = .clear
   var cornerRadius: CGFloat = 8
