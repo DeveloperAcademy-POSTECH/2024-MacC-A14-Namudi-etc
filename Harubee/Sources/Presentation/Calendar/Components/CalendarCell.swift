@@ -20,23 +20,32 @@ struct CalendarCell: View {
   
   // MARK: - UI Components
   var body: some View {
-    VStack(spacing: 0) {
-      if isOnboardingPreviousDay {
-        dateLabel
-        Spacer()
-      }
-      else {
-        dateLabel
-        iconSection
-        amountLabel
-      }
-    }
-    .frame(height: 90)
-    .frame(maxWidth: .infinity)
-    .background(cellBackground)
-    .tapFeedback {
+    Button {
       onSelect(date)
+    } label: {
+      ZStack {
+        Rectangle()
+          .fill(Color.clear)
+          .frame(maxWidth: .infinity)
+        
+        VStack(spacing: 0) {
+          dateLabel
+          if !isOnboardingPreviousDay {
+            iconSection
+            amountLabel
+          }
+          Spacer()
+        }
+      }
     }
+    .buttonStyle(
+      TapFeedbackButtonStyle(
+        tappedBackgroundColor: .textBright.opacity(0.1),
+        haptic: .tap
+      )
+    )
+    .frame(height: 90)
+    .background(cellBackground)
     .padding(.vertical, 10)
     .disabled(isOnboardingPreviousDay)
   }
