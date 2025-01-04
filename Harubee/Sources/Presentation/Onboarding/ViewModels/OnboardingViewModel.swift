@@ -64,6 +64,8 @@ final class OnboardingViewModel {
       self.state.currentBalance = currentBalance
       
     case .finishOnboardingSetting:
+      budgetUseCase.setIncomeDay(day: self.state.incomeStartDate.day)
+      
       let _ = try? budgetUseCase.createSalaryBudgetFromOnboarding(
         startDate: self.state.incomeStartDate,
         endDate: self.state.incomeEndDate,
@@ -71,8 +73,6 @@ final class OnboardingViewModel {
         fixedIncome: self.state.incomeAmount ?? 0,
         fixedExpenses: self.state.fixedExpenses
       )
-      
-      budgetUseCase.setIncomeDay(day: self.state.incomeStartDate.day)
     }
     
     self.state.averageHarubee = self.calculateAverageHarubee()
