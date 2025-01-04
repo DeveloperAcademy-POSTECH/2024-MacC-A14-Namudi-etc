@@ -16,7 +16,7 @@ struct HarubeeAdjustView: View {
   @State private var harubee: String // 변경할 하루비
   @State private var isUpdated: Bool = false // 하루비가 변경되었는지 여부 확인
   
-  @State private var isFocused: Bool = true
+  @State private var isFocused: Bool = false
   
   private let beforeHarubee: Int // 변경 전 하루비
   
