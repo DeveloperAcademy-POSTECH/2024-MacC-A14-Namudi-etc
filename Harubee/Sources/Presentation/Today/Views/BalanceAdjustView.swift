@@ -16,7 +16,7 @@ struct BalanceAdjustView: View {
   @State private var realBalance: String // 변경할 실제 잔액
   @State private var isUpdated: Bool = false // 잔액이 변경되었는지 여부 확인
   
-  @State private var isFocused: Bool = true
+  @State private var isFocused: Bool = false
   
   private let beforeRealBalance: Int // 변경 전 실제 잔액
   
