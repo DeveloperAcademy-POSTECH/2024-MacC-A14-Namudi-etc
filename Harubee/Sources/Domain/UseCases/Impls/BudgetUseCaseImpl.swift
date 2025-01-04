@@ -467,6 +467,7 @@ final class BudgetUseCaseImpl: BudgetUseCase {
     
     // 7. 이후의 SalaryBudget 업데이트
     for afterSalaryBudget in afterSalaryBudgets {
+      
       // 7-1. 새로운 잔액 계산
       let newBalance = afterSalaryBudget.fixedIncome - totalExpenses
       
