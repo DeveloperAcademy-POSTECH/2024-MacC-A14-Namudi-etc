@@ -20,7 +20,7 @@ struct TransactionInputView: View {
   @State private var transactionFocusType: TransactionFocusType
   
   @State private var isUpdated: Bool = false
-  @State private var isFocused: Bool = true
+  @State private var isFocused: Bool = false
   
   @State private var expense: String
   @State private var income: String
@@ -55,7 +55,8 @@ struct TransactionInputView: View {
         TransactionBodyItemView(
           expense: $expense,
           income: $income,
-          transactionFocusType: $transactionFocusType
+          transactionFocusType: $transactionFocusType,
+          isFocused: $isFocused
         )
         .padding(.top, 42)
         .padding(.horizontal, 16)
@@ -110,6 +111,7 @@ private struct TransactionBodyItemView: View {
   @Binding var expense: String
   @Binding var income: String
   @Binding var transactionFocusType: TransactionFocusType
+  @Binding var isFocused: Bool
   
   var body: some View {
     Button {
