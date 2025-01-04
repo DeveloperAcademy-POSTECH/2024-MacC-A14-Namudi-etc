@@ -135,7 +135,6 @@ private struct ExpectedBalanceContentView: View {
 
 // MARK: - BalanceAdjustField
 private struct BalanceAdjustField: View {
-  @Environment(\.dismiss) private var dismiss
   
   let viewModel: BalanceAdjustViewModel
   @Binding var realBalance: String
