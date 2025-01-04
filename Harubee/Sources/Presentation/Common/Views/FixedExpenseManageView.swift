@@ -70,7 +70,7 @@ struct FixedExpenseManageView: View {
           title: "저장하기",
           isEnabled: $isEnabled
         ) {
-          self.dismiss()
+          self.dismissSheet()
         }
       }
       .ignoresSafeArea(.keyboard)
@@ -123,7 +123,7 @@ struct FixedExpenseManageView: View {
     }
   }
   
-  private func dismiss() {
+  private func dismissSheet() {
     switch rootViewSwitcher.root {
     case .onboarding:
       onboardingCoordinator.dismissFixedExpenseManageSheet(
