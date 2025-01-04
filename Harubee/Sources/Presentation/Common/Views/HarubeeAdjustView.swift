@@ -143,7 +143,7 @@ private struct DefaultHarubeeContentView: View {
 
 // MARK: - HarubeeAdjustField
 private struct HarubeeAdjustField: View {
-  @Environment(\.dismiss) private var dismiss
+  @Environment(MainCoordinator.self) private var coordinator
   
   let viewModel: HarubeeAdjustViewModel
   @Binding var harubee: String
@@ -173,7 +173,7 @@ private struct HarubeeAdjustField: View {
       isPresented: $isAlert) {
         Button {
           viewModel.send(.resetDoneButtonTapped)
-          self.dismiss()
+          coordinator.dismissHarubeeAdjustSheet()
         } label: {
           Text("확인")
         }
