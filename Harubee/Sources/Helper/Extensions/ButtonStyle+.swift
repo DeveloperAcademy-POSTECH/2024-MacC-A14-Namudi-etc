@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct TapFeedbackButtonStyle: ButtonStyle {
+struct CustomButtonStyle: ButtonStyle {
   // MARK: - Properties
   var scale: CGFloat = 0.9
   var duration: TimeInterval = 0

@@ -215,7 +215,7 @@ private struct OnboardingFooterView: View {
           RoundedRectangle(cornerRadius: 10)
         )
       }
-      .buttonStyle(TapFeedbackButtonStyle(
+      .buttonStyle(CustomButtonStyle(
         haptic: .success
       ))
       .padding(.top, 10)

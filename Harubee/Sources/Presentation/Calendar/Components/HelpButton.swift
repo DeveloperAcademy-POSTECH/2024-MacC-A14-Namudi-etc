@@ -20,7 +20,7 @@ struct HelpButton: View {
       Image(systemName: "questionmark.circle")
         .foregroundStyle(buttonColor)
     }
-    .buttonStyle(TapFeedbackButtonStyle(
+    .buttonStyle(CustomButtonStyle(
       haptic: .none
     ))
   }

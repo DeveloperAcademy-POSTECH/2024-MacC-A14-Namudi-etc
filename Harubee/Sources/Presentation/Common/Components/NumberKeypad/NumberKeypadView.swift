@@ -191,7 +191,7 @@ private struct NumberKeypadButton: View {
       .clipShape(RoundedRectangle(cornerRadius: 10))
       .contentShape(Rectangle())
     }
-    .buttonStyle(TapFeedbackButtonStyle(
+    .buttonStyle(CustomButtonStyle(
       tappedBackgroundColor: .textBright.opacity(0.7),
       cornerRadius: 12
     ))

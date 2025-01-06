@@ -151,7 +151,7 @@ private struct DataResetView: View {
         .font(.pretendardSemibold_18)
       }
       .frame(maxWidth: .infinity, alignment: .leading)
-      .buttonStyle(TapFeedbackButtonStyle(
+      .buttonStyle(CustomButtonStyle(
         haptic: .warning
       ))
     }
