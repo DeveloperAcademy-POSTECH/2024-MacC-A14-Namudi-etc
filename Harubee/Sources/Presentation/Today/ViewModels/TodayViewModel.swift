@@ -65,18 +65,23 @@ extension TodayViewModel {
         date: state.todayDate
       )
       
+      // 2. 가져온 SalaryBudget이후에 SalaryBudget이 없다면 생성
+      try budgetUseCase.createNextSalaryBudgetIfNeeded(
+        salaryBudget: salaryBudget
+      )
+      
       initializeState(salaryBudget: salaryBudget)
       
     } catch DomainError.dataNotFound {
       
-      // 2. 없다면 가장 최근 SalaryBudget을 기반으로 새 SalaryBudget 생성
+      // 3. 없다면 가장 최근 SalaryBudget을 기반으로 새 SalaryBudget 생성
       let salaryBudgets = try? budgetUseCase.getAllSalaryBudget()
 
       guard let recentSalaryBudget = salaryBudgets?.max(
         by: { $0.endDate < $1.endDate }
       ) else { return }
       
-      // 3. 새로운 시작일과 종료일 계산
+      // 4. 새로운 시작일과 종료일 계산
       var incomeDay = budgetUseCase.getIncomeDay()
       
       // 온보딩이 끝날 때 수입일을 저장해야하는걸 까먹고 못했습니다..
@@ -92,7 +97,7 @@ extension TodayViewModel {
         anchor: .now
       )
       
-      // 4. 새로운 수입일에 맞춰 고정 지출 날짜 새롭게 계산
+      // 5. 새로운 수입일에 맞춰 고정 지출 날짜 새롭게 계산
       let newFixedExpenses = recentSalaryBudget.fixedExpenses.map {
         let date = Date.convertDateBetweenStartAndEnd(
           start: newStartDate,
@@ -107,7 +112,7 @@ extension TodayViewModel {
         )
       }
       
-      // 5. 새로운 SalaryBudget 생성
+      // 6. 새로운 SalaryBudget 생성
       if let newSalaryBudget = try? budgetUseCase.createSalaryBudget(
         startDate: newStartDate,
         endDate: newEndDate,
