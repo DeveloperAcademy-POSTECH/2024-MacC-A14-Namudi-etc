@@ -118,7 +118,7 @@ private struct FixedExpenseListView: View {
             } label: {
               fixedExpensesRow(for: item)
             }
-            .buttonStyle(TapFeedbackButtonStyle(
+            .buttonStyle(CustomButtonStyle(
               haptic: .tap
             ))
           }
@@ -155,7 +155,7 @@ private struct FixedExpenseListView: View {
         Image(systemName: "plus")
           .frame(width: 30, height: 21)
       }
-      .buttonStyle(TapFeedbackButtonStyle(
+      .buttonStyle(CustomButtonStyle(
         haptic: .tap
       ))
     }

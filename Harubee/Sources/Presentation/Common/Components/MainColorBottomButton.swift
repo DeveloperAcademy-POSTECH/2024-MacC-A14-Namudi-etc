@@ -62,7 +62,7 @@ struct MainColorBottomButton: View {
     }
     .disabled(!isEnabled)
     .buttonStyle(
-      TapFeedbackButtonStyle(
+      CustomButtonStyle(
         haptic: title == "저장하기" ? .success : .soft
       )
     )

@@ -85,7 +85,7 @@ struct DailyMemoView: View {
         )
     }
     .buttonStyle(
-      TapFeedbackButtonStyle(
+      CustomButtonStyle(
         scale: 1.0,
         haptic: .success
       )

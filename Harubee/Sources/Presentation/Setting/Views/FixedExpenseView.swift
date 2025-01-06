@@ -110,7 +110,7 @@ private struct FixedExpenseListView: View {
             } label: {
               fixedExpensesRow(for: item)
             }
-            .buttonStyle(TapFeedbackButtonStyle(
+            .buttonStyle(CustomButtonStyle(
               tappedBackgroundColor: .textBright.opacity(0.1),
               haptic: .tap
             ))
@@ -150,7 +150,7 @@ private struct FixedExpenseListView: View {
       }
       .infoBubble($isInfoBubbleVisible)
       .padding(.trailing, 10)
-      .buttonStyle(TapFeedbackButtonStyle(
+      .buttonStyle(CustomButtonStyle(
         haptic: .tap
       ))
     }

@@ -195,7 +195,7 @@ private struct HarubeeSection: View {
       .padding(.horizontal, 16)
     }
     .disabled(budget.date < Date().formattedDate)
-    .buttonStyle(TapFeedbackButtonStyle(
+    .buttonStyle(CustomButtonStyle(
       haptic: .tap
     ))
   }
@@ -277,7 +277,7 @@ private struct TransactionCard: View {
         .foregroundStyle(style.textColor)
       }
     }
-    .buttonStyle(TapFeedbackButtonStyle(
+    .buttonStyle(CustomButtonStyle(
       haptic: .tap
     ))
   }
@@ -367,7 +367,7 @@ private struct MemoSection: View {
             }
             .frame(width: 44, height: 21)
           }
-          .buttonStyle(TapFeedbackButtonStyle(
+          .buttonStyle(CustomButtonStyle(
             haptic: .tap
           ))
         }

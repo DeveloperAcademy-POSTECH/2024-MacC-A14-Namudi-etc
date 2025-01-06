@@ -169,7 +169,7 @@ private struct FixedIncomeBodyView: View {
               .foregroundStyle(Color.textBlack30)
           }
         }
-        .buttonStyle(TapFeedbackButtonStyle(
+        .buttonStyle(CustomButtonStyle(
           haptic: .none
         ))
       }

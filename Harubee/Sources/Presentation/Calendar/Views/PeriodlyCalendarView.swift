@@ -183,7 +183,7 @@ private struct PeriodDirectionButton: View {
         .contentShape(Rectangle())
         .disabled(!isEnabled)
     }
-    .buttonStyle(TapFeedbackButtonStyle())
+    .buttonStyle(CustomButtonStyle())
   }
 }
 

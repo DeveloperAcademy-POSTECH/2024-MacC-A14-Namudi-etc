@@ -105,7 +105,7 @@ struct TodayView: View {
           .font(Font.system(size: 18, weight: .regular))
           .foregroundStyle(Color.whiteDefault)
       }
-      .buttonStyle(TapFeedbackButtonStyle(
+      .buttonStyle(CustomButtonStyle(
         haptic: .none
       ))
     }
@@ -186,7 +186,7 @@ private struct Honeycomb: View {
                   hexgonSize: hexgonSize
                 )
               }
-              .buttonStyle(TapFeedbackButtonStyle(
+              .buttonStyle(CustomButtonStyle(
                 haptic: .tap
               ))
             } else if row == 2 && col == 1 {
@@ -204,7 +204,7 @@ private struct Honeycomb: View {
                   hexgonSize: hexgonSize
                 )
               }
-              .buttonStyle(TapFeedbackButtonStyle(
+              .buttonStyle(CustomButtonStyle(
                 haptic: .tap
               ))
             } else {
@@ -582,7 +582,7 @@ private struct CalendarStreakView: View {
     }
     .padding(.top, 10)
     .contentShape(Rectangle())
-    .buttonStyle(TapFeedbackButtonStyle(
+    .buttonStyle(CustomButtonStyle(
       tappedBackgroundColor: .textBright.opacity(0.5),
       haptic: .tap
     ))

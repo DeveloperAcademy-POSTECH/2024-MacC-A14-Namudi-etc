@@ -37,7 +37,7 @@ struct CalendarBottomFAB: View {
             .fill(backgroundColor)
         )
       }
-      .buttonStyle(TapFeedbackButtonStyle(
+      .buttonStyle(CustomButtonStyle(
         haptic: .none
       ))
       .padding(.bottom, 14)
