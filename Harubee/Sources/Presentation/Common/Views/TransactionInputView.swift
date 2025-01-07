@@ -20,7 +20,7 @@ struct TransactionInputView: View {
   @State private var transactionFocusType: TransactionFocusType
   
   @State private var isUpdated: Bool = false
-  @State private var isFocused: Bool = false
+  @State private var isFocused: Bool = true
   
   @State private var expense: String
   @State private var income: String
