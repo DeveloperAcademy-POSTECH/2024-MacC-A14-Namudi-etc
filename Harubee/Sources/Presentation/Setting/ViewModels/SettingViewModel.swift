@@ -29,6 +29,7 @@ final class SettingViewModel {
   private(set) var state: State
   
   private let budgetUseCase: BudgetUseCase
+  private let appSettingsUseCase: AppSettingsUseCase
   private var harubeeNotificationTime: Date = Date()
   private var expenseNotificationTime: Date = Date()
   private var harubeeNotificationStatus: Bool = false
@@ -36,9 +37,11 @@ final class SettingViewModel {
   
   init(
     budgetUseCase: BudgetUseCase,
+    appSettingsUseCase: AppSettingsUseCase,
     salaryBudget: SalaryBudget
   ) {
     self.budgetUseCase = budgetUseCase
+    self.appSettingsUseCase = appSettingsUseCase
     self.state = State(salaryBudget: salaryBudget)
     fetchNotificationData()
   }
@@ -76,7 +79,7 @@ final class SettingViewModel {
     switch notificationType {
     case .harubee:
       // 알림 시간 저장
-      budgetUseCase.setTodayHarubeeNotificationTime(time: time)
+      appSettingsUseCase.setTodayHarubeeNotificationTime(time: time)
       // 토글이 On이라면
       if harubeeNotificationStatus {
         // 알림 등록
@@ -86,7 +89,7 @@ final class SettingViewModel {
       }
     case .expense:
       // 알림 시간 저장
-      budgetUseCase.setExpenseNotificationTime(time: time)
+      appSettingsUseCase.setExpenseNotificationTime(time: time)
       // 토글이 On이라면
       if expenseNotificationStatus {
         // 알림 등록
@@ -103,7 +106,7 @@ final class SettingViewModel {
   ) {
     switch notificationType {
     case .harubee:
-      budgetUseCase.setTodayHarubeeNotificationStatus(status)
+      appSettingsUseCase.setTodayHarubeeNotificationStatus(status)
       if status {
         NotificationManager.shared.scheduleNotification(
           time: harubeeNotificationTime,
@@ -115,7 +118,7 @@ final class SettingViewModel {
         )
       }
     case .expense:
-      budgetUseCase.setExpenseNotificationStatus(status)
+      appSettingsUseCase.setExpenseNotificationStatus(status)
       if status {
         NotificationManager.shared.scheduleNotification(
           time: expenseNotificationTime,
@@ -131,10 +134,10 @@ final class SettingViewModel {
   
   private func fetchNotificationData() {
 
-    let harubeeNotificationTime = budgetUseCase.getTodayHarubeeNotificationTime()
-    let expenseNotificationTime = budgetUseCase.getExpenseNotificationTime()
-    let harubeeNotificationStatus = budgetUseCase.getTodayHarubeeNotificationStatus()
-    let expenseNotificationStatus = budgetUseCase.getExpenseNotificationStatus()
+    let harubeeNotificationTime = appSettingsUseCase.getTodayHarubeeNotificationTime()
+    let expenseNotificationTime = appSettingsUseCase.getExpenseNotificationTime()
+    let harubeeNotificationStatus = appSettingsUseCase.getTodayHarubeeNotificationStatus()
+    let expenseNotificationStatus = appSettingsUseCase.getExpenseNotificationStatus()
     
     self.harubeeNotificationTime = harubeeNotificationTime ?? Date()
     self.expenseNotificationTime = expenseNotificationTime ?? Date()

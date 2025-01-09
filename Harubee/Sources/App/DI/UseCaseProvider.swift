@@ -22,4 +22,10 @@ final class UseCaseProvider {
       userDefaultsRepository: repositoryProvider.userDefaltsRepository
     )
   }()
+  
+  lazy var appSettingsUseCase: AppSettingsUseCase = {
+    AppSettingsUseCaseImpl(
+      userDefaultsRepository: repositoryProvider.userDefaltsRepository
+    )
+  }()
 }

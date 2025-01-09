@@ -80,6 +80,7 @@ final class DIContainer {
   func makeSettingViewModel(salaryBudget: SalaryBudget) -> SettingViewModel {
     SettingViewModel(
       budgetUseCase: useCaseProvider.budgetUseCase,
+      appSettingsUseCase: useCaseProvider.appSettingsUseCase,
       salaryBudget: salaryBudget
     )
   }
