@@ -10,7 +10,7 @@ import SwiftUI
 struct CustomButtonStyle: ButtonStyle {
   // MARK: - Properties
   var scale: CGFloat = 0.9
-  var animation: Animation = .easeOut(duration: 0.5)
+  var animation: Animation = .easeOut(duration: 0.3)
   var backgroundColor: Color = .clear
   var tappedBackgroundColor: Color = .clear
   var cornerRadius: CGFloat = 8
