@@ -50,11 +50,10 @@ struct WeeklyCalendar: View {
   }
   
   private var weeks: [[Date]] {
-    let calendar = Calendar.current
-    let days = calendar.dateComponents([.day], from: budget.startDate, to: budget.endDate).day ?? 0
+    let days = budget.startDate.daysUntil(budget.endDate)
     
     let allDates = (0...days).compactMap {
-      calendar.date(byAdding: .day, value: $0, to: budget.startDate)
+      budget.startDate.adding(by: .day, value: $0)
     }
     return allDates.chunked(into: daysInWeek)
   }
@@ -82,7 +81,7 @@ private struct WeekRow: View {
   var body: some View {
     GeometryReader { geometry in
       HStack(spacing: layout.cellSpacing) {
-        ForEach(dates, id: \ .timeIntervalSince1970) { date in
+        ForEach(dates, id: \.timeIntervalSince1970) { date in
           WeekDayCell(
             date: date,
             isSelected: Calendar.current.isDate(date, equalTo: selectedDate, toGranularity: .day),
