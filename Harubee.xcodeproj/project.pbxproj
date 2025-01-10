@@ -71,6 +71,7 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Resources/Colors.xcassets,
+				Resources/DSColors.xcassets,
 				"Resources/Fonts/Pretendard-Medium.ttf",
 				"Resources/Fonts/Pretendard-SemiBold.ttf",
 				Resources/Images.xcassets,
