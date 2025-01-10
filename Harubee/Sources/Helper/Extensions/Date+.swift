@@ -116,8 +116,8 @@ extension Date {
 // MARK: - Period Operator
 extension Date {
   /// 수입일을 기준으로 이번 월급 기간을 계산해줍니다.
-  /// - Parameter from: 수입일
-  /// - Parameter anchor: 기준 날짜
+  /// - Parameter incomeDay: 수입일
+  /// - Parameter date: 기준 날짜
   /// - Returns: 이번 월급 기간의 시작 및 종료 날짜
   static func calculateStartAndEndDate(
     from incomeDay: Int,
@@ -130,6 +130,12 @@ extension Date {
     return (incomeStartDate, incomeEndDate)
   }
   
+  /// 특정 날(Day)을 시작, 종료 날짜 사이에 존재하는 날짜로 변환합니다
+  /// - Parameters:
+  ///   - start: 시작 날짜
+  ///   - end: 종료 날짜
+  ///   - day: 특정 날(Day)
+  /// - Returns: 시작, 종료 날짜 사이의 날짜
   static func convertDateBetweenStartAndEnd(
     start: Date,
     end: Date,

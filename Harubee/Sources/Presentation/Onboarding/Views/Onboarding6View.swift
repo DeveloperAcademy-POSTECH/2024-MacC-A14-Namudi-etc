@@ -134,7 +134,8 @@ private struct UserInfoView: View {
       .filter { $0.date > .now.formattedDate }
       .reduce(0) { $0 + $1.price }
     
-    self.remainingDays = (Int(endDate.timeIntervalSince(.now.formattedDate) + 86400.0)) / 86400
+    let today = Date().formattedDate
+    self.remainingDays = today.daysUntil(endDate) + 1
   }
   
   var body: some View {
