@@ -75,14 +75,17 @@ final class BudgetUseCaseImpl: BudgetUseCase {
     let startDate = startDate.formattedDate
     let endDate = endDate.formattedDate
     
-    // 2. 고정 수입에서 고정 지출을 뺀 금액 잔액으로 설정하기
+    // 2. 중복되는 SalaryBudget이 있으면 에러
+    guard try salaryBudgetRepository.readByStartDate(startDate) == nil else { throw DomainError.duplicateData }
+    
+    // 3. 고정 수입에서 고정 지출을 뺀 금액 잔액으로 설정하기
     let initialBalance = calculateInitialBalance(
       current: fixedIncome,
       items: fixedExpenses,
       from: startDate
     )
     
-    // 3. SalaryBudget 생성하기
+    // 4. SalaryBudget 생성하기
     let salaryBudget = initializeSalaryBudget(
       startDate: startDate,
       endDate: endDate,
@@ -90,14 +93,6 @@ final class BudgetUseCaseImpl: BudgetUseCase {
       fixedExpenses: fixedExpenses,
       balance: initialBalance
     )
-    
-    // 4. 중복되는 SalaryBudget이 있는지 찾기
-    let salaryBudgets = try salaryBudgetRepository.readAll()
-    if salaryBudgets.contains(
-      where: { $0.startDate == salaryBudget.startDate }
-    ) {
-      throw DomainError.duplicateData
-    }
     
     // 5. Repository에 저장하기
     salaryBudgetRepository.create(salaryBudget)
@@ -214,23 +209,6 @@ final class BudgetUseCaseImpl: BudgetUseCase {
     }
     return salaryBudget
   }
-  
-  func getSalaryBudget(
-    startDate: Date?
-  ) throws -> SalaryBudget {
-    // 1. date 포멧 변경
-    let targetDate = (startDate ?? Date()).formattedDate
-    
-    // 2. 특정 날짜에 해당하는 SalaryBudget 가져오기
-    guard let salaryBudget = try salaryBudgetRepository.readByStartDate(
-      targetDate
-    ) else {
-      throw DomainError.dataNotFound
-    }
-    
-    return salaryBudget
-  }
-  
   
   // TODO: updateBalance와 updateDefaultHarubee 분리 필요
   func updateBalance(
@@ -697,7 +675,7 @@ final class BudgetUseCaseImpl: BudgetUseCase {
       // salaryBudget의 기본 하루비 업데이트
       let defaultHarubee = self.calculateDefaultHarubee(
         salaryBudget: salaryBudget,
-        anchorDate: dailyBudget.date.addingTimeInterval(86400)
+        anchorDate: dailyBudget.date.adding(by: .day, value: 1)!
       )
       salaryBudget.defaultHarubee = defaultHarubee
       
