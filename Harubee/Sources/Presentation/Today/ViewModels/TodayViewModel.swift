@@ -167,8 +167,8 @@ extension TodayViewModel {
     let calendar = Calendar.current
     let today = state.todayDate
     
-    guard let startDate = calendar.date(byAdding: .day, value: -3, to: today),
-          let endDate = calendar.date(byAdding: .day, value: 3, to: today)
+    guard let startDate = today.adding(by: .day, value: -3),
+          let endDate = today.adding(by: .day, value: 3)
     else {
       return []
     }
@@ -210,11 +210,7 @@ extension TodayViewModel {
           to: nextStartDate
         )!
 
-        let nextSalaryBudgetDays = calendar.dateComponents(
-          [.day],
-          from: nextStartDate,
-          to: nextEndDate
-        ).day!
+        let nextSalaryBudgetDays = nextStartDate.daysUntil(nextEndDate)
         
         let harubee = salaryBudget.fixedIncome / nextSalaryBudgetDays
         
@@ -232,7 +228,7 @@ extension TodayViewModel {
         print("other error: \(error)")
       }
       
-      currentDate = calendar.date(byAdding: .day, value: 1, to: currentDate)!
+      currentDate = currentDate.adding(by: .day, value: 1)!
     }
     
     return weeklyStreaks

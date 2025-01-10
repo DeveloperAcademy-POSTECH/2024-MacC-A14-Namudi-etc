@@ -55,7 +55,9 @@ struct PeriodlyCalendar<CellContent: View>: View {
     var currentDate = startDate
     while currentDate <= endDate {
       dates.append(currentDate)
-      guard let nextDate = calendar.date(byAdding: .day, value: 1, to: currentDate) else { break }
+      guard let nextDate = currentDate.adding(
+        by: .day, value: 1
+      ) else { break }
       currentDate = nextDate
     }
     

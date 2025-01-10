@@ -181,9 +181,9 @@ private struct PeriodDirectionButton: View {
         .foregroundStyle(isEnabled ? .textFixed : .textTertiary30)
         .frame(width: 44, height: 44)
         .contentShape(Rectangle())
-        .disabled(!isEnabled)
     }
     .buttonStyle(CustomButtonStyle())
+    .disabled(!isEnabled)
   }
 }
 

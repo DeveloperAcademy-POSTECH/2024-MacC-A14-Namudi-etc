@@ -71,11 +71,7 @@ final class NotificationManager {
           }
         }
         
-        
-        let calendar = Calendar.current
-        let dateComponents = calendar.dateComponents(
-          [.hour, .minute], from: time
-        )
+        let dateComponents = time.getDateComponents([.hour, .minute])
         
         let trigger = UNCalendarNotificationTrigger(
           dateMatching: dateComponents, repeats: true
