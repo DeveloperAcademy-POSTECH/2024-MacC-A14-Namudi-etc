@@ -75,12 +75,12 @@ final class OnboardingViewModel {
       )
     }
     
-    self.state.averageHarubee = self.calculateAverageHarubee()
+    self.state.averageHarubee = self.getAverageHarubee()
   }
 }
 
-extension OnboardingViewModel {
-  private func calculateAverageHarubee() -> Int {
+private extension OnboardingViewModel {
+  func getAverageHarubee() -> Int {
     let balance = calculateBalance(
       currentBalance: self.state.currentBalance ?? 0,
       fixedExpenses: self.state.fixedExpenses
@@ -94,21 +94,21 @@ extension OnboardingViewModel {
     return Int(averageHarubee)
   }
   
-  private func calculateBalance(
+  func calculateBalance(
     currentBalance: Int,
     fixedExpenses: [TransactionItem]
   ) -> Int {
     let now = Date().formattedDate
-    let totalExpenses = fixedExpenses.filter { $0.date > now }.reduce(0) { $0 + $1.price }
+    let totalExpenses = fixedExpenses
+      .filter { $0.date > now }
+      .reduce(0) { $0 + $1.price }
     return currentBalance - totalExpenses
   }
   
-  private func calculateAverageHarubee(endDate: Date, balance: Int) -> Double {
+  func calculateAverageHarubee(endDate: Date, balance: Int) -> Double {
     let currentDate = Date().formattedDate
+    let remainDays = currentDate.daysUntil(endDate) + 1
     
-    let secondsInDay = 86400.0
-    let remain = endDate.timeIntervalSince(currentDate) / secondsInDay + 1
-    
-    return Double(balance) / remain
+    return Double(balance) / Double(remainDays)
   }
 }

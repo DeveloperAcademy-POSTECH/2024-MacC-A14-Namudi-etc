@@ -65,6 +65,7 @@ extension TodayViewModel {
         date: state.todayDate
       )
       
+      // TODO: 제거하기 (initializeState() 내에서 호출)
       // 2. 가져온 SalaryBudget이후에 SalaryBudget이 없다면 생성
       try budgetUseCase.createNextSalaryBudgetIfNeeded(
         salaryBudget: salaryBudget
