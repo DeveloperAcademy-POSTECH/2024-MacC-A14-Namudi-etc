@@ -61,6 +61,25 @@ extension Date {
     return Calendar.current.date(from: components)?.formattedDate ?? Date().formattedDate
   }
   
+  /// 특정 날짜까지 남은 일수를 구합니다
+  /// - Parameter date: 대상 날짜
+  /// - Returns: 남은 일수
+  func daysUntil(_ date: Date) -> Int {
+    Self.configuredCalendar.dateComponents(
+      [.day],
+      from: self,
+      to: date
+    ).day!
+  }
+  
+  func adding(by component: Calendar.Component, value: Int) -> Date? {
+    Self.configuredCalendar.date(
+      byAdding: component,
+      value: value,
+      to: self
+    )
+  }
+  
   /// Date를 String Format으로 변환합니다
   /// - Parameter dateFormatType: 변환하고 싶은 dateFormat 타입
   /// - Returns: 변환된 String 값
