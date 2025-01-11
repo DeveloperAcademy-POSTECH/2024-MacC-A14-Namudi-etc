@@ -38,6 +38,24 @@ final class SalaryBudgetRepositoryImpl: SalaryBudgetRepository {
     }
   }
   
+  func readAll(after date: Date) throws -> [SalaryBudget] {
+    print("Impl:", #function)
+    
+    let sort = SortDescriptor(\SalaryBudgetDTO.startDate, order: .forward)
+    let predicate = #Predicate<SalaryBudgetDTO> { $0.startDate > date }
+    let descriptor = FetchDescriptor(
+      predicate: predicate,
+      sortBy: [sort]
+    )
+    
+    do {
+      let datas = try modelContext.fetch(descriptor)
+      return datas.map { $0.toEntity() }
+    } catch {
+      throw SwiftDataError.fetchError
+    }
+  }
+  
   func readByTargetDateContaining(_ targetDate: Date) throws -> SalaryBudget? {
     print("Impl:", #function)
     
