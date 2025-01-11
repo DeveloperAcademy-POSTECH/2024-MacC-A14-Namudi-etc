@@ -61,43 +61,6 @@ final class BudgetUseCaseImpl: BudgetUseCase {
     return salaryBudget
   }
   
-  func createNextSalaryBudgetIfNeeded(salaryBudget: SalaryBudget) throws {
-    
-    // 1. 이번 기간 이후 SalaryBudget이 존재한다면 리턴
-    let nextDate = salaryBudget.endDate.adding(by: .day, value: 1)!
-    guard try salaryBudgetRepository.readByStartDate(nextDate) == nil else { return }
-    
-    // 2. incomeDay 가져오기
-    guard let incomeDay = getIncomeDay() else {
-      throw DomainError.dataNotFound
-    }
-    
-    // 3. 다음 달의 SalaryBudget StartDate, EndDate 계산
-    let (nextStartDate, nextEndDate) = Date.calculateStartAndEndDate(
-      from: incomeDay,
-      anchor: nextDate
-    )
-    
-    // 4. 고정지출 생성
-    let nextFixedExpenses = initializeFixedExpense(
-      startDate: nextStartDate,
-      endDate: nextEndDate,
-      from: salaryBudget.fixedExpenses
-    )
-    
-    // 5. SalaryBudget 생성
-    let nextSalaryBudget = initializeSalaryBudget(
-      startDate: nextStartDate,
-      endDate: nextEndDate,
-      fixedIncome: salaryBudget.fixedIncome,
-      fixedExpenses: nextFixedExpenses,
-      balance: salaryBudget.fixedIncome
-    )
-    
-    // 6. 저장하기
-    salaryBudgetRepository.create(nextSalaryBudget)
-  }
-  
   func getAllSalaryBudget() throws -> [SalaryBudget] {
     return try salaryBudgetRepository.readAll()
   }
@@ -471,6 +434,8 @@ final class BudgetUseCaseImpl: BudgetUseCase {
       defaultHarubee: salaryBudget.defaultHarubee
     )
     
+    try createNextSalaryBudgetIfNeeded(salaryBudget: salaryBudget)
+    
     return salaryBudget
   }
   
@@ -724,5 +689,47 @@ private extension BudgetUseCaseImpl {
         price: $0.price
       )
     }
+  }
+  
+  /// 다음 월급 달의 SalaryBudget을 생성합니다.
+  /// - Parameter salaryBudget: 현재 SalaryBudget
+  /// - `DomainError.dataNotFound`: IncomeDay를 찾을 수 없는 경우
+  func createNextSalaryBudgetIfNeeded(
+    salaryBudget: SalaryBudget
+  ) throws {
+    
+    // 1. 이번 기간 이후 SalaryBudget이 존재한다면 리턴
+    let nextDate = salaryBudget.endDate.adding(by: .day, value: 1)!
+    guard try salaryBudgetRepository.readByStartDate(nextDate) == nil else { return }
+    
+    // 2. incomeDay 가져오기
+    guard let incomeDay = getIncomeDay() else {
+      throw DomainError.dataNotFound
+    }
+    
+    // 3. 다음 달의 SalaryBudget StartDate, EndDate 계산
+    let (nextStartDate, nextEndDate) = Date.calculateStartAndEndDate(
+      from: incomeDay,
+      anchor: nextDate
+    )
+    
+    // 4. 고정지출 생성
+    let nextFixedExpenses = initializeFixedExpense(
+      startDate: nextStartDate,
+      endDate: nextEndDate,
+      from: salaryBudget.fixedExpenses
+    )
+    
+    // 5. SalaryBudget 생성
+    let nextSalaryBudget = initializeSalaryBudget(
+      startDate: nextStartDate,
+      endDate: nextEndDate,
+      fixedIncome: salaryBudget.fixedIncome,
+      fixedExpenses: nextFixedExpenses,
+      balance: salaryBudget.fixedIncome
+    )
+    
+    // 6. 저장하기
+    salaryBudgetRepository.create(nextSalaryBudget)
   }
 }
