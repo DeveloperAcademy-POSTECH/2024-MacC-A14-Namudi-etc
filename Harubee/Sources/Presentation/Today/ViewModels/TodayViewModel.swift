@@ -117,6 +117,7 @@ extension TodayViewModel {
       if let newSalaryBudget = try? budgetUseCase.createSalaryBudget(
         startDate: newStartDate,
         endDate: newEndDate,
+        currentBalance: nil,
         fixedIncome: recentSalaryBudget.fixedIncome,
         fixedExpenses: newFixedExpenses
       ) {
