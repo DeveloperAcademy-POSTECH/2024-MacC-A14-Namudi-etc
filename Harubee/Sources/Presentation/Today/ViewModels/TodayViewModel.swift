@@ -50,7 +50,6 @@ final class TodayViewModel {
     switch action {
     case .viewDidLoad:
       self.state.todayDate = .now
-      print(try? budgetUseCase.getAllSalaryBudget().count)
       fetchSalaryBudget()
     }
   }
@@ -64,12 +63,6 @@ extension TodayViewModel {
       // 1. 오늘날짜가 포함되는 SalaryBudget을 가져오기
       let salaryBudget = try budgetUseCase.getCurrentSalaryBudget(
         date: state.todayDate
-      )
-      
-      // TODO: 제거하기 (initializeState() 내에서 호출)
-      // 2. 가져온 SalaryBudget이후에 SalaryBudget이 없다면 생성
-      try budgetUseCase.createNextSalaryBudgetIfNeeded(
-        salaryBudget: salaryBudget
       )
       
       initializeState(salaryBudget: salaryBudget)

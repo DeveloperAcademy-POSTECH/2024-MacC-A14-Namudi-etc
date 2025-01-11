@@ -9,6 +9,8 @@
 import Foundation
 
 protocol BudgetUseCase {
+  // MARK: - SalaryBudget UseCase
+  
   /// 새로운 SalaryBudget을 생성합니다.
   /// - Parameters:
   ///   - startDate: SalaryBudget 시작일
@@ -26,15 +28,7 @@ protocol BudgetUseCase {
     fixedIncome: Int,
     fixedExpenses: [TransactionItem]
   ) throws -> SalaryBudget
-  
-  
-  /// 다음 월급 달의 SalaryBudget을 생성합니다.
-  /// - Parameter salaryBudget: 현재 SalaryBudget
-  /// - `DomainError.dataNotFound`: IncomeDay를 찾을 수 없는 경우
-  func createNextSalaryBudgetIfNeeded(
-    salaryBudget: SalaryBudget
-  ) throws
-  
+
   
   /// 모든 SalaryBudget을 가져옵니다.
   /// - Returns: 저장된 모든 SalaryBudget
@@ -110,6 +104,30 @@ protocol BudgetUseCase {
   /// 저장된 모든 SalaryBudget을 삭제합니다
   func deleteAllSalaryBudgets() throws
   
+  /// 고정 수입일을 수정합니다.
+  /// - Parameter day: 1-31 사이의 일자
+  /// - Throws:
+  ///   - `DomainError.dateOutOfRange`: 유효하지 않은 일자인 경우
+  func updateIncomeDay(
+    day: Int,
+    salaryBudget: SalaryBudget
+  ) throws -> SalaryBudget
+  
+  /// 고정 수입일을 저장합니다.
+  /// - Parameter day: 1-31 사이의 일자
+  func setIncomeDay(day: Int)
+  
+  /// 저장된 고정 수입일을 조회합니다.
+  /// - Returns: 1-31 사이의 고정 수입일
+  func getIncomeDay() -> Int?
+  
+  /// 오늘날짜 이전에 해당하는 DailyBudget에 하루비가 저장되지 않았는지 확인 후 값을 넣어줍니다.
+  /// - Parameter salaryBudget: 이번 기간의 SalaryBudget
+  /// - Returns: 변경된 SalaryBudget
+  func checkSalaryBudget(_ salaryBudget: SalaryBudget) throws -> SalaryBudget
+  
+  
+  // MARK: - DailyBudgetUseCase
   
   /// 특정 날짜의 DailyBudget을 조회합니다.
   /// - Parameters:
@@ -162,27 +180,4 @@ protocol BudgetUseCase {
     memoList: [String],
     dailyBudget: DailyBudget
   ) throws -> DailyBudget
-  
-  
-  /// 고정 수입일을 수정합니다.
-  /// - Parameter day: 1-31 사이의 일자
-  /// - Throws:
-  ///   - `DomainError.dateOutOfRange`: 유효하지 않은 일자인 경우
-  func updateIncomeDay(
-    day: Int,
-    salaryBudget: SalaryBudget
-  ) throws -> SalaryBudget
-  
-  /// 고정 수입일을 저장합니다.
-  /// - Parameter day: 1-31 사이의 일자
-  func setIncomeDay(day: Int)
-  
-  /// 저장된 고정 수입일을 조회합니다.
-  /// - Returns: 1-31 사이의 고정 수입일
-  func getIncomeDay() -> Int?
-  
-  /// 오늘날짜 이전에 해당하는 DailyBudget에 하루비가 저장되지 않았는지 확인 후 값을 넣어줍니다.
-  /// - Parameter salaryBudget: 이번 기간의 SalaryBudget
-  /// - Returns: 변경된 SalaryBudget
-  func checkSalaryBudget(_ salaryBudget: SalaryBudget) throws -> SalaryBudget
 }
