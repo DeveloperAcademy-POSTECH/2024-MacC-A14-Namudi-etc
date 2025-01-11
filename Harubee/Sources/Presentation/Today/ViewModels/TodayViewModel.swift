@@ -50,6 +50,7 @@ final class TodayViewModel {
     switch action {
     case .viewDidLoad:
       self.state.todayDate = .now
+      print(try? budgetUseCase.getAllSalaryBudget().count)
       fetchSalaryBudget()
     }
   }
