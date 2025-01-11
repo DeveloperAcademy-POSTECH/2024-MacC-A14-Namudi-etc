@@ -168,7 +168,10 @@ final class CalendarViewModel {
   
   private func handleMoveToToday() {
     let today = Date().formattedDate
-    guard let todayBudget = allSalaryBudgets.first(where: { $0.contains(date: today) })
+    // [1/1 ~ 1/31], [1/25 ~ 2/24], [2/25, 3/24]가 생성된 상태에서
+    // 1/30일 기준으로 allSalaryBudgets.first일 경우
+    // [1/1 ~ 1/31]를 가져오게 되므로 last로 변경
+    guard let todayBudget = allSalaryBudgets.last(where: { $0.contains(date: today) })
     else { return }
     
     state.currentBudget = todayBudget
@@ -233,6 +236,9 @@ final class CalendarViewModel {
   }
   
   private func findBudget(from current: SalaryBudget, direction: PeriodDirection) -> SalaryBudget? {
+    // TODO: 로직 수정 필요
+    // 날짜가 겹쳐있을 때 순서대로 탐색하지 못함 (중간에 건너뜀)
+    // 인덱싱으로 salaryBudget을 찾아야 할 거 같음
     switch direction {
     case .next:
       return allSalaryBudgets.first { $0.startDate > current.endDate }
@@ -241,10 +247,14 @@ final class CalendarViewModel {
     }
   }
   
+  // TODO: 로직 수정 필요
+  // [1/1 ~ 1/31], [1/25 ~ 2/24]일 때 [1/1 ~ 1/31]로 이동 불가
   private func hasPreviousBudget(from current: SalaryBudget) -> Bool {
     allSalaryBudgets.contains { $0.endDate < current.startDate }
   }
   
+  // TODO: 로직 수정 필요
+  // [1/1 ~ 1/31], [1/25 ~ 2/24]일 때 [1/25 ~ 2/24]로 이동 불가
   private func hasNextBudget(from current: SalaryBudget) -> Bool {
     allSalaryBudgets.contains { $0.startDate > current.endDate }
   }
