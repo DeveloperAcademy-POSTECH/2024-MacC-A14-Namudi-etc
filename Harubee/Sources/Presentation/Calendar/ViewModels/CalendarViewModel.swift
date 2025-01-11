@@ -127,8 +127,10 @@ final class CalendarViewModel {
   private func handleLoadInitialData() {
     allSalaryBudgets = loadBudgets()
     let today = Date().formattedDate
-    
-    guard let currentBudget = allSalaryBudgets.first(where: { $0.contains(date: today) })
+    // [1/1 ~ 1/31], [1/25 ~ 2/24], [2/25, 3/24]가 생성된 상태에서
+    // 1/30일 기준으로 allSalaryBudgets.first일 경우
+    // [1/1 ~ 1/31]를 가져오게 되므로 last로 변경
+    guard let currentBudget = allSalaryBudgets.last(where: { $0.contains(date: today) })
     else {
       return
     }

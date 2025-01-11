@@ -45,7 +45,7 @@ final class SalaryBudgetRepositoryImpl: SalaryBudgetRepository {
     let descriptor = FetchDescriptor(predicate: predicate)
     
     do {
-      let data = try modelContext.fetch(descriptor).first
+      let data = try modelContext.fetch(descriptor).last
       return data?.toEntity()
     } catch {
       throw SwiftDataError.fetchError
