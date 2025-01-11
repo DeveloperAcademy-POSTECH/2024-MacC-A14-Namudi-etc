@@ -116,7 +116,6 @@ final class BudgetUseCaseImpl: BudgetUseCase {
     )
   }
   
-  
   func updateFixedIncome(
     salaryBudget: SalaryBudget,
     newIncome: Int
@@ -145,10 +144,9 @@ final class BudgetUseCaseImpl: BudgetUseCase {
     )
     
     // 3. 현재 SalaryBudget 이후에 SalaryBudgets 가져오기
-    let salaryBudgets = try salaryBudgetRepository.readAll()
-    let afterSalaryBudgets = salaryBudgets.filter {
-      $0.startDate > salaryBudget.startDate
-    }
+    let afterSalaryBudgets = try salaryBudgetRepository.readAll(
+      after: salaryBudget.startDate
+    )
     
     // 4. 이후 SalaryBudgets 업데이트
     for afterSalaryBudget in afterSalaryBudgets {
@@ -238,10 +236,9 @@ final class BudgetUseCaseImpl: BudgetUseCase {
     )
     
     // 6. 현재 SalaryBudget 이후에 SalaryBudgets 가져오기
-    let salaryBudgets = try salaryBudgetRepository.readAll()
-    let afterSalaryBudgets = salaryBudgets.filter {
-      $0.startDate > salaryBudget.startDate
-    }
+    let afterSalaryBudgets = try salaryBudgetRepository.readAll(
+      after: salaryBudget.startDate
+    )
     
     // 7. 이후의 SalaryBudget 업데이트
     for afterSalaryBudget in afterSalaryBudgets {
@@ -269,7 +266,6 @@ final class BudgetUseCaseImpl: BudgetUseCase {
         ),
         anchorDate: .now
       )
-      
       
       // 7-4. 업데이트
       try salaryBudgetRepository.updateSalaryBudget(
@@ -344,29 +340,20 @@ final class BudgetUseCaseImpl: BudgetUseCase {
     try salaryBudgetRepository.deleteById(salaryBudget.id)
     
     // 5. 새로운 수입일에 맞춰 고정 지출 날짜 새롭게 계산
-    let newFixedExpenses = salaryBudget.fixedExpenses.map {
-      let date = Date.convertDateBetweenStartAndEnd(
-        start: startDate,
-        end: endDate,
-        day: $0.day
-      )
-      return TransactionItem(
-        date: date,
-        day: $0.day,
-        name: $0.name,
-        price: $0.price
-      )
-    }
+    let newFixedExpenses = initializeFixedExpense(
+      startDate: startDate,
+      endDate: endDate,
+      from: salaryBudget.fixedExpenses
+    )
     
     // 6. 현재 SalaryBudget 이후에 SalaryBudgets 가져오기
-    let salaryBudgets = try salaryBudgetRepository.readAll()
-    let afterSalaryBudgets = salaryBudgets.filter {
-      $0.startDate > salaryBudget.startDate
-    }
+    let afterSalaryBudgets = try salaryBudgetRepository.readAll(
+      after: salaryBudget.startDate
+    )
     
     // 7. 이후의 SalaryBudget들 삭제하기
-    for afterSalaryBudget in afterSalaryBudgets {
-      try salaryBudgetRepository.deleteById(afterSalaryBudget.id)
+    try afterSalaryBudgets.forEach {
+      try salaryBudgetRepository.deleteById($0.id)
     }
     
     // 8. 새로운 SalaryBudget 생성
@@ -626,6 +613,7 @@ private extension BudgetUseCaseImpl {
       // Ex) 1, 2월이 이미 생성된 상태에서 3월 중간에 접속했을 때
       // 3, 4월 데이터를 생성하는 과정에서 아래와 같이 조건을 설정하면
       // 3월 초반 날짜에 접근 불가
+      // UserDefaults의 isOnboarding을 확인해서 처리
       return DailyBudget(
         date: date,
         harubee: date < today ? -1 : nil,
