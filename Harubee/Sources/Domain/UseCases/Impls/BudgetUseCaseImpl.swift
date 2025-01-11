@@ -25,40 +25,12 @@ final class BudgetUseCaseImpl: BudgetUseCase {
   }
   
   // MARK: - SalaryBudget Function
-  @discardableResult
-  func createSalaryBudgetFromOnboarding(
-    startDate: Date,
-    endDate: Date,
-    currentBalance: Int?,
-    fixedIncome: Int,
-    fixedExpenses: [TransactionItem]
-  ) throws -> SalaryBudget {
-    // 1. date 포멧 변경
-    let startDate = startDate.formattedDate
-    let endDate = endDate.formattedDate
-      
-    // 2. SalaryBudget 생성하기
-    let salaryBudget = initializeSalaryBudget(
-      startDate: startDate,
-      endDate: endDate,
-      fixedIncome: fixedIncome,
-      fixedExpenses: fixedExpenses,
-      balance: currentBalance!
-    )
-    
-    // 3. Repository에 저장하기
-    salaryBudgetRepository.create(salaryBudget)
-    
-    // 4. 다음달의 salaryBudget 생성
-    try createNextSalaryBudgetIfNeeded(salaryBudget: salaryBudget)
-    
-    return salaryBudget
-  }
   
   @discardableResult
   func createSalaryBudget(
     startDate: Date,
     endDate: Date,
+    currentBalance: Int?,
     fixedIncome: Int,
     fixedExpenses: [TransactionItem]
   ) throws -> SalaryBudget {
@@ -77,7 +49,7 @@ final class BudgetUseCaseImpl: BudgetUseCase {
       endDate: endDate,
       fixedIncome: fixedIncome,
       fixedExpenses: fixedExpenses,
-      balance: fixedIncome
+      balance: currentBalance ?? fixedIncome
     )
     
     // 4. Repository에 저장하기
@@ -438,6 +410,7 @@ final class BudgetUseCaseImpl: BudgetUseCase {
     return try self.createSalaryBudget(
       startDate: startDate,
       endDate: endDate,
+      currentBalance: nil,
       fixedIncome: salaryBudget.fixedIncome,
       fixedExpenses: newFixedExpenses
     )

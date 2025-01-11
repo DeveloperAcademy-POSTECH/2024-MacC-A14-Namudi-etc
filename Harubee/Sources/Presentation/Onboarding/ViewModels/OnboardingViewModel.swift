@@ -66,7 +66,7 @@ final class OnboardingViewModel {
     case .finishOnboardingSetting:
       budgetUseCase.setIncomeDay(day: self.state.incomeStartDate.day)
       
-      let _ = try? budgetUseCase.createSalaryBudgetFromOnboarding(
+      let _ = try? budgetUseCase.createSalaryBudget(
         startDate: self.state.incomeStartDate,
         endDate: self.state.incomeEndDate,
         currentBalance: self.state.currentBalance,
