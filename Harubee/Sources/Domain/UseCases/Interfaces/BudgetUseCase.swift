@@ -57,14 +57,6 @@ protocol BudgetUseCase {
   ) throws -> SalaryBudget
   
   
-  /// 기본 하루비를 계산하여 SalaryBudget에 반영합니다
-  /// - Parameter salaryBudget: 기본 하루비를 다시 계산할 SalaryBudget
-  /// - Returns: 변경된 SalaryBudget
-  func updateDefaultHarubee(
-    salaryBudget: SalaryBudget
-  ) throws -> SalaryBudget
-  
-  
   /// 고정 수입 금액을 설정합니다.
   /// - Parameters:
   ///   - salaryBudget: 업데이트할 SalaryBudget
