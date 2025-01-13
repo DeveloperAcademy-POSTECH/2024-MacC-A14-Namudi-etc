@@ -27,6 +27,11 @@ struct SettingView: View {
         
         SectionDivider()
         
+        // 언어, 통화, 화면 테마 설정
+        PreferencesSettingsView()
+        
+        SectionDivider()
+        
         // 문의하기, 개발 로드맵, 앱 버전
         SettingInformationView()
         
@@ -109,6 +114,17 @@ private struct FixedAmountManageView: View {
     }
   }
 }
+
+// MARK: - PreferencesSettingsView
+private struct PreferencesSettingsView: View {
+  
+  var body: some View {
+    SectionContainer {
+      SectionItem(title: "화면 테마 설정", previewText: "시스템 설정")
+    }
+  }
+}
+
 
 // MARK: - SettingInformationView
 private struct SettingInformationView: View {
