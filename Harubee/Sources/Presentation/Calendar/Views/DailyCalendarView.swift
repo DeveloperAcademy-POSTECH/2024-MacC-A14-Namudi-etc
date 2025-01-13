@@ -297,7 +297,7 @@ private enum TransactionStyle {
   var textColor: Color {
     switch self {
     case .constant: return .textBlack
-    case .warning: return .redDefault
+    case .warning: return .warning
     case .saving: return .main
     }
   }
@@ -319,12 +319,12 @@ private struct ComparisonLabel: View {
         : "arrowtriangle.down.fill"
       )
       .font(.sfPro(size: 10))
-      .foregroundStyle(isOverBudget ? Color.redDefault : Color.main)
+      .foregroundStyle(isOverBudget ? Color.warning : Color.main)
       .padding(.trailing, -4)
       
       Text(" \(abs(harubee - expense))원")
         .font(.pretendardSemibold_14)
-        .foregroundStyle(isOverBudget ? Color.redDefault : Color.main)
+        .foregroundStyle(isOverBudget ? Color.warning : Color.main)
       
       Text(isOverBudget ? "더 썼어요" : "덜 썼어요")
     }
@@ -463,7 +463,7 @@ private struct FixedExpenseSection: View {
               
               Text("\(expense.price.formatted(.number))원")
                 .font(.pretendardSemibold_18)
-                .foregroundStyle(Color.redDefault)
+                .foregroundStyle(Color.warning)
                 .frame(maxWidth: .infinity, alignment: .trailing)
             }
           }

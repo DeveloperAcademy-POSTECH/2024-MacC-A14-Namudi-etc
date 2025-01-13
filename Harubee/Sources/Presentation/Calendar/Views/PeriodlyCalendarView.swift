@@ -23,7 +23,7 @@ struct PeriodlyCalendarView: View {
   // MARK: - Body
   var body: some View {
     ZStack {
-      Color.whiteDefault.ignoresSafeArea()
+      Color.bgPrimary.ignoresSafeArea()
       
       VStack(spacing: 0) {
         if let budget = viewModel.state.currentBudget {
@@ -55,8 +55,8 @@ struct PeriodlyCalendarView: View {
       } else if viewModel.hasExpenseMissingDays {
         CalendarBottomFAB(
           title: "아직 지출 및 수입을 입력하지 않은 날이 있어요",
-          titleColor: .main,
-          backgroundColor: .whiteDeep,
+          titleColor: .alertText,
+          backgroundColor: .alertBg,
           icon: nil,
           action: {}
         )
@@ -117,8 +117,8 @@ private struct CalendarHeader: View {
     .titleInfoBubble($infoBubbleVisible)
     .frame(maxWidth: .infinity, alignment: .bottom)
     .frame(height: 98, alignment: .bottom)
-    .background(Color.main)
-    .foregroundStyle(Color.whiteDefault)
+    .background(.bgAccent)
+    .foregroundStyle(.textFixed)
     
   }
   
@@ -128,7 +128,7 @@ private struct CalendarHeader: View {
       ForEach(weekDays, id: \.self) { day in
         Text(day)
           .font(.pretendardSemibold_12)
-          .foregroundStyle(Color.whiteDefault)
+          .foregroundStyle(.textFixed)
           .frame(maxWidth: .infinity)
       }
     }
@@ -178,7 +178,7 @@ private struct PeriodDirectionButton: View {
     } label: {
       Image(systemName: direction.imageName)
         .font(.system(size: 16))
-        .foregroundStyle(isEnabled ? Color.whiteDefault : Color.textBrighter30)
+        .foregroundStyle(isEnabled ? .textFixed : .textTertiary30)
         .frame(width: 44, height: 44)
         .contentShape(Rectangle())
         .disabled(!isEnabled)
@@ -243,7 +243,7 @@ private extension View {
           Text("하루비의 캘린더는\n수입일부터 다음 수입일까지로 구성돼요")
         }
         .font(.pretendardSemibold_14)
-        .foregroundStyle(Color.textBlack)
+        .foregroundStyle(.info)
       }
   }
   
@@ -269,7 +269,7 @@ private extension View {
                 Text("하루비보다 많이 지출했다면 ")
                 Text("빨간색 체크")
                   .font(.pretendardExtraBold_14)
-                  .foregroundStyle(Color.redDefault)
+                  .foregroundStyle(.warning)
                 Image(.hexagonBad)
                   .resizable()
                   .frame(width: 14, height: 14)
@@ -280,7 +280,7 @@ private extension View {
                 Text("적게 지출했다면 ")
                 Text("파란색 체크")
                   .font(.pretendardExtraBold_14)
-                  .foregroundStyle(Color.main)
+                  .foregroundStyle(.mainPrimary)
                 Image(.hexagonGood)
                   .resizable()
                   .frame(width: 14, height: 14)
@@ -290,7 +290,7 @@ private extension View {
               }
             }
             .font(.pretendardSemibold_14)
-            .foregroundStyle(Color.textBlack)
+            .foregroundStyle(.info)
           }
       }
   }
@@ -317,13 +317,13 @@ private extension View {
                 Text(", 조정된 하루비는 ")
                 Text("파란색")
                   .font(.pretendardExtraBold_14)
-                  .foregroundStyle(Color.main)
+                  .foregroundStyle(.mainPrimary)
                 Text("으로 표시돼요")
                 Spacer()
               }
             }
             .font(.pretendardSemibold_14)
-            .foregroundStyle(Color.textBlack)
+            .foregroundStyle(.info)
           }
       }
   }
