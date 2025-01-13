@@ -53,7 +53,7 @@ struct CalendarCell: View {
   private var dateLabel: some View {
     Text(date.formattedDateToString(.emphasizedFirstDay))
       .font(.pretendardSemibold_14)
-      .foregroundStyle(Color.textBlack)
+      .foregroundStyle(.textPrimary)
       .padding(.top, 5)
   }
   
@@ -74,8 +74,8 @@ struct CalendarCell: View {
   
   private var cellBackground: some View {
     RoundedRectangle(cornerRadius: 8)
-      .fill(date.isToday ? Color.whiteDeep50 : .whiteDefault)
-      .stroke(date.isToday ? Color.mainBright : Color.clear, lineWidth: 2)
+      .fill(date.isToday ? .bgSecondary50 : .clear)
+      .stroke(date.isToday ? .mainSecondary : Color.clear, lineWidth: 2)
       .padding(1)
   }
   
@@ -106,16 +106,16 @@ struct CalendarCell: View {
   private var amountColor: Color {
     if date > Date() {
       // 미래: 하루비 조정 여부로 색상 결정
-      return dailyBudget?.harubee != nil ? .main : .textBlack
+      return dailyBudget?.harubee != nil ? .mainText : .textPrimary
     } else if date.isToday {
       // 오늘: 실제 지출이 있으면 textBlack, 없으면 하루비 조정 여부로 색상 결정
       if dailyBudget?.expense != nil {
-        return .textBrighter
+        return .textTertiary
       }
-      return dailyBudget?.harubee != nil ? .main : .textBlack
+      return dailyBudget?.harubee != nil ? .mainText : .textPrimary
     } else {
       // 과거: 항상 연한 색상
-      return .textBrighter
+      return .textTertiary
     }
   }
   
@@ -129,19 +129,19 @@ struct CalendarCell: View {
     if let expense = dailyBudget?.expense {
       let budget = dailyBudget?.harubee ?? defaultHarubee
       if expense > budget {
-        return Image(.hexagonBad)
+        return Image.dynamicImage(light: .hexagonBad, dark: .hexagonBadDark)
       } else {
-        return Image(.hexagonGood)
+        return Image.dynamicImage(light: .hexagonGood, dark: .hexagonGoodDark)
       }
     }
     
     // 지출이 없는 경우
     if date.isToday {
       // 오늘: hexagonNone 표시
-      return Image(.hexagonNone)
+      return Image.dynamicImage(light: .hexagonNone, dark: .hexagonNoneDark)
     } else {
       // 과거: hexagonNone 표시
-      return Image(.hexagonNone)
+      return Image.dynamicImage(light: .hexagonNone, dark: .hexagonNoneDark)
     }
   }
 }
