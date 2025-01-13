@@ -124,9 +124,7 @@ extension TodayViewModel {
   
   private func initializeState(salaryBudget: SalaryBudget) {
     let calendar = Calendar.current
-    
-    let salaryBudget = try! budgetUseCase.setHarubeeForPastDates(salaryBudget)
-    
+
     let currentBalance = salaryBudget.balance
     let currentFixedIncome = salaryBudget.fixedIncome
     let todayDailyBudget = salaryBudget.dailyBudgets.first(
