@@ -22,7 +22,7 @@ struct FloatingTitleTextField: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .foregroundStyle(
           !text.isEmpty
-          ? (isTextfieldFocused ? .main : .textBright)
+          ? (isTextfieldFocused ? .main : .textSecondary)
           : .clear
         )
         .offset(y: !text.isEmpty ? -4 : 0)

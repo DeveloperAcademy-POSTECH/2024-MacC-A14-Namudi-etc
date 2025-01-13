@@ -40,7 +40,7 @@ struct CalendarCell: View {
     }
     .buttonStyle(
       CustomButtonStyle(
-        tappedBackgroundColor: .textBright.opacity(0.5),
+        tappedBackgroundColor: .textSecondary.opacity(0.5),
         haptic: .tap
       )
     )

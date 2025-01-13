@@ -597,7 +597,7 @@ private struct CalendarStreakView: View {
     .padding(.top, 10)
     .contentShape(Rectangle())
     .buttonStyle(CustomButtonStyle(
-      tappedBackgroundColor: .textBright.opacity(0.5),
+      tappedBackgroundColor: .textSecondary.opacity(0.5),
       haptic: .tap
     ))
   }

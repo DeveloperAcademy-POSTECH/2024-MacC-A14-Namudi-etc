@@ -80,9 +80,9 @@ enum KeypadButtonType: Int {
   var foregroundColor: Color {
     switch self {
     case .one, .two, .three, .four, .five, .six, .seven, .eight, .nine, .zero, .doubleZero, .tripleZero:
-      return .textBlack
+      return .textPrimary
     case .delete, .plus, .minus, .clear:
-      return .main
+      return .mainText
     }
   }
   
@@ -100,7 +100,7 @@ enum KeypadButtonType: Int {
   }
   
   
-  var highlightBackgroundColor: Color {
-    return .whiteDeep
-  }
+//  var highlightBackgroundColor: Color {
+//    return .bgSecondary50
+//  }
 }
