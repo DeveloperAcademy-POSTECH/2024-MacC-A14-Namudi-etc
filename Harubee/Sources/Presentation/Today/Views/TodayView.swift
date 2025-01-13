@@ -34,7 +34,7 @@ struct TodayView: View {
   var body: some View {
     ZStack(alignment: .topTrailing) {
       
-      Color.main.ignoresSafeArea()
+      Color.mainBgAccent.ignoresSafeArea()
       
       TodayPrimaryLayerView(
         isInfoBubbleVisible: $isInfoBubbleVisible,
@@ -91,7 +91,7 @@ struct TodayView: View {
     ToolbarItem(placement: .topBarTrailing) {
       HelpButton(
         infoBubbleVisible: $isInfoBubbleVisible,
-        buttonColor: .whiteDefault
+        buttonColor: .textFixed
       )
     }
     
@@ -103,7 +103,7 @@ struct TodayView: View {
       } label: {
         Image(systemName: "gearshape")
           .font(Font.system(size: 18, weight: .regular))
-          .foregroundStyle(Color.whiteDefault)
+          .foregroundStyle(.textFixed)
       }
       .buttonStyle(CustomButtonStyle(
         haptic: .none
@@ -134,7 +134,7 @@ private struct TodayPrimaryLayerView: View {
       )
       
       LinearGradient(
-        gradient: Gradient(colors: [Color.main, Color.main, .clear]),
+        gradient: Gradient(colors: [.mainBgAccent, .mainBgAccent, .clear]),
         startPoint: .top,
         endPoint: .bottom
       )
@@ -210,7 +210,7 @@ private struct Honeycomb: View {
             } else {
               RoundedHexagon()
                 .stroke(
-                  hexGrid[row][col] ? Color.whiteDefault : .clear,
+                  hexGrid[row][col] ? .hivePrimary : .clear,
                   lineWidth: 1.5
                 )
                 .frame(width: hexgonSize, height: hexgonSize)
@@ -270,24 +270,24 @@ private struct HarubeeHexagon: View {
   var body: some View {
     ZStack {
       RoundedHexagon()
-        .fill(Color.main)
+        .fill(.mainBgAccent)
         .frame(width: hexgonSize, height: hexgonSize)
         .shadow(color: Color.textBlack.opacity(0.3), radius: 7, x: 1, y: 4)
       
       Wave(xOffset: firstWaveOffset, fillPercentage: animatedFillPercentage)
-        .fill(isTodayHarubee ? Color.textBrighter : Color.textBlack30)
+        .fill(isTodayHarubee ? .hivePrimaryBack : .hiveSecondaryBack)
         .frame(width: hexgonSize, height: hexgonSize)
         .clipShape(RoundedHexagon())
         .animation(.easeInOut(duration: 1.5), value: animatedFillPercentage)
       
       Wave(xOffset: secondWaveOffset, fillPercentage: animatedFillPercentage)
-        .fill(isTodayHarubee ? Color.whiteDefault :  Color.mainBright)
+        .fill(isTodayHarubee ? .hivePrimary :  .hiveSecondary)
         .frame(width: hexgonSize, height: hexgonSize)
         .clipShape(RoundedHexagon())
         .animation(.easeInOut(duration: 1.5), value: animatedFillPercentage)
       
       RoundedHexagon()
-        .stroke(Color.whiteDefault, lineWidth: 1.5)
+        .stroke(.hivePrimary, lineWidth: 1.5)
         .frame(width: hexgonSize, height: hexgonSize)
       
       VStack(spacing: 0) {
@@ -297,7 +297,7 @@ private struct HarubeeHexagon: View {
             "다음 수입일(\(todayViewModel.state.nextIncomeDate.formattedDateToString(.monthDay_slash)))까지"
           )
             .font(.pretendardMedium_12)
-            .foregroundStyle(.whiteDeep50)
+            .foregroundStyle(.hiveSecondaryText)
             .infoBubble(isVisible: $isInfoBubbleVisible) {
               infoBubbleText
             }
@@ -359,8 +359,8 @@ private struct HarubeeHexagon: View {
     
     let textColor = isTodayHarubee
     ? (animatedFillPercentage <= 0.5
-       ? Color.whiteDefault : Color.textBlack)
-    : Color.whiteDefault
+       ? Color.textFixed : Color.textPrimary)
+    : .textFixed
     
     return Text(hexagonText)
       .font(isTodayHarubee
@@ -382,7 +382,7 @@ private struct HarubeeHexagon: View {
         """
     )
     .font(.pretendardSemibold_14)
-    .foregroundStyle(Color.textBlack)
+    .foregroundStyle(.info)
   }
   
   private var harubeeNumberContainer: some View {
@@ -393,27 +393,27 @@ private struct HarubeeHexagon: View {
         .frame(width: 20, height: 20)
       
       Text(todayViewModel.state.todayHarubee.decimalWithWon)
-        .foregroundStyle(isIncludedInWave ? Color.whiteDefault : Color.main)
+        .foregroundStyle(isIncludedInWave ? .textFixed : .hiveText)
         .font(.pretendardSemibold_24)
     }
     .fixedSize()
     .padding(EdgeInsets(top: 4, leading: 9, bottom: 6, trailing: 10))
     .background(
       RoundedRectangle(cornerRadius: 8)
-        .foregroundStyle(Color.mainBrighter60)
+        .foregroundStyle(.hivePrimaryButton)
     )
   }
   
   private var balanceNumberContainer: some View {
     HStack {
       Text(todayViewModel.state.todayBalance.decimalWithWon)
-        .foregroundStyle(.whiteDefault)
+        .foregroundStyle(.textFixed)
         .font(.pretendardSemibold_20)
     }.fixedSize()
       .padding(EdgeInsets(top: 4, leading: 9, bottom: 6, trailing: 9))
       .background(
         RoundedRectangle(cornerRadius: 8)
-          .foregroundStyle(Color.mainBrighter60)
+          .foregroundStyle(.hiveSecondaryButton)
       )
   }
 }
@@ -450,7 +450,7 @@ private struct TodayHeaderView: View {
     HStack {
       Text(todayViewModel.state.todayDate.formattedDateToString(.fullDate_kr))
         .font(.pretendardSemibold_14)
-        .foregroundStyle(Color.whiteDefault)
+        .foregroundStyle(.textFixed)
     }.frame(maxWidth: .infinity, alignment: .trailing)
       .padding(.trailing, 16)
       .padding(.top, 6)
@@ -487,11 +487,11 @@ private struct TodayFooterView: View {
           Text("더 정확한 하루비를 확인할 수 있어요")
         }
         .font(.pretendardSemibold_14)
-        .foregroundStyle(Color.textBlack)
+        .foregroundStyle(.info)
       }
     }
     .frame(maxWidth: .infinity, maxHeight: 196, alignment: .top)
-    .background(Color.whiteDefault)
+    .background(.mainBgPrimary)
   }
 }
 
@@ -527,21 +527,21 @@ private struct CalendarStreakView: View {
       HStack {
         Text("캘린더")
           .font(.pretendardSemibold_14)
-          .foregroundStyle(Color.textBlack)
+          .foregroundStyle(.textPrimary)
           .infoBubble(isVisible: $isInfoBubbleVisible, alignment: .topLeading) {
             VStack(alignment: .leading, spacing: 2) {
               Text("캘린더에서 다른 날짜들의")
               Text("하루비를 확인하고 조정해요")
             }
             .font(.pretendardSemibold_14)
-            .foregroundStyle(Color.textBlack)
+            .foregroundStyle(.info)
           }
         
         Spacer()
         
         Image(systemName: "chevron.right")
           .font(Font.system(size: 12, weight: .semibold))
-          .foregroundStyle(Color.textBlack)
+          .foregroundStyle(.textPrimary)
           .frame(width: 10, height: 14)
       }
       .padding(.horizontal, 4)
@@ -555,15 +555,15 @@ private struct CalendarStreakView: View {
           
           ZStack {
             RoundedRectangle(cornerRadius: 8)
-              .fill(Color.whiteDeep50)
-              .stroke(Color.mainBright, lineWidth: 2)
+              .fill(.bgSecondary50)
+              .stroke(.mainSecondary, lineWidth: 2)
               .foregroundStyle(Color.whiteDeep50)
               .frame(maxWidth: 50, maxHeight: 72)
             
             VStack {
               Text("오늘")
                 .font(.pretendardSemibold_12)
-                .foregroundStyle(Color.main)
+                .foregroundStyle(.mainText)
                 .padding(.top, 10)
               
               Spacer()
@@ -597,7 +597,7 @@ private struct StreakGroupView: View {
   var body: some View {
     ZStack {
       RoundedRectangle(cornerRadius: 8)
-        .foregroundStyle(Color.whiteDeep50)
+        .foregroundStyle(.bgSecondary50)
         .frame(maxWidth: .infinity, maxHeight: 72)
       GeometryReader { proxy in
         HStack {
@@ -633,7 +633,7 @@ private struct StreakCell: View {
     VStack {
         Text(dailyStreak.date.formattedDateToString(.dayWeekday))
           .font(.pretendardSemibold_12)
-          .foregroundStyle(Color.textBright)
+          .foregroundStyle(.textSecondary)
           .frame(width: 35, height: 14)
       
       Spacer()
@@ -645,7 +645,9 @@ private struct StreakCell: View {
             dailyStreak.isHarubeeAdjusted ? .pretendardSemibold_11
             : .pretendardMedium_11
           )
-          .foregroundStyle(dailyStreak.isHarubeeAdjusted ? .main : .textBlack)
+          .foregroundStyle(
+            dailyStreak.isHarubeeAdjusted ? .mainText : .textPrimary
+          )
           .padding(.bottom, 14)
       } else {
         hexagonImage
