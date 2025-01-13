@@ -78,7 +78,6 @@ final class BudgetUseCaseImpl: BudgetUseCase {
     return salaryBudget
   }
   
-  // TODO: updateBalance와 updateDefaultHarubee 분리 필요
   func updateBalance(
     salaryBudget: SalaryBudget,
     newBalance: Int
@@ -102,94 +101,53 @@ final class BudgetUseCaseImpl: BudgetUseCase {
     )
   }
   
-  func updateDefaultHarubee(
-    salaryBudget: SalaryBudget
-  ) throws -> SalaryBudget {
-    let newDefaultHarubee = self.calculateDefaultHarubee(
-      salaryBudget: salaryBudget,
-      anchorDate: .now
-    )
-    
-    return try salaryBudgetRepository.updateDefaultHarubee(
-      salaryBudget.id,
-      defaultHarubee: newDefaultHarubee
-    )
-  }
-  
   func updateFixedIncome(
     salaryBudget: SalaryBudget,
     newIncome: Int
   ) throws -> SalaryBudget {
     
-    // 0. 고정지출의 총 합계 계산
+    // 1. 고정지출의 총 합계 계산
     let totalFixedExpense = salaryBudget.fixedExpenses.reduce(0) {
       $0 + $1.price
     }
     
-    // 1. 새로운 잔액 = oldBalance - (기존 월급 - 새로운 월급)
-    let newBalance = salaryBudget.balance - (salaryBudget.fixedIncome - newIncome)
+    // 2. 이번 기간을 포함한 이후의 모든 SalaryBudget 가져오기
+    let anchor = salaryBudget.startDate.adding(by: .day, value: -1)!
+    let salaryBudgetsFromCurrent = try salaryBudgetRepository.readAll(after: anchor)
     
-    // 2. 기본 하루비 다시 계산하기
-    let defaultHarubee = self.calculateDefaultHarubee(
-      salaryBudget: SalaryBudget(
-        startDate: salaryBudget.startDate,
-        endDate: salaryBudget.endDate,
-        fixedIncome: newIncome,
-        fixedExpenses: salaryBudget.fixedExpenses,
-        balance: newBalance,
-        defaultHarubee: salaryBudget.defaultHarubee,
-        dailyBudgets: salaryBudget.dailyBudgets
-      ),
-      anchorDate: .now
-    )
+    // 3. 모든 SalaryBudget들을 업데이트하고, 이번 기간에 해당하는 SalaryBudget을 리턴
+    let updatedSalaryBudget = try
+    salaryBudgetsFromCurrent
+      .map {
+        // 이번 기간의 SalaryBudget인 경우
+        // 새로운 잔액 = oldBalance - (기존 월급 - 새로운 월급)
+        // 그 외에 SalaryBudget인 경우
+        // 새로운 잔액 = 고정 수입 - 고정 지출 총합
+        let newBalance = $0.id == salaryBudget.id
+        ? $0.balance - ($0.fixedIncome - newIncome)
+        : newIncome - totalFixedExpense
+        
+        var newSalaryBudget = $0
+        newSalaryBudget.fixedIncome = newIncome
+        newSalaryBudget.balance = newBalance
+        
+        let newDefaultHarubee = self.calculateDefaultHarubee(
+          salaryBudget: newSalaryBudget,
+          anchorDate: .now
+        )
+        
+        return try salaryBudgetRepository.updateSalaryBudget(
+          $0.id,
+          fixedIncome: .set(newIncome),
+          fixedExpenses: .keep,
+          balance: .set(newBalance),
+          defaultHarubee: .set(newDefaultHarubee)
+        )
+      }
+      .filter { $0.id == salaryBudget.id }
+      .first!
     
-    // 3. 현재 SalaryBudget 이후에 SalaryBudgets 가져오기
-    let afterSalaryBudgets = try salaryBudgetRepository.readAll(
-      after: salaryBudget.startDate
-    )
-    
-    // 4. 이후 SalaryBudgets 업데이트
-    for afterSalaryBudget in afterSalaryBudgets {
-      
-      // 4-1. 새로운 잔액 계산
-      let newBalance = newIncome - totalFixedExpense
-      
-      // 4-2. 기본 하루비 계산
-      let newDefaultHarubee = self.calculateDefaultHarubee(
-        salaryBudget: SalaryBudget(
-          startDate: afterSalaryBudget.startDate,
-          endDate: afterSalaryBudget.endDate,
-          fixedIncome: newIncome,
-          fixedExpenses: afterSalaryBudget.fixedExpenses,
-          balance: newBalance,
-          defaultHarubee: afterSalaryBudget.defaultHarubee,
-          dailyBudgets: afterSalaryBudget.dailyBudgets
-        ),
-        anchorDate: .now
-      )
-      
-      // 4-2. 업데이트
-      try salaryBudgetRepository.updateSalaryBudget(
-        afterSalaryBudget.id,
-        fixedIncome: .set(newIncome),
-        fixedExpenses: .keep,
-        balance: .set(newBalance),
-        defaultHarubee: .set(newDefaultHarubee)
-      )
-    }
-    
-    // 5. Repository 통해 저장하기
-    do {
-      return try salaryBudgetRepository.updateSalaryBudget(
-        salaryBudget.id,
-        fixedIncome: .set(newIncome),
-        fixedExpenses: .keep,
-        balance: .set(newBalance),
-        defaultHarubee: .set(defaultHarubee)
-      )
-    } catch DomainError.dataNotFound {
-      fatalError("고정 지출 배열을 설정했으나 SalaryBudget이 없습니다.")
-    }
+    return updatedSalaryBudget
   }
   
   func updateFixedExpenses(
@@ -470,7 +428,14 @@ final class BudgetUseCaseImpl: BudgetUseCase {
     )
     
     // 4. SalaryBudget의 기본하루비 업데이트
-    let newSalaryBudget = try self.updateDefaultHarubee(salaryBudget: salaryBudget)
+    let newDefaultHarubee = self.calculateDefaultHarubee(
+      salaryBudget: salaryBudget,
+      anchorDate: .now
+    )
+    let newSalaryBudget = try salaryBudgetRepository.updateDefaultHarubee(
+      salaryBudget.id,
+      defaultHarubee: newDefaultHarubee
+    )
     
     return (newDailyBudget, newSalaryBudget)
   }
