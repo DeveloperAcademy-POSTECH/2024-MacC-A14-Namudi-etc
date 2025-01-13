@@ -113,11 +113,6 @@ protocol BudgetUseCase {
   /// - Returns: 1-31 사이의 고정 수입일
   func getIncomeDay() -> Int?
   
-  /// 오늘날짜 이전에 해당하는 DailyBudget에 하루비가 저장되지 않았는지 확인 후 값을 넣어줍니다.
-  /// - Parameter salaryBudget: 이번 기간의 SalaryBudget
-  /// - Returns: 변경된 SalaryBudget
-  func setHarubeeForPastDates(_ salaryBudget: SalaryBudget) throws -> SalaryBudget
-  
   
   // MARK: - DailyBudgetUseCase
   
