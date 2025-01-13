@@ -12,8 +12,8 @@ struct TransactionItemButton: View {
   
   let title: String
   let amount: Int?
-  var textColor: Color = .textBlack
-  var backgroundColor: Color = .textBrighter30
+  var textColor: Color = .textPrimary
+  var backgroundColor: Color = .bgSecondary50
   
   var body: some View {
     VStack(spacing: 16) {
@@ -37,7 +37,7 @@ struct TransactionItemButton: View {
   TransactionItemButton(
     title: "수입",
     amount: 1000,
-    textColor: Color.textBlack,
-    backgroundColor: Color.textBrighter30
+    textColor: .textPrimary,
+    backgroundColor: .bgSecondary50
   )
 }
