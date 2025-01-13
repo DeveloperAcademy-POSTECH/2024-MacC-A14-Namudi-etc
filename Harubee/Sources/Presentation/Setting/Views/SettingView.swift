@@ -14,9 +14,9 @@ struct SettingView: View {
   
   var body: some View {
     ZStack(alignment: .top) {
-      Color.whiteDefault.ignoresSafeArea()
+      Color.bgPrimary.ignoresSafeArea()
       
-      VStack(spacing: 0) {
+      ScrollView {
         // 알림 설정
         NotificationManageView(settingViewModel: settingViewModel)
         
@@ -34,7 +34,7 @@ struct SettingView: View {
         
         // 데이터 초기화
         DataResetView(settingViewModel: settingViewModel)
-      }
+      }.scrollIndicators(.hidden)
     }
     .navigationBarStyle(.white(title: "설정", backTitle: "뒤로"))
   }
@@ -125,11 +125,11 @@ private struct SettingInformationView: View {
     VStack(alignment: .leading, spacing: 6) {
       Text("앱 버전")
         .font(.pretendardSemibold_18)
-        .foregroundStyle(Color.textBlack)
+        .foregroundStyle(.textPrimary)
       
       Text("v\(Bundle.main.shortVersionString)")
         .font(.pretendardMedium_14)
-        .foregroundStyle(Color.textBlack30)
+        .foregroundStyle(.textPrimary30)
     }
     .frame(maxWidth: .infinity, alignment: .leading)
   }
@@ -147,8 +147,8 @@ private struct DataResetView: View {
         isAlertPresented = true
       } label: {
         Text("데이터 초기화")
-        .foregroundStyle(.redDefault)
-        .font(.pretendardSemibold_18)
+          .foregroundStyle(.warning)
+          .font(.pretendardSemibold_18)
       }
       .frame(maxWidth: .infinity, alignment: .leading)
       .buttonStyle(CustomButtonStyle(
@@ -183,7 +183,7 @@ private struct SectionDivider: View {
     Rectangle()
       .frame(maxWidth: .infinity, maxHeight: 6)
       .foregroundStyle(
-        .textBlack5.shadow(.inner(radius: 3, x: 0, y: 1))
+        .textPrimary5.shadow(.inner(radius: 3, x: 0, y: 1))
       )
   }
 }
@@ -219,17 +219,17 @@ private struct SectionItem: View {
     HStack(alignment: .center, spacing: 8) {
       Text(title)
         .font(.pretendardSemibold_18)
-        .foregroundStyle(Color.textBlack)
+        .foregroundStyle(.textPrimary)
       
       Spacer()
       
       Text(previewText)
         .font(.pretendardMedium_16)
-        .foregroundStyle(Color.main)
+        .foregroundStyle(.mainText)
       
       Image(systemName: "chevron.right")
         .font(Font.system(size: 16, weight: .regular))
-        .foregroundStyle(Color.textBlack)
+        .foregroundStyle(.textPrimary)
         .frame(width: 12, height: 19)
     }
   }

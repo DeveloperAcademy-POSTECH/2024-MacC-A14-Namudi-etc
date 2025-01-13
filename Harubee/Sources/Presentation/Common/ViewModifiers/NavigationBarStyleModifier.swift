@@ -108,7 +108,7 @@ enum NavigationBarStyle: Equatable {
     switch self {
     case .onboarding: return .whiteDefault
     case .main: return .whiteDefault
-    case .white: return .main
+    case .white: return .mainText
     case .sheet: return .mainText
     case .clear: return .clear
     }
@@ -118,7 +118,7 @@ enum NavigationBarStyle: Equatable {
     switch self {
     case .onboarding: return .clear
     case .main: return .whiteDefault
-    case .white: return .textBlack
+    case .white: return .textPrimary
     case .sheet: return .textPrimary
     case .clear: return .clear
     }

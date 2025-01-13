@@ -47,8 +47,8 @@ struct PeriodlyCalendarView: View {
       if !viewModel.isCurrentPeriodContainsToday {
         CalendarBottomFAB(
           title: "이번 기간으로 돌아가기",
-          titleColor: .whiteDefault,
-          backgroundColor: .mainBright,
+          titleColor: .textFixed,
+          backgroundColor: .mainSecondary,
           icon: Image(systemName: "arrow.clockwise"),
           action: { viewModel.send(.moveToCurrent) }
         )
