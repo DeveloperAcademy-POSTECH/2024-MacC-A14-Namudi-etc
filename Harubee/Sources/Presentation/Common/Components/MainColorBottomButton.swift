@@ -17,11 +17,11 @@ struct MainColorBottomButton: View {
   private let action: () -> Void
   
   private var foregroundColor: Color {
-    !isReverseColor ? .whiteDefault : .main
+    !isReverseColor ? .textFixed : .hiveText
   }
   
   private var backgroundColor: Color {
-    !isReverseColor ? .main : .whiteDefault
+    !isReverseColor ? .mainPrimary : .hivePrimary
   }
   
   init(
@@ -46,7 +46,7 @@ struct MainColorBottomButton: View {
           .foregroundStyle(
             isEnabled
             ? foregroundColor
-            : Color.whiteDeep
+            : .bgSecondary
           )
           .padding(.vertical, 20)
       }
@@ -54,7 +54,7 @@ struct MainColorBottomButton: View {
       .background(
         isEnabled
         ? backgroundColor
-        : Color.main30
+        : .mainPrimary30
       )
       .clipShape(RoundedRectangle(cornerRadius: 10))
       .padding(.horizontal, 16)

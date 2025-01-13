@@ -69,6 +69,7 @@ struct HarubeeAdjustView: View {
       }
     }
     .navigationBarStyle(.sheet(title: "하루비 조정"))
+    .presentationBackground(.bgPrimary)
   }
   
   private func doneButtonTapped() {
@@ -104,7 +105,7 @@ private struct DefaultHarubeeContentView: View {
       if isUpdated {
         Text("하루비 조정 후 계산된")
           .font(.pretendardSemibold_18)
-          .foregroundStyle(Color.textBlack)
+          .foregroundStyle(Color.textPrimary)
           .padding(.top, 3)
       }
       
@@ -118,7 +119,7 @@ private struct DefaultHarubeeContentView: View {
         }
         .padding(.top, 10)
         .font(.pretendardMedium_14)
-        .foregroundStyle(Color.textBlack30)
+        .foregroundStyle(Color.textPrimary30)
       }
     }
     .frame(maxWidth: .infinity, alignment: .leading)
@@ -131,13 +132,13 @@ private struct DefaultHarubeeContentView: View {
       
       Text(defaultHarubee.decimalWithWon)
         .font(.pretendardSemibold_22)
-        .foregroundStyle(.main)
+        .foregroundStyle(.mainPrimary)
         .padding(.leading, 4)
       
       Text("입니다")
         .font(.pretendardSemibold_18)
     }
-    .foregroundStyle(Color.textBlack)
+    .foregroundStyle(Color.textPrimary)
   }
 }
 
@@ -205,10 +206,10 @@ private struct HarubeeAdjustField: View {
         Text("기본 하루비로 변경")
           .font(.pretendardMedium_14)
       }
-      .foregroundStyle(.main)
+      .foregroundStyle(.alertText)
       .padding(.horizontal, 8)
       .padding(.vertical, 6)
-      .background(.whiteDeep)
+      .background(.alertBg)
       .clipShape(RoundedRectangle(cornerRadius: 5))
     }
   }

@@ -87,6 +87,7 @@ struct TransactionInputView: View {
     }
     .id(transactionFocusType)
     .navigationBarStyle(.sheet(title: "실제 지출 및 수입 입력"))
+    .presentationBackground(.bgPrimary)
     .onChange(of: transactionFocusType) { _, _ in
       switch transactionFocusType {
       case .income, .expense:
@@ -123,7 +124,7 @@ private struct TransactionBodyItemView: View {
         .overlay(
           RoundedRectangle(cornerRadius: 5)
             .stroke(
-              Color.mainBright,
+              .mainSecondary,
               lineWidth: transactionFocusType == .income
               ? 2 : 0
             )
@@ -140,7 +141,7 @@ private struct TransactionBodyItemView: View {
         .overlay(
           RoundedRectangle(cornerRadius: 5)
             .stroke(
-              Color.mainBright,
+              .mainSecondary,
               lineWidth: transactionFocusType == .expense
               ? 2 : 0
             )
