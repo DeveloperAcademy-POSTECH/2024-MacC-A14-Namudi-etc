@@ -226,6 +226,7 @@ private struct Honeycomb: View {
 
 // MARK: - HarubeeHexagon(Primary Layer)
 private struct HarubeeHexagon: View {
+  @Environment(\.colorScheme) private var colorScheme
   
   // MARK: Public Properties
   @Binding var isInfoBubbleVisible: Bool
@@ -387,8 +388,19 @@ private struct HarubeeHexagon: View {
   
   private var harubeeNumberContainer: some View {
     let isIncludedInWave = self.animatedFillPercentage <= 0.33
+    var harubeeImage: Image {
+      switch colorScheme {
+      case .dark:
+        return Image(.harubeeWhite)
+      case .light:
+        return isIncludedInWave ? Image(.harubeeWhite) : Image(.harubeeMain)
+      default:
+        return Image(.harubeeMain)
+      }
+    }
+    
     return HStack {
-      (isIncludedInWave ? Image(.harubeeWhite) : Image(.harubeeMain))
+      harubeeImage
         .resizable()
         .frame(width: 20, height: 20)
       
@@ -498,6 +510,7 @@ private struct TodayFooterView: View {
 // MARK: - CalendarStreakView(Secondary Layer)
 private struct CalendarStreakView: View {
   @Environment(MainCoordinator.self) private var coordinator
+  @Environment(\.colorScheme) private var colorScheme
   
   // MARK: Public Properties
   let todayViewModel: TodayViewModel
@@ -505,6 +518,7 @@ private struct CalendarStreakView: View {
   
   var body: some View {
     
+    let isDarkMode = colorScheme.isDarkMode
     let weeklyStreaks = todayViewModel.state.weeklyStreaks ?? []
     let firstStreakGroup = Array(weeklyStreaks.prefix(3))
     let secondStreakGroup = Array(weeklyStreaks.suffix(3))
@@ -515,11 +529,11 @@ private struct CalendarStreakView: View {
     var hexagonImage: Image {
       switch(todayStreak?.isOverHarubee) {
       case .none:
-        return Image(.hexagonNone)
+        return isDarkMode ? Image(.hexagonNoneDark) : Image(.hexagonNone)
       case .some(true):
-        return Image(.hexagonBad)
+        return isDarkMode ? Image(.hexagonBadDark): Image(.hexagonBad)
       case .some(false):
-        return Image(.hexagonGood)
+        return isDarkMode ? Image(.hexagonGoodDark) : Image(.hexagonGood)
       }
     }
     
@@ -615,17 +629,19 @@ private struct StreakGroupView: View {
 
 // MARK: - StreakCell(Secondary Layer)
 private struct StreakCell: View {
-  
+  @Environment(\.colorScheme) private var colorScheme
   let dailyStreak: DailyStreak
   
   var hexagonImage: Image {
+    let isDarkMode = colorScheme.isDarkMode
+    
     switch(dailyStreak.isOverHarubee) {
     case .none:
-      return Image(.hexagonNone)
+      return isDarkMode ? Image(.hexagonNoneDark) : Image(.hexagonNone)
     case .some(true):
-      return Image(.hexagonBad)
+      return isDarkMode ? Image(.hexagonBadDark) : Image(.hexagonBad)
     case .some(false):
-      return Image(.hexagonGood)
+      return isDarkMode ? Image(.hexagonGoodDark) : Image(.hexagonGood)
     }
   }
   
