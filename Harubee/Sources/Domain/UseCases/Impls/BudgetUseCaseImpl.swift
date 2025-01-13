@@ -221,22 +221,32 @@ final class BudgetUseCaseImpl: BudgetUseCase {
     salaryBudget: SalaryBudget,
     anchorDate: Date
   ) -> Double {
-    
+    // 1. 하루비 계산의 기준 날짜 포멧팅
     let currentDate = anchorDate.formattedDate
     
-    var nilCount = 0.0
-    var newBalance = Double(salaryBudget.balance)
+    var nilCount = 0 // 하루비를 조정하지 않은 날짜 개수
+    var newBalance = Double(salaryBudget.balance) // 현재 잔액에서 조정된 하루비 금액을 차감하는데 사용됨
     
+    // SalaryBudget의 모든 DailyBudget을 순회
     for dailyBudget in salaryBudget.dailyBudgets {
-      if dailyBudget.date < currentDate || dailyBudget.expense != nil {
+      // dailyBudget의 날짜가 (하루비 계산의)기준 날짜보다 이전이거나,
+      // 해당 날짜에 지출을 입력하지 않은 경우는 건너뜀
+      if dailyBudget.date < currentDate
+          || dailyBudget.expense != nil {
         continue
       }
       
+      // 하루비를 조정했다면 현재 잔액에서 차감
+      // 그렇지 않다면 nilCount 증가
       if let harubee = dailyBudget.harubee { newBalance -= Double(harubee) }
       else { nilCount += 1 }
     }
     
-    return nilCount == 0.0 ? newBalance : newBalance / nilCount
+    // nilCount == 0 -> 모든 날짜의 하루비를 조정함 -> 차감된 최종 잔액 리턴
+    // 그렇지 않음 -> 일부 날짜만 하루비 조정 -> 차감된 잔액을 조정하지 않은 날짜의 개수만큼 나눔
+    return nilCount == 0
+    ? newBalance
+    : newBalance / Double(nilCount)
   }
   
   func deleteAllSalaryBudgets() throws {
@@ -293,51 +303,56 @@ final class BudgetUseCaseImpl: BudgetUseCase {
     return userDefaultsRepository.readIncomeDay()
   }
   
-  // TODO: 함수명, 로직 수정 필요
-  func checkSalaryBudget(_ salaryBudget: SalaryBudget) throws -> SalaryBudget {
+  func setHarubeeForPastDates(_ salaryBudget: SalaryBudget) throws -> SalaryBudget {
     var salaryBudget = salaryBudget
     
-    let today = Date().formattedDate
+    let now = Date().formattedDate
     var index = 0
     
     // 1. 최근 접속 날짜 불러오기
-    let recentAccessDay = userDefaultsRepository.readLastAccessDate() ?? today
+    let recentAccessDay = userDefaultsRepository.readLastAccessDate() ?? now
     
-    // 최근 접속 날짜 업데이트
-    userDefaultsRepository.saveLastAccessDate(today)
+    // 2. 최근 접속 날짜 업데이트
+    userDefaultsRepository.saveLastAccessDate(now)
     
-    // 2. 최근 접속 날짜가 오늘 날짜와 일치한 경우, 기존 salaryBudget 리턴
+    // 3. 최근 접속 날짜가 오늘 날짜와 일치한 경우, 기존 salaryBudget 리턴
     if recentAccessDay.isToday { return salaryBudget }
     
-    // 3.
-    while salaryBudget.dailyBudgets[index].date != today {
+    var newDefaultHarubee = 0.0
+    
+    // 4. 오늘 이전의 DailyBudget을 순회
+    while salaryBudget.dailyBudgets[index].date != now {
       let dailyBudget = salaryBudget.dailyBudgets[index]
       
-      // dailyBudget의 하루비가 nil이 아닌 경우, 건너뜀
+      // 4-1. 하루비가 조정된 경우 건너뜀
       if dailyBudget.harubee != nil {
         index += 1
         continue
       }
       
-      // dailyBudget의 하루비를 기본 하루비로 업데이트
-      salaryBudget.dailyBudgets[index] = try dailyBudgetRepository.updateHarubee(
-        dailyBudget.id,
-        harubee: Int(salaryBudget.defaultHarubee)
+      // 4-2. salaryBudget의 기본 하루비 업데이트
+      newDefaultHarubee = self.calculateDefaultHarubee(
+        salaryBudget: salaryBudget,
+        anchorDate: dailyBudget.date
       )
       
-      // salaryBudget의 기본 하루비 업데이트
-      let defaultHarubee = self.calculateDefaultHarubee(
-        salaryBudget: salaryBudget,
-        anchorDate: dailyBudget.date.adding(by: .day, value: 1)!
+      // 4-3. dailyBudget의 하루비를 기본 하루비로 업데이트
+      salaryBudget.dailyBudgets[index] = try dailyBudgetRepository.updateHarubee(
+        dailyBudget.id,
+        harubee: Int(newDefaultHarubee)
       )
-      salaryBudget.defaultHarubee = defaultHarubee
       
       index += 1
     }
     
+    newDefaultHarubee = self.calculateDefaultHarubee(
+      salaryBudget: salaryBudget,
+      anchorDate: .now
+    )
+    
     try salaryBudgetRepository.updateDefaultHarubee(
       salaryBudget.id,
-      defaultHarubee: salaryBudget.defaultHarubee
+      defaultHarubee: newDefaultHarubee
     )
     
     try createNextSalaryBudgetIfNeeded(salaryBudget: salaryBudget)
