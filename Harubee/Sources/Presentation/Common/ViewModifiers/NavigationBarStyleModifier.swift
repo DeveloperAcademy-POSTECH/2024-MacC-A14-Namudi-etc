@@ -109,7 +109,7 @@ enum NavigationBarStyle: Equatable {
     case .onboarding: return .whiteDefault
     case .main: return .whiteDefault
     case .white: return .main
-    case .sheet: return .main
+    case .sheet: return .mainText
     case .clear: return .clear
     }
   }
@@ -119,7 +119,7 @@ enum NavigationBarStyle: Equatable {
     case .onboarding: return .clear
     case .main: return .whiteDefault
     case .white: return .textBlack
-    case .sheet: return .textBlack
+    case .sheet: return .textPrimary
     case .clear: return .clear
     }
   }

@@ -41,7 +41,7 @@ struct NumberKeypadView: View {
       )
     }
     .frame(maxWidth: .infinity)
-    .background(.whiteDefault)
+    .background(.bgPrimary)
   }
 }
 
@@ -65,9 +65,9 @@ private struct ExpressionView: View {
     }
     .frame(maxWidth: .infinity, maxHeight: 50)
     .padding(.horizontal, 22)
-    .background(.whiteDeep)
+    .background(.bgSecondary50)
     .font(.pretendardMedium_16)
-    .foregroundStyle(.textBlack)
+    .foregroundStyle(.textPrimary)
   }
 }
 
@@ -119,7 +119,7 @@ private struct ExpressionText: View {
         .resizable()
         .frame(maxWidth: 2, maxHeight: 20)
         .foregroundStyle(
-          isExpressionChanging || isVisible ? .main : .clear
+          isExpressionChanging || isVisible ? .mainText : .clear
         )
         .id(scrollPositionID)
     }
@@ -192,7 +192,7 @@ private struct NumberKeypadButton: View {
       .contentShape(Rectangle())
     }
     .buttonStyle(CustomButtonStyle(
-      tappedBackgroundColor: .textBright.opacity(0.7),
+      tappedBackgroundColor: .textSecondary.opacity(0.7),
       cornerRadius: 12
     ))
   }

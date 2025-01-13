@@ -45,8 +45,8 @@ struct FloatingTitleNumberField: View {
         ? .clear
         : (
           isFocused
-          ? (isErrorTextVisible ? .redDefault : .main)
-          : .textBright
+          ? (isErrorTextVisible ? .warning : .mainText)
+          : .textTertiary
         )
       )
       .offset(y: !text.isEmpty ? -2 : 0)
@@ -58,7 +58,7 @@ struct FloatingTitleNumberField: View {
     VStack(alignment: .leading, spacing: 0) {
       Text(text.isEmpty ? title : text)
         .foregroundStyle(
-          !text.isEmpty ? .textBlack : .placeholder
+          !text.isEmpty ? .textPrimary : .textTertiary
         )
         .font(textSize.font)
         .padding(.leading, 4)
@@ -68,9 +68,9 @@ struct FloatingTitleNumberField: View {
         .foregroundStyle(
           isFocused
           ? (isErrorTextVisible && !text.isEmpty
-             ? .redDefault
-             : .mainBright)
-          : .textBrighter
+             ? .warning
+             : .mainSecondary)
+          : .textTertiary
         )
         .padding(.top, isFocused ? 7 : 8)
     }
@@ -86,7 +86,7 @@ struct FloatingTitleNumberField: View {
     .foregroundStyle(
       text.isEmpty
       ? .clear
-      : .redDefault
+      : .warning
     )
     .offset(y: !text.isEmpty ? 4 : 0)
     .animation(.easeOut(duration: 0.2), value: !text.isEmpty)

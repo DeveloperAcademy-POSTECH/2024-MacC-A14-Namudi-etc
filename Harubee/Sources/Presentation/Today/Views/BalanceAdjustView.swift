@@ -73,6 +73,7 @@ struct BalanceAdjustView: View {
       }
     }
     .navigationBarStyle(.sheet(title: "쓸 수 있는 돈 조정"))
+    .presentationBackground(.bgPrimary)
   }
   
   private func doneButtonTapped() {
@@ -109,25 +110,25 @@ private struct ExpectedBalanceContentView: View {
           "\((realBalance.numberFormat! - viewModel.state.totalFixedExpense).decimalWithWon)"
         )
           .font(.pretendardSemibold_22)
-          .foregroundStyle(.main)
+          .foregroundStyle(.mainText)
           .padding(.leading, 4)
         
         Text("입니다")
           .font(.pretendardSemibold_18)
       }
-      .foregroundStyle(Color.textBlack)
+      .foregroundStyle(.textPrimary)
       
       VStack(alignment: .leading, spacing: 3) {
         Text("*쓸 수 있는 돈은 실제 잔액에서")
         HStack(spacing: 0) {
           Text("예정된 고정지출 \(viewModel.state.totalFixedExpense.decimalWithWon)")
-            .highlighter(.main10)
+            .highlighter(.mainPrimary10)
           Text("을 뺀 금액입니다.")
         }
       }
       .padding(.top, 10)
       .font(.pretendardMedium_14)
-      .foregroundStyle(Color.textBlack30)
+      .foregroundStyle(.textPrimary30)
     }
     .frame(maxWidth: .infinity, alignment: .leading)
   }

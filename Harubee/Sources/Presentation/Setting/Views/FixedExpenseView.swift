@@ -111,7 +111,7 @@ private struct FixedExpenseListView: View {
               fixedExpensesRow(for: item)
             }
             .buttonStyle(CustomButtonStyle(
-              tappedBackgroundColor: .textBright.opacity(0.1),
+              tappedBackgroundColor: .textSecondary.opacity(0.1),
               haptic: .tap
             ))
           }
