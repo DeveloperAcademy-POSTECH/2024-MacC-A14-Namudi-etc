@@ -72,6 +72,11 @@ extension Date {
     ).day!
   }
   
+  /// Date에서 특정 component에 값을 더합니다.
+  /// - Parameters:
+  ///   - component: 값을 더할 component
+  ///   - value: 더할 값
+  /// - Returns: 계산된 Date
   func adding(by component: Calendar.Component, value: Int) -> Date? {
     Self.configuredCalendar.date(
       byAdding: component,
