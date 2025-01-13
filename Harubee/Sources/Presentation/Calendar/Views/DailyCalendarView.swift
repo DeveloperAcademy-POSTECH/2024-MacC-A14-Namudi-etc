@@ -25,7 +25,6 @@ struct DailyCalendarView: View {
         onSelect: { date in viewModel.send(.selectDate(date)) }
       )
       .frame(height: 98)
-      .background(Color.main)
       
       if let budget = viewModel.selectedDailyBudget,
          let currentBudget = viewModel.state.currentBudget {
@@ -68,6 +67,7 @@ struct DailyCalendarView: View {
         }
       }
     }
+    .background(.bgPrimary)
     .overlay {
       if infoBubbleVisible {
         Color.clear
@@ -83,8 +83,8 @@ struct DailyCalendarView: View {
           viewModel.isCurrentPeriodContainsToday {
         CalendarBottomFAB(
           title: "오늘로 돌아가기",
-          titleColor: .whiteDefault,
-          backgroundColor: .mainBright,
+          titleColor: .textFixed,
+          backgroundColor: .mainSecondary,
           icon: Image(systemName: "arrow.clockwise")) {
             viewModel.send(.selectDate(Date()))
           }
@@ -162,7 +162,8 @@ private struct HarubeeSection: View {
       ZStack {
         RoundedRectangle(cornerRadius: 5)
           .stroke(
-            budget.date >= Date().formattedDate ? Color.mainBright : Color.textBrighter,
+            // TODO: 색 물어보기
+            budget.date >= Date().formattedDate ? .textTertiary : .textTertiary,
             lineWidth: 1
           )
           .frame(height: 53)
@@ -170,16 +171,14 @@ private struct HarubeeSection: View {
         HStack(spacing: 0) {
           Text(budget.date.isToday ? "오늘의 하루비" : "이 날의 하루비")
             .font(.pretendardSemibold_16)
-            .foregroundStyle(Color.textBlack)
+            .foregroundStyle(.textPrimary)
           
           Spacer()
           
           Text("\(budget.harubee ?? defaultHarubee)원")
             .font(.pretendardSemibold_18)
             .foregroundStyle(
-              budget.date >= Date().formattedDate
-              ? Color.main
-              : Color.textBlack
+              budget.date >= Date().formattedDate ? .mainText : .textFixed
             )
             .frame(maxWidth: .infinity, alignment: .trailing)
             .padding(.trailing, 3)
@@ -187,7 +186,7 @@ private struct HarubeeSection: View {
           if budget.date >= Date().formattedDate {
             Image(systemName: "pencil")
               .font(.sfPro(size: 16))
-              .foregroundStyle(Color.mainBright)
+              .foregroundStyle(.mainSecondary)
           }
         }
         .padding(.horizontal, 14)
@@ -288,17 +287,17 @@ private enum TransactionStyle {
   
   var backgroundColor: Color {
     switch self {
-    case .constant: return .textBrighter30
-    case .warning: return .red10
-    case .saving: return .mainBrighter60
+    case .constant: return .textTertiary30
+    case .warning: return .warning10
+    case .saving: return .mainTertiary60
     }
   }
   
   var textColor: Color {
     switch self {
-    case .constant: return .textBlack
+    case .constant: return .textPrimary
     case .warning: return .warning
-    case .saving: return .main
+    case .saving: return .mainText
     }
   }
 }
@@ -319,12 +318,12 @@ private struct ComparisonLabel: View {
         : "arrowtriangle.down.fill"
       )
       .font(.sfPro(size: 10))
-      .foregroundStyle(isOverBudget ? Color.warning : Color.main)
+      .foregroundStyle(isOverBudget ? .warning : .mainPrimary)
       .padding(.trailing, -4)
       
       Text(" \(abs(harubee - expense))원")
         .font(.pretendardSemibold_14)
-        .foregroundStyle(isOverBudget ? Color.warning : Color.main)
+        .foregroundStyle(isOverBudget ? .warning : .mainPrimary)
       
       Text(isOverBudget ? "더 썼어요" : "덜 썼어요")
     }
@@ -347,7 +346,7 @@ private struct MemoSection: View {
   var body: some View {
     VStack(spacing: 0) {
       Rectangle()
-        .fill(Color.textBlack5)
+        .fill(.textPrimary5)
         .frame(height: 6)
       
       VStack(alignment: .leading, spacing: 16) {
@@ -372,14 +371,14 @@ private struct MemoSection: View {
           ))
         }
         .zIndex(1)
-        .foregroundStyle(Color.textBlack)
+        .foregroundStyle(.textPrimary)
         .padding(.leading, 22)
         
         Group {
           if memos.isEmpty {
             Text("입력된 메모가 없어요")
               .font(.pretendardMedium_16)
-              .foregroundStyle(Color.textBlack30)
+              .foregroundStyle(.textPrimary30)
               .padding(.leading, 22)
               .padding(.vertical, 8)
           } else {
@@ -409,7 +408,7 @@ private struct MemoList: View {
         } label: {
           Text(memo)
             .font(.pretendardMedium_16)
-            .foregroundStyle(Color.textBlack)
+            .foregroundStyle(.textPrimary)
             .listRowInsets(
               EdgeInsets(top: 8, leading: 0, bottom: 8, trailing: 0)
             )
@@ -428,7 +427,7 @@ private struct MemoList: View {
                   .font(.pretendardMedium_14)
               }
             }
-        }
+        }.listRowBackground(Color.clear)
       }
     }
     .listStyle(.plain)
@@ -450,7 +449,7 @@ private struct FixedExpenseSection: View {
       VStack(spacing: 26) {
         Text("예정된 고정 지출")
           .font(.pretendardSemibold_16)
-          .foregroundStyle(Color.textBlack)
+          .foregroundStyle(.textPrimary)
           .frame(maxWidth: .infinity, alignment: .leading)
           .padding(.top, 20)
         
@@ -459,11 +458,11 @@ private struct FixedExpenseSection: View {
             HStack {
               Text(expense.name)
                 .font(.pretendardMedium_16)
-                .foregroundStyle(Color.textBlack)
+                .foregroundStyle(.textPrimary)
               
               Text("\(expense.price.formatted(.number))원")
                 .font(.pretendardSemibold_18)
-                .foregroundStyle(Color.warning)
+                .foregroundStyle(.warning)
                 .frame(maxWidth: .infinity, alignment: .trailing)
             }
           }
@@ -494,7 +493,7 @@ private extension View {
       .infoBubble(isVisible: isVisible, alignment: .bottom) {
         Text("이날의 하루비를 확인하고 조정할 수 있어요")
           .font(.pretendardSemibold_14)
-          .foregroundStyle(Color.textBlack)
+          .foregroundStyle(.info)
       }
   }
   
@@ -505,7 +504,7 @@ private extension View {
           .infoBubble(isVisible: isVisible, alignment: .bottom) {
             Text("이날의 수입과 지출을 입력할 수 있어요")
               .font(.pretendardSemibold_14)
-              .foregroundStyle(Color.textBlack)
+              .foregroundStyle(.info)
           })
   }
   
@@ -519,7 +518,7 @@ private extension View {
           """
         )
         .font(.pretendardSemibold_14)
-        .foregroundStyle(Color.textBlack)
+        .foregroundStyle(.info)
       }
   }
 }

@@ -46,7 +46,7 @@ struct WeeklyCalendar: View {
       }
       .scrollTargetBehavior(.paging)
     }
-    .background(Color.main)
+    .background(.bgAccent)
   }
   
   private var weeks: [[Date]] {
@@ -115,24 +115,24 @@ private struct WeekDayCell: View {
     VStack(spacing: 0) {
       Text(weekday)
         .font(.pretendardMedium_14)
-        .foregroundStyle(Color.whiteDefault)
+        .foregroundStyle(.textFixed)
         .padding(.bottom, 9)
       
       ZStack {
         if isSelected {
           Circle()
-            .fill(Color.whiteDefault)
+            .fill(.textFixed)
             .frame(width: circleSize, height: circleSize)
             .transition(.scale.combined(with: .opacity))
         } else if date.isToday {
           Circle()
-            .stroke(Color.whiteDefault, lineWidth: 1)
+            .stroke(.textFixed, lineWidth: 1)
             .frame(width: circleSize, height: circleSize)
         }
         
         Text(day)
           .font(.pretendardSemibold_16)
-          .foregroundStyle(isSelected ? Color.main : .whiteDefault)
+          .foregroundStyle(isSelected ? .dayText : .textFixed)
       }
       .frame(width: circleSize, height: circleSize)
       .animation(.spring(duration: 0.2), value: isSelected)
