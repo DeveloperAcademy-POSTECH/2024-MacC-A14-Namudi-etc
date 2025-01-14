@@ -44,7 +44,7 @@ struct TodayHarubeeTextView: View {
     VStack(alignment: .leading, spacing: 2) {
       Text(title)
         .font(contentSize.titleFont)
-        .foregroundStyle(.textBright)
+        .foregroundStyle(.textSecondary)
       
       HStack(spacing: 5) {
         Image(.harubeeMain)
@@ -56,7 +56,7 @@ struct TodayHarubeeTextView: View {
         
         Text(harubee.amountFormat + "원")
           .font(contentSize.harubeeFont)
-          .foregroundStyle(.main)
+          .foregroundStyle(.mainText)
       }
     }
   }

@@ -22,9 +22,9 @@ struct ExpenseInputButton: View {
       }
     }
     .font(.pretendardSemibold_12)
-    .foregroundStyle(.whiteDefault)
+    .foregroundStyle(.textFixed)
     .padding(.vertical, 13)
-    .background(.main)
+    .background(.mainPrimary)
     .clipShape(RoundedRectangle(cornerRadius: 25))
   }
 }

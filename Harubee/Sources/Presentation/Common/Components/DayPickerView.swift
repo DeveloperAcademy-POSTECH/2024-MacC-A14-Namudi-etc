@@ -34,7 +34,7 @@ struct DayPickerView: View {
       HStack(spacing: 0) {
         Text(title)
           .font(titleFont.font)
-          .foregroundStyle(Color.textBlack)
+          .foregroundStyle(.textPrimary)
         Spacer()
         DayPickerButton(
           showDayPicker: $showDayPicker,
@@ -86,14 +86,14 @@ private struct DayPickerButton: View {
       Text("매달 \(selectedDay)일")
         .font(.pretendardMedium_16)
         .foregroundStyle(
-          showDayPicker ? Color.main : Color.textBlack
+          showDayPicker ? .mainPrimary : .textPrimary
         )
         .padding(.vertical, 6)
         .padding(.horizontal, 11)
         .background(
           RoundedRectangle(cornerRadius: 6)
             .foregroundStyle(
-              showDayPicker ? Color.whiteDeep : Color.textBrighter30
+              showDayPicker ? .mainPrimary30 : .textTertiary30
             )
         )
     }

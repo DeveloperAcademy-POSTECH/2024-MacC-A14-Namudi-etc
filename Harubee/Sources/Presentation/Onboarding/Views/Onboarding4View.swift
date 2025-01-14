@@ -18,6 +18,9 @@ struct Onboarding4View: View {
   
   var body: some View {
     ZStack(alignment: .bottom) {
+      
+      Color.bgPrimary.ignoresSafeArea()
+      
       VStack(spacing: 0) {
         OnboardingHeaderView(
           averageHarubee: viewModel.state.averageHarubee
@@ -49,7 +52,7 @@ struct Onboarding4View: View {
       ToolbarItem(placement: .topBarTrailing) {
         Text("2/3")
           .font(.pretendardSemibold_22)
-          .foregroundStyle(Color.whiteDeep50)
+          .foregroundStyle(.textSecondaryInversion)
       }
     })
   }
@@ -85,9 +88,9 @@ private struct OnboardingHeaderView: View {
       }
     }
     .frame(maxWidth: .infinity, maxHeight: 120, alignment: .leading)
-    .foregroundStyle(Color.whiteDefault)
+    .foregroundStyle(.textFixed)
     .padding(.horizontal, 20)
-    .background(.main)
+    .background(.bgAccent)
   }
 }
 
@@ -106,7 +109,7 @@ private struct OnboardingBodyView: View {
       Text("현재 잔액은 얼마인가요?")
         .frame(maxWidth: .infinity, alignment: .leading)
         .font(.pretendardMedium_20)
-        .foregroundStyle(Color.textBlack)
+        .foregroundStyle(.textFixed)
         .padding(.horizontal, 20)
       
       VStack(alignment: .leading, spacing: 2) {
@@ -114,7 +117,7 @@ private struct OnboardingBodyView: View {
         Text("수입금에서 지출 금액을 빼서 계산하는 방법도 있어요!")
       }
       .frame(maxWidth: .infinity, alignment: .leading)
-      .foregroundStyle(Color.textBlack30)
+      .foregroundStyle(.textPrimary30)
       .font(.pretendardMedium_12)
       .padding(.top, 6)
       .padding(.horizontal, 20)

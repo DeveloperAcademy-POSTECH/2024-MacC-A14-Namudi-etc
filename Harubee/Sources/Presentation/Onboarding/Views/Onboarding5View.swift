@@ -35,11 +35,12 @@ struct Onboarding5View: View {
         coordinator.push(.onboarding6)
       }
     }
+    .background(.bgPrimary)
     .navigationBarStyle(.onboarding, toolbar: {
       ToolbarItem(placement: .topBarTrailing) {
         Text("3/3")
           .font(.pretendardSemibold_22)
-          .foregroundStyle(Color.whiteDeep50)
+          .foregroundStyle(.textSecondaryInversion)
       }
     })
     .onChange(of: fixedExpenses, { _, _ in
@@ -69,9 +70,9 @@ private struct OnboardingHeaderView: View {
     }
     .frame(maxWidth: .infinity, maxHeight: 120, alignment: .leading)
     .font(.pretendardSemibold_24)
-    .foregroundStyle(Color.whiteDefault)
+    .foregroundStyle(.textFixed)
     .padding(.horizontal, 20)
-    .background(.main)
+    .background(.bgAccent)
   }
 }
 
@@ -84,7 +85,7 @@ private struct OnboardingBodyTitleView: View {
     }
     .frame(maxWidth: .infinity, alignment: .leading)
     .font(.pretendardMedium_20)
-    .foregroundStyle(Color.textBlack)
+    .foregroundStyle(.textFixed)
   }
 }
 
@@ -99,7 +100,7 @@ private struct FixedExpenseListView: View {
     VStack(spacing: 0) {
       listHeaderView
         .padding(.horizontal, 22)
-        .foregroundStyle(Color.textBlack)
+        .foregroundStyle(.textPrimary)
       
       if fixedExpenses.isEmpty {
         emptyListAnnounce
@@ -118,6 +119,7 @@ private struct FixedExpenseListView: View {
             } label: {
               fixedExpensesRow(for: item)
             }
+            .listRowBackground(Color.clear)
             .buttonStyle(CustomButtonStyle(
               haptic: .tap
             ))
@@ -174,12 +176,12 @@ private struct FixedExpenseListView: View {
     HStack(spacing: 0) {
       Text("매달 \(item.day)일")
         .font(.pretendardMedium_16)
-        .foregroundStyle(Color.textBlack)
+        .foregroundStyle(.textPrimary)
         .padding(.vertical, 6)
         .padding(.horizontal, 11)
         .background(
           RoundedRectangle(cornerRadius: 6)
-            .foregroundStyle(Color.textBrighter30)
+            .foregroundStyle(.textTertiary30)
         )
       
       Spacer()
@@ -187,11 +189,9 @@ private struct FixedExpenseListView: View {
       VStack(alignment: .trailing, spacing: 0) {
         Text(item.name)
           .font(.pretendardMedium_12)
-          .foregroundStyle(Color.textBlack)
         Text(item.price.decimalWithWon)
           .font(.pretendardSemibold_18)
-          .foregroundStyle(Color.textBlack)
-      }
+      }.foregroundStyle(.textPrimary)
     }
     .padding(.vertical, 1)
     .contentShape(Rectangle())
