@@ -13,7 +13,7 @@ struct Onboarding6View: View {
   
   var body: some View {
     ZStack {
-      Color.main.ignoresSafeArea()
+      Color.mainBgAccent.ignoresSafeArea()
       
       VStack(spacing: 0) {
         titleView
@@ -22,7 +22,7 @@ struct Onboarding6View: View {
         
         Rectangle()
           .frame(height: 1)
-          .foregroundStyle(Color.textBrighter30)
+          .foregroundStyle(.textTertiary30)
           .padding(.top, 12)
         
         CurrentHarubeeView(harubee: viewModel.state.averageHarubee)
@@ -30,7 +30,7 @@ struct Onboarding6View: View {
         
         Rectangle()
           .frame(height: 1)
-          .foregroundStyle(Color.textBrighter30)
+          .foregroundStyle(Color.textTertiary30)
           .padding(.top, 28)
         
         UserInfoView(
@@ -62,7 +62,7 @@ struct Onboarding6View: View {
       Text("끝났어요!")
     }
     .font(.pretendardSemibold_30)
-    .foregroundStyle(Color.whiteDefault)
+    .foregroundStyle(.textFixed)
     .frame(maxWidth: .infinity, alignment: .leading)
   }
 }
@@ -88,17 +88,17 @@ private struct CurrentHarubeeView: View {
       
       Text("(잔액 - 예정된 고정지출) ÷ 다음 주요 수입일까지 남은 일수")
         .font(.pretendardSemibold_14)
-        .foregroundStyle(Color.whiteDefault)
+        .foregroundStyle(.textFixed)
         .frame(maxWidth: .infinity)
         .padding(.vertical, 16)
         .background(
           RoundedRectangle(cornerRadius: 10)
-            .fill(Color.mainBrighter10)
+            .fill(Color.mainTertiary10)
         )
         .padding(.top, 36)
     }
     .frame(maxWidth: .infinity, alignment: .leading)
-    .foregroundStyle(Color.whiteDefault)
+    .foregroundStyle(.textFixed)
   }
 }
 
@@ -142,7 +142,7 @@ private struct UserInfoView: View {
       UserInfoItemView(
         title: "수입금 중",
         content: incomeAmount.decimalWithWon,
-        contentColor: .whiteDeep50
+        contentColor: .textSecondaryInversion
       )
       
       UserInfoItemView(
@@ -153,7 +153,7 @@ private struct UserInfoView: View {
       UserInfoItemView(
         title: "고정 지출 (총 \(fixedExpensesCount)건) 중",
         content: "\(fixedExpensesTotalAmount.decimalWithWon)",
-        contentColor: .whiteDeep50
+        contentColor: .textSecondaryInversion
       )
       
       UserInfoItemView(
@@ -173,14 +173,14 @@ private struct UserInfoView: View {
 private struct UserInfoItemView: View {
   let title: String
   let content: String
-  var contentColor: Color = .whiteDefault
+  var contentColor: Color = .textFixed
   
   var body: some View {
     HStack(spacing: 0) {
       Text(title)
         .font(.pretendardMedium_14)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .foregroundStyle(Color.whiteDeep50)
+        .foregroundStyle(.textSecondaryInversion)
       Text(content)
         .font(.pretendardSemibold_14)
         .foregroundStyle(contentColor)
@@ -196,7 +196,7 @@ private struct OnboardingFooterView: View {
     VStack(spacing: 0) {
       Text("입력한 정보들은 설정에서 언제든지 수정할 수 있어요")
         .font(.pretendardMedium_12)
-        .foregroundStyle(Color.whiteDeep50)
+        .foregroundStyle(.textSecondaryInversion)
       
       Button {
         viewModel.send(.finishOnboardingSetting)
@@ -206,11 +206,11 @@ private struct OnboardingFooterView: View {
         HStack {
           Text("하루비 시작하기")
             .font(.pretendardSemibold_18)
-            .foregroundStyle(Color.main)
+            .foregroundStyle(.hiveText)
             .padding(.vertical, 20)
         }
         .frame(maxWidth: .infinity)
-        .background(Color.whiteDefault)
+        .background(.hivePrimary)
         .clipShape(
           RoundedRectangle(cornerRadius: 10)
         )

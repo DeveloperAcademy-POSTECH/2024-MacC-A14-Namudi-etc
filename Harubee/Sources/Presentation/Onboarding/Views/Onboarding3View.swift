@@ -20,6 +20,9 @@ struct Onboarding3View: View {
   
   var body: some View {
     ZStack(alignment: .bottom) {
+      
+      Color.bgPrimary.ignoresSafeArea()
+      
       VStack(spacing: 0) {
         OnboardingHeaderView()
         
@@ -55,7 +58,7 @@ struct Onboarding3View: View {
       ToolbarItem(placement: .topBarTrailing) {
         Text("1/3")
           .font(.pretendardSemibold_22)
-          .foregroundStyle(Color.whiteDeep50)
+          .foregroundStyle(.textSecondaryInversion)
       }
     })
     .onChange(of: incomeDay, { _, _ in
@@ -88,9 +91,9 @@ private struct OnboardingHeaderView: View {
     }
     .frame(maxWidth: .infinity, maxHeight: 120, alignment: .leading)
     .font(.pretendardSemibold_24)
-    .foregroundStyle(Color.whiteDefault)
+    .foregroundStyle(.textFixed)
     .padding(.horizontal, 20)
-    .background(.main)
+    .background(.bgAccent)
   }
 }
 
@@ -113,11 +116,11 @@ private struct OnboardingBodyView: View {
       VStack(alignment: .leading, spacing: 0) {
         Text("한 달의 총 수입 금액은 얼마인가요?")
           .font(.pretendardMedium_20)
-          .foregroundStyle(Color.textBlack)
+          .foregroundStyle(.textPrimary)
         
         Text("*입력하신 정보는 수입 기간 동안의 하루비를 계산할 때만 사용됩니다")
           .font(.pretendardMedium_12)
-          .foregroundStyle(Color.textBlack30)
+          .foregroundStyle(.textPrimary30)
           .padding(.top, 6)
         
         FloatingTitleNumberField(

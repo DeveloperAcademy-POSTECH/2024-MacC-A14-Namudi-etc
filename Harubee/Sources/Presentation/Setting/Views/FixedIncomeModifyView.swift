@@ -54,6 +54,7 @@ struct FixedIncomeModifyView: View {
         }
       }
     }
+    .presentationBackground(.bgPrimary)
     .navigationBarStyle(.sheet(title: "고정수입 금액 입력"))
   }
   

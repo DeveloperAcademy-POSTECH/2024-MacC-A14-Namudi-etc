@@ -14,7 +14,7 @@ struct Onboarding2View: View {
   
   var body: some View {
     ZStack {
-      Color.main.ignoresSafeArea()
+      Color.mainBgAccent.ignoresSafeArea()
       VStack(spacing: 0) {
         titleView
         
@@ -51,7 +51,7 @@ struct Onboarding2View: View {
       Text("쓸 수 있을까?")
         .font(.pretendardSemibold_30)
     }
-    .foregroundStyle(Color.whiteDefault)
+    .foregroundStyle(.textFixed)
     .frame(maxWidth: .infinity, alignment: .leading)
     .padding(.horizontal, 20)
   }
@@ -60,17 +60,17 @@ struct Onboarding2View: View {
     VStack(spacing: 22) {
       Rectangle()
         .frame(height: 1)
-        .foregroundStyle(Color.textBrighter30)
+        .foregroundStyle(.textTertiary30)
       VStack(alignment: .leading, spacing: 8) {
         Text("하루비는 다음 수입일까지")
           .font(.pretendardMedium_16)
-          .foregroundStyle(Color.whiteDeep50)
+          .foregroundStyle(.textSecondaryInversion)
         HStack(spacing: 3) {
           Text("하루에 쓸 수 있는 금액을 미리 알려주는 앱")
-            .foregroundStyle(Color.whiteDefault)
-            .highlighter(.mainBrighter15)
+            .foregroundStyle(.textFixed)
+            .highlighter(.mainTertiary15)
           Text("이에요")
-            .foregroundStyle(Color.whiteDeep50)
+            .foregroundStyle(.textSecondaryInversion)
         }
       }
       .frame(maxWidth: .infinity, alignment: .leading)
@@ -82,24 +82,24 @@ struct Onboarding2View: View {
     VStack(spacing: 0) {
       Rectangle()
         .frame(height: 1)
-        .foregroundStyle(Color.textBrighter30)
+        .foregroundStyle(.textTertiary30)
         .padding(.horizontal, 4)
       
       Text("하루비의 계산 방법은 아래와 같아요")
         .font(.pretendardMedium_16)
-        .foregroundStyle(Color.whiteDeep50)
+        .foregroundStyle(.textSecondaryInversion)
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.leading, 4)
         .padding(.top, 22)
       
       Text("(잔액 - 예정된 고정지출) ÷ 다음 주요 수입일까지 남은 일수")
         .font(.pretendardSemibold_14)
-        .foregroundStyle(.whiteDefault)
+        .foregroundStyle(.textFixed)
         .frame(maxWidth: .infinity)
         .padding(.vertical, 16)
         .background(
           RoundedRectangle(cornerRadius: 10)
-            .fill(.mainBrighter10)
+            .fill(.mainTertiary10)
         )
         .padding(.top, 12)
     }

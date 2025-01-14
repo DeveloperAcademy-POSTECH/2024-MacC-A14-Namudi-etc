@@ -16,7 +16,7 @@ struct Onboarding1View: View {
   
   var body: some View {
     ZStack(alignment: .bottom) {
-      Color.main.ignoresSafeArea()
+      Color.mainBgAccent.ignoresSafeArea()
       
       VStack {
         LottieView(animation: .onboarding)
@@ -24,7 +24,7 @@ struct Onboarding1View: View {
           .frame(height: 146)
         Text("쉽고 빠른 지출 계획의 시작")
           .font(.pretendardSemibold_20)
-          .foregroundStyle(Color.whiteDefault)
+          .foregroundStyle(.textFixed)
           .offset(y: -30)
       }
       .frame(maxHeight: .infinity)
@@ -33,7 +33,7 @@ struct Onboarding1View: View {
       Text(isVisible ? "화면을 터치해주세요" : " ")
         .padding(.bottom, 50)
         .font(.pretendardSemibold_16)
-        .foregroundStyle(.whiteDefault)
+        .foregroundStyle(.textFixed)
     }
     .onAppear {
       DispatchQueue.main.asyncAfter(deadline: .now() + 2) {

@@ -81,6 +81,7 @@ struct FixedExpenseManageView: View {
         }
       }
     }
+    .presentationBackground(.bgPrimary)
     .navigationBarStyle(.sheet(title: "고정지출 내역 \(mode.title)"))
     .onChange(of: selectedDay) { _, _ in
       updateIsEnabled()

@@ -19,6 +19,9 @@ struct FixedExpenseView: View {
   
   var body: some View {
     ZStack {
+      
+      Color.bgPrimary.ignoresSafeArea()
+      
       VStack(spacing: 0) {
         FixedExpenseHeaderView(
           fixedExpenses: salaryBudget.fixedExpenses
@@ -51,7 +54,7 @@ struct FixedExpenseView: View {
       ToolbarItem(placement: .topBarTrailing) {
         HelpButton(
           infoBubbleVisible: $isInfoBubbleVisible,
-          buttonColor: .textBlack
+          buttonColor: .textPrimary
         )
       }
     }
@@ -68,6 +71,7 @@ private struct FixedExpenseHeaderView: View {
         Text("총 \(fixedExpenses.reduce(0) { $0 + $1.price }.decimalWithWon)")
       }
       .font(.pretendardSemibold_22)
+      .foregroundStyle(.textPrimary)
       .frame(maxWidth: .infinity, alignment: .leading)
       .padding(.horizontal, 26)
       .padding(.top, 44)
@@ -87,7 +91,6 @@ private struct FixedExpenseListView: View {
     VStack(spacing: 0) {
       listHeaderView
       .padding(.leading, 20)
-      .foregroundStyle(Color.textBlack)
       
       if fixedExpenses.isEmpty {
         emptyListAnnounce
@@ -110,6 +113,7 @@ private struct FixedExpenseListView: View {
             } label: {
               fixedExpensesRow(for: item)
             }
+            .listRowBackground(Color.clear)
             .buttonStyle(CustomButtonStyle(
               tappedBackgroundColor: .textSecondary.opacity(0.1),
               haptic: .tap
@@ -153,7 +157,7 @@ private struct FixedExpenseListView: View {
       .buttonStyle(CustomButtonStyle(
         haptic: .tap
       ))
-    }
+    }.foregroundStyle(.textPrimary)
   }
   
   private var emptyListAnnounce: some View {
@@ -169,12 +173,12 @@ private struct FixedExpenseListView: View {
     HStack(spacing: 0) {
       Text("매달 \(item.day)일")
         .font(.pretendardMedium_16)
-        .foregroundStyle(Color.textBlack)
+        .foregroundStyle(.textPrimary)
         .padding(.vertical, 6)
         .padding(.horizontal, 11)
         .background(
           RoundedRectangle(cornerRadius: 6)
-            .foregroundStyle(Color.textBrighter30)
+            .foregroundStyle(.textTertiary30)
         )
       
       Spacer()
@@ -182,11 +186,9 @@ private struct FixedExpenseListView: View {
       VStack(alignment: .trailing, spacing: 0) {
         Text(item.name)
           .font(.pretendardMedium_12)
-          .foregroundStyle(Color.textBlack)
         Text(item.price.decimalWithWon)
           .font(.pretendardSemibold_18)
-          .foregroundStyle(Color.textBlack)
-      }
+      }.foregroundStyle(.textPrimary)
     }
     .padding(.vertical, 1)
     .contentShape(Rectangle())
@@ -237,7 +239,7 @@ private extension View {
           Text("매달 고정으로 나가는 지출을 추가할 수 있어요")
         }
         .font(.pretendardSemibold_14)
-        .foregroundStyle(Color.textBlack)
+        .foregroundStyle(.info)
       }
   }
 }

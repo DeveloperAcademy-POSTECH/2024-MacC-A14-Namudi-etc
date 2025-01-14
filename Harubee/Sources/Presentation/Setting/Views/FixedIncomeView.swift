@@ -37,6 +37,9 @@ struct FixedIncomeView: View {
   
   var body: some View {
     ZStack {
+      
+      Color.bgPrimary.ignoresSafeArea()
+      
       VStack(spacing: 44) {
         fixedIncomeHeaderView
         .zIndex(1)
@@ -85,7 +88,7 @@ struct FixedIncomeView: View {
         ToolbarItem(placement: .topBarTrailing) {
           HelpButton(
             infoBubbleVisible: $isInfoBubbleVisible,
-            buttonColor: .textBlack
+            buttonColor: .textPrimary
           )
         }
     })
@@ -113,7 +116,7 @@ struct FixedIncomeView: View {
       Text("고정수입 날짜를 기준으로")
       Text("하루비를 알려드릴게요.")
     }
-    .foregroundStyle(Color.textBlack)
+    .foregroundStyle(.textPrimary)
     .font(.pretendardSemibold_22)
     .frame(maxWidth: .infinity, alignment: .leading)
     .infoBubble($isInfoBubbleVisible)
@@ -150,6 +153,7 @@ private struct FixedIncomeBodyView: View {
       HStack(spacing: 0) {
         Text("총 수입 금액")
           .font(.pretendardMedium_18)
+          .foregroundStyle(.textPrimary)
         
         Spacer()
         
@@ -163,10 +167,10 @@ private struct FixedIncomeBodyView: View {
           HStack(spacing: 3) {
             Text(fixedIncomeAmount.decimalWithWon)
               .font(.pretendardMedium_20)
-              .foregroundStyle(Color.textBlack)
+              .foregroundStyle(.textPrimary)
             Image(systemName: "pencil")
               .font(.system(size: 20))
-              .foregroundStyle(Color.textBlack30)
+              .foregroundStyle(.textPrimary30)
           }
         }
         .buttonStyle(CustomButtonStyle(
@@ -188,7 +192,7 @@ private extension View {
           Text("원활한 서비스 사용을 위해, 정확한 정보를 입력해주세요")
         }
         .font(.pretendardSemibold_14)
-        .foregroundStyle(Color.textBlack)
+        .foregroundStyle(.info)
       }
   }
 }

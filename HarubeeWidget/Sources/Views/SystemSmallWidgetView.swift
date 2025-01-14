@@ -21,7 +21,6 @@ struct SystemSmallWidgetView: View {
       }
     }
     .frame(maxWidth: .infinity, maxHeight: .infinity)
-    .background(.whiteDefault)
   }
 }
 
@@ -55,7 +54,7 @@ private struct SystemSmallContentView: View {
     .frame(maxWidth: .infinity)
     .padding(.top, 24)
     .padding(.bottom, 16)
-    .background(.whiteDefault)
+    .background(.bgPrimary)
   }
   
   private func getTitle() -> String {

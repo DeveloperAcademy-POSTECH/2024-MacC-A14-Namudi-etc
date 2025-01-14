@@ -21,7 +21,7 @@ struct SystemMediumWidgetView: View {
       }
     }
     .frame(maxWidth: .infinity, maxHeight: .infinity)
-    .background(.whiteDefault)
+    .background(.bgPrimary)
   }
 }
 
@@ -56,7 +56,8 @@ private struct BodyView: View {
       DailyView(daily: dailyStreak[0])
         .background(
           RoundedRectangle(cornerRadius: 10)
-            .stroke(.mainBright, lineWidth: 2)
+            .fill(.bgSecondary50)
+            .stroke(.mainSecondary, lineWidth: 2)
         )
       
       // futureDailyStreakView
@@ -67,7 +68,7 @@ private struct BodyView: View {
       }
       .background(
         RoundedRectangle(cornerRadius: 10)
-          .fill(.whiteDeep50)
+          .fill(.bgSecondary50)
       )
     }
   }
@@ -95,21 +96,21 @@ private struct DailyView: View {
     VStack(spacing: 0) {
       Text("오늘")
         .font(.pretendardSemibold_12)
-        .foregroundStyle(.main)
+        .foregroundStyle(.mainPrimary)
       
       Spacer()
       
       switch daily.expenseType {
       case .empty:
-        Image(.hexagonNone)
+        Image.dynamicImage(light: .hexagonNone, dark: .hexagonNoneDark)
           .resizable()
           .frame(width: 20, height: 20)
       case .good:
-        Image(.hexagonGood)
+        Image.dynamicImage(light: .hexagonGood, dark: .hexagonGoodDark)
           .resizable()
           .frame(width: 20, height: 20)
       case .bad:
-        Image(.hexagonBad)
+        Image.dynamicImage(light: .hexagonBad, dark: .hexagonBadDark)
           .resizable()
           .frame(width: 20, height: 20)
       }
@@ -124,7 +125,7 @@ private struct DailyView: View {
         daily.date?.formattedDateToString(.dayWeekday) ?? ""
       )
       .font(.pretendardSemibold_12)
-      .foregroundStyle(.textBright)
+      .foregroundStyle(.textSecondary)
       
       Spacer()
       
@@ -136,8 +137,8 @@ private struct DailyView: View {
         )
         .foregroundStyle(
           daily.isAdjustedHarubee == true
-          ? .main
-          : .textBlack
+          ? .mainPrimary
+          : .textPrimary
         )
         .lineLimit(1)
       
