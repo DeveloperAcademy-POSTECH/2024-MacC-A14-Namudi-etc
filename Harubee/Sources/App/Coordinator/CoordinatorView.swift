@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct CoordinatorView: View {
+  @AppStorage("appearance") var appearnace: AppearanceType = .automatic
   @State private var rootSwitcher = RootViewSwitcher()
   
   // Onboarding
@@ -30,6 +31,7 @@ struct CoordinatorView: View {
     .environment(rootSwitcher)
     .environment(mainCoordinator)
     .environment(onboardingCoordinator)
+    .preferredColorScheme(appearnace.getColorScheme())
     .onChange(of: rootSwitcher.root) { oldValue, _ in
       switch oldValue {
       case .onboarding:
