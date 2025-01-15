@@ -272,7 +272,7 @@ private struct HarubeeHexagon: View {
       RoundedHexagon()
         .fill(.mainBgAccent)
         .frame(width: hexgonSize, height: hexgonSize)
-        .shadow(color: Color.textBlack.opacity(0.3), radius: 7, x: 1, y: 4)
+        .shadow(color: .black.opacity(0.3), radius: 7, x: 1, y: 4)
       
       Wave(xOffset: firstWaveOffset, fillPercentage: animatedFillPercentage)
         .fill(isTodayHarubee ? .hivePrimaryBack : .hiveSecondaryBack)
@@ -563,7 +563,6 @@ private struct CalendarStreakView: View {
             RoundedRectangle(cornerRadius: 8)
               .fill(.bgSecondary50)
               .stroke(.mainSecondary, lineWidth: 2)
-              .foregroundStyle(Color.whiteDeep50)
               .frame(maxWidth: 50, maxHeight: 72)
             
             VStack {

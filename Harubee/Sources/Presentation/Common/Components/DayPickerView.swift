@@ -55,7 +55,7 @@ struct DayPickerView: View {
     VStack(spacing: 0) {
       Rectangle()
         .frame(height: 1)
-        .foregroundStyle(Color.textBrighter30)
+        .foregroundStyle(Color.textPrimary30)
         .padding(.top, 14)
         .padding(.horizontal, 16)
       

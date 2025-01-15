@@ -70,7 +70,6 @@
 		573230A62CEF104A0075D1B1 /* Exceptions for "Harubee" folder in "HarubeeWidgetExtension" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				Resources/Colors.xcassets,
 				Resources/DSColors.xcassets,
 				"Resources/Fonts/Pretendard-Medium.ttf",
 				"Resources/Fonts/Pretendard-SemiBold.ttf",

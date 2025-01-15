@@ -106,8 +106,8 @@ enum NavigationBarStyle: Equatable {
   
   var tintColor: Color {
     switch self {
-    case .onboarding: return .whiteDefault
-    case .main: return .whiteDefault
+    case .onboarding: return .textFixed
+    case .main: return .textFixed
     case .white: return .mainText
     case .sheet: return .mainText
     case .clear: return .clear
@@ -117,7 +117,7 @@ enum NavigationBarStyle: Equatable {
   var titleColor: Color {
     switch self {
     case .onboarding: return .clear
-    case .main: return .whiteDefault
+    case .main: return .textFixed
     case .white: return .textPrimary
     case .sheet: return .textPrimary
     case .clear: return .clear

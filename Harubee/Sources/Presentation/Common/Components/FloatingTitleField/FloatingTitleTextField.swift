@@ -22,7 +22,7 @@ struct FloatingTitleTextField: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .foregroundStyle(
           !text.isEmpty
-          ? (isTextfieldFocused ? .main : .textSecondary)
+          ? (isTextfieldFocused ? .mainPrimary : .textTertiary)
           : .clear
         )
         .offset(y: !text.isEmpty ? -4 : 0)
@@ -39,8 +39,8 @@ struct FloatingTitleTextField: View {
         .frame(height: !isTextfieldFocused ? 1 : 2)
         .foregroundStyle(
           !isTextfieldFocused
-          ? .textBrighter
-          : .mainBright
+          ? .textTertiary
+          : .mainSecondary
         )
         .padding(.top, !isTextfieldFocused ? 8 : 7)
     }
