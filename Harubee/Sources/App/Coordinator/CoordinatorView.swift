@@ -31,7 +31,7 @@ struct CoordinatorView: View {
     .environment(rootSwitcher)
     .environment(mainCoordinator)
     .environment(onboardingCoordinator)
-    .preferredColorScheme(appearnace.getColorScheme())
+    .preferredColorScheme(appearnace.colorScheme)
     .onChange(of: rootSwitcher.root) { oldValue, _ in
       switch oldValue {
       case .onboarding:
