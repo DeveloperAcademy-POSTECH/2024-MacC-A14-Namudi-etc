@@ -28,7 +28,7 @@ struct SettingView: View {
         SectionDivider()
         
         // 언어, 통화, 화면 테마 설정
-        PreferencesSettingsView()
+        PreferencesSettingsView(settingViewModel: settingViewModel)
         
         SectionDivider()
         
@@ -118,9 +118,17 @@ private struct FixedAmountManageView: View {
 // MARK: - PreferencesSettingsView
 private struct PreferencesSettingsView: View {
   
+  @Environment(MainCoordinator.self) private var coordinator
+  let settingViewModel: SettingViewModel
+  
   var body: some View {
     SectionContainer {
       SectionItem(title: "화면 테마 설정", previewText: "시스템 설정")
+    }
+    .onTapGesture {
+      coordinator.push(.appearanceOptions(
+        settingViewModel: settingViewModel
+      ))
     }
   }
 }

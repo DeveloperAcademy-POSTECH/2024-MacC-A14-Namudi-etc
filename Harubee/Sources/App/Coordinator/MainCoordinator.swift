@@ -21,6 +21,7 @@ final class MainCoordinator: MainCoordinatorProtocol {
     case setting(salaryBudget: SalaryBudget)
     case fixedExpense(settingViewModel: SettingViewModel)
     case fixedIncome(settingViewModel: SettingViewModel)
+    case appearanceOptions(settingViewModel: SettingViewModel)
   }
   
   enum Sheet: Identifiable {
@@ -239,6 +240,8 @@ final class MainCoordinator: MainCoordinatorProtocol {
       FixedExpenseView(settingViewModel: viewModel)
     case let .fixedIncome(viewModel):
       FixedIncomeView(settingViewModel: viewModel)
+    case let .appearanceOptions(settingViewModel: viewModel):
+      AppearanceOptionsView(settingViewModel: viewModel)
     }
   }
   
