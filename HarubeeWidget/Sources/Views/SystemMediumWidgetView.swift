@@ -102,15 +102,15 @@ private struct DailyView: View {
       
       switch daily.expenseType {
       case .empty:
-        Image.dynamicImage(light: .hexagonNone, dark: .hexagonNoneDark)
+        Image(.hexagonNone)
           .resizable()
           .frame(width: 20, height: 20)
       case .good:
-        Image.dynamicImage(light: .hexagonGood, dark: .hexagonGoodDark)
+        Image(.hexagonGood)
           .resizable()
           .frame(width: 20, height: 20)
       case .bad:
-        Image.dynamicImage(light: .hexagonBad, dark: .hexagonBadDark)
+        Image(.hexagonBad)
           .resizable()
           .frame(width: 20, height: 20)
       }

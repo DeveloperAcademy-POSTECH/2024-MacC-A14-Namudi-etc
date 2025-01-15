@@ -47,7 +47,7 @@ struct TodayHarubeeTextView: View {
         .foregroundStyle(.textSecondary)
       
       HStack(spacing: 5) {
-        Image(.harubeeMain)
+        Image(.harubeeWidget)
           .resizable()
           .frame(
             width: contentSize.imageSize,

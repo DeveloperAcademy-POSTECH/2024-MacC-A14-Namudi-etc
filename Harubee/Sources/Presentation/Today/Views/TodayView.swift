@@ -390,7 +390,7 @@ private struct HarubeeHexagon: View {
     var harubeeImage: Image {
       isIncludedInWave
       ? Image(.harubeeWhite)
-      : Image.dynamicImage(light: .harubeeMain, dark: .harubeeWhite)
+      : Image(.harubeeMain)
     }
     
     return HStack {
@@ -521,11 +521,11 @@ private struct CalendarStreakView: View {
     var hexagonImage: Image {
       switch(todayStreak?.isOverHarubee) {
       case .none:
-        return Image.dynamicImage(light: .hexagonNone, dark: .hexagonNoneDark)
+        return Image(.hexagonNone)
       case .some(true):
-        return Image.dynamicImage(light: .hexagonBad, dark: .hexagonBadDark)
+        return Image(.hexagonBad)
       case .some(false):
-        return Image.dynamicImage(light: .hexagonGood, dark: .hexagonGoodDark)
+        return Image(.hexagonGood)
       }
     }
     
@@ -625,11 +625,11 @@ private struct StreakCell: View {
   var hexagonImage: Image {
     switch(dailyStreak.isOverHarubee) {
     case .none:
-      return Image.dynamicImage(light: .hexagonNone, dark: .hexagonNoneDark)
+      return Image(.hexagonNone)
     case .some(true):
-      return Image.dynamicImage(light: .hexagonBad, dark: .hexagonBadDark)
+      return Image(.hexagonBad)
     case .some(false):
-      return Image.dynamicImage(light: .hexagonGood, dark: .hexagonGoodDark)
+      return Image(.hexagonGood)
     }
   }
   
