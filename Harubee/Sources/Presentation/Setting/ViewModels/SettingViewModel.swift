@@ -262,7 +262,7 @@ enum AppearanceType: Int, CaseIterable, Identifiable {
     }
   }
   
-  func getColorScheme() -> ColorScheme? {
+  var colorScheme: ColorScheme? {
     switch self {
     case .automatic: return nil
     case .light: return .light
