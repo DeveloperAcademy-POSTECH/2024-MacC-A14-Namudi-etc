@@ -9,10 +9,6 @@
 import Foundation
 import SwiftUI
 
-enum NotificationType {
-  case harubee
-  case expense
-}
 
 @Observable
 final class SettingViewModel {
@@ -250,4 +246,32 @@ extension SettingViewModel: Hashable {
   func hash(into hasher: inout Hasher) {
     hasher.combine(id)
   }
+}
+
+// MARK: - Enumeration
+enum AppearanceType: Int, CaseIterable, Identifiable {
+  case light, dark, automatic
+  
+  var id: Int { self.rawValue }
+  
+  var name: String {
+    switch self {
+    case .light: return "Light"
+    case .dark: return "Dark"
+    case .automatic: return "Automatic"
+    }
+  }
+  
+  func getColorScheme() -> ColorScheme? {
+    switch self {
+    case .automatic: return nil
+    case .light: return .light
+    case .dark: return .dark
+    }
+  }
+}
+
+enum NotificationType {
+  case harubee
+  case expense
 }
