@@ -70,7 +70,7 @@
 		573230A62CEF104A0075D1B1 /* Exceptions for "Harubee" folder in "HarubeeWidgetExtension" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				Resources/DSColors.xcassets,
+				Resources/Colors.xcassets,
 				"Resources/Fonts/Pretendard-Medium.ttf",
 				"Resources/Fonts/Pretendard-SemiBold.ttf",
 				Resources/Images.xcassets,
@@ -91,7 +91,6 @@
 				"Sources/Helper/DesignSystem/Color+.swift",
 				"Sources/Helper/DesignSystem/Font+.swift",
 				"Sources/Helper/Extensions/Date+.swift",
-				"Sources/Helper/Extensions/Image+.swift",
 				"Sources/Helper/Extensions/Int+.swift",
 			);
 			target = 57322F8E2CEE0FD60075D1B1 /* HarubeeWidgetExtension */;

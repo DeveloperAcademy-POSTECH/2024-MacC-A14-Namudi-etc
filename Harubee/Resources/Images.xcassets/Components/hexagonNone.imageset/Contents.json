@@ -3,6 +3,16 @@
     {
       "filename" : "hexagonNone.png",
       "idiom" : "universal"
+    },
+    {
+      "appearances" : [
+        {
+          "appearance" : "luminosity",
+          "value" : "dark"
+        }
+      ],
+      "filename" : "hexagonNoneDark.png",
+      "idiom" : "universal"
     }
   ],
   "info" : {
