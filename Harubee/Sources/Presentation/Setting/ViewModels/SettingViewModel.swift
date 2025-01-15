@@ -250,15 +250,15 @@ extension SettingViewModel: Hashable {
 
 // MARK: - Enumeration
 enum AppearanceType: Int, CaseIterable, Identifiable {
-  case light, dark, automatic
+  case automatic, light, dark
   
   var id: Int { self.rawValue }
   
   var name: String {
     switch self {
-    case .light: return "Light"
-    case .dark: return "Dark"
-    case .automatic: return "Automatic"
+    case .automatic: return "시스템"
+    case .light: return "라이트"
+    case .dark: return "다크"
     }
   }
   

@@ -126,9 +126,7 @@ private struct PreferencesSettingsView: View {
       SectionItem(title: "화면 테마 설정", previewText: "시스템 설정")
     }
     .onTapGesture {
-      coordinator.push(.appearanceOptions(
-        settingViewModel: settingViewModel
-      ))
+      coordinator.push(.appearanceOptions)
     }
   }
 }
