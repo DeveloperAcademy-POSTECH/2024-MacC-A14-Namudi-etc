@@ -119,11 +119,12 @@ private struct FixedAmountManageView: View {
 private struct PreferencesSettingsView: View {
   
   @Environment(MainCoordinator.self) private var coordinator
+  @AppStorage("appearance") var appearnace: AppearanceType = .automatic
   let settingViewModel: SettingViewModel
   
   var body: some View {
     SectionContainer {
-      SectionItem(title: "화면 테마 설정", previewText: "시스템 설정")
+      SectionItem(title: "화면 테마 설정", previewText: appearnace.name)
     }
     .onTapGesture {
       coordinator.push(.appearanceOptions)
