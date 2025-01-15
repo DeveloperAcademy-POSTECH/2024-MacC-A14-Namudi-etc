@@ -59,8 +59,8 @@ struct InfoBubbleModifier<Label: View>: ViewModifier {
             )
             .background(
               RoundedRectangle(cornerRadius: 8)
-                .fill(Color.whiteDefault)
-                .shadow(color: Color.textBlack.opacity(0.2), radius: 12, x: 2, y: 4)
+                .fill(.textFixed)
+                .shadow(color: .black.opacity(0.2), radius: 12, x: 2, y: 4)
             )
             .onPreferenceChange(LabelSizeKey.self) { newSize in
               labelSize = newSize
@@ -80,7 +80,7 @@ struct InfoBubbleModifier<Label: View>: ViewModifier {
               [.bottom, .bottomLeading, .bottomTrailing].contains(alignment) ? 0 : 180
             )
           )
-          .foregroundStyle(Color.whiteDefault)
+          .foregroundStyle(.textFixed)
           .offset(
             y: [.bottom, .bottomLeading, .bottomTrailing].contains(alignment)
             ? contentSize.height / 2 + spacing

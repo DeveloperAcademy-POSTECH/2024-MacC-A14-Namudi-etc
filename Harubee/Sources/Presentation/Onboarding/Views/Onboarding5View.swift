@@ -166,7 +166,7 @@ private struct FixedExpenseListView: View {
   private var emptyListAnnounce: some View {
     Text("목록을 추가해주세요")
       .font(.pretendardMedium_16)
-      .foregroundStyle(Color.textBlack30)
+      .foregroundStyle(.textPrimary30)
       .padding(.top, 150)
   }
   

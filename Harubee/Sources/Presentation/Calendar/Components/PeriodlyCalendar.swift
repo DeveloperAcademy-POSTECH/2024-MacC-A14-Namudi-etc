@@ -98,7 +98,7 @@ private struct WeekRow<CellContent: View>: View {
       
       if !isLastRow {
         Divider()
-          .background(Color.textBlack10)
+          .background(.textPrimary10)
           .padding(.horizontal, -14)
           .frame(height: 1)
       }

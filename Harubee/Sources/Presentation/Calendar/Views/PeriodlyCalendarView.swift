@@ -77,7 +77,7 @@ struct PeriodlyCalendarView: View {
         ToolbarItem(placement: .topBarTrailing) {
           HelpButton(
             infoBubbleVisible: $infoBubbleVisible,
-            buttonColor: .whiteDefault
+            buttonColor: .textFixed
           )
         }
       })

@@ -132,7 +132,7 @@ struct DailyCalendarView: View {
       ToolbarItem(placement: .topBarTrailing) {
         HelpButton(
           infoBubbleVisible: $infoBubbleVisible,
-          buttonColor: .whiteDefault
+          buttonColor: .textFixed
         )
       }
     })
@@ -442,7 +442,7 @@ private struct FixedExpenseSection: View {
   var body: some View {
     VStack(spacing: 0) {
       Rectangle()
-        .fill(Color.textBlack5)
+        .fill(.textPrimary5)
         .frame(height: 6)
         .padding(.top, 20)
       

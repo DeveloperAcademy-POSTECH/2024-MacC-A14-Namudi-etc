@@ -50,6 +50,7 @@ struct DailyMemoView: View {
       saveButton
     }
     .frame(maxHeight: .infinity, alignment: .top)
+    .presentationBackground(.bgPrimary)
     .navigationBarStyle(.sheet(title: mode.title))
   }
   
@@ -57,7 +58,7 @@ struct DailyMemoView: View {
     ZStack(alignment: .topTrailing) {
       Text("(\(memoStringCount)/20)")
         .font(.pretendardMedium_12)
-        .foregroundStyle(Color.textBlack)
+        .foregroundStyle(.textFixed)
         .frame(maxWidth: .infinity, alignment: .trailing)
       
       FloatingTitleTextField(
@@ -79,9 +80,9 @@ struct DailyMemoView: View {
         .font(.pretendardMedium_18)
         .padding(.vertical, 20)
         .frame(maxWidth: .infinity)
-        .foregroundStyle(Color.whiteDefault)
+        .foregroundStyle(.textFixed)
         .background(
-          Color.main.opacity(isEmptyMemo ? 0.3 : 1)
+          Color.mainPrimary.opacity(isEmptyMemo ? 0.3 : 1)
         )
     }
     .buttonStyle(

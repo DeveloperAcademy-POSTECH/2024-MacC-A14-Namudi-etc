@@ -14,7 +14,7 @@ struct WidgetAnnounceView: View {
       Text("앱을 실행시켜 기본 설정을 완료해 주세요")
         .multilineTextAlignment(.center)
         .font(.pretendardSemibold_14)
-        .foregroundStyle(.textBlack30)
+        .foregroundStyle(.textPrimary30)
     }
     .padding(16)
   }
