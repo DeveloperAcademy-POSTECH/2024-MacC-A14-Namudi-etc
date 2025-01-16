@@ -26,7 +26,6 @@ struct NavigationBarStyleModifier<ToolbarItems: ToolbarContent>: ViewModifier {
     
     return content
       .toolbarBackground(.clear, for: .navigationBar)
-      .toolbarColorScheme(style.colorScheme, for: .navigationBar)
       .navigationBarTitleDisplayMode(.inline)
       .navigationBarBackButtonHidden()
       .toolbar {
@@ -121,16 +120,6 @@ enum NavigationBarStyle: Equatable {
     case .white: return .textPrimary
     case .sheet: return .textPrimary
     case .clear: return .clear
-    }
-  }
-  
-  var colorScheme: ColorScheme {
-    switch self {
-    case .onboarding: return .dark
-    case .main: return .dark
-    case .white: return .light
-    case .sheet: return .light
-    case .clear: return .dark
     }
   }
   
