@@ -19,7 +19,7 @@ protocol SalaryBudgetRepository {
   /// - Returns: DB에 저장된 모든 SalaryBudget
   func readAll() throws -> [SalaryBudget]
   
-  /// DB에 저장된 모든 SalaryBudget들 중 특정 날짜 이후에 해당하는 것들을 가져옵니다.
+  /// DB에 저장된 모든 SalaryBudget들 중 특정 날짜 이후에 해당하는 startDate를 가진 SalaryBudget들을 가져옵니다.
   /// - Parameter date: 타겟 날짜
   /// - Returns: 타겟 날짜 이후에 해당되는 모든 SalaryBudget
   func readAll(after date: Date) throws -> [SalaryBudget]

@@ -69,7 +69,7 @@ extension Date {
       [.day],
       from: self,
       to: date
-    ).day!
+    ).day ?? 0
   }
   
   /// Date에서 특정 component에 값을 더합니다.
