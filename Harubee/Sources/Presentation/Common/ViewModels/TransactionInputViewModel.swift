@@ -24,16 +24,19 @@ final class TransactionInputViewModel {
   }
   
   private let budgetUseCase: BudgetUseCase
+  private let analyticsUseCase: AnalyticsUseCase
   
   private(set) var state: State
   
   init(
     salaryBudget: SalaryBudget,
     dailyBudget: DailyBudget,
-    budgetUseCase: BudgetUseCase
+    budgetUseCase: BudgetUseCase,
+    analyticsUseCase: AnalyticsUseCase
   ) {
     self.state = State(salaryBudget: salaryBudget, dailyBudget: dailyBudget)
     self.budgetUseCase = budgetUseCase
+    self.analyticsUseCase = analyticsUseCase
   }
   
   func send(_ action: Action) {
@@ -41,6 +44,7 @@ final class TransactionInputViewModel {
     case .doneButtonTapped(let income, let expense):
       self.state.updatedIncome = income.numberFormat
       self.state.updatedExpense = expense.numberFormat
+      
     case .saveButtonTapped:
       do {
         let _ = try self.budgetUseCase.recordTransaction(
@@ -49,6 +53,10 @@ final class TransactionInputViewModel {
           date: self.state.dailyBudget.date,
           salaryBudget: self.state.salaryBudget
         )
+        analyticsUseCase.trackEvent(
+          event: .userAction(type: "save", content: "transaction_input")
+        )
+        
       } catch {
         print(error.localizedDescription)
       }
