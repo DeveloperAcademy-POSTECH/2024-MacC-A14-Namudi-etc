@@ -54,7 +54,7 @@ final class TransactionInputViewModel {
           salaryBudget: self.state.salaryBudget
         )
         analyticsUseCase.trackEvent(
-          event: .userAction(type: "save", content: "transaction_input")
+          event: .buttonTap(name: "실제 지출 입력")
         )
         
       } catch {

@@ -67,3 +67,16 @@ Derived/
 
 ### Tuist managed dependencies ###
 Tuist/.build
+
+### Firebase ###
+.idea
+**/node_modules/*
+**/.firebaserc
+
+### Firebase Patch ###
+.runtimeconfig.json
+.firebase/
+
+### GoogleService Plists ###
+GoogleService-Info.plist
+GoogleService-Info-Dev.plist

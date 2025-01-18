@@ -60,7 +60,7 @@ final class SettingViewModel {
       }
       
       analyticsUseCase.trackEvent(
-        event: .userAction(type: "save", content: "fixed_income_update")
+        event: .buttonTap(name: "고정 수입 변경")
       )
       
     case let .updateFixedExpenses(items):
@@ -70,7 +70,7 @@ final class SettingViewModel {
       do {
         try budgetUseCase.deleteAllSalaryBudgets()
         analyticsUseCase.trackEvent(
-          event: .userAction(type: "reset", content: "reset_data")
+          event: .buttonTap(name: "데이터 초기화")
         )
         
       } catch {
