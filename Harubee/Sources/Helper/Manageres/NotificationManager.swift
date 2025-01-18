@@ -25,11 +25,12 @@ final class NotificationManager {
     let center = UNUserNotificationCenter.current()
     
     center.getNotificationSettings { settings in
-      switch settings.alertSetting {
-      case .enabled:
-        print("Notification Permission approved")
-      default:
-        print("not..!")
+      switch settings.authorizationStatus {
+      case .authorized:
+        print("Notification Authorized")
+      case .denied:
+        print("Notification Denied")
+      case .notDetermined:
         Task {
           do {
             try await center.requestAuthorization(
@@ -38,8 +39,9 @@ final class NotificationManager {
           } catch {
             print("Failed to enroll with error: \(error)")
           }
-          
         }
+      default:
+        break
       }
     }
   }

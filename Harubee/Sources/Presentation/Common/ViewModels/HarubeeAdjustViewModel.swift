@@ -65,7 +65,7 @@ final class HarubeeAdjustViewModel {
           salaryBudget: self.state.salaryBudget
         )
         analyticsUseCase.trackEvent(
-          event: .userAction(type: "reset", content: "harubee_adjust")
+          event: .buttonTap(name: "하루비 초기화")
         )
         
       } catch {
@@ -80,7 +80,7 @@ final class HarubeeAdjustViewModel {
           salaryBudget: self.state.salaryBudget
         )
         analyticsUseCase.trackEvent(
-          event: .userAction(type: "update", content: "harubee_adjust")
+          event: .buttonTap(name: "하루비 조정")
         )
         
       } catch {

@@ -20,6 +20,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
     
     FirebaseApp.configure(options: options)
 #else
+    print("is RELEASE")
     // Release 환경의 GoogleService-Info.plist 설정
     guard let filePath = Bundle.main.path(forResource: "GoogleService-Info", ofType: "plist"),
           let options = FirebaseOptions(contentsOfFile: filePath)
