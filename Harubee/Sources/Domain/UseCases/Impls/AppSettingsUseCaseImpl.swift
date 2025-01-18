@@ -13,7 +13,9 @@ final class AppSettingsUseCaseImpl: AppSettingsUseCase {
   
   private let calendar: Calendar = .current
   
-  init(userDefaultsRepository: UserDefaultsRepository) {
+  init(
+    userDefaultsRepository: UserDefaultsRepository
+  ) {
     self.userDefaultsRepository = userDefaultsRepository
   }
   

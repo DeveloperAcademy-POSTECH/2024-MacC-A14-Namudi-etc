@@ -26,6 +26,8 @@ final class SettingViewModel {
   
   private let budgetUseCase: BudgetUseCase
   private let appSettingsUseCase: AppSettingsUseCase
+  private let analyticsUseCase: AnalyticsUseCase
+  
   private var harubeeNotificationTime: Date = Date()
   private var expenseNotificationTime: Date = Date()
   private var harubeeNotificationStatus: Bool = false
@@ -34,12 +36,15 @@ final class SettingViewModel {
   init(
     budgetUseCase: BudgetUseCase,
     appSettingsUseCase: AppSettingsUseCase,
+    analyticsUseCase: AnalyticsUseCase,
     salaryBudget: SalaryBudget
   ) {
     self.budgetUseCase = budgetUseCase
     self.appSettingsUseCase = appSettingsUseCase
+    self.analyticsUseCase = analyticsUseCase
+    
     self.state = State(salaryBudget: salaryBudget)
-    fetchNotificationData()
+    self.fetchNotificationData()
   }
   
   // MARK: - Public Methods (유저 액션 핸들러)
@@ -54,12 +59,20 @@ final class SettingViewModel {
         self.updateFixedIncomeAmount(incomeAmount)
       }
       
+      analyticsUseCase.trackEvent(
+        event: .userAction(type: "save", content: "fixed_income_update")
+      )
+      
     case let .updateFixedExpenses(items):
       self.updateFixedExpenses(items)
       
     case .resetDataButtonTapped:
       do {
         try budgetUseCase.deleteAllSalaryBudgets()
+        analyticsUseCase.trackEvent(
+          event: .userAction(type: "reset", content: "reset_data")
+        )
+        
       } catch {
         print("Reset Data Error: \(error.localizedDescription)")
       }

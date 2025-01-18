@@ -10,9 +10,14 @@ import Foundation
 
 final class UseCaseProvider {
   private let repositoryProvider: RepositoryProvider
+  private let serviceProvider: ServiceProvider
   
-  init(repositoryProvider: RepositoryProvider) {
+  init(
+    repositoryProvider: RepositoryProvider,
+    serviceProvider: ServiceProvider
+  ) {
     self.repositoryProvider = repositoryProvider
+    self.serviceProvider = serviceProvider
   }
   
   lazy var budgetUseCase: BudgetUseCase = {
@@ -27,5 +32,9 @@ final class UseCaseProvider {
     AppSettingsUseCaseImpl(
       userDefaultsRepository: repositoryProvider.userDefaltsRepository
     )
+  }()
+  
+  lazy var analyticsUseCase: AnalyticsUseCase = {
+    AnalyticsUseCaseImpl(analyticsService: serviceProvider.analyticsService)
   }()
 }

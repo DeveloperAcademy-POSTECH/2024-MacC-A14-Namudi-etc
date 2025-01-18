@@ -13,6 +13,7 @@ final class DIContainer {
   
   private let storageProvider: StorageProvider
   private let repositoryProvider: RepositoryProvider
+  private let serviceProvider: ServiceProvider
   private let useCaseProvider: UseCaseProvider
   
   private init() {
@@ -20,8 +21,10 @@ final class DIContainer {
     self.repositoryProvider = RepositoryProvider(
       storageProvider: storageProvider
     )
+    self.serviceProvider = ServiceProvider()
     self.useCaseProvider = UseCaseProvider(
-      repositoryProvider: repositoryProvider
+      repositoryProvider: repositoryProvider,
+      serviceProvider: serviceProvider
     )
   }
   
@@ -51,7 +54,8 @@ final class DIContainer {
     HarubeeAdjustViewModel(
       salaryBudget: salaryBudget,
       dailyBudget: dailyBudget,
-      budgetUseCase: useCaseProvider.budgetUseCase
+      budgetUseCase: useCaseProvider.budgetUseCase,
+      analyticsUseCase: useCaseProvider.analyticsUseCase
     )
   }
   
@@ -73,7 +77,8 @@ final class DIContainer {
     TransactionInputViewModel(
       salaryBudget: salaryBudget,
       dailyBudget: dailyBudget,
-      budgetUseCase: useCaseProvider.budgetUseCase
+      budgetUseCase: useCaseProvider.budgetUseCase,
+      analyticsUseCase: useCaseProvider.analyticsUseCase
     )
   }
 
@@ -81,6 +86,7 @@ final class DIContainer {
     SettingViewModel(
       budgetUseCase: useCaseProvider.budgetUseCase,
       appSettingsUseCase: useCaseProvider.appSettingsUseCase,
+      analyticsUseCase: useCaseProvider.analyticsUseCase,
       salaryBudget: salaryBudget
     )
   }

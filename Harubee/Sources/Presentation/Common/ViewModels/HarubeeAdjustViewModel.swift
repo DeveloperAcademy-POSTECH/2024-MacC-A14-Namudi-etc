@@ -30,16 +30,19 @@ final class HarubeeAdjustViewModel {
   }
   
   private let budgetUseCase: BudgetUseCase
+  private let analyticsUseCase: AnalyticsUseCase
   
   private(set) var state: State
   
   init(
     salaryBudget: SalaryBudget,
     dailyBudget: DailyBudget,
-    budgetUseCase: BudgetUseCase
+    budgetUseCase: BudgetUseCase,
+    analyticsUseCase: AnalyticsUseCase
   ) {
     self.state = .init(salaryBudget: salaryBudget, dailyBudget: dailyBudget)
     self.budgetUseCase = budgetUseCase
+    self.analyticsUseCase = analyticsUseCase
     
     self.state.defaultHarubee = Int(salaryBudget.defaultHarubee)
     self.state.updatedHarubee = dailyBudget.harubee ?? self.state.defaultHarubee
@@ -61,6 +64,10 @@ final class HarubeeAdjustViewModel {
           date: self.state.dailyBudget.date,
           salaryBudget: self.state.salaryBudget
         )
+        analyticsUseCase.trackEvent(
+          event: .userAction(type: "reset", content: "harubee_adjust")
+        )
+        
       } catch {
         print(error.localizedDescription)
       }
@@ -72,6 +79,10 @@ final class HarubeeAdjustViewModel {
           date: self.state.dailyBudget.date,
           salaryBudget: self.state.salaryBudget
         )
+        analyticsUseCase.trackEvent(
+          event: .userAction(type: "update", content: "harubee_adjust")
+        )
+        
       } catch {
         print(error.localizedDescription)
       }
