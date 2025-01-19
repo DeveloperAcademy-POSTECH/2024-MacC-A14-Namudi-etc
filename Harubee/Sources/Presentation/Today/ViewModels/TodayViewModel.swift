@@ -230,22 +230,20 @@ extension TodayViewModel {
     return weeklyStreaks
   }
   
-  func reqTrackingAuthorization() {
+  private func reqTrackingAuthorization() {
     DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-      if #available(iOS 14, *) {
-        ATTrackingManager.requestTrackingAuthorization { status in
-          switch status {
-          case .authorized:           // 허용됨
-            print("Tracking Authorized")
-          case .denied:               // 거부됨
-            print("Tracking Denied")
-          case .notDetermined:        // 결정되지 않음
-            print("Tracking Not Determined")
-          case .restricted:           // 제한됨
-            print("Tracking Restricted")
-          @unknown default:           // 알려지지 않음
-            print("Tracking Unknown")
-          }
+      ATTrackingManager.requestTrackingAuthorization { status in
+        switch status {
+        case .authorized:           // 허용됨
+          print("Tracking Authorized")
+        case .denied:               // 거부됨
+          print("Tracking Denied")
+        case .notDetermined:        // 결정되지 않음
+          print("Tracking Not Determined")
+        case .restricted:           // 제한됨
+          print("Tracking Restricted")
+        @unknown default:           // 알려지지 않음
+          print("Tracking Unknown")
         }
       }
     }
