@@ -78,5 +78,4 @@ Tuist/.build
 .firebase/
 
 ### GoogleService Plists ###
-GoogleService-Info.plist
-GoogleService-Info-Dev.plist
+Harubee/Resources/GooglePlists/

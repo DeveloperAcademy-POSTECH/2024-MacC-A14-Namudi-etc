@@ -55,18 +55,10 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		17B1A12F2D3C41EC00E66731 /* Exceptions for "Harubee" folder in "HarubeeTests" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				"Resources/Plists/GoogleService-Info-Dev.plist",
-				"Resources/Plists/GoogleService-Info.plist",
-			);
-			target = 578A00EE2D044BF4002191F6 /* HarubeeTests */;
-		};
 		17B1A5392D3C4C4C00E66731 /* Exceptions for "Harubee" folder in "Harubee" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				Resources/Plists/Info.plist,
+				Resources/Info.plist,
 			);
 			target = 57322DA22CEDE9F90075D1B1 /* Harubee */;
 		};
@@ -84,8 +76,6 @@
 				"Resources/Fonts/Pretendard-Medium.ttf",
 				"Resources/Fonts/Pretendard-SemiBold.ttf",
 				Resources/Images.xcassets,
-				"Resources/Plists/GoogleService-Info-Dev.plist",
-				"Resources/Plists/GoogleService-Info.plist",
 				Sources/App/DI/StorageProvider.swift,
 				Sources/Data/DTOs/DailyBudgetDTO.swift,
 				Sources/Data/DTOs/Migration/MigrationPlan.swift,
@@ -115,7 +105,6 @@
 			exceptions = (
 				17B1A5392D3C4C4C00E66731 /* Exceptions for "Harubee" folder in "Harubee" target */,
 				573230A62CEF104A0075D1B1 /* Exceptions for "Harubee" folder in "HarubeeWidgetExtension" target */,
-				17B1A12F2D3C41EC00E66731 /* Exceptions for "Harubee" folder in "HarubeeTests" target */,
 			);
 			path = Harubee;
 			sourceTree = "<group>";
@@ -516,7 +505,7 @@
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 5DFZR8RCQR;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = Harubee/Resources/Plists/Info.plist;
+				INFOPLIST_FILE = Harubee/Resources/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "[Dev] 하루비";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.finance";
 				INFOPLIST_KEY_NSUserTrackingUsageDescription = "앱의 성능을 개선하고, 사용자에게 더 나은 경험을 제공하기 위해 사용 현황 데이터를 최소한으로 수집합니다. 이 데이터는 익명으로 처리되며, 앱 오류 해결 및 유용한 기능 추천에만 사용됩니다.";
@@ -561,7 +550,7 @@
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 5DFZR8RCQR;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = Harubee/Resources/Plists/Info.plist;
+				INFOPLIST_FILE = Harubee/Resources/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "하루비";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.finance";
 				INFOPLIST_KEY_NSUserTrackingUsageDescription = "앱의 성능을 개선하고, 사용자에게 더 나은 경험을 제공하기 위해 사용 현황 데이터를 최소한으로 수집합니다. 이 데이터는 익명으로 처리되며, 앱 오류 해결 및 유용한 기능 추천에만 사용됩니다.";

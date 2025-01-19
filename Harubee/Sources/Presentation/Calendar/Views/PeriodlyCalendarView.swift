@@ -52,7 +52,7 @@ struct PeriodlyCalendarView: View {
           icon: Image(systemName: "arrow.clockwise"),
           action: { viewModel.send(.moveToCurrent) }
         )
-      } else if viewModel.hasExpenseMissingDays {
+      } /* else if viewModel.hasExpenseMissingDays {
         CalendarBottomFAB(
           title: "아직 지출 및 수입을 입력하지 않은 날이 있어요",
           titleColor: .alertText,
@@ -60,7 +60,7 @@ struct PeriodlyCalendarView: View {
           icon: nil,
           action: {}
         )
-      }
+      } */
       
       if infoBubbleVisible {
         Color.clear
