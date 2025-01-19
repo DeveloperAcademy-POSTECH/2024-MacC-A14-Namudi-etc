@@ -138,8 +138,8 @@ private struct SettingInformationView: View {
   
   var body: some View {
     SectionContainer {
-      SectionItem(title: "문의하기", previewText: "")
-      SectionItem(title: "개발 로드맵", previewText: "")
+//      SectionItem(title: "문의하기", previewText: "")
+//      SectionItem(title: "개발 로드맵", previewText: "")
       appVersionSection
     }
   }
