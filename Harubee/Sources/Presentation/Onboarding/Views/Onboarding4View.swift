@@ -109,7 +109,7 @@ private struct OnboardingBodyView: View {
       Text("현재 잔액은 얼마인가요?")
         .frame(maxWidth: .infinity, alignment: .leading)
         .font(.pretendardMedium_20)
-        .foregroundStyle(.textFixed)
+        .foregroundStyle(.textPrimary)
         .padding(.horizontal, 20)
       
       VStack(alignment: .leading, spacing: 2) {

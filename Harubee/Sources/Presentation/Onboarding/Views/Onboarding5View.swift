@@ -85,7 +85,7 @@ private struct OnboardingBodyTitleView: View {
     }
     .frame(maxWidth: .infinity, alignment: .leading)
     .font(.pretendardMedium_20)
-    .foregroundStyle(.textFixed)
+    .foregroundStyle(.textPrimary)
   }
 }
 
