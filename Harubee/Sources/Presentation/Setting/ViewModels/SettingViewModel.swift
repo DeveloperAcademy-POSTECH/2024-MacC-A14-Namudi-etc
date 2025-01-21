@@ -20,6 +20,7 @@ final class SettingViewModel {
     case fixedIncomeSaveButtonTapped(Int?, Int?)
     case updateFixedExpenses([TransactionItem])
     case resetDataButtonTapped
+    case contactButtonTapped(OpenURLAction, String)
   }
   
   private(set) var state: State
@@ -76,6 +77,9 @@ final class SettingViewModel {
       } catch {
         print("Reset Data Error: \(error.localizedDescription)")
       }
+      
+    case .contactButtonTapped(let openURL, let email):
+      sendEmail(openURL: openURL, email: email)
     }
   }
   
@@ -142,7 +146,6 @@ final class SettingViewModel {
   }
   
   private func fetchNotificationData() {
-
     let harubeeNotificationTime = appSettingsUseCase.getTodayHarubeeNotificationTime()
     let expenseNotificationTime = appSettingsUseCase.getExpenseNotificationTime()
     let harubeeNotificationStatus = appSettingsUseCase.getTodayHarubeeNotificationStatus()
@@ -187,6 +190,27 @@ final class SettingViewModel {
       self.state.salaryBudget = updatedSalaryBudget
     } catch {
       print("Error: \(error.localizedDescription)")
+    }
+  }
+  
+  private func sendEmail(openURL: OpenURLAction, email: String) {
+    let subject = "[하루비] 문의하기"
+    let body = """
+      이곳에 문의 내용을 작성해주세요.
+                           
+      ================================
+      버그 제보의 경우 문제 상황 확인을 위해 아래 정보는 꼭 남겨주세요.
+      Device OS : \(UIDevice.current.systemVersion)
+      App Version : \(Bundle.main.shortVersionString)
+      ================================
+      """
+    
+    let urlString = "mailto:\(email)?subject=\(subject.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? "")&body=\(body.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? "")"
+    guard let url = URL(string: urlString) else { return }
+    openURL(url) { accepted in
+      if !accepted {
+        print("ERROR: 현재 기기는 이메일을 지원하지 않습니다.")
+      }
     }
   }
 }

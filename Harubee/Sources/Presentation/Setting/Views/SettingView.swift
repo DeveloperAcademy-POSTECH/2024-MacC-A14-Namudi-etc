@@ -33,7 +33,7 @@ struct SettingView: View {
         SectionDivider()
         
         // 문의하기, 개발 로드맵, 앱 버전
-        SettingInformationView()
+        SettingInformationView(settingViewModel: settingViewModel)
         
         SectionDivider()
         
@@ -92,24 +92,26 @@ private struct FixedAmountManageView: View {
   
   var body: some View {
     SectionContainer {
-      SectionItem(
-        title: "고정지출 관리",
-        previewText: "총 \(salaryBudget.fixedExpenses.count)건 / \(salaryBudget.fixedExpenses.reduce(0) { $0 + $1.price }.decimalWithWon)"
-      )
-      .onTapGesture {
+      Button {
         coordinator.push(.fixedExpense(
           settingViewModel: settingViewModel
         ))
+      } label: {
+        SectionItem(
+          title: "고정지출 관리",
+          previewText: "총 \(salaryBudget.fixedExpenses.count)건 / \(salaryBudget.fixedExpenses.reduce(0) { $0 + $1.price }.decimalWithWon)"
+        )
       }
       
-      SectionItem(
-        title: "고정수입 관리",
-        previewText: "매달 \(salaryBudget.startDate.formattedDateToString(.day_kr)) / \(salaryBudget.fixedIncome.decimalWithWon)"
-      )
-      .onTapGesture {
+      Button {
         coordinator.push(.fixedIncome(
           settingViewModel: settingViewModel
         ))
+      } label: {
+        SectionItem(
+          title: "고정수입 관리",
+          previewText: "매달 \(salaryBudget.startDate.formattedDateToString(.day_kr)) / \(salaryBudget.fixedIncome.decimalWithWon)"
+        )
       }
     }
   }
@@ -117,17 +119,17 @@ private struct FixedAmountManageView: View {
 
 // MARK: - PreferencesSettingsView
 private struct PreferencesSettingsView: View {
-  
   @Environment(MainCoordinator.self) private var coordinator
   @AppStorage("appearance") var appearnace: AppearanceType = .automatic
   let settingViewModel: SettingViewModel
   
   var body: some View {
-    SectionContainer {
-      SectionItem(title: "화면 테마 설정", previewText: appearnace.name)
-    }
-    .onTapGesture {
+    Button {
       coordinator.push(.appearanceOptions)
+    } label: {
+      SectionContainer {
+        SectionItem(title: "화면 테마 설정", previewText: appearnace.name)
+      }
     }
   }
 }
@@ -135,11 +137,26 @@ private struct PreferencesSettingsView: View {
 
 // MARK: - SettingInformationView
 private struct SettingInformationView: View {
+  @Environment(\.openURL) var openURL
+  let settingViewModel: SettingViewModel
+  let email: String = "contact@harubee.app"
   
   var body: some View {
     SectionContainer {
-//      SectionItem(title: "문의하기", previewText: "")
-//      SectionItem(title: "개발 로드맵", previewText: "")
+      Button {
+        settingViewModel.send(.contactButtonTapped(openURL, email))
+      } label: {
+        SectionItem(title: "문의하기", previewText: "")
+      }
+      
+      /*
+      Button {
+        
+      } label: {
+        SectionItem(title: "개발 로드맵", previewText: "")
+      }
+      */
+      
       appVersionSection
     }
   }
@@ -168,15 +185,13 @@ private struct DataResetView: View {
     SectionContainer {
       Button {
         isAlertPresented = true
+        HapticManager.shared.trigger(.warning)
       } label: {
         Text("데이터 초기화")
           .foregroundStyle(.warning)
           .font(.pretendardSemibold_18)
       }
       .frame(maxWidth: .infinity, alignment: .leading)
-      .buttonStyle(CustomButtonStyle(
-        haptic: .warning
-      ))
     }
     .alert(
       "데이터를 초기화 하시겠어요?",
