@@ -253,6 +253,7 @@ extension SettingViewModel {
       return Binding(
         get: { self.harubeeNotificationStatus as! T },
         set: {
+          HapticManager.shared.trigger(.selection)
           self.harubeeNotificationStatus = $0 as! Bool
           self.onChangeNotificationStatus(
             notificationType: .harubee,
@@ -264,6 +265,7 @@ extension SettingViewModel {
       return Binding(
         get: { self.expenseNotificationStatus as! T },
         set: {
+          HapticManager.shared.trigger(.selection)
           self.expenseNotificationStatus = $0 as! Bool
           self.onChangeNotificationStatus(
             notificationType: .expense,

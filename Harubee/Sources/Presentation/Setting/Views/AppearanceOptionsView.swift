@@ -20,6 +20,9 @@ struct AppearanceOptionsView: View {
           selectedOption: $selectedAppearance,
           optionFormatter: { "\($0.name) 테마" }
         )
+        .onChange(of: selectedAppearance) { _, _ in
+          HapticManager.shared.trigger(.selection)
+        }
       }
     }
     .navigationBarStyle(.white(title: "화면 테마 설정", backTitle: "뒤로"))
