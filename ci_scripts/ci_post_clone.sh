@@ -69,8 +69,8 @@ cat <<EOF > "$PLIST_FILE_PATH"
 EOF
 
 # 파일 존재 여부 확인
-if [ -f "$FILE_PATH" ]; then
-    echo "파일이 생성되었습니다: $FILE_PATH"
+if [ -f "$PLIST_FILE_PATH" ]; then
+    echo "파일이 생성되었습니다: $PLIST_FILE_PATH"
 else
-    echo "파일이 생성되지 않았습니다: $FILE_PATH"
+    echo "파일이 생성되지 않았습니다: $PLIST_FILE_PATH"
 fi
