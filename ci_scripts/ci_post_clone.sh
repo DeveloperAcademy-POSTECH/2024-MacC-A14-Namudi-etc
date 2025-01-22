@@ -24,17 +24,17 @@ cat <<EOF > "/Volumes/workspace/repository/Harubee/Resources/GooglePlists/Google
 <plist version="1.0">
 <dict>
     <key>API_KEY</key>
-    <string>$(API_KEY)</string>
+    <string>${API_KEY}</string>
     <key>GCM_SENDER_ID</key>
-    <string>$(GCM_SENDER_ID)</string>
+    <string>${GCM_SENDER_ID}</string>
     <key>PLIST_VERSION</key>
-    <string>$(PLIST_VERSION)</string>
+    <string>${PLIST_VERSION}</string>
     <key>BUNDLE_ID</key>
-    <string>$(BUNDLE_ID)</string>
+    <string>${BUNDLE_ID}</string>
     <key>PROJECT_ID</key>
-    <string>$(PROJECT_ID)</string>
+    <string>${PROJECT_ID}</string>
     <key>STORAGE_BUCKET</key>
-    <string>$(STORAGE_BUCKET)</string>
+    <string>${STORAGE_BUCKET}</string>
     <key>IS_ADS_ENABLED</key>
     `convert_bool ${IS_ADS_ENABLED}`
     <key>IS_ANALYTICS_ENABLED</key>
@@ -46,7 +46,7 @@ cat <<EOF > "/Volumes/workspace/repository/Harubee/Resources/GooglePlists/Google
     <key>IS_SIGNIN_ENABLED</key>
     `convert_bool ${IS_SIGNIN_ENABLED}`
     <key>GOOGLE_APP_ID</key>
-    <string>$(GOOGLE_APP_ID)</string>
+    <string>${GOOGLE_APP_ID}</string>
 </dict>
 </plist>
 EOF

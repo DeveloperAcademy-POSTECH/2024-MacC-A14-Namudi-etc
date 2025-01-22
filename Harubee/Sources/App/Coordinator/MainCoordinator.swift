@@ -240,7 +240,7 @@ final class MainCoordinator: MainCoordinatorProtocol {
       FixedExpenseView(settingViewModel: viewModel)
     case let .fixedIncome(viewModel):
       FixedIncomeView(settingViewModel: viewModel)
-    case let .appearanceOptions:
+    case .appearanceOptions:
       AppearanceOptionsView()
     }
   }
