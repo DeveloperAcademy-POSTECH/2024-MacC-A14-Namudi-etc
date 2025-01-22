@@ -10,7 +10,7 @@
 echo "환경변수 참조 GoogleService-Info.plist file 생성시작"
 
 # 생성할 디렉터리 경로
-PLIST_DIR="/Volumes/workspace/repository/Harubee/Resources/GooglePlists/"
+PLIST_DIR="/Volumes/workspace/repository/Harubee/Resources/GooglePlists"
 
 # 디렉터리 생성
 mkdir -p "$PLIST_DIR"
