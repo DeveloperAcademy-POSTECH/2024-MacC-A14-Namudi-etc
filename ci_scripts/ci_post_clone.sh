@@ -9,7 +9,23 @@
 # GoogleService-Info.plist 파일 생성
 echo "환경변수 참조 GoogleService-Info.plist file 생성시작"
 
-# Boolean 값 변환
+# 생성할 디렉터리 경로
+PLIST_DIR="/Volumes/workspace/repository/Harubee/Resources/GooglePlists/"
+
+# 디렉터리 생성
+mkdir -p "$PLIST_DIR"
+
+# 디렉토리 확인
+if [ -d "/Volumes/workspace/repository/Harubee/Resources/GooglePlists" ]; then
+    echo "디렉토리가 생성되었습니다: $PLIST_DIR"
+else
+    echo "디렉토리가 생성되지 않았습니다: $PLIST_DIR"
+fi
+
+# plist 파일 생성 경로
+PLIST_FILE_PATH="$PLIST_DIR/GoogleService-Info.plist"
+
+# Boolean 값 변환 함수
 convert_bool() {
     if [ "$1" == "true" ]; then
         echo "<true/>"
@@ -18,7 +34,8 @@ convert_bool() {
     fi
 }
 
-cat <<EOF > "/Volumes/workspace/repository/Harubee/Resources/GooglePlists/GoogleService-Info.plist"
+# plist 파일 생성
+cat <<EOF > "$PLIST_FILE_PATH"
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
@@ -50,4 +67,10 @@ cat <<EOF > "/Volumes/workspace/repository/Harubee/Resources/GooglePlists/Google
 </dict>
 </plist>
 EOF
-echo "환경변수 참조 GoogleService-Info.plist file 생성완료"
+
+# 파일 존재 여부 확인
+if [ -f "$FILE_PATH" ]; then
+    echo "파일이 생성되었습니다: $FILE_PATH"
+else
+    echo "파일이 생성되지 않았습니다: $FILE_PATH"
+fi
