@@ -403,31 +403,35 @@ private struct MemoList: View {
   var body: some View {
     List {
       ForEach(memos, id: \.self) { memo in
-        Button {
-          onEdit(memo)
-        } label: {
+        HStack {
           Text(memo)
             .font(.pretendardMedium_16)
             .foregroundStyle(.textPrimary)
             .listRowInsets(
               EdgeInsets(top: 8, leading: 0, bottom: 8, trailing: 0)
             )
-            .swipeActions(edge: .trailing, allowsFullSwipe: true) {
-              Button(role: .destructive) {
-                onDelete(memo)
-              } label: {
-                Text("삭제")
-                  .font(.pretendardMedium_14)
-              }
-              
-              Button {
-                onEdit(memo)
-              } label: {
-                Text("수정")
-                  .font(.pretendardMedium_14)
-              }
-            }
-        }.listRowBackground(Color.clear)
+        }
+        .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+          Button(role: .destructive) {
+            onDelete(memo)
+          } label: {
+            Text("삭제")
+              .font(.pretendardMedium_14)
+          }
+          
+          Button {
+            onEdit(memo)
+          } label: {
+            Text("수정")
+              .font(.pretendardMedium_14)
+          }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .contentShape(Rectangle())
+        .onTapGesture {
+          onEdit(memo)
+        }
+        .listRowBackground(Color.clear)
       }
     }
     .listStyle(.plain)
