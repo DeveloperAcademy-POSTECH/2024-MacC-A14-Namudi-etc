@@ -117,6 +117,11 @@
 			path = HarubeeWidget;
 			sourceTree = "<group>";
 		};
+		5769C63B2D40B773003F3C1E /* ci_scripts */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = ci_scripts;
+			sourceTree = "<group>";
+		};
 		578A00F02D044BF4002191F6 /* HarubeeTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = HarubeeTests;
@@ -157,6 +162,7 @@
 		57322D9A2CEDE9F90075D1B1 = {
 			isa = PBXGroup;
 			children = (
+				5769C63B2D40B773003F3C1E /* ci_scripts */,
 				57322DA52CEDE9F90075D1B1 /* Harubee */,
 				57322F952CEE0FD60075D1B1 /* HarubeeWidget */,
 				578A00F02D044BF4002191F6 /* HarubeeTests */,
@@ -205,6 +211,7 @@
 			);
 			fileSystemSynchronizedGroups = (
 				57322DA52CEDE9F90075D1B1 /* Harubee */,
+				5769C63B2D40B773003F3C1E /* ci_scripts */,
 			);
 			name = Harubee;
 			packageProductDependencies = (
