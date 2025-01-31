@@ -160,7 +160,8 @@ final class SalaryBudgetRepositoryImpl: SalaryBudgetRepository {
   }
   
   func deleteAll() throws {
-    try modelContext.delete(model: SalaryBudgetDTO.self)
+    let salaryBudgets = try modelContext.fetch(FetchDescriptor<SalaryBudgetDTO>())
+    salaryBudgets.forEach { modelContext.delete($0) }
   }
   
   func deleteById(_ id: String) throws {
