@@ -17,7 +17,7 @@ struct SystemSmallWidgetView: View {
       if let salaryBudget = entry.salaryBudget {
         SystemSmallContentView(salaryBudget: salaryBudget)
       } else {
-        WidgetAnnounceView()
+        WidgetAnnounceText()
       }
     }
     .frame(maxWidth: .infinity, maxHeight: .infinity)

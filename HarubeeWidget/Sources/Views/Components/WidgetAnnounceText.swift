@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct WidgetAnnounceView: View {
+struct WidgetAnnounceText: View {
   
   var body: some View {
     VStack {

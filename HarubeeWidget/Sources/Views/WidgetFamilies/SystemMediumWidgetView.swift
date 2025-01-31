@@ -17,7 +17,7 @@ struct SystemMediumWidgetView: View {
       if let salaryBudget = entry.salaryBudget {
         SystemMediumContentView(salaryBudget: salaryBudget)
       } else {
-        WidgetAnnounceView()
+        WidgetAnnounceText()
       }
     }
     .frame(maxWidth: .infinity, maxHeight: .infinity)
