@@ -13,23 +13,22 @@ struct WidgetManager {
   static let shared = WidgetManager()
   
   private init() {
-    self.salaryBudgetRepository = SalaryBudgetRepositoryImpl(
-      modelContext: StorageProvider().modelContext
+    let storageProvider = StorageProvider()
+    let repositoryProvider = RepositoryProvider(storageProvider: storageProvider)
+    
+    self.budgetUseCase = BudgetUseCaseImpl(
+      salaryBudgetRepository: repositoryProvider.salaryBudgetRepository,
+      dailyBudgetRepository: repositoryProvider.dailyBudgetRepository,
+      userDefaultsRepository: repositoryProvider.userDefaltsRepository
     )
   }
   
-  private let salaryBudgetRepository: SalaryBudgetRepository
+  private let budgetUseCase: BudgetUseCase
   
   func fetchCurrentSalaryBudget() -> SalaryBudget? {
     do {
-      let salaryBudgets = try salaryBudgetRepository.readAll()
-      
       let now = Date().formattedDate
-      let currentSalaryBudget = salaryBudgets.first(where: {
-        $0.startDate <= now && $0.endDate >= now
-      }) ?? salaryBudgets.last
-      
-      return currentSalaryBudget
+      return try budgetUseCase.getCurrentSalaryBudget(date: now)
     } catch {
       return nil
     }

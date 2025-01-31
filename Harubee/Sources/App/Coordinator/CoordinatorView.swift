@@ -17,7 +17,6 @@ struct CoordinatorView: View {
   
   // Main
   @State private var mainCoordinator = MainCoordinator()
-  @State private var todayViewModel = DIContainer.shared.makeTodayViewModel()
   
   var body: some View {
     Group {

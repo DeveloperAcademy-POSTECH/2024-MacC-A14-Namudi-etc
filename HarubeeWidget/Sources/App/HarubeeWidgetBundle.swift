@@ -37,6 +37,8 @@ struct HarubeeWidgetBundle: WidgetBundle {
     > Repositories
       > Impls
         - SalaryBudgetRepositoryImpl
+        - DailyBudgetRepositoryImpl
+        - UserDefaultsRepositoryImpl
   > Domain
     > Models
       - DailyBudget
@@ -44,7 +46,13 @@ struct HarubeeWidgetBundle: WidgetBundle {
       - TransactionItem
     > Repositories
       - SalaryBudgetRepository
+      - DailyBudgetRepository
+      - UserDefaultsRepository
       - UpdateValue
+    > UseCases
+      - BudgetUseCaseImpl
+    > Interfaces
+      - BudgetUseCase
   > Helper
     > Constants
       - WidgetURL
