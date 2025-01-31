@@ -7,7 +7,6 @@
 
 import WidgetKit
 import SwiftUI
-import SwiftData
 
 // MARK: - Provider
 struct Provider: TimelineProvider {
@@ -77,12 +76,6 @@ struct HarubeeWidget: Widget {
     .supportedFamilies([.systemSmall, .systemMedium])
     .contentMarginsDisabled()
   }
-}
-
-// MARK: - HarubeeWidgetEntry
-struct HarubeeWidgetEntry: TimelineEntry {
-  let date: Date
-  let salaryBudget: SalaryBudget?
 }
 
 
