@@ -17,8 +17,8 @@ final class OnboardingViewModel {
     var fixedExpenses: [TransactionItem] = [] // 고정 지출 내역
     var averageHarubee: Int = 0 // 평균 하루비
     
-    var incomeStartDate: Date
-    var incomeEndDate: Date
+    var incomeStartDate: Date = .now
+    var incomeEndDate: Date = .now
   }
   
   enum Action {
@@ -32,13 +32,12 @@ final class OnboardingViewModel {
   
   private let budgetUseCase: BudgetUseCase
   
-  private(set) var state: State
+  private(set) var state: State = .init()
   
   init(budgetUseCase: BudgetUseCase) {
     self.budgetUseCase = budgetUseCase
     
-    let (start, end) = Date.calculateStartAndEndDate(from: 1, anchor: .now)
-    self.state = .init(incomeStartDate: start, incomeEndDate: end)
+    initialState()
   }
   
   func send(_ action: Action) {
@@ -73,6 +72,8 @@ final class OnboardingViewModel {
         fixedIncome: self.state.incomeAmount ?? 0,
         fixedExpenses: self.state.fixedExpenses
       )
+      
+      initialState()
     }
     
     self.state.averageHarubee = self.getAverageHarubee()
@@ -80,6 +81,11 @@ final class OnboardingViewModel {
 }
 
 private extension OnboardingViewModel {
+  func initialState() {
+    let (start, end) = Date.calculateStartAndEndDate(from: 1, anchor: .now)
+    self.state = .init(incomeStartDate: start, incomeEndDate: end)
+  }
+  
   func getAverageHarubee() -> Int {
     let balance = calculateBalance(
       currentBalance: self.state.currentBalance ?? 0,
