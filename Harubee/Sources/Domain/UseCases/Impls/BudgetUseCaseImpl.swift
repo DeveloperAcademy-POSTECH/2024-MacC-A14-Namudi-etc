@@ -77,7 +77,7 @@ final class BudgetUseCaseImpl: BudgetUseCase {
     }
     
     // 다음 기간에 해당하는 SalaryBudget이 있는지 확인 후 생성
-    try createNextSalaryBudgetIfNeeded(salaryBudget: salaryBudget)
+    try? createNextSalaryBudgetIfNeeded(salaryBudget: salaryBudget)
     
     // 이전 날짜에 입력되지 않은 하루비가 있는지 확인 후 값 설정
     return try updateHarubeeForPastDates(salaryBudget)
