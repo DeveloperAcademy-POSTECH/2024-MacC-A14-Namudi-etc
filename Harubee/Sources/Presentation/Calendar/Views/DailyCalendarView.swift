@@ -62,6 +62,12 @@ struct DailyCalendarView: View {
             if !fixedExpenses.isEmpty {
               FixedExpenseSection(expenses: fixedExpenses)
             }
+            
+            if let selectedDate = viewModel.state.selectedDate {
+              if selectedDate.isSameDay(as: currentBudget.startDate) {
+                FixedIncomeSection(fixedIncome: currentBudget.fixedIncome)
+              }
+            }
           }
           .padding(.top, 20)
         }
@@ -364,7 +370,6 @@ private struct MemoSection: View {
                 .frame(width: 30)
                 .memoInfoBubble($infoBubbleVisible)
             }
-            .frame(width: 44, height: 21)
           }
           .buttonStyle(CustomButtonStyle(
             haptic: .tap
@@ -373,6 +378,7 @@ private struct MemoSection: View {
         .zIndex(1)
         .foregroundStyle(.textPrimary)
         .padding(.leading, 22)
+        .padding(.trailing, 15)
         
         Group {
           if memos.isEmpty {
@@ -464,11 +470,47 @@ private struct FixedExpenseSection: View {
                 .font(.pretendardMedium_16)
                 .foregroundStyle(.textPrimary)
               
-              Text("\(expense.price.formatted(.number))원")
+              Text("-\(expense.price.formatted(.number))원")
                 .font(.pretendardSemibold_18)
                 .foregroundStyle(.warning)
                 .frame(maxWidth: .infinity, alignment: .trailing)
             }
+          }
+        }
+      }
+      .padding(.horizontal, 22)
+    }
+  }
+}
+
+// MARK: - FixedIncomeSection
+private struct FixedIncomeSection: View {
+  let fixedIncome: Int
+  
+  var body: some View {
+    VStack(spacing: 0) {
+      Rectangle()
+        .fill(.textPrimary5)
+        .frame(height: 6)
+        .padding(.top, 20)
+      
+      VStack(spacing: 26) {
+        Text("예정된 고정 수입")
+          .font(.pretendardSemibold_16)
+          .foregroundStyle(.textPrimary)
+          .frame(maxWidth: .infinity, alignment: .leading)
+          .padding(.top, 20)
+        
+        VStack(spacing: 14) {
+          HStack {
+            Text("고정 수입")
+              .font(.pretendardMedium_16)
+              .foregroundStyle(.textPrimary)
+            
+            Text("+\(fixedIncome.formatted(.number))원")
+              .font(.pretendardSemibold_18)
+              .foregroundStyle(.mainPrimary)
+              .frame(maxWidth: .infinity, alignment: .trailing)
           }
         }
       }
