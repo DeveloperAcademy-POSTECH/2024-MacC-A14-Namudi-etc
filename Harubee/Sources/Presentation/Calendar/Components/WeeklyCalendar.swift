@@ -52,9 +52,17 @@ struct WeeklyCalendar: View {
   private var weeks: [[Date]] {
     let days = budget.startDate.daysUntil(budget.endDate)
     
-    let allDates = (0...days).compactMap {
-      budget.startDate.adding(by: .day, value: $0)
+    let allDates = (0...days).compactMap { offset -> Date? in
+      let date = budget.startDate.adding(by: .day, value: offset)
+      if let dailyBudget = budget.dailyBudgets.first(where: {
+        $0.date.isSameDay(as: date!)
+      }),
+         dailyBudget.expense == -1 {
+        return nil
+      }
+      return date
     }
+    
     return allDates.chunked(into: daysInWeek)
   }
   
