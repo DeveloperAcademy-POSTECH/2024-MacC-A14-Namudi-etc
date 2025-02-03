@@ -79,3 +79,7 @@ Tuist/.build
 
 ### GoogleService Plists ###
 Harubee/Resources/GooglePlists/
+
+### Build Server ###
+buildServer.json
+*.mdc
