@@ -535,7 +535,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.2.2;
+				MARKETING_VERSION = 1.2.3;
 				PRODUCT_BUNDLE_IDENTIFIER = "etc.namudi.harubee.ios.app-dev";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -580,7 +580,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.2.2;
+				MARKETING_VERSION = 1.2.3;
 				PRODUCT_BUNDLE_IDENTIFIER = etc.namudi.harubee.ios.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -617,7 +617,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 1.2.2;
+				MARKETING_VERSION = 1.2.3;
 				PRODUCT_BUNDLE_IDENTIFIER = "etc.namudi.harubee.ios.app-dev.HarubeeWidget";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -655,7 +655,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 1.2.2;
+				MARKETING_VERSION = 1.2.3;
 				PRODUCT_BUNDLE_IDENTIFIER = etc.namudi.harubee.ios.app.HarubeeWidget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
