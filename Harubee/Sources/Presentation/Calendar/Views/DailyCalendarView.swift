@@ -63,10 +63,9 @@ struct DailyCalendarView: View {
               FixedExpenseSection(expenses: fixedExpenses)
             }
             
-            if let selectedDate = viewModel.state.selectedDate {
-              if selectedDate.isSameDay(as: currentBudget.startDate) {
+            if let selectedDate = viewModel.state.selectedDate, 
+              selectedDate.isSameDay(as: currentBudget.startDate) {
                 FixedIncomeSection(fixedIncome: currentBudget.fixedIncome)
-              }
             }
           }
           .padding(.top, 20)
