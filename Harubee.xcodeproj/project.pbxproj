@@ -95,8 +95,6 @@
 				Sources/Domain/Repositories/SalaryBudgetRepository.swift,
 				Sources/Domain/Repositories/UpdateValue.swift,
 				Sources/Domain/Repositories/UserDefaultsRepository.swift,
-				Sources/Domain/UseCases/Impls/BudgetUseCaseImpl.swift,
-				Sources/Domain/UseCases/Interfaces/BudgetUseCase.swift,
 				Sources/Helper/Constants/WidgetURL.swift,
 				"Sources/Helper/DesignSystem/Color+.swift",
 				"Sources/Helper/DesignSystem/Font+.swift",
