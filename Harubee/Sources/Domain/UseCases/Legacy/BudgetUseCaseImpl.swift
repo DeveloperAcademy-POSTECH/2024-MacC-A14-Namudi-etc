@@ -26,6 +26,7 @@ final class BudgetUseCaseImpl: BudgetUseCase {
   
   // MARK: - SalaryBudget Function
   
+  // MARK: ✅
   @discardableResult
   func createSalaryBudget(
     startDate: Date,
@@ -440,6 +441,7 @@ final class BudgetUseCaseImpl: BudgetUseCase {
 
 // MARK: - Private Function
 private extension BudgetUseCaseImpl {
+  // MARK: ✅
   /// 초기 SalaryBudget을 생성합니다
   /// - Parameters:
   ///   - startDate: 시작 날짜
@@ -489,6 +491,7 @@ private extension BudgetUseCaseImpl {
     )
   }
   
+  // MARK: ✅
   /// SalaryBudget에 들어갈 초기 DailyBudgets을 생성합니다
   /// - Parameters:
   ///   - startDate: 시작 날짜
@@ -521,6 +524,7 @@ private extension BudgetUseCaseImpl {
     }
   }
   
+  // MARK: ✅
   /// 이후에 빠져나갈 고정 지출 금액을 뺀 잔액을 구합니다
   /// - Parameters:
   ///   - current: 현재 잔액
@@ -549,6 +553,7 @@ private extension BudgetUseCaseImpl {
     return current - totalFixedExpenses
   }
   
+  // MARK: ✅
   /// 이전 고정 지출 내역을 가지고 새로운 고정 지출 내역을 생성합니다
   /// - Parameters:
   ///   - startDate: 시작 날짜
