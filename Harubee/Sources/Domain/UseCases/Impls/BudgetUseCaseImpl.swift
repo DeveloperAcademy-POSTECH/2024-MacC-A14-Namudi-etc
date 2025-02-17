@@ -222,6 +222,7 @@ final class BudgetUseCaseImpl: BudgetUseCase {
       .first!
   }
   
+  // MARK: ✅
   func calculateDefaultHarubee(
     salaryBudget: SalaryBudget,
     anchorDate: Date
