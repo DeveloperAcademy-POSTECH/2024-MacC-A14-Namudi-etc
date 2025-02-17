@@ -107,6 +107,7 @@ final class BudgetUseCaseImpl: BudgetUseCase {
     )
   }
   
+  // MARK: ✅
   func updateFixedIncome(
     salaryBudget: SalaryBudget,
     newIncome: Int
@@ -155,6 +156,7 @@ final class BudgetUseCaseImpl: BudgetUseCase {
       .first!
   }
   
+  // MARK: ✅
   func updateFixedExpenses(
     salaryBudget: SalaryBudget,
     expenses: [TransactionItem]
@@ -260,6 +262,7 @@ final class BudgetUseCaseImpl: BudgetUseCase {
     try salaryBudgetRepository.deleteAll()
   }
   
+  // MARK: ✅
   func updateIncomeDay(
     day: Int,
     salaryBudget: SalaryBudget
@@ -302,10 +305,12 @@ final class BudgetUseCaseImpl: BudgetUseCase {
     )
   }
   
+  // MARK: ✅
   func setIncomeDay(day: Int) {
     userDefaultsRepository.saveIncomeDay(day)
   }
   
+  // MARK: ✅
   func getIncomeDay() -> Int? {
     return userDefaultsRepository.readIncomeDay()
   }
