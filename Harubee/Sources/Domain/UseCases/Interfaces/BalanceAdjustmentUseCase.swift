@@ -8,7 +8,6 @@
 import Foundation
 
 
-/// 잔액 조정과 관련된 작업을 수행합니다.
 protocol BalanceAdjustmentUseCase {
   /// SalaryBudget의 잔액을 업데이트합니다.
   /// - Parameters:

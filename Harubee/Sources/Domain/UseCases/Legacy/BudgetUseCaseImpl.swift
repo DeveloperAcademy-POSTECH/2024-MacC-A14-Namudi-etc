@@ -83,6 +83,7 @@ final class BudgetUseCaseImpl: BudgetUseCase {
     return try updateHarubeeForPastDates(salaryBudget)
   }
   
+  // MARK: ✅
   func updateBalance(
     salaryBudget: SalaryBudget,
     newBalance: Int
@@ -324,6 +325,7 @@ final class BudgetUseCaseImpl: BudgetUseCase {
     return budget
   }
   
+  // MARK: ✅
   func adjustHarubee(
     amount: Int?,
     date: Date,
@@ -365,7 +367,7 @@ final class BudgetUseCaseImpl: BudgetUseCase {
     return (newDailyBudget, newSalaryBudget)
   }
   
-  
+  // MARK: ✅
   func recordTransaction(
     expense: Int?,
     income: Int?,
@@ -418,7 +420,7 @@ final class BudgetUseCaseImpl: BudgetUseCase {
     return (newDailyBudget, newSalaryBudget)
   }
   
-  
+  // MARK: ✅
   func updateMemoList(
     memoList: [String],
     dailyBudget: DailyBudget
