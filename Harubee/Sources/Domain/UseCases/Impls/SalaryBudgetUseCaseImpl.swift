@@ -7,7 +7,7 @@
 
 import Foundation
 
-final class SalaryBudgetManagementUseCaseImpl: SalaryBudgetManagementUseCase {
+final class SalaryBudgetUseCaseImpl: SalaryBudgetUseCase {
   
   private let salaryBudgetRepository: SalaryBudgetRepository
   private let dailyBudgetRepository: DailyBudgetRepository
@@ -23,11 +23,11 @@ final class SalaryBudgetManagementUseCaseImpl: SalaryBudgetManagementUseCase {
     self.userDefaultsRepository = userDefaultsRepository
   }
   
-  func getAllSalaryBudget() throws -> [SalaryBudget] {
+  func fetchAll() throws -> [SalaryBudget] {
     return try salaryBudgetRepository.readAll()
   }
   
-  func getCurrentSalaryBudget(date: Date?) throws -> SalaryBudget {
+  func fetchCurrent(date: Date?) throws -> SalaryBudget {
     let targetDate = (date ?? Date()).formattedDate
     
     guard let salaryBudget = try salaryBudgetRepository.readByTargetDateContaining(
@@ -44,15 +44,15 @@ final class SalaryBudgetManagementUseCaseImpl: SalaryBudgetManagementUseCase {
     return try updateHarubeeForPastDates(salaryBudget)
   }
   
-  func deleteAllSalaryBudgets() throws {
+  func deleteAll() throws {
     try salaryBudgetRepository.deleteAll()
   }
   
 }
 
-extension SalaryBudgetManagementUseCaseImpl: DefaultHarubeeCalculatable, FixedExpensesRegeneratable {}
+extension SalaryBudgetUseCaseImpl: DefaultHarubeeCalculatable, FixedExpensesRegeneratable {}
 
-private extension SalaryBudgetManagementUseCaseImpl {
+private extension SalaryBudgetUseCaseImpl {
   
   /// 다음 월급 달의 SalaryBudget을 생성합니다.
   /// - Parameter salaryBudget: 현재 SalaryBudget

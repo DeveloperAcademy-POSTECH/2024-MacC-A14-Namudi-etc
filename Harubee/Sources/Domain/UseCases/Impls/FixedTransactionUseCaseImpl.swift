@@ -7,7 +7,7 @@
 
 import Foundation
 
-final class FixedTransactionManagementUseCaseImpl: FixedTransactionManagementUseCase {
+final class FixedTransactionUseCaseImpl: FixedTransactionUseCase {
   
   private let salaryBudgetRepository: SalaryBudgetRepository
   private let userDefaultsRepository: UserDefaultsRepository
@@ -20,7 +20,7 @@ final class FixedTransactionManagementUseCaseImpl: FixedTransactionManagementUse
     self.userDefaultsRepository = userDefaultsRepository
   }
   
-  func updateFixedIncome(
+  func updateIncome(
     salaryBudget: SalaryBudget,
     newIncome: Int
   ) throws -> SalaryBudget {
@@ -68,7 +68,7 @@ final class FixedTransactionManagementUseCaseImpl: FixedTransactionManagementUse
       .first!
   }
   
-  func updateFixedExpenses(
+  func updateExpenses(
     salaryBudget: SalaryBudget,
     expenses: [TransactionItem]
   ) throws -> SalaryBudget {
@@ -186,6 +186,6 @@ final class FixedTransactionManagementUseCaseImpl: FixedTransactionManagementUse
   }
 }
 
-extension FixedTransactionManagementUseCaseImpl: DefaultHarubeeCalculatable, FixedExpensesRegeneratable {}
+extension FixedTransactionUseCaseImpl: DefaultHarubeeCalculatable, FixedExpensesRegeneratable {}
 
 

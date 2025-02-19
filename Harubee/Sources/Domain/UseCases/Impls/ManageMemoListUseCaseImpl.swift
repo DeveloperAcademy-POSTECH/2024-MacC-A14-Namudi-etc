@@ -7,7 +7,7 @@
 
 import Foundation
 
-final class ManageMemoUseCaseImpl: ManageMemoUseCase {
+final class ManageMemoListUseCaseImpl: ManageMemoListUseCase {
   
   private let dailyBudgetRepository: DailyBudgetRepository
   
