@@ -7,7 +7,7 @@
 
 import Foundation
 
-final class AdjustHarubeeUseCaseImpl: AdjustHarubeeUseCase {
+final class AdjustDailyHarubeeUseCaseImpl: AdjustDailyHarubeeUseCase {
   
   private let salaryBudgetRepository: SalaryBudgetRepository
   private let dailyBudgetRepository: DailyBudgetRepository
@@ -20,7 +20,7 @@ final class AdjustHarubeeUseCaseImpl: AdjustHarubeeUseCase {
     self.dailyBudgetRepository = dailyBudgetRepository
   }
   
-  func adjustHarubee(
+  func updateHarubee(
     amount: Int?,
     date: Date,
     salaryBudget: SalaryBudget
@@ -62,4 +62,4 @@ final class AdjustHarubeeUseCaseImpl: AdjustHarubeeUseCase {
   }
 }
 
-extension AdjustHarubeeUseCaseImpl: DefaultHarubeeCalculatable {}
+extension AdjustDailyHarubeeUseCaseImpl: DefaultHarubeeCalculatable {}

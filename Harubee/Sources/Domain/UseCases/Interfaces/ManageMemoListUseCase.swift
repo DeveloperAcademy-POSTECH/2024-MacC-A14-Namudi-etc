@@ -7,7 +7,7 @@
 
 import Foundation
 
-protocol ManageMemoUseCase {
+protocol ManageMemoListUseCase {
   /// 메모 리스트를 업데이트합니다.
   /// - Parameters:
   ///   - memoList: 업데이트할 메모 리스트
