@@ -27,7 +27,7 @@ final class SaveOnboardingDataUseCaseImpl: SaveOnboardingDataUseCase {
     fixedIncomeDay: Int,
     fixedIncomeAmount: Int,
     fixedExpenses: [TransactionItem]
-  ) throws -> SalaryBudget {
+  ) throws {
     // 1. date 포멧 변경
     let startDate = startDate.formattedDate
     let endDate = endDate.formattedDate
@@ -35,26 +35,37 @@ final class SaveOnboardingDataUseCaseImpl: SaveOnboardingDataUseCase {
     // 2. 고정 수입일 저장
     userDefaultsRepository.saveIncomeDay(fixedIncomeDay)
     
-    // 3. SalaryBudget 생성하기
-    let salaryBudget = SalaryBudget.create(
-      startDate: startDate,
-      endDate: endDate,
-      fixedIncome: fixedIncomeAmount,
-      fixedExpenses: fixedExpenses
-    )
-    
-    // 4. 초기(첫번째) 데이터로 표현될 SalaryBudget으로 변환
-    let initialSalaryBudget = convertToOnboardingFormat(
-      from: salaryBudget,
-      currentBalance: currentBalance
-    )
-    
-    // 5. Repository에 저장하기
-    salaryBudgetRepository.create(initialSalaryBudget)
-    
-    // TODO: 다음달 SalaryBudget 생성 시점 생각하기 (온보딩에서 바로 처리 or 홈화면에서 기존 createNextSalaryBudgetIfNeeded() 호출할지
-    
-    return salaryBudget
+    // 3. 이번, 다음달 SalaryBudget 생성
+    for i in (0...1) {
+      // 수입일(day)과 기준 날짜를 가지고 새로운 시작, 종료 날짜를 계산
+      // 첫번째 SalaryBudget의 endDate + 하루는 다음 기간 날짜에 포함되기 때문에
+      // 다음 기간 SalaryBudget의 시작, 종료 날짜를 계산하기 위한 기준 날짜가 됨
+      let anchorDate = endDate.adding(by: .day, value: i)!
+      let (start, end) = Date.calculateStartAndEndDate(from: fixedIncomeDay, anchor: anchorDate)
+      
+      // 고정 지출일(day)을 가지고 시작, 종료 날짜 사이에 위치한 날짜로 변환
+      let newFixedExpenses = fixedExpenses.recalculateDateInRange(startDate: start, endDate: end)
+      
+      // SalaryBudget 생성 및 배열에 추가
+      var salaryBudget = SalaryBudget.create(
+        startDate: start,
+        endDate: end,
+        fixedIncome: fixedIncomeAmount,
+        fixedExpenses: newFixedExpenses
+      )
+      
+      // 이번 기간의 SalaryBudget인 경우 지난 날짜의 DailyBudget 포멧 변환
+      // (온보딩에서 입력한 잔액으로 변경 및 하루비, 지출 -1로 입력)
+      if i == 0 {
+        salaryBudget = convertToOnboardingFormat(
+          from: salaryBudget,
+          currentBalance: currentBalance
+        )
+      }
+      
+      // Repository에 저장하기
+      salaryBudgetRepository.create(salaryBudget)
+    }
   }
 }
 
