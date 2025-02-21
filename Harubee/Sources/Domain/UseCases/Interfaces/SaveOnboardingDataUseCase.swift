@@ -17,7 +17,6 @@ protocol SaveOnboardingDataUseCase {
   ///   - fixedIncomeDay: 고정 수입일
   ///   - fixedIncomeAmount: 고정 수입 금액
   ///   - fixedExpenses: 고정 지출 항목 배열
-  /// - Returns: 생성된 SalaryBudget 객체
   func execute(
     startDate: Date,
     endDate: Date,
@@ -25,5 +24,5 @@ protocol SaveOnboardingDataUseCase {
     fixedIncomeDay: Int,
     fixedIncomeAmount: Int,
     fixedExpenses: [TransactionItem]
-  ) throws -> SalaryBudget
+  ) throws
 }
