@@ -81,3 +81,49 @@ struct SalaryBudget: Identifiable, Hashable {
     )
   }
 }
+
+extension SalaryBudget {
+  static func create(
+    startDate: Date,
+    endDate: Date,
+    fixedIncome: Int,
+    fixedExpenses: [TransactionItem]
+  ) -> SalaryBudget {
+    // 1. 시작, 종료까지의 일자 구하기
+    let days = startDate.daysUntil(endDate)
+    
+    // 2. 고정 수입에서 총 고정 지출 금액 뺀 잔액 구하기
+    let totalFixedExpenses = fixedExpenses
+      .reduce(0) { $0 + $1.price }
+    let balance = fixedIncome - totalFixedExpenses
+    
+    // 3. 기본 하루비 구하기
+    let defaultHarubee = Double(balance) / Double(days + 1)
+    
+    // 4. DailyBudgets 생성
+    let dailyBudgets = (0...days).compactMap { day -> DailyBudget? in
+      guard let date = startDate.adding(
+        by: .day, value: day
+      ) else { return nil }
+      
+      return DailyBudget(
+        date: date,
+        harubee: nil,
+        memo: [],
+        expense: nil,
+        income: nil
+      )
+    }
+    
+    // 5. SalaryBudget 리턴
+    return SalaryBudget(
+      startDate: startDate,
+      endDate: endDate,
+      fixedIncome: fixedIncome,
+      fixedExpenses: fixedExpenses,
+      balance: balance,
+      defaultHarubee: defaultHarubee,
+      dailyBudgets: dailyBudgets
+    )
+  }
+}
