@@ -38,3 +38,25 @@ struct TransactionItem: Identifiable, Hashable {
     )
   }
 }
+
+extension Array where Element == TransactionItem {
+  func recalculateDateInRange(
+    startDate: Date,
+    endDate: Date
+  ) -> [Element] {
+    return self.map {
+      let date = Date.convertDateBetweenStartAndEnd(
+        start: startDate,
+        end: endDate,
+        day: $0.day
+      )
+
+      return TransactionItem(
+        date: date,
+        day: $0.day,
+        name: $0.name,
+        price: $0.price
+      )
+    }
+  }
+}

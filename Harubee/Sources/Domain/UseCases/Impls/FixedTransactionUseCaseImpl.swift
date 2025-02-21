@@ -103,14 +103,10 @@ final class FixedTransactionUseCaseImpl: FixedTransactionUseCase {
         ? $0.balance - (newTotalExpenseFromToday - oldTotalExpenseFromToday)
         : $0.fixedIncome - totalExpenses
         
-        // 이번 기간의 SalaryBudget인 경우 파라미터로 전달된 고정 지출 사용
-        // 그 외에 SalaryBudget인 경우 날짜 새로 계산
-        let newFixedExpenses = $0.id == salaryBudget.id
-        ? expenses
-        : regenerateFixedExpenses(
+        // 파라미터로 전달받은 고정 지출 내역들의 날짜를 SalaryBudget의 시작, 종료 날짜 사이의 날짜에 맞춰 변환
+        let newFixedExpenses = expenses.recalculateDateInRange(
           startDate: $0.startDate,
-          endDate: $0.endDate,
-          from: expenses
+          endDate: $0.endDate
         )
         
         var newSalaryBudget = $0
@@ -186,6 +182,6 @@ final class FixedTransactionUseCaseImpl: FixedTransactionUseCase {
   }
 }
 
-extension FixedTransactionUseCaseImpl: DefaultHarubeeCalculatable, FixedExpensesRegeneratable {}
+extension FixedTransactionUseCaseImpl: DefaultHarubeeCalculatable {}
 
 

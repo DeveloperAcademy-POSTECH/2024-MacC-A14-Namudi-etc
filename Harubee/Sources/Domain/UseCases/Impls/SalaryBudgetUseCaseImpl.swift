@@ -50,7 +50,7 @@ final class SalaryBudgetUseCaseImpl: SalaryBudgetUseCase {
   
 }
 
-extension SalaryBudgetUseCaseImpl: DefaultHarubeeCalculatable, FixedExpensesRegeneratable {}
+extension SalaryBudgetUseCaseImpl: DefaultHarubeeCalculatable {}
 
 private extension SalaryBudgetUseCaseImpl {
   
