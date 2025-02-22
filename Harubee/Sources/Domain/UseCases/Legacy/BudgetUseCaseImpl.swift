@@ -285,7 +285,7 @@ final class BudgetUseCaseImpl: BudgetUseCase {
     
     // 4. 새로운 수입일에 맞춰 월급 기간 구하기
     let (startDate, endDate) = Date.calculateStartAndEndDate(
-      from: day,
+      incomeDay: day,
       anchor: .now
     )
     
@@ -599,7 +599,7 @@ private extension BudgetUseCaseImpl {
     
     // 3. 다음 달의 SalaryBudget StartDate, EndDate 계산
     let (nextStartDate, nextEndDate) = Date.calculateStartAndEndDate(
-      from: incomeDay,
+      incomeDay: incomeDay,
       anchor: nextDate
     )
     

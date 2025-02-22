@@ -28,30 +28,24 @@ final class SaveOnboardingDataUseCaseImpl: SaveOnboardingDataUseCase {
     fixedIncomeAmount: Int,
     fixedExpenses: [TransactionItem]
   ) throws {
-    // 1. date 포멧 변경
-    let startDate = startDate.formattedDate
-    let endDate = endDate.formattedDate
     
-    // 2. 고정 수입일 저장
+    // 1. 고정 수입일 저장
     userDefaultsRepository.saveIncomeDay(fixedIncomeDay)
     
-    // 3. 이번, 다음달 SalaryBudget 생성
+    // 2. 이번, 다음달 SalaryBudget 생성
     for i in (0...1) {
       // 수입일(day)과 기준 날짜를 가지고 새로운 시작, 종료 날짜를 계산
       // 첫번째 SalaryBudget의 endDate + 하루는 다음 기간 날짜에 포함되기 때문에
       // 다음 기간 SalaryBudget의 시작, 종료 날짜를 계산하기 위한 기준 날짜가 됨
-      let anchorDate = endDate.adding(by: .day, value: i)!
-      let (start, end) = Date.calculateStartAndEndDate(from: fixedIncomeDay, anchor: anchorDate)
-      
-      // 고정 지출일(day)을 가지고 시작, 종료 날짜 사이에 위치한 날짜로 변환
-      let newFixedExpenses = fixedExpenses.recalculateDateInRange(startDate: start, endDate: end)
+      let anchorDate = endDate.formattedDate.adding(by: .day, value: i)!
+      let (start, end) = Date.calculateStartAndEndDate(incomeDay: fixedIncomeDay, anchor: anchorDate)
       
       // SalaryBudget 생성 및 배열에 추가
       var salaryBudget = SalaryBudget.create(
         startDate: start,
         endDate: end,
         fixedIncome: fixedIncomeAmount,
-        fixedExpenses: newFixedExpenses
+        fixedExpenses: fixedExpenses
       )
       
       // 이번 기간의 SalaryBudget인 경우 지난 날짜의 DailyBudget 포멧 변환

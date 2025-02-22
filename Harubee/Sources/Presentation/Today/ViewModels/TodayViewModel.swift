@@ -90,7 +90,7 @@ extension TodayViewModel {
       }
       
       let (newStartDate, newEndDate) = Date.calculateStartAndEndDate(
-        from: incomeDay!,
+        incomeDay: incomeDay!,
         anchor: .now
       )
       

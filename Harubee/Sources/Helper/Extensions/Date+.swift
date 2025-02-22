@@ -125,12 +125,12 @@ extension Date {
   /// - Parameter date: 기준 날짜
   /// - Returns: 이번 월급 기간의 시작 및 종료 날짜
   static func calculateStartAndEndDate(
-    from incomeDay: Int,
+    incomeDay: Int,
     anchor date: Date
   ) -> (Date, Date) {
     
-    let incomeStartDate = calculateStartDate(from: incomeDay, anchor: date)
-    let incomeEndDate = calculateEndDate(from: incomeDay, anchor: date)
+    let incomeStartDate = calculateStartDate(incomeDay: incomeDay, anchor: date)
+    let incomeEndDate = calculateEndDate(incomeDay: incomeDay, anchor: date)
     
     return (incomeStartDate, incomeEndDate)
   }
@@ -167,7 +167,7 @@ extension Date {
   }
 
   static private func calculateStartDate(
-    from incomeDay: Int,
+    incomeDay: Int,
     anchor date: Date
   ) -> Date {
     let date = date.formattedDate
@@ -209,7 +209,7 @@ extension Date {
   }
 
   static private func calculateEndDate(
-    from incomeDay: Int,
+    incomeDay: Int,
     anchor date: Date
   ) -> Date {
     let date = date.formattedDate

@@ -49,7 +49,7 @@ final class OnboardingViewModel {
     case let .updateFixedIncomeDay(day):
       self.state.incomeDay = day
       
-      let (start, end) = Date.calculateStartAndEndDate(from: day, anchor: .now)
+      let (start, end) = Date.calculateStartAndEndDate(incomeDay: day, anchor: .now)
       self.state.incomeStartDate = start
       self.state.incomeEndDate = end
       
@@ -82,7 +82,7 @@ final class OnboardingViewModel {
 
 private extension OnboardingViewModel {
   func initialState() {
-    let (start, end) = Date.calculateStartAndEndDate(from: 1, anchor: .now)
+    let (start, end) = Date.calculateStartAndEndDate(incomeDay: 1, anchor: .now)
     self.state = .init(incomeStartDate: start, incomeEndDate: end)
   }
   
