@@ -92,15 +92,21 @@ extension SalaryBudget {
     // 1. 시작, 종료까지의 일자 구하기
     let days = startDate.daysUntil(endDate)
     
-    // 2. 고정 수입에서 총 고정 지출 금액 뺀 잔액 구하기
-    let totalFixedExpenses = fixedExpenses
+    // 2. 시작, 종료 날짜에 맞춰 고정 지출 날짜 재설정
+    let newFixedExpenses = fixedExpenses.recalculateDateInRange(
+      startDate: startDate,
+      endDate: endDate
+    )
+    
+    // 3. 고정 수입에서 총 고정 지출 금액 뺀 잔액 구하기
+    let totalFixedExpenses = newFixedExpenses
       .reduce(0) { $0 + $1.price }
     let balance = fixedIncome - totalFixedExpenses
     
-    // 3. 기본 하루비 구하기
+    // 4. 기본 하루비 구하기
     let defaultHarubee = Double(balance) / Double(days + 1)
     
-    // 4. DailyBudgets 생성
+    // 5. DailyBudgets 생성
     let dailyBudgets = (0...days).compactMap { day -> DailyBudget? in
       guard let date = startDate.adding(
         by: .day, value: day
@@ -115,12 +121,12 @@ extension SalaryBudget {
       )
     }
     
-    // 5. SalaryBudget 리턴
+    // 6. SalaryBudget 리턴
     return SalaryBudget(
       startDate: startDate,
       endDate: endDate,
       fixedIncome: fixedIncome,
-      fixedExpenses: fixedExpenses,
+      fixedExpenses: newFixedExpenses,
       balance: balance,
       defaultHarubee: defaultHarubee,
       dailyBudgets: dailyBudgets
