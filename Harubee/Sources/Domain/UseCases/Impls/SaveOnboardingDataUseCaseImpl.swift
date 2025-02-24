@@ -40,7 +40,7 @@ final class SaveOnboardingDataUseCaseImpl: SaveOnboardingDataUseCase {
       let anchorDate = endDate.formattedDate.adding(by: .day, value: i)!
       let (start, end) = Date.calculateStartAndEndDate(incomeDay: fixedIncomeDay, anchor: anchorDate)
       
-      // SalaryBudget 생성 및 배열에 추가
+      // SalaryBudget 생성
       var salaryBudget = SalaryBudget.create(
         startDate: start,
         endDate: end,
