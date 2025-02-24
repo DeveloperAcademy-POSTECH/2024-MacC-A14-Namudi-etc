@@ -36,9 +36,4 @@ protocol FixedTransactionUseCase {
     day: Int,
     salaryBudget: SalaryBudget
   ) throws -> SalaryBudget
-  
-  // TODO: 리팩토링에 따라 제거 가능
-  /// 저장된 고정 수입일을 조회합니다.
-  /// - Returns: 1-31 사이의 고정 수입일
-  func getIncomeDay() -> Int?
 }

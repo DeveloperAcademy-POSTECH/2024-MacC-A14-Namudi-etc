@@ -132,7 +132,6 @@ final class FixedTransactionUseCaseImpl: FixedTransactionUseCase {
       .first!
   }
   
-  // TODO: 용도 다시 생각해보기
   func updateIncomeDay(
     day: Int,
     salaryBudget: SalaryBudget
@@ -146,39 +145,42 @@ final class FixedTransactionUseCaseImpl: FixedTransactionUseCase {
     // 2. UserDefaults에 설정하기
     userDefaultsRepository.saveIncomeDay(day)
     
-    // TODO: 수입 날짜 변경 시 새로운 SalaryBudget 생성 로직은 SalaryBudget 관리 유스케이스에서 구현 필요
-//    // 3. 이번 기간을 포함한 이후의 모든 SalaryBudget 가져오고 삭제
-//    let anchor = salaryBudget.startDate.adding(by: .day, value: -1)!
-//    try salaryBudgetRepository
-//      .readAll(after: anchor)
-//      .forEach { try salaryBudgetRepository.deleteById($0.id) }
-//    
-//    // 4. 새로운 수입일에 맞춰 월급 기간 구하기
-//    let (startDate, endDate) = Date.calculateStartAndEndDate(
-//      from: day,
-//      anchor: .now
-//    )
-//    
-//    // 5. 새로운 수입일에 맞춰 고정 지출 날짜 새롭게 계산
-//    let newFixedExpenses = initializeFixedExpense(
-//      startDate: startDate,
-//      endDate: endDate,
-//      from: salaryBudget.fixedExpenses
-//    )
-//    
-//    // 6. 새로운 SalaryBudget 생성
-//    return try self.createSalaryBudget(
-//      startDate: startDate,
-//      endDate: endDate,
-//      currentBalance: nil,
-//      fixedIncome: salaryBudget.fixedIncome,
-//      fixedExpenses: newFixedExpenses
-//    )
-    return SalaryBudget.default
-  }
-  
-  func getIncomeDay() -> Int? {
-    return userDefaultsRepository.readIncomeDay()
+    // 3. 이번 기간을 포함한 이후의 모든 SalaryBudget 가져오고 삭제
+    let anchor = salaryBudget.startDate.adding(by: .day, value: -1)!
+    try salaryBudgetRepository
+      .readAll(after: anchor)
+      .forEach { try salaryBudgetRepository.deleteById($0.id) }
+    
+    // 4. 이번, 다음달 SalaryBudget 생성
+    var anchorDate = Date().formattedDate
+    var newSalaryBudget = salaryBudget
+    
+    for i in (0...1) {
+      // 기준 날짜, 수입일을 기반으로 새로운 시작, 종료 날짜 생성
+      let (start, end) = Date.calculateStartAndEndDate(
+        incomeDay: day,
+        anchor: anchorDate
+      )
+      
+      // SalaryBudget 생성
+      var salaryBudget = SalaryBudget.create(
+        startDate: start,
+        endDate: end,
+        fixedIncome: salaryBudget.fixedIncome,
+        fixedExpenses: salaryBudget.fixedExpenses
+      )
+      
+      // Repository에 저장하기
+      salaryBudgetRepository.create(salaryBudget)
+      
+      // 기준 날짜 수정
+      anchorDate = end.adding(by: .day, value: 1)!
+      
+      // 이번 기간의 SalaryBudget을 리턴하기 위함
+      if i == 0 { newSalaryBudget = salaryBudget }
+    }
+    
+    return newSalaryBudget
   }
 }
 
