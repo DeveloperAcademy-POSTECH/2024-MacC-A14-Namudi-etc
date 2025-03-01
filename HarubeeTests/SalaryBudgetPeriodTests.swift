@@ -15,7 +15,7 @@ struct SalaryBudgetPeriodTests {
   func checkPeriod(object: TestObject) async throws {
     
     let result = Date.calculateStartAndEndDate(
-      from: object.incomeDay,
+      incomeDay: object.incomeDay,
       anchor: object.currentDate
     )
     let expectedStart = object.expectedStart
