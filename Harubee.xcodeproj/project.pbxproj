@@ -539,7 +539,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "etc.namudi.harubee.ios.app-dev";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = Harubee_Dev_Development;
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "Harubee Develop";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
@@ -584,7 +584,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = etc.namudi.harubee.ios.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = Harubee_Distribution;
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "Harubee Production";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
@@ -621,7 +621,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "etc.namudi.harubee.ios.app-dev.HarubeeWidget";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = Harubee_Widget_Dev_Development;
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "Harubee Widget Develop";
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
@@ -659,7 +659,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = etc.namudi.harubee.ios.app.HarubeeWidget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = Harubee_Widget_Distribution;
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "Harubee Widget Production";
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;

@@ -17,10 +17,19 @@ final class StorageProvider {
       TransactionItemDTO.self
     ])
     
-    let configuration = ModelConfiguration(
+    let configuration: ModelConfiguration
+#if DEV
+    let devDatabaseURL = URL.documentsDirectory.appending(path: "HarubeeDatabase-Dev.sqlite")
+    configuration = ModelConfiguration(
+      schema: schema,
+      url: devDatabaseURL
+    )
+#else
+    configuration = ModelConfiguration(
       schema: schema,
       isStoredInMemoryOnly: false
     )
+#endif
     
     do {
       let container = try ModelContainer(
