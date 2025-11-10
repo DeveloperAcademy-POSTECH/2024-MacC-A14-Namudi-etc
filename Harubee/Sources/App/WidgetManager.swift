@@ -8,7 +8,6 @@
 import Foundation
 import WidgetKit
 
-@Observable
 final class WidgetManager {
   static let shared = WidgetManager()
   
