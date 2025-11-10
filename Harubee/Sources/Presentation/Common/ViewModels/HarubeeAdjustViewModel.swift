@@ -82,7 +82,7 @@ final class HarubeeAdjustViewModel {
         analyticsUseCase.trackEvent(
           event: .buttonTap(name: "하루비 조정")
         )
-        
+        WidgetManager.shared.enableReload()
       } catch {
         print(error.localizedDescription)
       }

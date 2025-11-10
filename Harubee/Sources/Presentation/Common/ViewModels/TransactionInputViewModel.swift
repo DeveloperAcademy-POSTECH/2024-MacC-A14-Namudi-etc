@@ -56,7 +56,7 @@ final class TransactionInputViewModel {
         analyticsUseCase.trackEvent(
           event: .buttonTap(name: "실제 지출 입력")
         )
-        
+        WidgetManager.shared.enableReload()
       } catch {
         print(error.localizedDescription)
       }
