@@ -13,12 +13,17 @@ struct HarubeeApp: App {
   @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
   @Environment(\.scenePhase) private var scenePhase
   
+  private var shouldReloadWidget: Bool {
+    WidgetManager.shared.isReloadEnabled
+  }
+  
   var body: some Scene {
     WindowGroup {
       CoordinatorView()
         .onChange(of: scenePhase) {
-          if case ScenePhase.background = $1 {
-            WidgetCenter.shared.reloadAllTimelines()
+          if case ScenePhase.background = $1,
+             shouldReloadWidget {
+            WidgetManager.shared.reloadTimeline()
           }
         }
     }
