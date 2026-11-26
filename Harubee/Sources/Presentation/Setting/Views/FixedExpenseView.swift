@@ -114,6 +114,10 @@ private struct FixedExpenseListView: View {
               fixedExpensesRow(for: item)
             }
             .listRowBackground(Color.clear)
+            .listRowSeparator(
+              item.id == fixedExpenses.first?.id ? .hidden : .visible,
+              edges: .top
+            )
             .buttonStyle(CustomButtonStyle(
               tappedBackgroundColor: .textSecondary.opacity(0.1),
               haptic: .tap
@@ -206,13 +210,13 @@ private struct FixedExpenseListView: View {
     )
     
     if let item = selectedItem,
-       let index = fixedExpenses.firstIndex(where: {
-         $0.id == item.id
-       }) {
-      fixedExpenses[index].date = date
-      fixedExpenses[index].day = day
-      fixedExpenses[index].name = name
-      fixedExpenses[index].price = price.numberFormat ?? 0
+       let index = fixedExpenses.firstIndex(where: { $0.id == item.id }) {
+      var updatedFixedExpenses = fixedExpenses
+      updatedFixedExpenses[index].date = date
+      updatedFixedExpenses[index].day = day
+      updatedFixedExpenses[index].name = name
+      updatedFixedExpenses[index].price = price.numberFormat ?? 0
+      fixedExpenses = updatedFixedExpenses
     } else {
       fixedExpenses.append(.init(
         date: date,
